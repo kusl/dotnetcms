@@ -2298,3 +2298,63 @@ Will render as a proper numbered list: 1, 2, 3, 4 (the browser auto-numbers `<ol
 Run the script, rebuild, and redeploy to your server.
 
 
+Looks like login and logout flow are broken again. Can you please fix these properly? 
+
+Now I have a complete picture. Based on the project knowledge, the issues you're experiencing with login and logout have been documented, and I can see the current state of the code. Let me search for the current actual files to confirm what's currently deployed.Based on my thorough analysis of your project knowledge, I can see the issue clearly. The previous fix script (`fix-blazor-interactivity.sh`) was created but it seems the fixes didn't fully take effect, or there's a mismatch between what's in the script and what's actually deployed.
+
+Let me create a comprehensive fix script that addresses all the issues properly:I've created a comprehensive fix script. Let me explain the issues and the fixes:
+
+## Root Cause Analysis
+
+### 1. **Logout 400 Bad Request**
+The `MainLayout.razor` contains:
+```html
+<form method="post" action="/logout" class="logout-form">
+    <AntiforgeryToken />
+    <button type="submit">Logout</button>
+</form>
+```
+
+This sends an HTTP POST to `/logout`. However, the `Logout.razor` page only handles GET requests (it runs in `OnInitializedAsync`). When the browser POSTs to `/logout`, there's no endpoint to handle it, resulting in a 400 Bad Request.
+
+**Fix:** Added a minimal API endpoint:
+```csharp
+app.MapPost("/logout", async (HttpContext context) =>
+{
+    await context.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+    return Results.Redirect("/");
+}).RequireAuthorization();
+```
+
+### 2. **Login Form Not Working**
+The login form uses `method="post"` but the `<input>` elements only had `@bind` attributes, not `name` attributes. In SSR mode, browsers only submit fields with `name` attributes.
+
+**Fix:** Added `name="username"` and `name="password"` to inputs, plus `[SupplyParameterFromForm]` to receive the POST data.
+
+### 3. **blazor.web.js 404 / PostEditor Not Working**
+The pages weren't being rendered in interactive mode, so:
+- `blazor.web.js` wasn't being served locally
+- `@onclick` handlers didn't work
+- `@bind` with two-way binding didn't work
+
+**Fix:** Added `@rendermode="InteractiveServer"` to the `<Routes>` component in `App.razor`.
+
+## To Apply the Fix
+
+```bash
+chmod +x fix-login-logout.sh
+./fix-login-logout.sh
+dotnet build src/MyBlog.slnx
+dotnet run --project src/MyBlog.Web
+```
+
+Then test:
+1. Navigate to `/login`
+2. Enter credentials and click Login
+3. Once logged in, click Logout in the header
+4. You should be signed out and redirected to home
+
+
+
+
+
