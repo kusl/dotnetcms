@@ -2048,3 +2048,73 @@ The tests were using file-based SQLite (`Data Source={Guid.NewGuid()}.db`) which
 
 
 
+something has gone wrong here. please review the full `dump.txt` but I am pretty sure unit tests for a small project like this should not take over 900 seconds to complete. 
+  MyBlog.Core net10.0 succeeded (0.2s) → MyBlog.Core/bin/Debug/net10.0/MyBlog.Core.dll
+  MyBlog.Infrastructure net10.0 succeeded (0.1s) → MyBlog.Infrastructure/bin/Debug/net10.0/MyBlog.Infrastructure.dll
+  MyBlog.Web net10.0 succeeded (0.1s) → MyBlog.Web/bin/Debug/net10.0/MyBlog.Web.dll
+  MyBlog.Tests net10.0 succeeded (0.1s) → MyBlog.Tests/bin/Debug/net10.0/MyBlog.Tests.dll
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.5+1b188a7b0a (64-bit .NET 10.0.1)
+[xUnit.net 00:00:00.17]   Discovering: MyBlog.Tests
+[xUnit.net 00:00:00.38]   Discovered:  MyBlog.Tests
+[xUnit.net 00:00:00.56]   Starting:    MyBlog.Tests
+Attempting to cancel the build...
+  MyBlog.Tests test net10.0 failed with 1 warning(s) (909.1s)
+    /usr/lib64/dotnet/sdk/10.0.101/Microsoft.TestPlatform.targets(48,5): warning MSB5021: Terminating the task executable "dotnet" and its child processes because the build was canceled.
+
+Build failed with 1 warning(s) in 910.3s
+
+real	15m10.510s
+user	0m3.761s
+sys	0m1.236s
+Restore complete (0.8s)
+
+Found the issue! Looking at the `LoginRateLimitMiddlewareTests`, the test `InvokeAsync_NeverBlocksCompletely` actually waits for **real** `Task.Delay` calls in the middleware. The middleware implements progressive delays: 1s, 2s, 4s, 8s... up to 30s max.
+
+When the test makes **100 login attempts** from the same IP:
+- Attempts 1-5: no delay
+- Attempt 6: 1s delay
+- Attempt 7: 2s delay  
+- Attempt 8: 4s delay
+- Attempt 9: 8s delay
+- Attempt 10: 16s delay
+- Attempts 11-100: 30s delay each (capped at max)
+
+That's roughly: **0 + 1 + 2 + 4 + 8 + 16 + (90 × 30) = 2731 seconds** of delays!
+
+Even with the 60-second timeout per request, the cumulative wait is enormous.
+
+Here's a fix script that makes the middleware testable by allowing you to inject a "delay provider" for tests:The problem is clear now. The `InvokeAsync_NeverBlocksCompletely` test makes **100 real login attempts**, and the middleware actually calls `Task.Delay()` with real delays:
+
+- Attempts 1-5: 0s
+- Attempt 6: 1s
+- Attempt 7: 2s
+- Attempt 8: 4s
+- Attempt 9: 8s
+- Attempt 10: 16s
+- Attempts 11-100: 30s each (capped)
+
+That's approximately **5 + 16 + (90 × 30) = 2721 seconds (~45 minutes)** of actual waiting!
+
+The fix makes the middleware **testable** by allowing injection of a no-op delay function:
+
+**Key changes:**
+
+1. **Middleware now accepts an optional delay function** via an internal constructor, so tests can skip real delays while production uses `Task.Delay`
+
+2. **Tests use a no-op delay** that just records what delays *would* have been applied, making them run in milliseconds
+
+3. **Added `ClearAttempts()`** method so tests don't interfere with each other (the static `ConcurrentDictionary` was being shared across tests)
+
+4. **Better test coverage** - now tests verify the actual delay values (1s → 2s → 4s → 8s → 16s → 30s cap) without waiting
+
+Run the script and your tests should complete in seconds instead of 15+ minutes.
+
+
+
+
+
+
+
+
+
+
