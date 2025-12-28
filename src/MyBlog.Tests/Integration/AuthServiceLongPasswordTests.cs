@@ -4,6 +4,7 @@ using MyBlog.Core.Models;
 using MyBlog.Infrastructure.Data;
 using MyBlog.Infrastructure.Repositories;
 using MyBlog.Infrastructure.Services;
+using Xunit;
 
 namespace MyBlog.Tests.Integration;
 

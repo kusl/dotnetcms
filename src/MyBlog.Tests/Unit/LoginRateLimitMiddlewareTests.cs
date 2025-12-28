@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using MyBlog.Web.Middleware;
+using Xunit;
 
 namespace MyBlog.Tests.Unit;
 
