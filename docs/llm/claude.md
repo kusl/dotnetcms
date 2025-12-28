@@ -1192,3 +1192,9 @@ Error: The remote name could not be resolved: 'https'
 Error count: 1.
 Write-Error: Deployment failed with exit code -1
 Error: Process completed with exit code 1.
+I don't know what else to say why is the remote called "https"? 
+wait I think I know why
+```
+$destArg = "-dest:contentPath=$env:DEPLOY_SITE,computerName=https://$($env:DEPLOY_HOST):8172/msdeploy.axd,userName=$env:DEPLOY_USER,password=$env:DEPLOY_PASSWORD,authType=Basic"
+```
+
