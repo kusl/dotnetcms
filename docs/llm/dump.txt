@@ -1,6 +1,6 @@
 ===============================================================================
 PROJECT EXPORT
-Generated: Sun Dec 28 11:10:40 AM CST 2025
+Generated: Sun Dec 28 11:13:04 AM CST 2025
 Project Path: /home/kushal/src/dotnet/MyBlog
 ===============================================================================
 
@@ -76,6 +76,7 @@ DIRECTORY STRUCTURE:
 │   │   │   ├── PostRepositoryTests.cs
 │   │   │   └── TelemetryCleanupTests.cs
 │   │   ├── Unit
+│   │   │   ├── LoginRateLimitMiddlewareTests.cs
 │   │   │   ├── MarkdownServiceTests.cs
 │   │   │   ├── PasswordServiceTests.cs
 │   │   │   └── SlugServiceTests.cs
@@ -104,6 +105,8 @@ DIRECTORY STRUCTURE:
 │   │   │   ├── App.razor
 │   │   │   ├── _Imports.razor
 │   │   │   └── Routes.razor
+│   │   ├── Middleware
+│   │   │   └── LoginRateLimitMiddleware.cs
 │   │   ├── wwwroot
 │   │   │   └── css
 │   │   │       └── site.css
@@ -8378,8 +8381,8 @@ MODIFIED: 2025-12-28 07:44:06
 
 ================================================================================
 FILE: src/MyBlog.Tests/Integration/AuthServiceLongPasswordTests.cs
-SIZE: 11.13 KB
-MODIFIED: 2025-12-28 10:57:49
+SIZE: 11.11 KB
+MODIFIED: 2025-12-28 11:12:01
 ================================================================================
 
 using Microsoft.EntityFrameworkCore;
@@ -8388,12 +8391,12 @@ using MyBlog.Core.Models;
 using MyBlog.Infrastructure.Data;
 using MyBlog.Infrastructure.Repositories;
 using MyBlog.Infrastructure.Services;
-using Xunit;
 
 namespace MyBlog.Tests.Integration;
 
 /// <summary>
 /// Tests for long password support and account lockout behavior.
+/// Uses in-memory SQLite for cross-platform compatibility (Windows/Linux/macOS).
 /// </summary>
 public sealed class AuthServiceLongPasswordTests : IAsyncDisposable
 {
@@ -8403,11 +8406,13 @@ public sealed class AuthServiceLongPasswordTests : IAsyncDisposable
 
     public AuthServiceLongPasswordTests()
     {
+        // Use in-memory SQLite - works on all platforms without file locking issues
         var options = new DbContextOptionsBuilder<BlogDbContext>()
-            .UseSqlite($"Data Source={Guid.NewGuid()}.db")
+            .UseSqlite("Data Source=:memory:")
             .Options;
 
         _context = new BlogDbContext(options);
+        _context.Database.OpenConnection();
         _context.Database.EnsureCreated();
 
         _passwordService = new PasswordService();
@@ -8424,12 +8429,7 @@ public sealed class AuthServiceLongPasswordTests : IAsyncDisposable
 
     public async ValueTask DisposeAsync()
     {
-        var dbPath = _context.Database.GetConnectionString()?.Replace("Data Source=", "");
         await _context.DisposeAsync();
-        if (!string.IsNullOrEmpty(dbPath) && File.Exists(dbPath))
-        {
-            File.Delete(dbPath);
-        }
     }
 
     // =========================================================================
@@ -9337,6 +9337,134 @@ MODIFIED: 2025-12-28 08:03:54
 
 
 ================================================================================
+FILE: src/MyBlog.Tests/Unit/LoginRateLimitMiddlewareTests.cs
+SIZE: 3.56 KB
+MODIFIED: 2025-12-28 11:12:01
+================================================================================
+
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
+using MyBlog.Web.Middleware;
+
+namespace MyBlog.Tests.Unit;
+
+/// <summary>
+/// Tests for LoginRateLimitMiddleware.
+/// Verifies that the middleware slows down but never blocks requests.
+/// </summary>
+public sealed class LoginRateLimitMiddlewareTests
+{
+    private readonly LoginRateLimitMiddleware _sut;
+    private int _nextCallCount;
+
+    public LoginRateLimitMiddlewareTests()
+    {
+        _nextCallCount = 0;
+        RequestDelegate next = _ =>
+        {
+            _nextCallCount++;
+            return Task.CompletedTask;
+        };
+        _sut = new LoginRateLimitMiddleware(next, NullLogger<LoginRateLimitMiddleware>.Instance);
+    }
+
+    [Fact]
+    public async Task InvokeAsync_NonLoginRequest_PassesThroughImmediately()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var context = CreateHttpContext("/api/posts", "GET");
+
+        await _sut.InvokeAsync(context);
+
+        Assert.Equal(1, _nextCallCount);
+    }
+
+    [Fact]
+    public async Task InvokeAsync_GetLoginRequest_PassesThroughImmediately()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var context = CreateHttpContext("/login", "GET");
+
+        await _sut.InvokeAsync(context);
+
+        Assert.Equal(1, _nextCallCount);
+    }
+
+    [Fact]
+    public async Task InvokeAsync_FirstLoginAttempt_PassesThroughImmediately()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var context = CreateHttpContext("/login", "POST", "192.168.1.100");
+
+        var sw = System.Diagnostics.Stopwatch.StartNew();
+        await _sut.InvokeAsync(context);
+        sw.Stop();
+
+        Assert.Equal(1, _nextCallCount);
+        Assert.True(sw.ElapsedMilliseconds < 500, "First attempt should not be delayed");
+    }
+
+    [Fact]
+    public async Task InvokeAsync_AfterManyAttempts_StillPassesThrough()
+    {
+        // Use unique IP to avoid interference from other tests
+        var uniqueIp = $"10.0.0.{Random.Shared.Next(1, 255)}";
+
+        // Make 20 requests - middleware should always pass through
+        for (var i = 0; i < 20; i++)
+        {
+            var context = CreateHttpContext("/login", "POST", uniqueIp);
+            await _sut.InvokeAsync(context);
+        }
+
+        // All 20 requests should have passed through
+        Assert.Equal(20, _nextCallCount);
+    }
+
+    [Fact]
+    public async Task InvokeAsync_NeverBlocksCompletely()
+    {
+        // Use unique IP
+        var uniqueIp = $"10.0.1.{Random.Shared.Next(1, 255)}";
+
+        // Even after 100 attempts, requests should pass through
+        for (var i = 0; i < 100; i++)
+        {
+            var context = CreateHttpContext("/login", "POST", uniqueIp);
+            
+            // Use a timeout to ensure we're not blocked forever
+            using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(60));
+            try
+            {
+                await _sut.InvokeAsync(context);
+            }
+            catch (OperationCanceledException)
+            {
+                Assert.Fail($"Request {i} was blocked or timed out");
+            }
+        }
+
+        Assert.Equal(100, _nextCallCount);
+    }
+
+    private static DefaultHttpContext CreateHttpContext(string path, string method, string? remoteIp = null)
+    {
+        var context = new DefaultHttpContext();
+        context.Request.Path = path;
+        context.Request.Method = method;
+        
+        if (remoteIp != null)
+        {
+            context.Connection.RemoteIpAddress = System.Net.IPAddress.Parse(remoteIp);
+        }
+
+        return context;
+    }
+}
+
+
+================================================================================
 FILE: src/MyBlog.Tests/Unit/MarkdownServiceTests.cs
 SIZE: 3.30 KB
 MODIFIED: 2025-12-28 07:44:06
@@ -9658,6 +9786,167 @@ MODIFIED: 2025-12-28 10:14:51
 
 
 ================================================================================
+FILE: src/MyBlog.Web/Middleware/LoginRateLimitMiddleware.cs
+SIZE: 4.51 KB
+MODIFIED: 2025-12-28 11:12:01
+================================================================================
+
+using System.Collections.Concurrent;
+
+namespace MyBlog.Web.Middleware;
+
+/// <summary>
+/// Rate limiting middleware for login attempts.
+/// Slows down requests but NEVER blocks users completely.
+/// </summary>
+public sealed class LoginRateLimitMiddleware
+{
+    private readonly RequestDelegate _next;
+    private readonly ILogger<LoginRateLimitMiddleware> _logger;
+
+    // Track attempts per IP: IP -> (attempt count, window start)
+    private static readonly ConcurrentDictionary<string, (int Count, DateTime WindowStart)> _attempts = new();
+
+    // Configuration
+    private const int WindowMinutes = 15;
+    private const int AttemptsBeforeDelay = 5;
+    private const int MaxDelaySeconds = 30;
+
+    public LoginRateLimitMiddleware(RequestDelegate next, ILogger<LoginRateLimitMiddleware> logger)
+    {
+        _next = next;
+        _logger = logger;
+    }
+
+    public async Task InvokeAsync(HttpContext context)
+    {
+        // Only rate limit POST requests to login endpoint
+        if (!IsLoginPostRequest(context))
+        {
+            await _next(context);
+            return;
+        }
+
+        var ip = GetClientIp(context);
+        var delay = CalculateDelay(ip);
+
+        if (delay > TimeSpan.Zero)
+        {
+            _logger.LogInformation(
+                "Rate limiting login attempt from {IP}, delaying {Seconds}s",
+                ip, delay.TotalSeconds);
+            await Task.Delay(delay, context.RequestAborted);
+        }
+
+        // Always proceed - never block
+        await _next(context);
+
+        // Record the attempt after processing
+        RecordAttempt(ip);
+    }
+
+    private static bool IsLoginPostRequest(HttpContext context)
+    {
+        return context.Request.Method == HttpMethods.Post &&
+               context.Request.Path.StartsWithSegments("/login", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static string GetClientIp(HttpContext context)
+    {
+        // Check for forwarded IP (behind proxy/load balancer)
+        var forwardedFor = context.Request.Headers["X-Forwarded-For"].FirstOrDefault();
+        if (!string.IsNullOrEmpty(forwardedFor))
+        {
+            var ip = forwardedFor.Split(',')[0].Trim();
+            if (!string.IsNullOrEmpty(ip))
+            {
+                return ip;
+            }
+        }
+
+        return context.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+    }
+
+    private static TimeSpan CalculateDelay(string ip)
+    {
+        if (!_attempts.TryGetValue(ip, out var record))
+        {
+            return TimeSpan.Zero;
+        }
+
+        // Reset if window expired
+        if (DateTime.UtcNow - record.WindowStart > TimeSpan.FromMinutes(WindowMinutes))
+        {
+            _attempts.TryRemove(ip, out _);
+            return TimeSpan.Zero;
+        }
+
+        // No delay for first few attempts
+        if (record.Count < AttemptsBeforeDelay)
+        {
+            return TimeSpan.Zero;
+        }
+
+        // Progressive delay: 1s, 2s, 4s, 8s, ... capped at MaxDelaySeconds
+        var delayMultiplier = record.Count - AttemptsBeforeDelay;
+        var delaySeconds = Math.Min(Math.Pow(2, delayMultiplier), MaxDelaySeconds);
+        return TimeSpan.FromSeconds(delaySeconds);
+    }
+
+    private static void RecordAttempt(string ip)
+    {
+        var now = DateTime.UtcNow;
+
+        _attempts.AddOrUpdate(
+            ip,
+            _ => (1, now),
+            (_, existing) =>
+            {
+                // Reset window if expired
+                if (now - existing.WindowStart > TimeSpan.FromMinutes(WindowMinutes))
+                {
+                    return (1, now);
+                }
+                return (existing.Count + 1, existing.WindowStart);
+            });
+
+        // Cleanup old entries periodically (every 100th request)
+        if (Random.Shared.Next(100) == 0)
+        {
+            CleanupOldEntries();
+        }
+    }
+
+    private static void CleanupOldEntries()
+    {
+        var cutoff = DateTime.UtcNow.AddMinutes(-WindowMinutes * 2);
+        foreach (var kvp in _attempts)
+        {
+            if (kvp.Value.WindowStart < cutoff)
+            {
+                _attempts.TryRemove(kvp.Key, out _);
+            }
+        }
+    }
+}
+
+/// <summary>
+/// Extension methods for LoginRateLimitMiddleware.
+/// </summary>
+public static class LoginRateLimitMiddlewareExtensions
+{
+    /// <summary>
+    /// Adds login rate limiting middleware that slows down repeated attempts
+    /// but never completely blocks users.
+    /// </summary>
+    public static IApplicationBuilder UseLoginRateLimit(this IApplicationBuilder app)
+    {
+        return app.UseMiddleware<LoginRateLimitMiddleware>();
+    }
+}
+
+
+================================================================================
 FILE: src/MyBlog.Web/MyBlog.Web.csproj
 SIZE: .55 KB
 MODIFIED: 2025-12-28 08:26:41
@@ -9682,10 +9971,11 @@ MODIFIED: 2025-12-28 08:26:41
 
 ================================================================================
 FILE: src/MyBlog.Web/Program.cs
-SIZE: 3.09 KB
-MODIFIED: 2025-12-28 08:39:37
+SIZE: 3.15 KB
+MODIFIED: 2025-12-28 11:12:01
 ================================================================================
 
+using MyBlog.Web.Middleware;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using MyBlog.Core.Constants;
@@ -9776,6 +10066,7 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseStaticFiles();
+app.UseLoginRateLimit();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseAntiforgery();
@@ -11314,9 +11605,9 @@ echo "=============================================="
 
 
 ===============================================================================
-EXPORT COMPLETED: Sun Dec 28 11:10:41 AM CST 2025
-Total Files Found: 60
-Files Exported: 60
+EXPORT COMPLETED: Sun Dec 28 11:13:05 AM CST 2025
+Total Files Found: 62
+Files Exported: 62
 Files Skipped: 0 (binary or large files)
 Output File: /home/kushal/src/dotnet/MyBlog/docs/llm/dump.txt
 ===============================================================================

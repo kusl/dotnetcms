@@ -88,7 +88,7 @@ public sealed class LoginRateLimitMiddlewareTests
         for (var i = 0; i < 100; i++)
         {
             var context = CreateHttpContext("/login", "POST", uniqueIp);
-            
+
             // Use a timeout to ensure we're not blocked forever
             using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(60));
             try
@@ -109,7 +109,7 @@ public sealed class LoginRateLimitMiddlewareTests
         var context = new DefaultHttpContext();
         context.Request.Path = path;
         context.Request.Method = method;
-        
+
         if (remoteIp != null)
         {
             context.Connection.RemoteIpAddress = System.Net.IPAddress.Parse(remoteIp);

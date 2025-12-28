@@ -1,4 +1,3 @@
-using MyBlog.Web.Middleware;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using MyBlog.Core.Constants;
@@ -7,6 +6,7 @@ using MyBlog.Infrastructure;
 using MyBlog.Infrastructure.Data;
 using MyBlog.Infrastructure.Telemetry;
 using MyBlog.Web.Components;
+using MyBlog.Web.Middleware;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
