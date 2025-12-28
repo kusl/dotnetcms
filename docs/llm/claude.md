@@ -631,7 +631,7 @@ The generated `src/generate-myblog.sh` script must:
 Generate ONLY the complete shell script content. 
 - No explanations before or after the script
 - No markdown code fences around the entire output
-- The script should be immediately runnable with: `chmod +x src/generate-myblog.sh && ./src/generate-myblog.sh`
+- The script should be immediately runnable with: `time bash src/generate-myblog.sh`
 - Script creates everything needed for a fully functional application
 
 
