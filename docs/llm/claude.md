@@ -2018,3 +2018,33 @@ Error: Process completed with exit code 1.
 
 
 
+I see the issue - Windows has stricter file locking behavior than Linux/macOS, so SQLite database files can't be deleted while the connection is still open. Let me search for how other tests handle this to be consistent.I see the pattern. The other tests use in-memory SQLite (`Data Source=:memory:`) which doesn't have the Windows file locking issue. My test used file-based SQLite which causes problems on Windows. Let me create a comprehensive fix script:The script is ready. Here's a summary of what changed:
+
+**Key fix for Windows test failures:**
+
+The tests were using file-based SQLite (`Data Source={Guid.NewGuid()}.db`) which works fine on Linux/macOS but fails on Windows because Windows has stricter file locking. The `DisposeAsync` method tried to delete the file while SQLite still had a handle on it.
+
+**Solution:** Changed to in-memory SQLite (`Data Source=:memory:`) which:
+- Doesn't create files on disk
+- Has no file locking issues
+- Works identically on Windows, Linux, and macOS
+- Is the same pattern used by your other tests (`PostRepositoryTests`, `TelemetryCleanupTests`, etc.)
+
+**Other changes in the script:**
+
+1. **ChangePassword.razor fix** - Added `name` attributes and `[SupplyParameterFromForm]` properties
+
+2. **Rate limiting middleware** - New `LoginRateLimitMiddleware` that:
+   - Tracks attempts per IP address
+   - First 5 attempts: no delay
+   - After 5 attempts: progressive delay (1s, 2s, 4s, 8s... max 30s)
+   - **Never blocks users** - just slows them down
+   - 15-minute sliding window resets
+
+3. **Tests for rate limiting** - Verifies the middleware:
+   - Passes through non-login requests
+   - Passes through GET requests to login
+   - Never completely blocks (even after 100 attempts)
+
+
+

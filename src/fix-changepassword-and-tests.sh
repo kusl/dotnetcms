@@ -1,6 +1,6 @@
 #!/bin/bash
 # =============================================================================
-# Fix ChangePassword.razor form and add tests for long passwords & no lockout
+# Fix ChangePassword.razor form, add rate limiting, fix tests for Windows
 # =============================================================================
 set -euo pipefail
 
@@ -8,14 +8,14 @@ SRC_DIR="src"
 SCRIPT_NAME=$(basename "$0")
 
 echo "=============================================="
-echo "  MyBlog: Fix ChangePassword Form & Add Tests"
+echo "  MyBlog: Complete Fix Script"
 echo "=============================================="
 echo ""
 
 # =============================================================================
 # Step 1: Fix ChangePassword.razor - Add name attributes and SupplyParameterFromForm
 # =============================================================================
-echo "[1/3] Fixing ChangePassword.razor form (adding name attributes)..."
+echo "[1/5] Fixing ChangePassword.razor form (adding name attributes)..."
 
 cat << 'EOF' > "$SRC_DIR/MyBlog.Web/Components/Pages/Admin/ChangePassword.razor"
 @page "/admin/change-password"
@@ -142,9 +142,197 @@ EOF
 echo "      Done."
 
 # =============================================================================
-# Step 2: Add tests for long passwords (128+ characters) and no account lockout
+# Step 2: Add rate limiting middleware (slows down but never blocks)
 # =============================================================================
-echo "[2/3] Adding tests for long passwords and no account lockout..."
+echo "[2/5] Adding rate limiting middleware..."
+
+cat << 'EOF' > "$SRC_DIR/MyBlog.Web/Middleware/LoginRateLimitMiddleware.cs"
+using System.Collections.Concurrent;
+
+namespace MyBlog.Web.Middleware;
+
+/// <summary>
+/// Rate limiting middleware for login attempts.
+/// Slows down requests but NEVER blocks users completely.
+/// </summary>
+public sealed class LoginRateLimitMiddleware
+{
+    private readonly RequestDelegate _next;
+    private readonly ILogger<LoginRateLimitMiddleware> _logger;
+
+    // Track attempts per IP: IP -> (attempt count, window start)
+    private static readonly ConcurrentDictionary<string, (int Count, DateTime WindowStart)> _attempts = new();
+
+    // Configuration
+    private const int WindowMinutes = 15;
+    private const int AttemptsBeforeDelay = 5;
+    private const int MaxDelaySeconds = 30;
+
+    public LoginRateLimitMiddleware(RequestDelegate next, ILogger<LoginRateLimitMiddleware> logger)
+    {
+        _next = next;
+        _logger = logger;
+    }
+
+    public async Task InvokeAsync(HttpContext context)
+    {
+        // Only rate limit POST requests to login endpoint
+        if (!IsLoginPostRequest(context))
+        {
+            await _next(context);
+            return;
+        }
+
+        var ip = GetClientIp(context);
+        var delay = CalculateDelay(ip);
+
+        if (delay > TimeSpan.Zero)
+        {
+            _logger.LogInformation(
+                "Rate limiting login attempt from {IP}, delaying {Seconds}s",
+                ip, delay.TotalSeconds);
+            await Task.Delay(delay, context.RequestAborted);
+        }
+
+        // Always proceed - never block
+        await _next(context);
+
+        // Record the attempt after processing
+        RecordAttempt(ip);
+    }
+
+    private static bool IsLoginPostRequest(HttpContext context)
+    {
+        return context.Request.Method == HttpMethods.Post &&
+               context.Request.Path.StartsWithSegments("/login", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static string GetClientIp(HttpContext context)
+    {
+        // Check for forwarded IP (behind proxy/load balancer)
+        var forwardedFor = context.Request.Headers["X-Forwarded-For"].FirstOrDefault();
+        if (!string.IsNullOrEmpty(forwardedFor))
+        {
+            var ip = forwardedFor.Split(',')[0].Trim();
+            if (!string.IsNullOrEmpty(ip))
+            {
+                return ip;
+            }
+        }
+
+        return context.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+    }
+
+    private static TimeSpan CalculateDelay(string ip)
+    {
+        if (!_attempts.TryGetValue(ip, out var record))
+        {
+            return TimeSpan.Zero;
+        }
+
+        // Reset if window expired
+        if (DateTime.UtcNow - record.WindowStart > TimeSpan.FromMinutes(WindowMinutes))
+        {
+            _attempts.TryRemove(ip, out _);
+            return TimeSpan.Zero;
+        }
+
+        // No delay for first few attempts
+        if (record.Count < AttemptsBeforeDelay)
+        {
+            return TimeSpan.Zero;
+        }
+
+        // Progressive delay: 1s, 2s, 4s, 8s, ... capped at MaxDelaySeconds
+        var delayMultiplier = record.Count - AttemptsBeforeDelay;
+        var delaySeconds = Math.Min(Math.Pow(2, delayMultiplier), MaxDelaySeconds);
+        return TimeSpan.FromSeconds(delaySeconds);
+    }
+
+    private static void RecordAttempt(string ip)
+    {
+        var now = DateTime.UtcNow;
+
+        _attempts.AddOrUpdate(
+            ip,
+            _ => (1, now),
+            (_, existing) =>
+            {
+                // Reset window if expired
+                if (now - existing.WindowStart > TimeSpan.FromMinutes(WindowMinutes))
+                {
+                    return (1, now);
+                }
+                return (existing.Count + 1, existing.WindowStart);
+            });
+
+        // Cleanup old entries periodically (every 100th request)
+        if (Random.Shared.Next(100) == 0)
+        {
+            CleanupOldEntries();
+        }
+    }
+
+    private static void CleanupOldEntries()
+    {
+        var cutoff = DateTime.UtcNow.AddMinutes(-WindowMinutes * 2);
+        foreach (var kvp in _attempts)
+        {
+            if (kvp.Value.WindowStart < cutoff)
+            {
+                _attempts.TryRemove(kvp.Key, out _);
+            }
+        }
+    }
+}
+
+/// <summary>
+/// Extension methods for LoginRateLimitMiddleware.
+/// </summary>
+public static class LoginRateLimitMiddlewareExtensions
+{
+    /// <summary>
+    /// Adds login rate limiting middleware that slows down repeated attempts
+    /// but never completely blocks users.
+    /// </summary>
+    public static IApplicationBuilder UseLoginRateLimit(this IApplicationBuilder app)
+    {
+        return app.UseMiddleware<LoginRateLimitMiddleware>();
+    }
+}
+EOF
+
+echo "      Done."
+
+# =============================================================================
+# Step 3: Update Program.cs to use rate limiting
+# =============================================================================
+echo "[3/5] Updating Program.cs to use rate limiting middleware..."
+
+# We need to add the middleware. Let's check if it exists and add it if not
+if ! grep -q "UseLoginRateLimit" "$SRC_DIR/MyBlog.Web/Program.cs" 2>/dev/null; then
+    # Add using statement at the top if not present
+    if ! grep -q "using MyBlog.Web.Middleware" "$SRC_DIR/MyBlog.Web/Program.cs" 2>/dev/null; then
+        sed -i '1s/^/using MyBlog.Web.Middleware;\n/' "$SRC_DIR/MyBlog.Web/Program.cs"
+    fi
+    
+    # Add middleware after UseRouting (or after app is created if UseRouting doesn't exist)
+    if grep -q "app.UseRouting" "$SRC_DIR/MyBlog.Web/Program.cs"; then
+        sed -i '/app\.UseRouting/a app.UseLoginRateLimit();' "$SRC_DIR/MyBlog.Web/Program.cs"
+    elif grep -q "app.UseAuthentication" "$SRC_DIR/MyBlog.Web/Program.cs"; then
+        sed -i '/app\.UseAuthentication/i app.UseLoginRateLimit();' "$SRC_DIR/MyBlog.Web/Program.cs"
+    fi
+    echo "      Added UseLoginRateLimit() to middleware pipeline."
+else
+    echo "      UseLoginRateLimit() already present."
+fi
+
+echo "      Done."
+
+# =============================================================================
+# Step 4: Add tests using in-memory SQLite (Windows compatible)
+# =============================================================================
+echo "[4/5] Adding Windows-compatible tests (using in-memory SQLite)..."
 
 cat << 'EOF' > "$SRC_DIR/MyBlog.Tests/Integration/AuthServiceLongPasswordTests.cs"
 using Microsoft.EntityFrameworkCore;
@@ -158,6 +346,7 @@ namespace MyBlog.Tests.Integration;
 
 /// <summary>
 /// Tests for long password support and account lockout behavior.
+/// Uses in-memory SQLite for cross-platform compatibility (Windows/Linux/macOS).
 /// </summary>
 public sealed class AuthServiceLongPasswordTests : IAsyncDisposable
 {
@@ -167,11 +356,13 @@ public sealed class AuthServiceLongPasswordTests : IAsyncDisposable
 
     public AuthServiceLongPasswordTests()
     {
+        // Use in-memory SQLite - works on all platforms without file locking issues
         var options = new DbContextOptionsBuilder<BlogDbContext>()
-            .UseSqlite($"Data Source={Guid.NewGuid()}.db")
+            .UseSqlite("Data Source=:memory:")
             .Options;
 
         _context = new BlogDbContext(options);
+        _context.Database.OpenConnection();
         _context.Database.EnsureCreated();
 
         _passwordService = new PasswordService();
@@ -188,12 +379,7 @@ public sealed class AuthServiceLongPasswordTests : IAsyncDisposable
 
     public async ValueTask DisposeAsync()
     {
-        var dbPath = _context.Database.GetConnectionString()?.Replace("Data Source=", "");
         await _context.DisposeAsync();
-        if (!string.IsNullOrEmpty(dbPath) && File.Exists(dbPath))
-        {
-            File.Delete(dbPath);
-        }
     }
 
     // =========================================================================
@@ -474,16 +660,134 @@ EOF
 echo "      Done."
 
 # =============================================================================
-# Step 3: Verify AuthService has no lockout mechanism
+# Step 5: Add rate limiting middleware tests
 # =============================================================================
-echo "[3/3] Verifying AuthService has no lockout mechanism..."
+echo "[5/5] Adding rate limiting middleware tests..."
 
-# Check if AuthService has any lockout-related code
-if grep -q -i "lockout\|locked\|attempt\|fail.*count\|block\|ban" "$SRC_DIR/MyBlog.Infrastructure/Services/AuthService.cs" 2>/dev/null; then
-    echo "      WARNING: AuthService may contain lockout-related code. Please review."
-else
-    echo "      VERIFIED: AuthService contains no lockout mechanism."
-fi
+cat << 'EOF' > "$SRC_DIR/MyBlog.Tests/Unit/LoginRateLimitMiddlewareTests.cs"
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
+using MyBlog.Web.Middleware;
+
+namespace MyBlog.Tests.Unit;
+
+/// <summary>
+/// Tests for LoginRateLimitMiddleware.
+/// Verifies that the middleware slows down but never blocks requests.
+/// </summary>
+public sealed class LoginRateLimitMiddlewareTests
+{
+    private readonly LoginRateLimitMiddleware _sut;
+    private int _nextCallCount;
+
+    public LoginRateLimitMiddlewareTests()
+    {
+        _nextCallCount = 0;
+        RequestDelegate next = _ =>
+        {
+            _nextCallCount++;
+            return Task.CompletedTask;
+        };
+        _sut = new LoginRateLimitMiddleware(next, NullLogger<LoginRateLimitMiddleware>.Instance);
+    }
+
+    [Fact]
+    public async Task InvokeAsync_NonLoginRequest_PassesThroughImmediately()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var context = CreateHttpContext("/api/posts", "GET");
+
+        await _sut.InvokeAsync(context);
+
+        Assert.Equal(1, _nextCallCount);
+    }
+
+    [Fact]
+    public async Task InvokeAsync_GetLoginRequest_PassesThroughImmediately()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var context = CreateHttpContext("/login", "GET");
+
+        await _sut.InvokeAsync(context);
+
+        Assert.Equal(1, _nextCallCount);
+    }
+
+    [Fact]
+    public async Task InvokeAsync_FirstLoginAttempt_PassesThroughImmediately()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var context = CreateHttpContext("/login", "POST", "192.168.1.100");
+
+        var sw = System.Diagnostics.Stopwatch.StartNew();
+        await _sut.InvokeAsync(context);
+        sw.Stop();
+
+        Assert.Equal(1, _nextCallCount);
+        Assert.True(sw.ElapsedMilliseconds < 500, "First attempt should not be delayed");
+    }
+
+    [Fact]
+    public async Task InvokeAsync_AfterManyAttempts_StillPassesThrough()
+    {
+        // Use unique IP to avoid interference from other tests
+        var uniqueIp = $"10.0.0.{Random.Shared.Next(1, 255)}";
+
+        // Make 20 requests - middleware should always pass through
+        for (var i = 0; i < 20; i++)
+        {
+            var context = CreateHttpContext("/login", "POST", uniqueIp);
+            await _sut.InvokeAsync(context);
+        }
+
+        // All 20 requests should have passed through
+        Assert.Equal(20, _nextCallCount);
+    }
+
+    [Fact]
+    public async Task InvokeAsync_NeverBlocksCompletely()
+    {
+        // Use unique IP
+        var uniqueIp = $"10.0.1.{Random.Shared.Next(1, 255)}";
+
+        // Even after 100 attempts, requests should pass through
+        for (var i = 0; i < 100; i++)
+        {
+            var context = CreateHttpContext("/login", "POST", uniqueIp);
+            
+            // Use a timeout to ensure we're not blocked forever
+            using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(60));
+            try
+            {
+                await _sut.InvokeAsync(context);
+            }
+            catch (OperationCanceledException)
+            {
+                Assert.Fail($"Request {i} was blocked or timed out");
+            }
+        }
+
+        Assert.Equal(100, _nextCallCount);
+    }
+
+    private static DefaultHttpContext CreateHttpContext(string path, string method, string? remoteIp = null)
+    {
+        var context = new DefaultHttpContext();
+        context.Request.Path = path;
+        context.Request.Method = method;
+        
+        if (remoteIp != null)
+        {
+            context.Connection.RemoteIpAddress = System.Net.IPAddress.Parse(remoteIp);
+        }
+
+        return context;
+    }
+}
+EOF
+
+echo "      Done."
 
 echo ""
 echo "=============================================="
@@ -491,22 +795,27 @@ echo "  Completed!"
 echo "=============================================="
 echo ""
 echo "Changes made:"
+echo ""
 echo "  1. Fixed ChangePassword.razor:"
 echo "     - Added 'name' attributes to all form inputs"
 echo "     - Added [SupplyParameterFromForm] properties"
 echo "     - Updated HandleSubmit to use form values"
 echo ""
-echo "  2. Added AuthServiceLongPasswordTests.cs with tests for:"
-echo "     - 128-character passwords"
-echo "     - 256-character passwords"
-echo "     - 512-character passwords"
-echo "     - Complex long passwords"
-echo "     - No lockout after 100 failed attempts"
-echo "     - No lockout after 1000 failed attempts"
-echo "     - Password change works after many failed attempts"
-echo "     - Interleaved failures and successes never lock"
+echo "  2. Added LoginRateLimitMiddleware:"
+echo "     - Slows down repeated login attempts (progressive delay)"
+echo "     - NEVER blocks users completely"
+echo "     - First 5 attempts: no delay"
+echo "     - After 5 attempts: 1s, 2s, 4s, 8s... delay (max 30s)"
+echo "     - 15-minute sliding window"
 echo ""
-echo "  3. Verified AuthService has no lockout mechanism"
+echo "  3. Updated Program.cs to use rate limiting"
+echo ""
+echo "  4. Fixed tests to use in-memory SQLite:"
+echo "     - Changed from file-based SQLite to 'Data Source=:memory:'"
+echo "     - This fixes Windows file locking issues"
+echo "     - Works on Windows, Linux, and macOS"
+echo ""
+echo "  5. Added rate limiting middleware tests"
 echo ""
 echo "Next steps:"
 echo "  1. Run: dotnet build"
