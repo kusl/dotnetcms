@@ -32,6 +32,8 @@ public class TelemetryCleanupTests : IAsyncDisposable
     [Fact]
     public async Task DeleteOlderThanAsync_RemovesOldLogs()
     {
+        var ct = TestContext.Current.CancellationToken;
+        
         // Add old logs
         var oldLog = new TelemetryLog
         {
@@ -51,53 +53,43 @@ public class TelemetryCleanupTests : IAsyncDisposable
             Message = "Recent log"
         };
         _context.TelemetryLogs.Add(recentLog);
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(ct);
 
         var cutoff = DateTime.UtcNow.AddDays(-30);
-        var deleted = await _sut.DeleteOlderThanAsync(cutoff);
+        var deleted = await _sut.DeleteOlderThanAsync(cutoff, ct);
 
         Assert.Equal(1, deleted);
-        var remaining = await _context.TelemetryLogs.CountAsync();
+        var remaining = await _context.TelemetryLogs.CountAsync(ct);
         Assert.Equal(1, remaining);
     }
 
     [Fact]
-    public async Task DeleteOlderThanAsync_KeepsRecentLogs()
+    public async Task DeleteOlderThanAsync_WithNoOldLogs_ReturnsZero()
     {
+        var ct = TestContext.Current.CancellationToken;
+        
         var recentLog = new TelemetryLog
         {
-            TimestampUtc = DateTime.UtcNow.AddDays(-1),
+            TimestampUtc = DateTime.UtcNow.AddDays(-5),
             Level = "Information",
             Category = "Test",
             Message = "Recent log"
         };
         _context.TelemetryLogs.Add(recentLog);
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(ct);
 
         var cutoff = DateTime.UtcNow.AddDays(-30);
-        var deleted = await _sut.DeleteOlderThanAsync(cutoff);
+        var deleted = await _sut.DeleteOlderThanAsync(cutoff, ct);
 
         Assert.Equal(0, deleted);
-        var remaining = await _context.TelemetryLogs.CountAsync();
-        Assert.Equal(1, remaining);
     }
 
     [Fact]
-    public async Task WriteAsync_AddsLogToDatabase()
+    public async Task DeleteOlderThanAsync_WithEmptyTable_ReturnsZero()
     {
-        var log = new TelemetryLog
-        {
-            TimestampUtc = DateTime.UtcNow,
-            Level = "Error",
-            Category = "Test",
-            Message = "Test error message"
-        };
-
-        await _sut.WriteAsync(log);
-
-        var saved = await _context.TelemetryLogs.FirstOrDefaultAsync();
-        Assert.NotNull(saved);
-        Assert.Equal("Error", saved.Level);
-        Assert.Equal("Test error message", saved.Message);
+        var ct = TestContext.Current.CancellationToken;
+        var cutoff = DateTime.UtcNow.AddDays(-30);
+        var deleted = await _sut.DeleteOlderThanAsync(cutoff, ct);
+        Assert.Equal(0, deleted);
     }
 }

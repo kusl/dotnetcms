@@ -42,65 +42,71 @@ public class AuthServiceTests : IAsyncDisposable
     }
 
     [Fact]
-    public async Task AuthenticateAsync_WithValidCredentials_ReturnsUser()
+    public async Task ValidateCredentialsAsync_WithValidCredentials_ReturnsUser()
     {
+        var ct = TestContext.Current.CancellationToken;
+        var password = "TestPassword123";
         var user = new User
         {
             Id = Guid.NewGuid(),
             Username = "testuser",
-            PasswordHash = _passwordService.HashPassword("TestPassword"),
+            PasswordHash = _passwordService.HashPassword(password),
             Email = "test@example.com",
             DisplayName = "Test User",
             CreatedAtUtc = DateTime.UtcNow
         };
         _context.Users.Add(user);
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(ct);
 
-        var result = await _sut.AuthenticateAsync("testuser", "TestPassword");
+        var result = await _sut.ValidateCredentialsAsync("testuser", password, ct);
 
         Assert.NotNull(result);
         Assert.Equal("testuser", result.Username);
     }
 
     [Fact]
-    public async Task AuthenticateAsync_WithWrongPassword_ReturnsNull()
+    public async Task ValidateCredentialsAsync_WithInvalidPassword_ReturnsNull()
     {
+        var ct = TestContext.Current.CancellationToken;
         var user = new User
         {
             Id = Guid.NewGuid(),
             Username = "testuser",
-            PasswordHash = _passwordService.HashPassword("TestPassword"),
+            PasswordHash = _passwordService.HashPassword("CorrectPassword"),
             Email = "test@example.com",
             DisplayName = "Test User",
             CreatedAtUtc = DateTime.UtcNow
         };
         _context.Users.Add(user);
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(ct);
 
-        var result = await _sut.AuthenticateAsync("testuser", "WrongPassword");
+        var result = await _sut.ValidateCredentialsAsync("testuser", "WrongPassword", ct);
 
         Assert.Null(result);
     }
 
     [Fact]
-    public async Task AuthenticateAsync_WithUnknownUser_ReturnsNull()
+    public async Task ValidateCredentialsAsync_WithNonExistentUser_ReturnsNull()
     {
-        var result = await _sut.AuthenticateAsync("nonexistent", "anypassword");
+        var ct = TestContext.Current.CancellationToken;
+        var result = await _sut.ValidateCredentialsAsync("nonexistent", "password", ct);
         Assert.Null(result);
     }
 
     [Fact]
-    public async Task EnsureAdminUserAsync_WhenNoUsers_CreatesAdmin()
+    public async Task EnsureAdminUserAsync_WhenNoUsersExist_CreatesAdmin()
     {
-        await _sut.EnsureAdminUserAsync();
+        var ct = TestContext.Current.CancellationToken;
+        await _sut.EnsureAdminUserAsync(ct);
 
-        var admin = await _context.Users.FirstOrDefaultAsync(u => u.Username == "admin");
+        var admin = await _context.Users.FirstOrDefaultAsync(u => u.Username == "admin", ct);
         Assert.NotNull(admin);
     }
 
     [Fact]
     public async Task EnsureAdminUserAsync_WhenUsersExist_DoesNotCreateAnother()
     {
+        var ct = TestContext.Current.CancellationToken;
         var existingUser = new User
         {
             Id = Guid.NewGuid(),
@@ -111,11 +117,11 @@ public class AuthServiceTests : IAsyncDisposable
             CreatedAtUtc = DateTime.UtcNow
         };
         _context.Users.Add(existingUser);
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(ct);
 
-        await _sut.EnsureAdminUserAsync();
+        await _sut.EnsureAdminUserAsync(ct);
 
-        var userCount = await _context.Users.CountAsync();
+        var userCount = await _context.Users.CountAsync(ct);
         Assert.Equal(1, userCount);
     }
 }

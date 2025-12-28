@@ -45,12 +45,13 @@ public class PostRepositoryTests : IAsyncDisposable
     [Fact]
     public async Task CreateAsync_AddsPostToDatabase()
     {
+        var ct = TestContext.Current.CancellationToken;
         var post = CreateTestPost("Test Post");
 
-        var result = await _sut.CreateAsync(post);
+        var result = await _sut.CreateAsync(post, ct);
 
         Assert.NotEqual(Guid.Empty, result.Id);
-        var saved = await _context.Posts.FindAsync(result.Id);
+        var saved = await _context.Posts.FindAsync([result.Id], ct);
         Assert.NotNull(saved);
         Assert.Equal("Test Post", saved.Title);
     }
@@ -58,10 +59,11 @@ public class PostRepositoryTests : IAsyncDisposable
     [Fact]
     public async Task GetByIdAsync_WithExistingId_ReturnsPost()
     {
+        var ct = TestContext.Current.CancellationToken;
         var post = CreateTestPost("Test Post");
-        await _sut.CreateAsync(post);
+        await _sut.CreateAsync(post, ct);
 
-        var result = await _sut.GetByIdAsync(post.Id);
+        var result = await _sut.GetByIdAsync(post.Id, ct);
 
         Assert.NotNull(result);
         Assert.Equal("Test Post", result.Title);
@@ -70,72 +72,75 @@ public class PostRepositoryTests : IAsyncDisposable
     [Fact]
     public async Task GetByIdAsync_WithNonExistingId_ReturnsNull()
     {
-        var result = await _sut.GetByIdAsync(Guid.NewGuid());
+        var ct = TestContext.Current.CancellationToken;
+        var result = await _sut.GetByIdAsync(Guid.NewGuid(), ct);
         Assert.Null(result);
     }
 
     [Fact]
     public async Task GetBySlugAsync_WithExistingSlug_ReturnsPost()
     {
+        var ct = TestContext.Current.CancellationToken;
         var post = CreateTestPost("Test Post", "test-post");
-        await _sut.CreateAsync(post);
+        await _sut.CreateAsync(post, ct);
 
-        var result = await _sut.GetBySlugAsync("test-post");
+        var result = await _sut.GetBySlugAsync("test-post", ct);
 
         Assert.NotNull(result);
         Assert.Equal("Test Post", result.Title);
     }
 
     [Fact]
-    public async Task GetPublishedPostsAsync_ReturnsOnlyPublishedPosts()
+    public async Task GetPublishedAsync_ReturnsOnlyPublishedPosts()
     {
-        var published = CreateTestPost("Published", "published", true);
-        var draft = CreateTestPost("Draft", "draft", false);
-        await _sut.CreateAsync(published);
-        await _sut.CreateAsync(draft);
+        var ct = TestContext.Current.CancellationToken;
+        await _sut.CreateAsync(CreateTestPost("Published", isPublished: true), ct);
+        await _sut.CreateAsync(CreateTestPost("Draft", isPublished: false), ct);
 
-        var (posts, count) = await _sut.GetPublishedPostsAsync(1, 10);
+        var result = await _sut.GetPublishedAsync(1, 10, ct);
 
-        Assert.Single(posts);
-        Assert.Equal("Published", posts[0].Title);
-        Assert.Equal(1, count);
+        Assert.Single(result);
+        Assert.Equal("Published", result.First().Title);
     }
 
     [Fact]
-    public async Task UpdateAsync_ModifiesExistingPost()
+    public async Task UpdateAsync_ModifiesPost()
     {
+        var ct = TestContext.Current.CancellationToken;
         var post = CreateTestPost("Original Title");
-        await _sut.CreateAsync(post);
+        await _sut.CreateAsync(post, ct);
 
         post.Title = "Updated Title";
-        await _sut.UpdateAsync(post);
+        await _sut.UpdateAsync(post, ct);
 
-        var updated = await _context.Posts.FindAsync(post.Id);
-        Assert.Equal("Updated Title", updated!.Title);
+        var result = await _sut.GetByIdAsync(post.Id, ct);
+        Assert.Equal("Updated Title", result!.Title);
     }
 
     [Fact]
-    public async Task DeleteAsync_RemovesPostFromDatabase()
+    public async Task DeleteAsync_RemovesPost()
     {
+        var ct = TestContext.Current.CancellationToken;
         var post = CreateTestPost("To Delete");
-        await _sut.CreateAsync(post);
+        await _sut.CreateAsync(post, ct);
 
-        await _sut.DeleteAsync(post.Id);
+        await _sut.DeleteAsync(post.Id, ct);
 
-        var deleted = await _context.Posts.FindAsync(post.Id);
-        Assert.Null(deleted);
+        var result = await _sut.GetByIdAsync(post.Id, ct);
+        Assert.Null(result);
     }
 
     [Fact]
-    public async Task GetCountAsync_ReturnsCorrectCount()
+    public async Task GetPublishedCountAsync_ReturnsCorrectCount()
     {
-        await _sut.CreateAsync(CreateTestPost("Post 1"));
-        await _sut.CreateAsync(CreateTestPost("Post 2"));
-        await _sut.CreateAsync(CreateTestPost("Post 3"));
+        var ct = TestContext.Current.CancellationToken;
+        await _sut.CreateAsync(CreateTestPost("Post 1", isPublished: true), ct);
+        await _sut.CreateAsync(CreateTestPost("Post 2", isPublished: true), ct);
+        await _sut.CreateAsync(CreateTestPost("Draft", isPublished: false), ct);
 
-        var count = await _sut.GetCountAsync();
+        var count = await _sut.GetPublishedCountAsync(ct);
 
-        Assert.Equal(3, count);
+        Assert.Equal(2, count);
     }
 
     private Post CreateTestPost(string title, string? slug = null, bool isPublished = true)
