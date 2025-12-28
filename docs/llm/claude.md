@@ -2370,3 +2370,41 @@ yeah, no, you broke it
     /home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/Program.cs(83,54): error CS0246: The type or namespace name 'TelemetryCleanupService' could not be found (are you missing a using directive or an assembly reference?)
 Build failed with 8 error(s) in 1.3s
 please review the latest dump.txt and fix it properly. 
+
+Let me search for the context of what we were working on.Now let me search for more context about the current state of the code and what files exist.Now let me search the project knowledge for the latest dump.txt to see the actual current state of the code:Now let me search for the current Program.cs to see exactly what's there:Now I have a clearer picture. Let me search for the exact current state of Program.cs and check what classes exist in the Infrastructure project:Now I have a clear picture. Let me search for the latest Program.cs to see exactly what's broken:Now I have a clear picture. The problem is that the previous fix script introduced references to classes that don't exist in your codebase (`FileActivityExporter`, `TelemetryPaths`, `DbSeeder`, `FileMetricExporter`, `TelemetryCleanupService`). 
+
+Looking at the actual code in your project:
+1. `TelemetryCleanupService` exists in `MyBlog.Infrastructure.Services`
+2. `FileLogExporter` exists in `MyBlog.Infrastructure.Telemetry`  
+3. But there's no `FileActivityExporter`, `FileMetricExporter`, `TelemetryPaths`, or `DbSeeder`
+
+Let me create a fix script that corrects Program.cs to use what actually exists in your codebase:Run this script to fix the build errors. The key issues were:
+
+**What was broken:**
+1. `FileActivityExporter` - doesn't exist in your codebase (only `FileLogExporter` exists)
+2. `FileMetricExporter` - doesn't exist in your codebase
+3. `TelemetryPaths` - doesn't exist (you have `TelemetryPathResolver`)
+4. `DbSeeder` - doesn't exist (you have `IAuthService.EnsureAdminUserAsync()`)
+5. `AddRuntimeInstrumentation()` - requires `OpenTelemetry.Instrumentation.Runtime` package which isn't installed
+6. Manual `TelemetryCleanupService.StartAsync()` - should use `AddHostedService<>()` instead
+
+**What I fixed:**
+1. Using `TelemetryPathResolver.GetTelemetryDirectory()` to get the telemetry path
+2. Using `IAuthService.EnsureAdminUserAsync()` to seed the admin user
+3. Using `AddHostedService<TelemetryCleanupService>()` to properly register the background service
+4. Using console exporters for tracing and metrics (since file exporters don't exist for those)
+5. Only using `FileLogExporter` for logs (which does exist)
+6. Removed `AddRuntimeInstrumentation()` since the package isn't installed
+
+Run:
+```bash
+chmod +x fix-program-cs.sh
+./fix-program-cs.sh
+dotnet build src/MyBlog.slnx
+```
+
+
+
+
+
+
