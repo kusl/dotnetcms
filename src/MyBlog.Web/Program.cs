@@ -9,6 +9,7 @@ using MyBlog.Infrastructure.Services;
 using MyBlog.Infrastructure.Telemetry;
 using MyBlog.Web.Components;
 using MyBlog.Web.Middleware;
+using OpenTelemetry; // Required for BatchLogRecordExportProcessor
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
@@ -76,7 +77,8 @@ builder.Logging.AddOpenTelemetry(logging =>
     {
         var logsPath = Path.Combine(telemetryDir, "logs");
         Directory.CreateDirectory(logsPath);
-        logging.AddProcessor(new FileLogExporter(logsPath));
+        // FIX: Exporters must be wrapped in a Processor (Batch or Simple)
+        logging.AddProcessor(new BatchLogRecordExportProcessor(new FileLogExporter(logsPath)));
     }
 });
 
