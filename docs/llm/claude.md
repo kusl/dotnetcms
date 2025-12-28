@@ -1198,3 +1198,144 @@ wait I think I know why
 $destArg = "-dest:contentPath=$env:DEPLOY_SITE,computerName=https://$($env:DEPLOY_HOST):8172/msdeploy.axd,userName=$env:DEPLOY_USER,password=$env:DEPLOY_PASSWORD,authType=Basic"
 ```
 
+I guess this is progress... 
+```
+Run $msdeployPath = "C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe"
+  $msdeployPath = "C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe"
+  
+  if (-not (Test-Path $msdeployPath)) {
+    Write-Host "Installing Web Deploy..."
+    choco install webdeploy -y --no-progress
+  }
+  
+  Write-Host "Deploying to $env:DEPLOY_HOST..."
+  
+  $sourceArg = "-source:contentPath=$env:DEPLOY_SOURCE"
+  $destArg = "-dest:contentPath=$env:DEPLOY_SITE,computerName=https://$($env:DEPLOY_HOST):8172/msdeploy.axd,userName=$env:DEPLOY_USER,***"
+  
+  & $msdeployPath -verb:sync $sourceArg $destArg -allowUntrusted -enableRule:DoNotDeleteRule
+  
+  if ($LASTEXITCODE -ne 0) {
+    Write-Error "Deployment failed with exit code $LASTEXITCODE"
+    exit 1
+  }
+  
+  Write-Host "Deployment completed successfully!"
+  shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+  env:
+    DOTNET_ROOT: C:\Program Files\dotnet
+    DEPLOY_SOURCE: D:\a\dotnetcms\dotnetcms\publish
+    DEPLOY_SITE: ***
+    DEPLOY_HOST: ***
+    DEPLOY_USER: ***
+    DEPLOY_PASSWORD: ***
+  
+Deploying to ***...
+Info: Using ID 'e38b8b21-4c0c-43f4-989e-38444f04ac8f' for connections to the remote server.
+Error Code: ERROR_USER_UNAUTHORIZED
+More Information: Connected to the remote computer ("***") using the Web Management Service, but could not authorize. Make sure that you are using the correct user name and password, that the site you are connecting to exists, and that the credentials represent a user who has permissions to access the site.  Learn more at: https://go.microsoft.com/fwlink/?LinkId=221672#ERROR_USER_UNAUTHORIZED.
+Error: The remote server returned an error: (401) Unauthorized.
+Error count: 1.
+Write-Error: Deployment failed with exit code -1
+Error: Process completed with exit code 1.
+```
+
+is there something different about out code vs the simply web deploy code? 
+```powershell     simply-web-deploy/Scripts/Set-ApplicationPool.ps1
+$msdeploy = "C:\Program Files (x86)\IIS\Microsoft Web Deploy V3\msdeploy.exe";
+
+$recycleMode = $args[0]
+$recycleApp = $args[1]
+$computerName = $args[2]
+$username = $args[3]
+$password = $args[4]
+
+$computerNameArgument = $computerName + '/MsDeploy.axd?site=' + $recycleApp
+
+$msdeployArguments = 
+    "-verb:sync",
+    "-allowUntrusted",
+    "-source:recycleApp",
+    ("-dest:" + 
+        "recycleApp=${recycleApp}," +
+        "recycleMode=${recycleMode}," +
+        "computerName=${computerNameArgument}," + 
+        "username=${username}," +
+        "password=${password}," +
+        "AuthType='Basic'"
+    )
+
+& $msdeploy $msdeployArguments
+```powershell simply-web-deploy/Scripts/Deploy-ApplicationPackage.ps1
+$msdeploy = "C:\Program Files (x86)\IIS\Microsoft Web Deploy V3\msdeploy.exe"
+
+$source                 = $args[0]
+$destination            = $args[1]
+$recycleApp             = $args[2]
+$computerName           = $args[3]
+$username               = $args[4]
+$password               = $args[5]
+$deleteTarget           = $args[6]
+$skipDirectoryPathsInput= $args[7]
+$skipFilesInput         = $args[8]
+$skipPatternsInput      = $args[9]
+
+Write-Host "------------------------------------"
+Write-Host "Starting deployment with parameters:"
+Write-Host "Source:               $source"
+Write-Host "Destination:          $destination"
+Write-Host "Recycle App:          $recycleApp"
+Write-Host "Computer Name:        $computerName"
+Write-Host "Delete target:        $deleteTarget"
+Write-Host "Skip Directory Paths: $skipDirectoryPathsInput"
+Write-Host "Skip Files:           $skipFilesInput"
+Write-Host "Skip Regex Patterns:  $skipPatternsInput"
+Write-Host "------------------------------------"
+
+$computerNameArgument = "$computerName/MsDeploy.axd?site=$recycleApp"
+
+$directory = Split-Path -Path (Get-Location) -Parent
+$baseName = (Get-Item $directory).BaseName
+$contentPath = Join-Path (Join-Path $directory $baseName) $source
+
+$targetPath = "$recycleApp$destination"
+
+[System.Collections.ArrayList]$msdeployArguments = 
+    "-verb:sync",
+    "-allowUntrusted",
+    "-source:contentPath=$contentPath",
+    ("-dest:" + 
+      "contentPath=${targetPath}," +
+      "computerName=${computerNameArgument}," + 
+      "username=${username}," +
+      "password=${password}," +
+      "AuthType='Basic'"
+    )
+
+if ($deleteTarget -NotMatch "true") {
+  $msdeployArguments.Add("-enableRule:DoNotDeleteRule")
+}
+
+if ($skipDirectoryPathsInput) {
+  $skipDirs = $skipDirectoryPathsInput -split ","
+  foreach ($dir in $skipDirs) {
+    $msdeployArguments.Add("-skip:Directory=$dir")
+  }
+}
+
+if ($skipFilesInput) {
+  $skipFiles = $skipFilesInput -split ","
+  foreach ($file in $skipFiles) {
+    $msdeployArguments.Add("-skip:File=$file")
+  }
+}
+
+if ($skipPatternsInput) {
+  $skipPatterns = $skipPatternsInput -split ","
+  foreach ($pattern in $skipPatterns) {
+    $msdeployArguments.Add("-skip:regexPattern=$pattern")
+  }
+}
+
+& $msdeploy $msdeployArguments
+```
