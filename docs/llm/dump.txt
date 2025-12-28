@@ -1,6 +1,6 @@
 ===============================================================================
 PROJECT EXPORT
-Generated: Sun Dec 28 08:18:24 AM CST 2025
+Generated: Sun Dec 28 08:27:47 AM CST 2025
 Project Path: /home/kushal/src/dotnet/MyBlog
 ===============================================================================
 
@@ -915,8 +915,8 @@ MODIFIED: 2025-12-28 07:44:06
 
 ================================================================================
 FILE: src/Directory.Packages.props
-SIZE: 1.45 KB
-MODIFIED: 2025-12-28 08:14:42
+SIZE: 1.29 KB
+MODIFIED: 2025-12-28 08:26:54
 ================================================================================
 
 <Project>
@@ -935,16 +935,8 @@ MODIFIED: 2025-12-28 08:14:42
     <PackageVersion Include="OpenTelemetry" Version="1.14.0" />
     <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.14.0" />
     <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.14.0" />
-    
-  <!-- OpenTelemetry exporters -->
-  <PackageVersion Include="OpenTelemetry.Exporter.Console" Version="1.14.0" />
-
-  <!-- OpenTelemetry instrumentation -->
-  <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.14.0" />
-
-  <!-- Swagger -->
-  <PackageVersion Include="Swashbuckle.AspNetCore" Version="6.6.2" />
-
+    <PackageVersion Include="OpenTelemetry.Exporter.Console" Version="1.14.0" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.14.0" />
     
     <!-- Testing (xUnit v3) -->
     <PackageVersion Include="xunit.v3" Version="3.2.1" />
@@ -952,7 +944,6 @@ MODIFIED: 2025-12-28 08:14:42
     <PackageVersion Include="xunit.runner.visualstudio" Version="3.0.0" />
   </ItemGroup>
 </Project>
-
 
 ================================================================================
 FILE: src/.editorconfig
@@ -7148,8 +7139,8 @@ MODIFIED: 2025-12-28 07:44:06
 
 ================================================================================
 FILE: src/MyBlog.Tests/Integration/AuthServiceTests.cs
-SIZE: 3.55 KB
-MODIFIED: 2025-12-28 07:44:06
+SIZE: 3.93 KB
+MODIFIED: 2025-12-28 08:26:04
 ================================================================================
 
 using Microsoft.EntityFrameworkCore;
@@ -7196,65 +7187,71 @@ public class AuthServiceTests : IAsyncDisposable
     }
 
     [Fact]
-    public async Task AuthenticateAsync_WithValidCredentials_ReturnsUser()
+    public async Task ValidateCredentialsAsync_WithValidCredentials_ReturnsUser()
     {
+        var ct = TestContext.Current.CancellationToken;
+        var password = "TestPassword123";
         var user = new User
         {
             Id = Guid.NewGuid(),
             Username = "testuser",
-            PasswordHash = _passwordService.HashPassword("TestPassword"),
+            PasswordHash = _passwordService.HashPassword(password),
             Email = "test@example.com",
             DisplayName = "Test User",
             CreatedAtUtc = DateTime.UtcNow
         };
         _context.Users.Add(user);
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(ct);
 
-        var result = await _sut.AuthenticateAsync("testuser", "TestPassword");
+        var result = await _sut.ValidateCredentialsAsync("testuser", password, ct);
 
         Assert.NotNull(result);
         Assert.Equal("testuser", result.Username);
     }
 
     [Fact]
-    public async Task AuthenticateAsync_WithWrongPassword_ReturnsNull()
+    public async Task ValidateCredentialsAsync_WithInvalidPassword_ReturnsNull()
     {
+        var ct = TestContext.Current.CancellationToken;
         var user = new User
         {
             Id = Guid.NewGuid(),
             Username = "testuser",
-            PasswordHash = _passwordService.HashPassword("TestPassword"),
+            PasswordHash = _passwordService.HashPassword("CorrectPassword"),
             Email = "test@example.com",
             DisplayName = "Test User",
             CreatedAtUtc = DateTime.UtcNow
         };
         _context.Users.Add(user);
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(ct);
 
-        var result = await _sut.AuthenticateAsync("testuser", "WrongPassword");
+        var result = await _sut.ValidateCredentialsAsync("testuser", "WrongPassword", ct);
 
         Assert.Null(result);
     }
 
     [Fact]
-    public async Task AuthenticateAsync_WithUnknownUser_ReturnsNull()
+    public async Task ValidateCredentialsAsync_WithNonExistentUser_ReturnsNull()
     {
-        var result = await _sut.AuthenticateAsync("nonexistent", "anypassword");
+        var ct = TestContext.Current.CancellationToken;
+        var result = await _sut.ValidateCredentialsAsync("nonexistent", "password", ct);
         Assert.Null(result);
     }
 
     [Fact]
-    public async Task EnsureAdminUserAsync_WhenNoUsers_CreatesAdmin()
+    public async Task EnsureAdminUserAsync_WhenNoUsersExist_CreatesAdmin()
     {
-        await _sut.EnsureAdminUserAsync();
+        var ct = TestContext.Current.CancellationToken;
+        await _sut.EnsureAdminUserAsync(ct);
 
-        var admin = await _context.Users.FirstOrDefaultAsync(u => u.Username == "admin");
+        var admin = await _context.Users.FirstOrDefaultAsync(u => u.Username == "admin", ct);
         Assert.NotNull(admin);
     }
 
     [Fact]
     public async Task EnsureAdminUserAsync_WhenUsersExist_DoesNotCreateAnother()
     {
+        var ct = TestContext.Current.CancellationToken;
         var existingUser = new User
         {
             Id = Guid.NewGuid(),
@@ -7265,11 +7262,11 @@ public class AuthServiceTests : IAsyncDisposable
             CreatedAtUtc = DateTime.UtcNow
         };
         _context.Users.Add(existingUser);
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(ct);
 
-        await _sut.EnsureAdminUserAsync();
+        await _sut.EnsureAdminUserAsync(ct);
 
-        var userCount = await _context.Users.CountAsync();
+        var userCount = await _context.Users.CountAsync(ct);
         Assert.Equal(1, userCount);
     }
 }
@@ -7277,8 +7274,8 @@ public class AuthServiceTests : IAsyncDisposable
 
 ================================================================================
 FILE: src/MyBlog.Tests/Integration/PostRepositoryTests.cs
-SIZE: 4.35 KB
-MODIFIED: 2025-12-28 07:44:06
+SIZE: 4.80 KB
+MODIFIED: 2025-12-28 08:26:20
 ================================================================================
 
 using Microsoft.EntityFrameworkCore;
@@ -7328,12 +7325,13 @@ public class PostRepositoryTests : IAsyncDisposable
     [Fact]
     public async Task CreateAsync_AddsPostToDatabase()
     {
+        var ct = TestContext.Current.CancellationToken;
         var post = CreateTestPost("Test Post");
 
-        var result = await _sut.CreateAsync(post);
+        var result = await _sut.CreateAsync(post, ct);
 
         Assert.NotEqual(Guid.Empty, result.Id);
-        var saved = await _context.Posts.FindAsync(result.Id);
+        var saved = await _context.Posts.FindAsync([result.Id], ct);
         Assert.NotNull(saved);
         Assert.Equal("Test Post", saved.Title);
     }
@@ -7341,10 +7339,11 @@ public class PostRepositoryTests : IAsyncDisposable
     [Fact]
     public async Task GetByIdAsync_WithExistingId_ReturnsPost()
     {
+        var ct = TestContext.Current.CancellationToken;
         var post = CreateTestPost("Test Post");
-        await _sut.CreateAsync(post);
+        await _sut.CreateAsync(post, ct);
 
-        var result = await _sut.GetByIdAsync(post.Id);
+        var result = await _sut.GetByIdAsync(post.Id, ct);
 
         Assert.NotNull(result);
         Assert.Equal("Test Post", result.Title);
@@ -7353,72 +7352,75 @@ public class PostRepositoryTests : IAsyncDisposable
     [Fact]
     public async Task GetByIdAsync_WithNonExistingId_ReturnsNull()
     {
-        var result = await _sut.GetByIdAsync(Guid.NewGuid());
+        var ct = TestContext.Current.CancellationToken;
+        var result = await _sut.GetByIdAsync(Guid.NewGuid(), ct);
         Assert.Null(result);
     }
 
     [Fact]
     public async Task GetBySlugAsync_WithExistingSlug_ReturnsPost()
     {
+        var ct = TestContext.Current.CancellationToken;
         var post = CreateTestPost("Test Post", "test-post");
-        await _sut.CreateAsync(post);
+        await _sut.CreateAsync(post, ct);
 
-        var result = await _sut.GetBySlugAsync("test-post");
+        var result = await _sut.GetBySlugAsync("test-post", ct);
 
         Assert.NotNull(result);
         Assert.Equal("Test Post", result.Title);
     }
 
     [Fact]
-    public async Task GetPublishedPostsAsync_ReturnsOnlyPublishedPosts()
+    public async Task GetPublishedAsync_ReturnsOnlyPublishedPosts()
     {
-        var published = CreateTestPost("Published", "published", true);
-        var draft = CreateTestPost("Draft", "draft", false);
-        await _sut.CreateAsync(published);
-        await _sut.CreateAsync(draft);
+        var ct = TestContext.Current.CancellationToken;
+        await _sut.CreateAsync(CreateTestPost("Published", isPublished: true), ct);
+        await _sut.CreateAsync(CreateTestPost("Draft", isPublished: false), ct);
 
-        var (posts, count) = await _sut.GetPublishedPostsAsync(1, 10);
+        var result = await _sut.GetPublishedAsync(1, 10, ct);
 
-        Assert.Single(posts);
-        Assert.Equal("Published", posts[0].Title);
-        Assert.Equal(1, count);
+        Assert.Single(result);
+        Assert.Equal("Published", result.First().Title);
     }
 
     [Fact]
-    public async Task UpdateAsync_ModifiesExistingPost()
+    public async Task UpdateAsync_ModifiesPost()
     {
+        var ct = TestContext.Current.CancellationToken;
         var post = CreateTestPost("Original Title");
-        await _sut.CreateAsync(post);
+        await _sut.CreateAsync(post, ct);
 
         post.Title = "Updated Title";
-        await _sut.UpdateAsync(post);
+        await _sut.UpdateAsync(post, ct);
 
-        var updated = await _context.Posts.FindAsync(post.Id);
-        Assert.Equal("Updated Title", updated!.Title);
+        var result = await _sut.GetByIdAsync(post.Id, ct);
+        Assert.Equal("Updated Title", result!.Title);
     }
 
     [Fact]
-    public async Task DeleteAsync_RemovesPostFromDatabase()
+    public async Task DeleteAsync_RemovesPost()
     {
+        var ct = TestContext.Current.CancellationToken;
         var post = CreateTestPost("To Delete");
-        await _sut.CreateAsync(post);
+        await _sut.CreateAsync(post, ct);
 
-        await _sut.DeleteAsync(post.Id);
+        await _sut.DeleteAsync(post.Id, ct);
 
-        var deleted = await _context.Posts.FindAsync(post.Id);
-        Assert.Null(deleted);
+        var result = await _sut.GetByIdAsync(post.Id, ct);
+        Assert.Null(result);
     }
 
     [Fact]
-    public async Task GetCountAsync_ReturnsCorrectCount()
+    public async Task GetPublishedCountAsync_ReturnsCorrectCount()
     {
-        await _sut.CreateAsync(CreateTestPost("Post 1"));
-        await _sut.CreateAsync(CreateTestPost("Post 2"));
-        await _sut.CreateAsync(CreateTestPost("Post 3"));
+        var ct = TestContext.Current.CancellationToken;
+        await _sut.CreateAsync(CreateTestPost("Post 1", isPublished: true), ct);
+        await _sut.CreateAsync(CreateTestPost("Post 2", isPublished: true), ct);
+        await _sut.CreateAsync(CreateTestPost("Draft", isPublished: false), ct);
 
-        var count = await _sut.GetCountAsync();
+        var count = await _sut.GetPublishedCountAsync(ct);
 
-        Assert.Equal(3, count);
+        Assert.Equal(2, count);
     }
 
     private Post CreateTestPost(string title, string? slug = null, bool isPublished = true)
@@ -7442,8 +7444,8 @@ public class PostRepositoryTests : IAsyncDisposable
 
 ================================================================================
 FILE: src/MyBlog.Tests/Integration/TelemetryCleanupTests.cs
-SIZE: 2.86 KB
-MODIFIED: 2025-12-28 07:44:06
+SIZE: 2.70 KB
+MODIFIED: 2025-12-28 08:25:54
 ================================================================================
 
 using Microsoft.EntityFrameworkCore;
@@ -7480,6 +7482,8 @@ public class TelemetryCleanupTests : IAsyncDisposable
     [Fact]
     public async Task DeleteOlderThanAsync_RemovesOldLogs()
     {
+        var ct = TestContext.Current.CancellationToken;
+        
         // Add old logs
         var oldLog = new TelemetryLog
         {
@@ -7499,54 +7503,44 @@ public class TelemetryCleanupTests : IAsyncDisposable
             Message = "Recent log"
         };
         _context.TelemetryLogs.Add(recentLog);
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(ct);
 
         var cutoff = DateTime.UtcNow.AddDays(-30);
-        var deleted = await _sut.DeleteOlderThanAsync(cutoff);
+        var deleted = await _sut.DeleteOlderThanAsync(cutoff, ct);
 
         Assert.Equal(1, deleted);
-        var remaining = await _context.TelemetryLogs.CountAsync();
+        var remaining = await _context.TelemetryLogs.CountAsync(ct);
         Assert.Equal(1, remaining);
     }
 
     [Fact]
-    public async Task DeleteOlderThanAsync_KeepsRecentLogs()
+    public async Task DeleteOlderThanAsync_WithNoOldLogs_ReturnsZero()
     {
+        var ct = TestContext.Current.CancellationToken;
+        
         var recentLog = new TelemetryLog
         {
-            TimestampUtc = DateTime.UtcNow.AddDays(-1),
+            TimestampUtc = DateTime.UtcNow.AddDays(-5),
             Level = "Information",
             Category = "Test",
             Message = "Recent log"
         };
         _context.TelemetryLogs.Add(recentLog);
-        await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync(ct);
 
         var cutoff = DateTime.UtcNow.AddDays(-30);
-        var deleted = await _sut.DeleteOlderThanAsync(cutoff);
+        var deleted = await _sut.DeleteOlderThanAsync(cutoff, ct);
 
         Assert.Equal(0, deleted);
-        var remaining = await _context.TelemetryLogs.CountAsync();
-        Assert.Equal(1, remaining);
     }
 
     [Fact]
-    public async Task WriteAsync_AddsLogToDatabase()
+    public async Task DeleteOlderThanAsync_WithEmptyTable_ReturnsZero()
     {
-        var log = new TelemetryLog
-        {
-            TimestampUtc = DateTime.UtcNow,
-            Level = "Error",
-            Category = "Test",
-            Message = "Test error message"
-        };
-
-        await _sut.WriteAsync(log);
-
-        var saved = await _context.TelemetryLogs.FirstOrDefaultAsync();
-        Assert.NotNull(saved);
-        Assert.Equal("Error", saved.Level);
-        Assert.Equal("Test error message", saved.Message);
+        var ct = TestContext.Current.CancellationToken;
+        var cutoff = DateTime.UtcNow.AddDays(-30);
+        var deleted = await _sut.DeleteOlderThanAsync(cutoff, ct);
+        Assert.Equal(0, deleted);
     }
 }
 
@@ -7900,8 +7894,8 @@ MODIFIED: 2025-12-28 07:44:06
 
 ================================================================================
 FILE: src/MyBlog.Web/MyBlog.Web.csproj
-SIZE: .41 KB
-MODIFIED: 2025-12-28 07:44:06
+SIZE: .55 KB
+MODIFIED: 2025-12-28 08:26:41
 ================================================================================
 
 <Project Sdk="Microsoft.NET.Sdk.Web">
@@ -7912,6 +7906,8 @@ MODIFIED: 2025-12-28 07:44:06
   <ItemGroup>
     <PackageReference Include="OpenTelemetry.Extensions.Hosting" />
     <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" />
+    <PackageReference Include="OpenTelemetry.Exporter.Console" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.Http" />
   </ItemGroup>
   
   <ItemGroup>
@@ -7919,17 +7915,21 @@ MODIFIED: 2025-12-28 07:44:06
   </ItemGroup>
 </Project>
 
-
 ================================================================================
 FILE: src/MyBlog.Web/Program.cs
-SIZE: 2.29 KB
-MODIFIED: 2025-12-28 08:13:02
+SIZE: 3.64 KB
+MODIFIED: 2025-12-28 08:26:30
 ================================================================================
 
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.EntityFrameworkCore;
+using MyBlog.Core.Constants;
+using MyBlog.Core.Interfaces;
+using MyBlog.Infrastructure;
+using MyBlog.Infrastructure.Data;
+using MyBlog.Infrastructure.Telemetry;
+using MyBlog.Web.Components;
+using OpenTelemetry;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
@@ -7937,78 +7937,111 @@ using OpenTelemetry.Trace;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ------------------------------------------------------------
-// Logging
-// ------------------------------------------------------------
-builder.Logging.ClearProviders();
-builder.Logging.AddConsole();
+// Add services
+builder.Services.AddRazorComponents()
+    .AddInteractiveServerComponents();
 
-builder.Logging.AddOpenTelemetry(options =>
-{
-    options.SetResourceBuilder(
-        ResourceBuilder.CreateDefault()
-            .AddService("MyBlog.Web"));
+builder.Services.AddInfrastructure(builder.Configuration);
 
-    options.IncludeFormattedMessage = true;
-    options.IncludeScopes = true;
-    options.ParseStateValues = true;
-
-    options.AddConsoleExporter();
-});
-
-// ------------------------------------------------------------
-// OpenTelemetry Tracing & Metrics
-// ------------------------------------------------------------
-builder.Services.AddOpenTelemetry()
-    .ConfigureResource(resource =>
+// Configure authentication
+var sessionTimeout = builder.Configuration.GetValue("Authentication:SessionTimeoutMinutes", 30);
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
     {
-        resource.AddService("MyBlog.Web");
-    })
+        options.Cookie.Name = AppConstants.AuthCookieName;
+        options.LoginPath = "/login";
+        options.LogoutPath = "/logout";
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(sessionTimeout);
+        options.SlidingExpiration = true;
+        options.Cookie.HttpOnly = true;
+        options.Cookie.SecurePolicy = builder.Configuration.GetValue("Application:RequireHttps", false)
+            ? CookieSecurePolicy.Always
+            : CookieSecurePolicy.SameAsRequest;
+    });
+
+builder.Services.AddAuthorization();
+builder.Services.AddCascadingAuthenticationState();
+
+// Configure OpenTelemetry
+var telemetryDir = TelemetryPathResolver.GetTelemetryDirectory();
+var enableFileLogging = builder.Configuration.GetValue("Telemetry:EnableFileLogging", true);
+var enableDbLogging = builder.Configuration.GetValue("Telemetry:EnableDatabaseLogging", true);
+
+builder.Services.AddOpenTelemetry()
+    .ConfigureResource(r => r.AddService("MyBlog"))
     .WithTracing(tracing =>
     {
         tracing
             .AddAspNetCoreInstrumentation()
-            .AddHttpClientInstrumentation()
-            .AddConsoleExporter();
+            .AddHttpClientInstrumentation();
     })
     .WithMetrics(metrics =>
     {
         metrics
             .AddAspNetCoreInstrumentation()
-            .AddHttpClientInstrumentation()
-            .AddRuntimeInstrumentation()
-            .AddConsoleExporter();
+            .AddHttpClientInstrumentation();
     });
 
-// ------------------------------------------------------------
-// ASP.NET Core services
-// ------------------------------------------------------------
-builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Logging.AddOpenTelemetry(options =>
+{
+    options.IncludeScopes = true;
+    options.IncludeFormattedMessage = true;
 
-// ------------------------------------------------------------
-// Application services
-// ------------------------------------------------------------
-// builder.Services.AddScoped<IMyService, MyService>();
+    if (enableDbLogging)
+    {
+        options.AddProcessor(new BatchLogRecordExportProcessor(
+            new DatabaseLogExporter(builder.Services.BuildServiceProvider()
+                .GetRequiredService<IServiceScopeFactory>())));
+    }
+
+    if (enableFileLogging && telemetryDir is not null)
+    {
+        options.AddProcessor(new BatchLogRecordExportProcessor(
+            new FileLogExporter(telemetryDir)));
+    }
+});
 
 var app = builder.Build();
 
-// ------------------------------------------------------------
-// HTTP pipeline
-// ------------------------------------------------------------
-if (app.Environment.IsDevelopment())
+// Initialize database
+using (var scope = app.Services.CreateScope())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    var context = scope.ServiceProvider.GetRequiredService<BlogDbContext>();
+    await context.Database.EnsureCreatedAsync();
+
+    var authService = scope.ServiceProvider.GetRequiredService<IAuthService>();
+    await authService.EnsureAdminUserAsync();
 }
 
-app.UseHttpsRedirection();
+// Configure pipeline
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler("/Error");
+    if (builder.Configuration.GetValue("Application:RequireHttps", false))
+    {
+        app.UseHsts();
+        app.UseHttpsRedirection();
+    }
+}
+
+app.UseStaticFiles();
+app.UseAuthentication();
 app.UseAuthorization();
-app.MapControllers();
+app.UseAntiforgery();
+
+app.MapRazorComponents<App>()
+    .AddInteractiveServerRenderMode();
+
+// Image endpoint
+app.MapGet("/api/images/{id:guid}", async (Guid id, IImageRepository repo, CancellationToken ct) =>
+{
+    var image = await repo.GetByIdAsync(id, ct);
+    return image is null
+        ? Results.NotFound()
+        : Results.File(image.Data, image.ContentType, image.FileName);
+});
 
 app.Run();
-
 
 ================================================================================
 FILE: src/MyBlog.Web/wwwroot/css/site.css
@@ -8568,7 +8601,7 @@ dotnet test MyBlog.slnx -v normal
 
 
 ===============================================================================
-EXPORT COMPLETED: Sun Dec 28 08:18:25 AM CST 2025
+EXPORT COMPLETED: Sun Dec 28 08:27:47 AM CST 2025
 Total Files Found: 55
 Files Exported: 55
 Files Skipped: 0 (binary or large files)

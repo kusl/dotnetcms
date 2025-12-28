@@ -33,7 +33,7 @@ public class TelemetryCleanupTests : IAsyncDisposable
     public async Task DeleteOlderThanAsync_RemovesOldLogs()
     {
         var ct = TestContext.Current.CancellationToken;
-        
+
         // Add old logs
         var oldLog = new TelemetryLog
         {
@@ -67,7 +67,7 @@ public class TelemetryCleanupTests : IAsyncDisposable
     public async Task DeleteOlderThanAsync_WithNoOldLogs_ReturnsZero()
     {
         var ct = TestContext.Current.CancellationToken;
-        
+
         var recentLog = new TelemetryLog
         {
             TimestampUtc = DateTime.UtcNow.AddDays(-5),
