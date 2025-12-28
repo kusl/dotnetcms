@@ -1,0 +1,3266 @@
+kushal@syn-2600-6c56-9840-001d-0000-0000-0000-1157:~/src/dotnet/MyBlog/src$ cd ~/src/dotnet/MyBlog/; time bash export.sh; cd ~/src/dotnet/MyBlog/src/; time dotnet format; time dotnet restore; time dotnet clean; time dotnet build; time dotnet test; time dotnet list package; time dotnet list package --outdated;
+==============================================
+  Project Export for LLM Analysis
+==============================================
+
+Project Path: /home/kushal/src/dotnet/MyBlog
+Output File:  docs/llm/dump.txt
+
+Generating directory structure...
+Collecting files...
+Found 63 files to export
+
+Processing (1/63): export.sh
+Processing (2/63): .github/workflows/build-deploy.yml
+Processing (3/63): .gitignore
+Processing (4/63): README.md
+Processing (5/63): src/Directory.Build.props
+Processing (6/63): src/Directory.Packages.props
+Processing (7/63): src/.editorconfig
+Processing (8/63): src/fix-changepassword-and-tests.sh
+Processing (9/63): src/fix-rate-limit.sh
+Processing (10/63): src/generate-myblog.sh
+Processing (11/63): src/.github/workflows/build-deploy.yml
+Processing (12/63): src/global.json
+Processing (13/63): src/MyBlog.Core/Constants/AppConstants.cs
+Processing (14/63): src/MyBlog.Core/Interfaces/IAuthService.cs
+Processing (15/63): src/MyBlog.Core/Interfaces/IImageRepository.cs
+Processing (16/63): src/MyBlog.Core/Interfaces/IMarkdownService.cs
+Processing (17/63): src/MyBlog.Core/Interfaces/IPasswordService.cs
+Processing (18/63): src/MyBlog.Core/Interfaces/IPostRepository.cs
+Processing (19/63): src/MyBlog.Core/Interfaces/ISlugService.cs
+Processing (20/63): src/MyBlog.Core/Interfaces/ITelemetryLogRepository.cs
+Processing (21/63): src/MyBlog.Core/Interfaces/IUserRepository.cs
+Processing (22/63): src/MyBlog.Core/Models/Image.cs
+Processing (23/63): src/MyBlog.Core/Models/Post.cs
+Processing (24/63): src/MyBlog.Core/Models/PostDto.cs
+Processing (25/63): src/MyBlog.Core/Models/TelemetryLog.cs
+Processing (26/63): src/MyBlog.Core/Models/User.cs
+Processing (27/63): src/MyBlog.Core/MyBlog.Core.csproj
+Processing (28/63): src/MyBlog.Core/Services/MarkdownService.cs
+Processing (29/63): src/MyBlog.Core/Services/SlugService.cs
+Processing (30/63): src/MyBlog.Infrastructure/Data/BlogDbContext.cs
+Processing (31/63): src/MyBlog.Infrastructure/Data/DatabasePathResolver.cs
+Processing (32/63): src/MyBlog.Infrastructure/MyBlog.Infrastructure.csproj
+Processing (33/63): src/MyBlog.Infrastructure/Repositories/ImageRepository.cs
+Processing (34/63): src/MyBlog.Infrastructure/Repositories/PostRepository.cs
+Processing (35/63): src/MyBlog.Infrastructure/Repositories/TelemetryLogRepository.cs
+Processing (36/63): src/MyBlog.Infrastructure/Repositories/UserRepository.cs
+Processing (37/63): src/MyBlog.Infrastructure/ServiceCollectionExtensions.cs
+Processing (38/63): src/MyBlog.Infrastructure/Services/AuthService.cs
+Processing (39/63): src/MyBlog.Infrastructure/Services/PasswordService.cs
+Processing (40/63): src/MyBlog.Infrastructure/Services/TelemetryCleanupService.cs
+Processing (41/63): src/MyBlog.Infrastructure/Telemetry/DatabaseLogExporter.cs
+Processing (42/63): src/MyBlog.Infrastructure/Telemetry/FileLogExporter.cs
+Processing (43/63): src/MyBlog.Infrastructure/Telemetry/TelemetryPathResolver.cs
+Processing (44/63): src/MyBlog.slnx
+Processing (45/63): src/MyBlog.Tests/Integration/AuthServiceLongPasswordTests.cs
+Processing (46/63): src/MyBlog.Tests/Integration/AuthServiceTests.cs
+Processing (47/63): src/MyBlog.Tests/Integration/PasswordChangeTests.cs
+Processing (48/63): src/MyBlog.Tests/Integration/PostRepositoryTests.cs
+Processing (49/63): src/MyBlog.Tests/Integration/TelemetryCleanupTests.cs
+Processing (50/63): src/MyBlog.Tests/MyBlog.Tests.csproj
+Processing (51/63): src/MyBlog.Tests/Unit/LoginRateLimitMiddlewareTests.cs
+Processing (52/63): src/MyBlog.Tests/Unit/MarkdownServiceTests.cs
+Processing (53/63): src/MyBlog.Tests/Unit/PasswordServiceTests.cs
+Processing (54/63): src/MyBlog.Tests/Unit/SlugServiceTests.cs
+Processing (55/63): src/MyBlog.Web/appsettings.Development.json
+Processing (56/63): src/MyBlog.Web/appsettings.json
+Processing (57/63): src/MyBlog.Web/Middleware/LoginRateLimitMiddleware.cs
+Processing (58/63): src/MyBlog.Web/MyBlog.Web.csproj
+Processing (59/63): src/MyBlog.Web/Program.cs
+Processing (60/63): src/MyBlog.Web/wwwroot/css/site.css
+Processing (61/63): src/run.sh
+Processing (62/63): src/test.sh
+Processing (63/63): src/upgrade-myblog.sh
+
+==============================================
+  Export Complete!
+==============================================
+
+Output file:    docs/llm/dump.txt
+Files exported: 63
+Files skipped:  0
+Output size:    357.30 KB
+
+File types included:
+  • Source code: .cs, .fs, .vb
+  • UI/XAML: .axaml, .xaml, .paml
+  • Projects: .csproj, .slnx, .sln, .props, .targets
+  • Config: .json, .yaml, .yml, .xml, .config
+  • Docs: .md, .txt
+  • Scripts: .sh, .ps1, .cmd, .bat
+  • Other: .sql, .resx, .css, .scss, Dockerfile, etc.
+
+
+real	0m0.626s
+user	0m0.365s
+sys	0m0.398s
+
+real	0m8.021s
+user	0m13.736s
+sys	0m1.027s
+Restore complete (0.5s)
+
+Build succeeded in 0.6s
+
+real	0m0.819s
+user	0m0.874s
+sys	0m0.155s
+
+Build succeeded in 0.6s
+
+real	0m0.729s
+user	0m0.743s
+sys	0m0.142s
+Restore complete (0.5s)
+  MyBlog.Core net10.0 succeeded (0.3s) → MyBlog.Core/bin/Debug/net10.0/MyBlog.Core.dll
+  MyBlog.Infrastructure net10.0 succeeded (0.3s) → MyBlog.Infrastructure/bin/Debug/net10.0/MyBlog.Infrastructure.dll
+  MyBlog.Web net10.0 succeeded (0.9s) → MyBlog.Web/bin/Debug/net10.0/MyBlog.Web.dll
+  MyBlog.Tests net10.0 succeeded (0.5s) → MyBlog.Tests/bin/Debug/net10.0/MyBlog.Tests.dll
+
+Build succeeded in 2.7s
+
+real	0m2.822s
+user	0m1.957s
+sys	0m0.394s
+Restore complete (0.5s)
+  MyBlog.Core net10.0 succeeded (0.1s) → MyBlog.Core/bin/Debug/net10.0/MyBlog.Core.dll
+  MyBlog.Infrastructure net10.0 succeeded (0.1s) → MyBlog.Infrastructure/bin/Debug/net10.0/MyBlog.Infrastructure.dll
+  MyBlog.Web net10.0 succeeded (0.1s) → MyBlog.Web/bin/Debug/net10.0/MyBlog.Web.dll
+  MyBlog.Tests net10.0 succeeded (0.1s) → MyBlog.Tests/bin/Debug/net10.0/MyBlog.Tests.dll
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.5+1b188a7b0a (64-bit .NET 10.0.1)
+[xUnit.net 00:00:00.15]   Discovering: MyBlog.Tests
+[xUnit.net 00:00:00.33]   Discovered:  MyBlog.Tests
+[xUnit.net 00:00:00.49]   Starting:    MyBlog.Tests
+[xUnit.net 00:00:41.94]   Finished:    MyBlog.Tests (ID = '24cedafe73dab5684218bb3cf04cfd49ae8ce3b87ae799399cb2e301cbc1e755')
+  MyBlog.Tests test net10.0 succeeded (42.5s)
+
+Test summary: total: 70, failed: 0, succeeded: 70, skipped: 0, duration: 42.5s
+Build succeeded in 43.6s
+
+real	0m43.791s
+user	0m1.472s
+sys	0m0.338s
+Restore complete (0.4s)
+
+Build succeeded in 0.5s
+Project 'MyBlog.Core' has the following package references
+   [net10.0]: No packages were found for this framework.
+Project 'MyBlog.Infrastructure' has the following package references
+   [net10.0]: 
+   Top-level Package                           Requested   Resolved
+   > Microsoft.AspNetCore.Identity             2.3.1       2.3.1   
+   > Microsoft.EntityFrameworkCore.Sqlite      10.0.1      10.0.1  
+   > OpenTelemetry                             1.14.0      1.14.0  
+
+Project 'MyBlog.Tests' has the following package references
+   [net10.0]: 
+   Top-level Package                           Requested   Resolved
+   > Microsoft.EntityFrameworkCore.Sqlite      10.0.1      10.0.1  
+   > Microsoft.NET.Test.Sdk                    18.0.1      18.0.1  
+   > xunit.runner.visualstudio                 3.1.5       3.1.5   
+   > xunit.v3                                  3.2.1       3.2.1   
+
+Project 'MyBlog.Web' has the following package references
+   [net10.0]: 
+   Top-level Package                                  Requested    Resolved
+   > Microsoft.AspNetCore.App.Internal.Assets   (A)   [10.0.1, )   10.0.1  
+   > OpenTelemetry.Exporter.Console                   1.14.0       1.14.0  
+   > OpenTelemetry.Extensions.Hosting                 1.14.0       1.14.0  
+   > OpenTelemetry.Instrumentation.AspNetCore         1.14.0       1.14.0  
+   > OpenTelemetry.Instrumentation.Http               1.14.0       1.14.0  
+
+(A) : Auto-referenced package.
+
+real	0m1.484s
+user	0m1.505s
+sys	0m0.293s
+Restore complete (0.4s)
+
+Build succeeded in 0.5s
+
+The following sources were used:
+   https://api.nuget.org/v3/index.json
+
+The given project `MyBlog.Core` has no updates given the current sources.
+The given project `MyBlog.Infrastructure` has no updates given the current sources.
+The given project `MyBlog.Tests` has no updates given the current sources.
+The given project `MyBlog.Web` has no updates given the current sources.
+
+real	0m1.553s
+user	0m1.574s
+sys	0m0.303s
+kushal@syn-2600-6c56-9840-001d-0000-0000-0000-1157:~/src/dotnet/MyBlog/src$ cd .. 
+kushal@syn-2600-6c56-9840-001d-0000-0000-0000-1157:~/src/dotnet/MyBlog$ time bash fix-all-forms.sh 
+==============================================
+  MyBlog: Fix All Forms Script
+==============================================
+
+[1/2] Fixing Login.razor form...
+      Done.
+[2/2] Fixing ChangePassword.razor form...
+      Done.
+
+==============================================
+  All forms fixed!
+==============================================
+
+Fixed files:
+  - src/MyBlog.Web/Components/Pages/Login.razor
+  - src/MyBlog.Web/Components/Pages/Admin/ChangePassword.razor
+
+Note: The PostEditor.razor and ImageManager.razor pages use
+@onclick handlers (interactive Blazor), not method='post' forms,
+so they do not need the 'name' attribute fix.
+
+The fix adds:
+  1. name='fieldname' attributes to all <input> elements
+  2. [SupplyParameterFromForm] properties to receive POST data
+  3. Logic to use form values when available (SSR) or bound values (interactive)
+
+
+real	0m0.006s
+user	0m0.001s
+sys	0m0.005s
+kushal@syn-2600-6c56-9840-001d-0000-0000-0000-1157:~/src/dotnet/MyBlog$ cd ~/src/dotnet/MyBlog/; time bash export.sh; cd ~/src/dotnet/MyBlog/src/; time dotnet format; time dotnet restore; time dotnet clean; time dotnet build; time dotnet test; time dotnet list package; time dotnet list package --outdated; cd ~/src/dotnet/MyBlog/src/MyBlog.Web/; time dotnet restore; time dotnet clean; time dotnet build; dotnet run;
+==============================================
+  Project Export for LLM Analysis
+==============================================
+
+Project Path: /home/kushal/src/dotnet/MyBlog
+Output File:  docs/llm/dump.txt
+
+Generating directory structure...
+Collecting files...
+Found 64 files to export
+
+Processing (1/64): export.sh
+Processing (2/64): fix-all-forms.sh
+Processing (3/64): .github/workflows/build-deploy.yml
+Processing (4/64): .gitignore
+Processing (5/64): README.md
+Processing (6/64): src/Directory.Build.props
+Processing (7/64): src/Directory.Packages.props
+Processing (8/64): src/.editorconfig
+Processing (9/64): src/fix-changepassword-and-tests.sh
+Processing (10/64): src/fix-rate-limit.sh
+Processing (11/64): src/generate-myblog.sh
+Processing (12/64): src/.github/workflows/build-deploy.yml
+Processing (13/64): src/global.json
+Processing (14/64): src/MyBlog.Core/Constants/AppConstants.cs
+Processing (15/64): src/MyBlog.Core/Interfaces/IAuthService.cs
+Processing (16/64): src/MyBlog.Core/Interfaces/IImageRepository.cs
+Processing (17/64): src/MyBlog.Core/Interfaces/IMarkdownService.cs
+Processing (18/64): src/MyBlog.Core/Interfaces/IPasswordService.cs
+Processing (19/64): src/MyBlog.Core/Interfaces/IPostRepository.cs
+Processing (20/64): src/MyBlog.Core/Interfaces/ISlugService.cs
+Processing (21/64): src/MyBlog.Core/Interfaces/ITelemetryLogRepository.cs
+Processing (22/64): src/MyBlog.Core/Interfaces/IUserRepository.cs
+Processing (23/64): src/MyBlog.Core/Models/Image.cs
+Processing (24/64): src/MyBlog.Core/Models/Post.cs
+Processing (25/64): src/MyBlog.Core/Models/PostDto.cs
+Processing (26/64): src/MyBlog.Core/Models/TelemetryLog.cs
+Processing (27/64): src/MyBlog.Core/Models/User.cs
+Processing (28/64): src/MyBlog.Core/MyBlog.Core.csproj
+Processing (29/64): src/MyBlog.Core/Services/MarkdownService.cs
+Processing (30/64): src/MyBlog.Core/Services/SlugService.cs
+Processing (31/64): src/MyBlog.Infrastructure/Data/BlogDbContext.cs
+Processing (32/64): src/MyBlog.Infrastructure/Data/DatabasePathResolver.cs
+Processing (33/64): src/MyBlog.Infrastructure/MyBlog.Infrastructure.csproj
+Processing (34/64): src/MyBlog.Infrastructure/Repositories/ImageRepository.cs
+Processing (35/64): src/MyBlog.Infrastructure/Repositories/PostRepository.cs
+Processing (36/64): src/MyBlog.Infrastructure/Repositories/TelemetryLogRepository.cs
+Processing (37/64): src/MyBlog.Infrastructure/Repositories/UserRepository.cs
+Processing (38/64): src/MyBlog.Infrastructure/ServiceCollectionExtensions.cs
+Processing (39/64): src/MyBlog.Infrastructure/Services/AuthService.cs
+Processing (40/64): src/MyBlog.Infrastructure/Services/PasswordService.cs
+Processing (41/64): src/MyBlog.Infrastructure/Services/TelemetryCleanupService.cs
+Processing (42/64): src/MyBlog.Infrastructure/Telemetry/DatabaseLogExporter.cs
+Processing (43/64): src/MyBlog.Infrastructure/Telemetry/FileLogExporter.cs
+Processing (44/64): src/MyBlog.Infrastructure/Telemetry/TelemetryPathResolver.cs
+Processing (45/64): src/MyBlog.slnx
+Processing (46/64): src/MyBlog.Tests/Integration/AuthServiceLongPasswordTests.cs
+Processing (47/64): src/MyBlog.Tests/Integration/AuthServiceTests.cs
+Processing (48/64): src/MyBlog.Tests/Integration/PasswordChangeTests.cs
+Processing (49/64): src/MyBlog.Tests/Integration/PostRepositoryTests.cs
+Processing (50/64): src/MyBlog.Tests/Integration/TelemetryCleanupTests.cs
+Processing (51/64): src/MyBlog.Tests/MyBlog.Tests.csproj
+Processing (52/64): src/MyBlog.Tests/Unit/LoginRateLimitMiddlewareTests.cs
+Processing (53/64): src/MyBlog.Tests/Unit/MarkdownServiceTests.cs
+Processing (54/64): src/MyBlog.Tests/Unit/PasswordServiceTests.cs
+Processing (55/64): src/MyBlog.Tests/Unit/SlugServiceTests.cs
+Processing (56/64): src/MyBlog.Web/appsettings.Development.json
+Processing (57/64): src/MyBlog.Web/appsettings.json
+Processing (58/64): src/MyBlog.Web/Middleware/LoginRateLimitMiddleware.cs
+Processing (59/64): src/MyBlog.Web/MyBlog.Web.csproj
+Processing (60/64): src/MyBlog.Web/Program.cs
+Processing (61/64): src/MyBlog.Web/wwwroot/css/site.css
+Processing (62/64): src/run.sh
+Processing (63/64): src/test.sh
+Processing (64/64): src/upgrade-myblog.sh
+
+==============================================
+  Export Complete!
+==============================================
+
+Output file:    docs/llm/dump.txt
+Files exported: 64
+Files skipped:  0
+Output size:    366.35 KB
+
+File types included:
+  • Source code: .cs, .fs, .vb
+  • UI/XAML: .axaml, .xaml, .paml
+  • Projects: .csproj, .slnx, .sln, .props, .targets
+  • Config: .json, .yaml, .yml, .xml, .config
+  • Docs: .md, .txt
+  • Scripts: .sh, .ps1, .cmd, .bat
+  • Other: .sql, .resx, .css, .scss, Dockerfile, etc.
+
+
+real	0m0.651s
+user	0m0.378s
+sys	0m0.405s
+
+real	0m7.046s
+user	0m11.740s
+sys	0m0.879s
+Restore complete (0.4s)
+
+Build succeeded in 0.5s
+
+real	0m0.700s
+user	0m0.746s
+sys	0m0.139s
+
+Build succeeded in 0.5s
+
+real	0m0.648s
+user	0m0.670s
+sys	0m0.120s
+Restore complete (0.4s)
+  MyBlog.Core net10.0 succeeded (0.2s) → MyBlog.Core/bin/Debug/net10.0/MyBlog.Core.dll
+  MyBlog.Infrastructure net10.0 succeeded (0.1s) → MyBlog.Infrastructure/bin/Debug/net10.0/MyBlog.Infrastructure.dll
+  MyBlog.Web net10.0 succeeded (0.6s) → MyBlog.Web/bin/Debug/net10.0/MyBlog.Web.dll
+  MyBlog.Tests net10.0 succeeded (0.2s) → MyBlog.Tests/bin/Debug/net10.0/MyBlog.Tests.dll
+
+Build succeeded in 1.9s
+
+real	0m2.014s
+user	0m1.476s
+sys	0m0.299s
+Restore complete (0.4s)
+  MyBlog.Core net10.0 succeeded (0.1s) → MyBlog.Core/bin/Debug/net10.0/MyBlog.Core.dll
+  MyBlog.Infrastructure net10.0 succeeded (0.0s) → MyBlog.Infrastructure/bin/Debug/net10.0/MyBlog.Infrastructure.dll
+  MyBlog.Web net10.0 succeeded (0.1s) → MyBlog.Web/bin/Debug/net10.0/MyBlog.Web.dll
+  MyBlog.Tests net10.0 succeeded (0.1s) → MyBlog.Tests/bin/Debug/net10.0/MyBlog.Tests.dll
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.5+1b188a7b0a (64-bit .NET 10.0.1)
+[xUnit.net 00:00:00.15]   Discovering: MyBlog.Tests
+[xUnit.net 00:00:00.32]   Discovered:  MyBlog.Tests
+[xUnit.net 00:00:00.47]   Starting:    MyBlog.Tests
+[xUnit.net 00:00:41.27]   Finished:    MyBlog.Tests (ID = '24cedafe73dab5684218bb3cf04cfd49ae8ce3b87ae799399cb2e301cbc1e755')
+  MyBlog.Tests test net10.0 succeeded (41.8s)
+
+Test summary: total: 70, failed: 0, succeeded: 70, skipped: 0, duration: 41.8s
+Build succeeded in 42.8s
+
+real	0m42.910s
+user	0m1.335s
+sys	0m0.321s
+Restore complete (0.4s)
+
+Build succeeded in 0.5s
+Project 'MyBlog.Core' has the following package references
+   [net10.0]: No packages were found for this framework.
+Project 'MyBlog.Infrastructure' has the following package references
+   [net10.0]: 
+   Top-level Package                           Requested   Resolved
+   > Microsoft.AspNetCore.Identity             2.3.1       2.3.1   
+   > Microsoft.EntityFrameworkCore.Sqlite      10.0.1      10.0.1  
+   > OpenTelemetry                             1.14.0      1.14.0  
+
+Project 'MyBlog.Tests' has the following package references
+   [net10.0]: 
+   Top-level Package                           Requested   Resolved
+   > Microsoft.EntityFrameworkCore.Sqlite      10.0.1      10.0.1  
+   > Microsoft.NET.Test.Sdk                    18.0.1      18.0.1  
+   > xunit.runner.visualstudio                 3.1.5       3.1.5   
+   > xunit.v3                                  3.2.1       3.2.1   
+
+Project 'MyBlog.Web' has the following package references
+   [net10.0]: 
+   Top-level Package                                  Requested    Resolved
+   > Microsoft.AspNetCore.App.Internal.Assets   (A)   [10.0.1, )   10.0.1  
+   > OpenTelemetry.Exporter.Console                   1.14.0       1.14.0  
+   > OpenTelemetry.Extensions.Hosting                 1.14.0       1.14.0  
+   > OpenTelemetry.Instrumentation.AspNetCore         1.14.0       1.14.0  
+   > OpenTelemetry.Instrumentation.Http               1.14.0       1.14.0  
+
+(A) : Auto-referenced package.
+
+real	0m1.470s
+user	0m1.488s
+sys	0m0.281s
+Restore complete (0.4s)
+
+Build succeeded in 0.5s
+
+The following sources were used:
+   https://api.nuget.org/v3/index.json
+
+The given project `MyBlog.Core` has no updates given the current sources.
+The given project `MyBlog.Infrastructure` has no updates given the current sources.
+The given project `MyBlog.Tests` has no updates given the current sources.
+The given project `MyBlog.Web` has no updates given the current sources.
+
+real	0m1.607s
+user	0m1.578s
+sys	0m0.334s
+Restore complete (0.3s)
+
+Build succeeded in 0.6s
+
+real	0m0.743s
+user	0m0.713s
+sys	0m0.103s
+
+Build succeeded in 0.5s
+
+real	0m0.662s
+user	0m0.613s
+sys	0m0.105s
+Restore complete (0.4s)
+  MyBlog.Core net10.0 succeeded (0.1s) → /home/kushal/src/dotnet/MyBlog/src/MyBlog.Core/bin/Debug/net10.0/MyBlog.Core.dll
+  MyBlog.Infrastructure net10.0 succeeded (0.2s) → /home/kushal/src/dotnet/MyBlog/src/MyBlog.Infrastructure/bin/Debug/net10.0/MyBlog.Infrastructure.dll
+  MyBlog.Web net10.0 succeeded (0.6s) → bin/Debug/net10.0/MyBlog.Web.dll
+
+Build succeeded in 1.7s
+
+real	0m1.829s
+user	0m1.449s
+sys	0m0.204s
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://localhost:5000
+LogRecord.Timestamp:               2025-12-28T19:18:50.8354784Z
+LogRecord.CategoryName:            Microsoft.Hosting.Lifetime
+LogRecord.Severity:                Info
+LogRecord.SeverityText:            Information
+LogRecord.FormattedMessage:        Now listening on: http://localhost:5000
+LogRecord.Body:                    Now listening on: {address}
+LogRecord.Attributes (Key:Value):
+    address: http://localhost:5000
+    OriginalFormat (a.k.a Body): Now listening on: {address}
+LogRecord.EventId:                 14
+LogRecord.EventName:               ListeningOnAddress
+
+Resource associated with LogRecord:
+service.name: MyBlog.Web
+service.namespace: 1.0.0
+service.instance.id: a6937a58-6edf-4d06-bcef-b83910caf153
+telemetry.sdk.name: opentelemetry
+telemetry.sdk.language: dotnet
+telemetry.sdk.version: 1.14.0
+
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+LogRecord.Timestamp:               2025-12-28T19:18:50.8459274Z
+LogRecord.CategoryName:            Microsoft.Hosting.Lifetime
+LogRecord.Severity:                Info
+LogRecord.SeverityText:            Information
+LogRecord.FormattedMessage:        Application started. Press Ctrl+C to shut down.
+LogRecord.Body:                    Application started. Press Ctrl+C to shut down.
+LogRecord.Attributes (Key:Value):
+    OriginalFormat (a.k.a Body): Application started. Press Ctrl+C to shut down.
+
+Resource associated with LogRecord:
+service.name: MyBlog.Web
+service.namespace: 1.0.0
+service.instance.id: a6937a58-6edf-4d06-bcef-b83910caf153
+telemetry.sdk.name: opentelemetry
+telemetry.sdk.language: dotnet
+telemetry.sdk.version: 1.14.0
+
+LogRecord.Timestamp:               2025-12-28T19:18:50.8463233Z
+LogRecord.CategoryName:            Microsoft.Hosting.Lifetime
+LogRecord.Severity:                Info
+LogRecord.SeverityText:            Information
+LogRecord.FormattedMessage:        Hosting environment: Production
+LogRecord.Body:                    Hosting environment: {EnvName}
+LogRecord.Attributes (Key:Value):
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+    EnvName: Production
+    OriginalFormat (a.k.a Body): Hosting environment: {EnvName}
+
+Resource associated with LogRecord:
+service.name: MyBlog.Web
+service.namespace: 1.0.0
+service.instance.id: a6937a58-6edf-4d06-bcef-b83910caf153
+telemetry.sdk.name: opentelemetry
+telemetry.sdk.language: dotnet
+telemetry.sdk.version: 1.14.0
+
+LogRecord.Timestamp:               2025-12-28T19:18:50.8464075Z
+LogRecord.CategoryName:            Microsoft.Hosting.Lifetime
+LogRecord.Severity:                Info
+LogRecord.SeverityText:            Information
+LogRecord.FormattedMessage:        Content root path: /home/kushal/src/dotnet/MyBlog/src/MyBlog.Web
+LogRecord.Body:                    Content root path: {ContentRoot}
+LogRecord.Attributes (Key:Value):
+    ContentRoot: /home/kushal/src/dotnet/MyBlog/src/MyBlog.Web
+    OriginalFormat (a.k.a Body): Content root path: {ContentRoot}
+
+Resource associated with LogRecord:
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: /home/kushal/src/dotnet/MyBlog/src/MyBlog.Web
+service.name: MyBlog.Web
+service.namespace: 1.0.0
+service.instance.id: a6937a58-6edf-4d06-bcef-b83910caf153
+telemetry.sdk.name: opentelemetry
+telemetry.sdk.language: dotnet
+telemetry.sdk.version: 1.14.0
+
+Activity.TraceId:            9885a8fdf84fcb5b41e8162aa2a267db
+Activity.SpanId:             b248288bb8571724
+Activity.TraceFlags:         Recorded
+Activity.DisplayName:        Route / -> MyBlog.Web.Components.Pages.Home
+Activity.Kind:               Internal
+Activity.StartTime:          2025-12-28T19:18:58.9452162Z
+Activity.Duration:           00:00:00.0009728
+Activity.Tags:
+    aspnetcore.components.type: MyBlog.Web.Components.Pages.Home
+    aspnetcore.components.route: /
+Activity.Links:
+    fd0e463115cd4b87f095c91b636af478 bd96c5c6216bbbc8
+Instrumentation scope (ActivitySource):
+    Name: Microsoft.AspNetCore.Components
+Resource associated with Activity:
+    service.name: MyBlog.Web
+    service.namespace: 1.0.0
+    service.instance.id: a6937a58-6edf-4d06-bcef-b83910caf153
+    telemetry.sdk.name: opentelemetry
+    telemetry.sdk.language: dotnet
+    telemetry.sdk.version: 1.14.0
+
+Activity.TraceId:            fd0e463115cd4b87f095c91b636af478
+Activity.SpanId:             bd96c5c6216bbbc8
+Activity.TraceFlags:         Recorded
+Activity.DisplayName:        GET /
+Activity.Kind:               Server
+Activity.StartTime:          2025-12-28T19:18:58.8779356Z
+Activity.Duration:           00:00:00.2076383
+Activity.Tags:
+    server.address: localhost
+    server.port: 5000
+    http.request.method: GET
+    url.scheme: http
+    url.path: /
+    network.protocol.version: 1.1
+    user_agent.original: Mozilla/5.0 (X11; Linux x86_64; rv:146.0) Gecko/20100101 Firefox/146.0
+    http.route: /
+    http.response.status_code: 200
+Instrumentation scope (ActivitySource):
+    Name: Microsoft.AspNetCore
+Resource associated with Activity:
+    service.name: MyBlog.Web
+    service.namespace: 1.0.0
+    service.instance.id: a6937a58-6edf-4d06-bcef-b83910caf153
+    telemetry.sdk.name: opentelemetry
+    telemetry.sdk.language: dotnet
+    telemetry.sdk.version: 1.14.0
+
+Activity.TraceId:            8ce6e4258922942f9315f3fa98bc7941
+Activity.SpanId:             327496486cf6f1ef
+Activity.TraceFlags:         Recorded
+Activity.DisplayName:        GET
+Activity.Kind:               Server
+Activity.StartTime:          2025-12-28T19:18:59.0925791Z
+Activity.Duration:           00:00:00.0032814
+Activity.Tags:
+    server.address: localhost
+    server.port: 5000
+    http.request.method: GET
+    url.scheme: http
+    url.path: /_framework/blazor.web.js
+    network.protocol.version: 1.1
+    user_agent.original: Mozilla/5.0 (X11; Linux x86_64; rv:146.0) Gecko/20100101 Firefox/146.0
+    http.response.status_code: 404
+Instrumentation scope (ActivitySource):
+    Name: Microsoft.AspNetCore
+Resource associated with Activity:
+    service.name: MyBlog.Web
+    service.namespace: 1.0.0
+    service.instance.id: a6937a58-6edf-4d06-bcef-b83910caf153
+    telemetry.sdk.name: opentelemetry
+    telemetry.sdk.language: dotnet
+    telemetry.sdk.version: 1.14.0
+
+Activity.TraceId:            20d0760d8a8ea09c90685b5d8030bb5a
+Activity.SpanId:             3b1d7d47298875b6
+Activity.TraceFlags:         Recorded
+Activity.DisplayName:        GET
+Activity.Kind:               Server
+Activity.StartTime:          2025-12-28T19:18:59.0971825Z
+Activity.Duration:           00:00:00.0019143
+Activity.Tags:
+    server.address: localhost
+    server.port: 5000
+    http.request.method: GET
+    url.scheme: http
+    url.path: /favicon.ico
+    network.protocol.version: 1.1
+    user_agent.original: Mozilla/5.0 (X11; Linux x86_64; rv:146.0) Gecko/20100101 Firefox/146.0
+    http.response.status_code: 404
+Instrumentation scope (ActivitySource):
+    Name: Microsoft.AspNetCore
+Resource associated with Activity:
+    service.name: MyBlog.Web
+    service.namespace: 1.0.0
+    service.instance.id: a6937a58-6edf-4d06-bcef-b83910caf153
+    telemetry.sdk.name: opentelemetry
+    telemetry.sdk.language: dotnet
+    telemetry.sdk.version: 1.14.0
+
+Resource associated with Metrics:
+	service.name: MyBlog.Web
+	service.namespace: 1.0.0
+	service.instance.id: a6937a58-6edf-4d06-bcef-b83910caf153
+	telemetry.sdk.name: opentelemetry
+	telemetry.sdk.language: dotnet
+	telemetry.sdk.version: 1.14.0
+
+Metric Name: aspnetcore.memory_pool.pooled, Description: Number of bytes currently pooled and available for reuse., Unit: By, Metric Type: LongSumNonMonotonic
+Instrumentation scope (Meter):
+	Name: Microsoft.AspNetCore.MemoryPool
+(2025-12-28T19:18:50.7327588Z, 2025-12-28T19:19:00.7216605Z] aspnetcore.memory_pool.owner: kestrel
+Value: 4096
+
+Metric Name: aspnetcore.memory_pool.allocated, Description: Total number of bytes allocated by the memory pool. Allocation occurs when a memory rental request exceeds the available pooled memory., Unit: By, Metric Type: LongSum
+Instrumentation scope (Meter):
+	Name: Microsoft.AspNetCore.MemoryPool
+(2025-12-28T19:18:50.7336521Z, 2025-12-28T19:19:00.7216958Z] aspnetcore.memory_pool.owner: kestrel
+Value: 4096
+
+Metric Name: aspnetcore.memory_pool.rented, Description: Total number of bytes rented from the memory pool., Unit: By, Metric Type: LongSum
+Instrumentation scope (Meter):
+	Name: Microsoft.AspNetCore.MemoryPool
+(2025-12-28T19:18:50.7336720Z, 2025-12-28T19:19:00.7216980Z] aspnetcore.memory_pool.owner: kestrel
+Value: 24576
+
+Metric Name: kestrel.active_connections, Description: Number of connections that are currently active on the server., Unit: {connection}, Metric Type: LongSumNonMonotonic
+Instrumentation scope (Meter):
+	Name: Microsoft.AspNetCore.Server.Kestrel
+(2025-12-28T19:18:50.7336815Z, 2025-12-28T19:19:00.7216991Z] network.transport: tcp network.type: ipv4 server.address: 127.0.0.1 server.port: 5000
+Value: 1
+
+Metric Name: kestrel.queued_connections, Description: Number of connections that are currently queued and are waiting to start., Unit: {connection}, Metric Type: LongSumNonMonotonic
+Instrumentation scope (Meter):
+	Name: Microsoft.AspNetCore.Server.Kestrel
+(2025-12-28T19:18:50.7341167Z, 2025-12-28T19:19:00.7217020Z] network.transport: tcp network.type: ipv4 server.address: 127.0.0.1 server.port: 5000
+Value: 0
+
+Metric Name: http.server.active_requests, Description: Number of active HTTP server requests., Unit: {request}, Metric Type: LongSumNonMonotonic
+Instrumentation scope (Meter):
+	Name: Microsoft.AspNetCore.Hosting
+(2025-12-28T19:18:50.7348034Z, 2025-12-28T19:19:00.7217053Z] http.request.method: GET url.scheme: http
+Value: 0
+
+Metric Name: http.server.request.duration, Description: Duration of HTTP server requests., Unit: s, Metric Type: Histogram
+Instrumentation scope (Meter):
+	Name: Microsoft.AspNetCore.Hosting
+(2025-12-28T19:18:50.7348123Z, 2025-12-28T19:19:00.7217911Z] http.request.method: GET http.response.status_code: 200 http.route: / network.protocol.version: 1.1 url.scheme: http
+Value: Sum: 0.2105816 Count: 1 Min: 0.2105816 Max: 0.2105816 
+(-Infinity,0.005]:0
+(0.005,0.01]:0
+(0.01,0.025]:0
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:1
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+(2025-12-28T19:18:50.7348123Z, 2025-12-28T19:19:00.7217911Z] aspnetcore.request.is_unhandled: true http.request.method: GET http.response.status_code: 404 network.protocol.version: 1.1 url.scheme: http
+Value: Sum: 0.0050987 Count: 2 Min: 0.0019179 Max: 0.0031808 
+(-Infinity,0.005]:2
+(0.005,0.01]:0
+(0.01,0.025]:0
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+
+Metric Name: aspnetcore.routing.match_attempts, Description: Number of requests that were attempted to be matched to an endpoint., Unit: {match_attempt}, Metric Type: LongSum
+Instrumentation scope (Meter):
+	Name: Microsoft.AspNetCore.Routing
+(2025-12-28T19:18:50.8209931Z, 2025-12-28T19:19:00.7217952Z] aspnetcore.routing.is_fallback: false aspnetcore.routing.match_status: success http.route: /
+Value: 1
+(2025-12-28T19:18:50.8209931Z, 2025-12-28T19:19:00.7217952Z] aspnetcore.routing.match_status: failure
+Value: 2
+
+Metric Name: aspnetcore.authentication.authenticate.duration, Description: The authentication duration for a request., Unit: s, Metric Type: Histogram
+Instrumentation scope (Meter):
+	Name: Microsoft.AspNetCore.Authentication
+(2025-12-28T19:18:58.8975151Z, 2025-12-28T19:19:00.7217978Z] aspnetcore.authentication.result: success aspnetcore.authentication.scheme: Cookies
+Value: Sum: 0.0081176 Count: 3 Min: 0.0006349 Max: 0.006714 
+(-Infinity,0.005]:2
+(0.005,0.01]:1
+(0.01,0.025]:0
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+
+Metric Name: aspnetcore.components.navigate, Description: Total number of route changes., Unit: {route}, Metric Type: LongSum
+Instrumentation scope (Meter):
+	Name: Microsoft.AspNetCore.Components
+(2025-12-28T19:18:58.9161011Z, 2025-12-28T19:19:00.7218013Z] aspnetcore.components.route: / aspnetcore.components.type: MyBlog.Web.Components.Pages.Home
+Value: 1
+
+Metric Name: aspnetcore.components.update_parameters.duration, Description: Duration of processing component parameters. It includes business logic of the component., Unit: s, Metric Type: Histogram
+Instrumentation scope (Meter):
+	Name: Microsoft.AspNetCore.Components.Lifecycle
+(2025-12-28T19:18:58.9163704Z, 2025-12-28T19:19:00.7218158Z] aspnetcore.components.type: Microsoft.AspNetCore.Components.Web.HeadOutlet
+Value: Sum: 0.0001859 Count: 1 Min: 0.0001859 Max: 0.0001859 
+(-Infinity,1E-06]:0
+(1E-06,1E-05]:0
+(1E-05,0.0001]:0
+(0.0001,0.001]:1
+(0.001,0.005]:0
+(0.005,0.01]:0
+(0.01,0.025]:0
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+(2025-12-28T19:18:58.9163704Z, 2025-12-28T19:19:00.7218158Z] aspnetcore.components.type: MyBlog.Web.Components.Routes
+Value: Sum: 1.74E-05 Count: 1 Min: 1.74E-05 Max: 1.74E-05 
+(-Infinity,1E-06]:0
+(1E-06,1E-05]:0
+(1E-05,0.0001]:1
+(0.0001,0.001]:0
+(0.001,0.005]:0
+(0.005,0.01]:0
+(0.01,0.025]:0
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+(2025-12-28T19:18:58.9163704Z, 2025-12-28T19:19:00.7218158Z] aspnetcore.components.type: Microsoft.AspNetCore.Components.Sections.SectionOutlet
+Value: Sum: 7.13E-05 Count: 2 Min: 1.02E-05 Max: 6.11E-05 
+(-Infinity,1E-06]:0
+(1E-06,1E-05]:0
+(1E-05,0.0001]:2
+(0.0001,0.001]:0
+(0.001,0.005]:0
+(0.005,0.01]:0
+(0.01,0.025]:0
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+(2025-12-28T19:18:58.9163704Z, 2025-12-28T19:19:00.7218158Z] aspnetcore.components.type: Microsoft.AspNetCore.Components.Routing.Router
+Value: Sum: 0.0064451 Count: 1 Min: 0.0064451 Max: 0.0064451 
+(-Infinity,1E-06]:0
+(1E-06,1E-05]:0
+(1E-05,0.0001]:0
+(0.0001,0.001]:0
+(0.001,0.005]:0
+(0.005,0.01]:1
+(0.01,0.025]:0
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+(2025-12-28T19:18:58.9163704Z, 2025-12-28T19:19:00.7218158Z] aspnetcore.components.type: Microsoft.AspNetCore.Components.Sections.SectionOutlet+SectionOutletContentRenderer
+Value: Sum: 6.79E-05 Count: 5 Min: 1E-07 Max: 3.37E-05 
+(-Infinity,1E-06]:2
+(1E-06,1E-05]:1
+(1E-05,0.0001]:2
+(0.0001,0.001]:0
+(0.001,0.005]:0
+(0.005,0.01]:0
+(0.01,0.025]:0
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+(2025-12-28T19:18:58.9163704Z, 2025-12-28T19:19:00.7218158Z] aspnetcore.components.type: Microsoft.AspNetCore.Components.Authorization.AuthorizeRouteView
+Value: Sum: 0.0002024 Count: 1 Min: 0.0002024 Max: 0.0002024 
+(-Infinity,1E-06]:0
+(1E-06,1E-05]:0
+(1E-05,0.0001]:0
+(0.0001,0.001]:1
+(0.001,0.005]:0
+(0.005,0.01]:0
+(0.01,0.025]:0
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+(2025-12-28T19:18:58.9163704Z, 2025-12-28T19:19:00.7218158Z] aspnetcore.components.type: Microsoft.AspNetCore.Components.Routing.FocusOnNavigate
+Value: Sum: 8.89E-05 Count: 1 Min: 8.89E-05 Max: 8.89E-05 
+(-Infinity,1E-06]:0
+(1E-06,1E-05]:0
+(1E-05,0.0001]:1
+(0.0001,0.001]:0
+(0.001,0.005]:0
+(0.005,0.01]:0
+(0.01,0.025]:0
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+(2025-12-28T19:18:58.9163704Z, 2025-12-28T19:19:00.7218158Z] aspnetcore.components.type: Microsoft.AspNetCore.Components.Authorization.AuthorizeRouteView+AuthorizeRouteViewCore
+Value: Sum: 0.0006138 Count: 1 Min: 0.0006138 Max: 0.0006138 
+(-Infinity,1E-06]:0
+(1E-06,1E-05]:0
+(1E-05,0.0001]:0
+(0.0001,0.001]:1
+(0.001,0.005]:0
+(0.005,0.01]:0
+(0.01,0.025]:0
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+(2025-12-28T19:18:58.9163704Z, 2025-12-28T19:19:00.7218158Z] aspnetcore.components.type: Microsoft.AspNetCore.Components.LayoutView
+Value: Sum: 6.27E-05 Count: 1 Min: 6.27E-05 Max: 6.27E-05 
+(-Infinity,1E-06]:0
+(1E-06,1E-05]:0
+(1E-05,0.0001]:1
+(0.0001,0.001]:0
+(0.001,0.005]:0
+(0.005,0.01]:0
+(0.01,0.025]:0
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+(2025-12-28T19:18:58.9163704Z, 2025-12-28T19:19:00.7218158Z] aspnetcore.components.type: MyBlog.Web.Components.Layout.MainLayout
+Value: Sum: 3.44E-05 Count: 1 Min: 3.44E-05 Max: 3.44E-05 
+(-Infinity,1E-06]:0
+(1E-06,1E-05]:0
+(1E-05,0.0001]:1
+(0.0001,0.001]:0
+(0.001,0.005]:0
+(0.005,0.01]:0
+(0.01,0.025]:0
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+(2025-12-28T19:18:58.9163704Z, 2025-12-28T19:19:00.7218158Z] aspnetcore.components.type: Microsoft.AspNetCore.Components.Authorization.AuthorizeView
+Value: Sum: 0.0015359 Count: 1 Min: 0.0015359 Max: 0.0015359 
+(-Infinity,1E-06]:0
+(1E-06,1E-05]:0
+(1E-05,0.0001]:0
+(0.0001,0.001]:0
+(0.001,0.005]:1
+(0.005,0.01]:0
+(0.01,0.025]:0
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+(2025-12-28T19:18:58.9163704Z, 2025-12-28T19:19:00.7218158Z] aspnetcore.components.type: MyBlog.Web.Components.Pages.Home
+Value: Sum: 0.0891944 Count: 1 Min: 0.0891944 Max: 0.0891944 
+(-Infinity,1E-06]:0
+(1E-06,1E-05]:0
+(1E-05,0.0001]:0
+(0.0001,0.001]:0
+(0.001,0.005]:0
+(0.005,0.01]:0
+(0.01,0.025]:0
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:1
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+(2025-12-28T19:18:58.9163704Z, 2025-12-28T19:19:00.7218158Z] aspnetcore.components.type: Microsoft.AspNetCore.Components.Forms.AntiforgeryToken
+Value: Sum: 1.86E-05 Count: 1 Min: 1.86E-05 Max: 1.86E-05 
+(-Infinity,1E-06]:0
+(1E-06,1E-05]:0
+(1E-05,0.0001]:1
+(0.0001,0.001]:0
+(0.001,0.005]:0
+(0.005,0.01]:0
+(0.01,0.025]:0
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+(2025-12-28T19:18:58.9163704Z, 2025-12-28T19:19:00.7218158Z] aspnetcore.components.type: Microsoft.AspNetCore.Components.Web.PageTitle
+Value: Sum: 6.64E-05 Count: 1 Min: 6.64E-05 Max: 6.64E-05 
+(-Infinity,1E-06]:0
+(1E-06,1E-05]:0
+(1E-05,0.0001]:1
+(0.0001,0.001]:0
+(0.001,0.005]:0
+(0.005,0.01]:0
+(0.01,0.025]:0
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+(2025-12-28T19:18:58.9163704Z, 2025-12-28T19:19:00.7218158Z] aspnetcore.components.type: Microsoft.AspNetCore.Components.Sections.SectionContent
+Value: Sum: 5.46E-05 Count: 1 Min: 5.46E-05 Max: 5.46E-05 
+(-Infinity,1E-06]:0
+(1E-06,1E-05]:0
+(1E-05,0.0001]:1
+(0.0001,0.001]:0
+(0.001,0.005]:0
+(0.005,0.01]:0
+(0.01,0.025]:0
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+(2025-12-28T19:18:58.9163704Z, 2025-12-28T19:19:00.7218158Z] aspnetcore.components.type: MyBlog.Web.Components.App
+Value: Sum: 0.1234683 Count: 1 Min: 0.1234683 Max: 0.1234683 
+(-Infinity,1E-06]:0
+(1E-06,1E-05]:0
+(1E-05,0.0001]:0
+(0.0001,0.001]:0
+(0.001,0.005]:0
+(0.005,0.01]:0
+(0.01,0.025]:0
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:1
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+
+Metric Name: aspnetcore.components.render_diff.duration, Description: Duration of rendering component tree and producing HTML diff. It includes business logic of the changed components., Unit: s, Metric Type: Histogram
+Instrumentation scope (Meter):
+	Name: Microsoft.AspNetCore.Components.Lifecycle
+(2025-12-28T19:18:58.9163861Z, 2025-12-28T19:19:00.7218178Z] error.type: System.Threading.Tasks.TaskCanceledException
+Value: Sum: 0.1217814 Count: 1 Min: 0.1217814 Max: 0.1217814 
+(-Infinity,1E-06]:0
+(1E-06,1E-05]:0
+(1E-05,0.0001]:0
+(0.0001,0.001]:0
+(0.001,0.005]:0
+(0.005,0.01]:0
+(0.01,0.025]:0
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:1
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+
+Metric Name: aspnetcore.components.render_diff.size, Description: Number of HTML elements modified during a rendering batch., Unit: {elements}, Metric Type: Histogram
+Instrumentation scope (Meter):
+	Name: Microsoft.AspNetCore.Components.Lifecycle
+(2025-12-28T19:18:58.9175238Z, 2025-12-28T19:19:00.7218192Z] error.type: System.Threading.Tasks.TaskCanceledException
+Value: Sum: 23 Count: 1 Min: 23 Max: 23 
+(-Infinity,0]:0
+(0,1]:0
+(1,2]:0
+(2,4]:0
+(4,6]:0
+(6,8]:0
+(8,10]:0
+(10,20]:0
+(20,30]:1
+(30,40]:0
+(40,50]:0
+(50,100]:0
+(100,+Infinity]:0
+
+
+Metric Name: aspnetcore.authorization.attempts, Description: The total number of authorization attempts., Unit: {attempt}, Metric Type: LongSum
+Instrumentation scope (Meter):
+	Name: Microsoft.AspNetCore.Authorization
+(2025-12-28T19:18:58.9572014Z, 2025-12-28T19:19:00.7218200Z] aspnetcore.authorization.result: success aspnetcore.user.is_authenticated: true
+Value: 1
+Activity.TraceId:            a9fcaf4e0ce60cd425b9f82771caa15a
+Activity.SpanId:             bac8601c77711f37
+Activity.TraceFlags:         Recorded
+Activity.DisplayName:        Route /admin -> MyBlog.Web.Components.Pages.Admin.Dashboard
+Activity.Kind:               Internal
+Activity.StartTime:          2025-12-28T19:19:01.0224084Z
+Activity.Duration:           00:00:00.0004163
+Activity.Tags:
+    aspnetcore.components.type: MyBlog.Web.Components.Pages.Admin.Dashboard
+    aspnetcore.components.route: /admin
+Activity.Links:
+    0de024f4945b516f64ba5ff7b6654b13 4a9d4f97de920b5c
+Instrumentation scope (ActivitySource):
+    Name: Microsoft.AspNetCore.Components
+Resource associated with Activity:
+    service.name: MyBlog.Web
+    service.namespace: 1.0.0
+    service.instance.id: a6937a58-6edf-4d06-bcef-b83910caf153
+    telemetry.sdk.name: opentelemetry
+    telemetry.sdk.language: dotnet
+    telemetry.sdk.version: 1.14.0
+
+Activity.TraceId:            0de024f4945b516f64ba5ff7b6654b13
+Activity.SpanId:             4a9d4f97de920b5c
+Activity.TraceFlags:         Recorded
+Activity.DisplayName:        GET /admin
+Activity.Kind:               Server
+Activity.StartTime:          2025-12-28T19:19:00.9988985Z
+Activity.Duration:           00:00:00.0483087
+Activity.Tags:
+    server.address: localhost
+    server.port: 5000
+    http.request.method: GET
+    url.scheme: http
+    url.path: /admin
+    network.protocol.version: 1.1
+    user_agent.original: Mozilla/5.0 (X11; Linux x86_64; rv:146.0) Gecko/20100101 Firefox/146.0
+    http.route: /admin
+    http.response.status_code: 200
+Instrumentation scope (ActivitySource):
+    Name: Microsoft.AspNetCore
+Resource associated with Activity:
+    service.name: MyBlog.Web
+    service.namespace: 1.0.0
+    service.instance.id: a6937a58-6edf-4d06-bcef-b83910caf153
+    telemetry.sdk.name: opentelemetry
+    telemetry.sdk.language: dotnet
+    telemetry.sdk.version: 1.14.0
+
+Activity.TraceId:            7d10b0c859953fd242ff9750fced3c9a
+Activity.SpanId:             f231fd5d11637eb0
+Activity.TraceFlags:         Recorded
+Activity.DisplayName:        GET
+Activity.Kind:               Server
+Activity.StartTime:          2025-12-28T19:19:01.0569879Z
+Activity.Duration:           00:00:00.0070429
+Activity.Tags:
+    server.address: localhost
+    server.port: 5000
+    http.request.method: GET
+    url.scheme: http
+    url.path: /_framework/blazor.web.js
+    network.protocol.version: 1.1
+    user_agent.original: Mozilla/5.0 (X11; Linux x86_64; rv:146.0) Gecko/20100101 Firefox/146.0
+    http.response.status_code: 404
+Instrumentation scope (ActivitySource):
+    Name: Microsoft.AspNetCore
+Resource associated with Activity:
+    service.name: MyBlog.Web
+    service.namespace: 1.0.0
+    service.instance.id: a6937a58-6edf-4d06-bcef-b83910caf153
+    telemetry.sdk.name: opentelemetry
+    telemetry.sdk.language: dotnet
+    telemetry.sdk.version: 1.14.0
+
+Activity.TraceId:            5d769b7942715fc32aa4b441f560b4e0
+Activity.SpanId:             3e8930d2d4a3de54
+Activity.TraceFlags:         Recorded
+Activity.DisplayName:        Route /admin/posts/new -> MyBlog.Web.Components.Pages.Admin.PostEditor
+Activity.Kind:               Internal
+Activity.StartTime:          2025-12-28T19:19:02.9600715Z
+Activity.Duration:           00:00:00.0009937
+Activity.Tags:
+    aspnetcore.components.type: MyBlog.Web.Components.Pages.Admin.PostEditor
+    aspnetcore.components.route: /admin/posts/new
+Activity.Links:
+    6a5059bff511d68aedfba5b3e15b5744 932a9a772b6609f3
+Instrumentation scope (ActivitySource):
+    Name: Microsoft.AspNetCore.Components
+Resource associated with Activity:
+    service.name: MyBlog.Web
+    service.namespace: 1.0.0
+    service.instance.id: a6937a58-6edf-4d06-bcef-b83910caf153
+    telemetry.sdk.name: opentelemetry
+    telemetry.sdk.language: dotnet
+    telemetry.sdk.version: 1.14.0
+
+Activity.TraceId:            6a5059bff511d68aedfba5b3e15b5744
+Activity.SpanId:             932a9a772b6609f3
+Activity.TraceFlags:         Recorded
+Activity.DisplayName:        GET /admin/posts/new
+Activity.Kind:               Server
+Activity.StartTime:          2025-12-28T19:19:02.9519558Z
+Activity.Duration:           00:00:00.0209246
+Activity.Tags:
+    server.address: localhost
+    server.port: 5000
+    http.request.method: GET
+    url.scheme: http
+    url.path: /admin/posts/new
+    network.protocol.version: 1.1
+    user_agent.original: Mozilla/5.0 (X11; Linux x86_64; rv:146.0) Gecko/20100101 Firefox/146.0
+    http.route: /admin/posts/new
+    http.response.status_code: 200
+Instrumentation scope (ActivitySource):
+    Name: Microsoft.AspNetCore
+Resource associated with Activity:
+    service.name: MyBlog.Web
+    service.namespace: 1.0.0
+    service.instance.id: a6937a58-6edf-4d06-bcef-b83910caf153
+    telemetry.sdk.name: opentelemetry
+    telemetry.sdk.language: dotnet
+    telemetry.sdk.version: 1.14.0
+
+Activity.TraceId:            13d978cf0bb139b5132b51d12a98536d
+Activity.SpanId:             7fb940f0ca62bf5e
+Activity.TraceFlags:         Recorded
+Activity.DisplayName:        GET
+Activity.Kind:               Server
+Activity.StartTime:          2025-12-28T19:19:02.9815243Z
+Activity.Duration:           00:00:00.0004999
+Activity.Tags:
+    server.address: localhost
+    server.port: 5000
+    http.request.method: GET
+    url.scheme: http
+    url.path: /_framework/blazor.web.js
+    network.protocol.version: 1.1
+    user_agent.original: Mozilla/5.0 (X11; Linux x86_64; rv:146.0) Gecko/20100101 Firefox/146.0
+    http.response.status_code: 404
+Instrumentation scope (ActivitySource):
+    Name: Microsoft.AspNetCore
+Resource associated with Activity:
+    service.name: MyBlog.Web
+    service.namespace: 1.0.0
+    service.instance.id: a6937a58-6edf-4d06-bcef-b83910caf153
+    telemetry.sdk.name: opentelemetry
+    telemetry.sdk.language: dotnet
+    telemetry.sdk.version: 1.14.0
+
+Resource associated with Metrics:
+	service.name: MyBlog.Web
+	service.namespace: 1.0.0
+	service.instance.id: a6937a58-6edf-4d06-bcef-b83910caf153
+	telemetry.sdk.name: opentelemetry
+	telemetry.sdk.language: dotnet
+	telemetry.sdk.version: 1.14.0
+
+Metric Name: aspnetcore.memory_pool.pooled, Description: Number of bytes currently pooled and available for reuse., Unit: By, Metric Type: LongSumNonMonotonic
+Instrumentation scope (Meter):
+	Name: Microsoft.AspNetCore.MemoryPool
+(2025-12-28T19:18:50.7327588Z, 2025-12-28T19:19:10.7200555Z] aspnetcore.memory_pool.owner: kestrel
+Value: 4096
+
+Metric Name: aspnetcore.memory_pool.allocated, Description: Total number of bytes allocated by the memory pool. Allocation occurs when a memory rental request exceeds the available pooled memory., Unit: By, Metric Type: LongSum
+Instrumentation scope (Meter):
+	Name: Microsoft.AspNetCore.MemoryPool
+(2025-12-28T19:18:50.7336521Z, 2025-12-28T19:19:10.7200582Z] aspnetcore.memory_pool.owner: kestrel
+Value: 4096
+
+Metric Name: aspnetcore.memory_pool.rented, Description: Total number of bytes rented from the memory pool., Unit: By, Metric Type: LongSum
+Instrumentation scope (Meter):
+	Name: Microsoft.AspNetCore.MemoryPool
+(2025-12-28T19:18:50.7336720Z, 2025-12-28T19:19:10.7200606Z] aspnetcore.memory_pool.owner: kestrel
+Value: 57344
+
+Metric Name: kestrel.active_connections, Description: Number of connections that are currently active on the server., Unit: {connection}, Metric Type: LongSumNonMonotonic
+Instrumentation scope (Meter):
+	Name: Microsoft.AspNetCore.Server.Kestrel
+(2025-12-28T19:18:50.7336815Z, 2025-12-28T19:19:10.7200615Z] network.transport: tcp network.type: ipv4 server.address: 127.0.0.1 server.port: 5000
+Value: 1
+
+Metric Name: kestrel.queued_connections, Description: Number of connections that are currently queued and are waiting to start., Unit: {connection}, Metric Type: LongSumNonMonotonic
+Instrumentation scope (Meter):
+	Name: Microsoft.AspNetCore.Server.Kestrel
+(2025-12-28T19:18:50.7341167Z, 2025-12-28T19:19:10.7200823Z] network.transport: tcp network.type: ipv4 server.address: 127.0.0.1 server.port: 5000
+Value: 0
+
+Metric Name: http.server.active_requests, Description: Number of active HTTP server requests., Unit: {request}, Metric Type: LongSumNonMonotonic
+Instrumentation scope (Meter):
+	Name: Microsoft.AspNetCore.Hosting
+(2025-12-28T19:18:50.7348034Z, 2025-12-28T19:19:10.7200889Z] http.request.method: GET url.scheme: http
+Value: 0
+
+Metric Name: http.server.request.duration, Description: Duration of HTTP server requests., Unit: s, Metric Type: Histogram
+Instrumentation scope (Meter):
+	Name: Microsoft.AspNetCore.Hosting
+(2025-12-28T19:18:50.7348123Z, 2025-12-28T19:19:10.7200983Z] http.request.method: GET http.response.status_code: 200 http.route: / network.protocol.version: 1.1 url.scheme: http
+Value: Sum: 0.2105816 Count: 1 Min: 0.2105816 Max: 0.2105816 
+(-Infinity,0.005]:0
+(0.005,0.01]:0
+(0.01,0.025]:0
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:1
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+(2025-12-28T19:18:50.7348123Z, 2025-12-28T19:19:10.7200983Z] aspnetcore.request.is_unhandled: true http.request.method: GET http.response.status_code: 404 network.protocol.version: 1.1 url.scheme: http
+Value: Sum: 0.012699900000000002 Count: 4 Min: 0.0005277 Max: 0.0070735 
+(-Infinity,0.005]:3
+(0.005,0.01]:1
+(0.01,0.025]:0
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+(2025-12-28T19:18:50.7348123Z, 2025-12-28T19:19:10.7200983Z] http.request.method: GET http.response.status_code: 200 http.route: /admin network.protocol.version: 1.1 url.scheme: http
+Value: Sum: 0.0483198 Count: 1 Min: 0.0483198 Max: 0.0483198 
+(-Infinity,0.005]:0
+(0.005,0.01]:0
+(0.01,0.025]:0
+(0.025,0.05]:1
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+(2025-12-28T19:18:50.7348123Z, 2025-12-28T19:19:10.7200983Z] http.request.method: GET http.response.status_code: 200 http.route: /admin/posts/new network.protocol.version: 1.1 url.scheme: http
+Value: Sum: 0.0209227 Count: 1 Min: 0.0209227 Max: 0.0209227 
+(-Infinity,0.005]:0
+(0.005,0.01]:0
+(0.01,0.025]:1
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+
+Metric Name: aspnetcore.routing.match_attempts, Description: Number of requests that were attempted to be matched to an endpoint., Unit: {match_attempt}, Metric Type: LongSum
+Instrumentation scope (Meter):
+	Name: Microsoft.AspNetCore.Routing
+(2025-12-28T19:18:50.8209931Z, 2025-12-28T19:19:10.7201006Z] aspnetcore.routing.is_fallback: false aspnetcore.routing.match_status: success http.route: /
+Value: 1
+(2025-12-28T19:18:50.8209931Z, 2025-12-28T19:19:10.7201006Z] aspnetcore.routing.match_status: failure
+Value: 4
+(2025-12-28T19:18:50.8209931Z, 2025-12-28T19:19:10.7201006Z] aspnetcore.routing.is_fallback: false aspnetcore.routing.match_status: success http.route: /admin
+Value: 1
+(2025-12-28T19:18:50.8209931Z, 2025-12-28T19:19:10.7201006Z] aspnetcore.routing.is_fallback: false aspnetcore.routing.match_status: success http.route: /admin/posts/new
+Value: 1
+
+Metric Name: aspnetcore.authentication.authenticate.duration, Description: The authentication duration for a request., Unit: s, Metric Type: Histogram
+Instrumentation scope (Meter):
+	Name: Microsoft.AspNetCore.Authentication
+(2025-12-28T19:18:58.8975151Z, 2025-12-28T19:19:10.7201031Z] aspnetcore.authentication.result: success aspnetcore.authentication.scheme: Cookies
+Value: Sum: 0.0091553 Count: 7 Min: 0.0002194 Max: 0.006714 
+(-Infinity,0.005]:6
+(0.005,0.01]:1
+(0.01,0.025]:0
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+
+Metric Name: aspnetcore.components.navigate, Description: Total number of route changes., Unit: {route}, Metric Type: LongSum
+Instrumentation scope (Meter):
+	Name: Microsoft.AspNetCore.Components
+(2025-12-28T19:18:58.9161011Z, 2025-12-28T19:19:10.7201068Z] aspnetcore.components.route: / aspnetcore.components.type: MyBlog.Web.Components.Pages.Home
+Value: 1
+(2025-12-28T19:18:58.9161011Z, 2025-12-28T19:19:10.7201068Z] aspnetcore.components.route: /admin aspnetcore.components.type: MyBlog.Web.Components.Pages.Admin.Dashboard
+Value: 1
+(2025-12-28T19:18:58.9161011Z, 2025-12-28T19:19:10.7201068Z] aspnetcore.components.route: /admin/posts/new aspnetcore.components.type: MyBlog.Web.Components.Pages.Admin.PostEditor
+Value: 1
+
+Metric Name: aspnetcore.components.update_parameters.duration, Description: Duration of processing component parameters. It includes business logic of the component., Unit: s, Metric Type: Histogram
+Instrumentation scope (Meter):
+	Name: Microsoft.AspNetCore.Components.Lifecycle
+(2025-12-28T19:18:58.9163704Z, 2025-12-28T19:19:10.7201294Z] aspnetcore.components.type: Microsoft.AspNetCore.Components.Web.HeadOutlet
+Value: Sum: 0.0002029 Count: 3 Min: 4.5E-06 Max: 0.0001859 
+(-Infinity,1E-06]:0
+(1E-06,1E-05]:1
+(1E-05,0.0001]:1
+(0.0001,0.001]:1
+(0.001,0.005]:0
+(0.005,0.01]:0
+(0.01,0.025]:0
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+(2025-12-28T19:18:58.9163704Z, 2025-12-28T19:19:10.7201294Z] aspnetcore.components.type: MyBlog.Web.Components.Routes
+Value: Sum: 2.0700000000000002E-05 Count: 3 Min: 1.6E-06 Max: 1.74E-05 
+(-Infinity,1E-06]:0
+(1E-06,1E-05]:2
+(1E-05,0.0001]:1
+(0.0001,0.001]:0
+(0.001,0.005]:0
+(0.005,0.01]:0
+(0.01,0.025]:0
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+(2025-12-28T19:18:58.9163704Z, 2025-12-28T19:19:10.7201294Z] aspnetcore.components.type: Microsoft.AspNetCore.Components.Sections.SectionOutlet
+Value: Sum: 9.34E-05 Count: 6 Min: 1.1E-06 Max: 6.11E-05 
+(-Infinity,1E-06]:0
+(1E-06,1E-05]:4
+(1E-05,0.0001]:2
+(0.0001,0.001]:0
+(0.001,0.005]:0
+(0.005,0.01]:0
+(0.01,0.025]:0
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+(2025-12-28T19:18:58.9163704Z, 2025-12-28T19:19:10.7201294Z] aspnetcore.components.type: Microsoft.AspNetCore.Components.Routing.Router
+Value: Sum: 0.0083027 Count: 3 Min: 0.0006175 Max: 0.0064451 
+(-Infinity,1E-06]:0
+(1E-06,1E-05]:0
+(1E-05,0.0001]:0
+(0.0001,0.001]:1
+(0.001,0.005]:1
+(0.005,0.01]:1
+(0.01,0.025]:0
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+(2025-12-28T19:18:58.9163704Z, 2025-12-28T19:19:10.7201294Z] aspnetcore.components.type: Microsoft.AspNetCore.Components.Sections.SectionOutlet+SectionOutletContentRenderer
+Value: Sum: 8.520000000000001E-05 Count: 15 Min: 1E-07 Max: 3.37E-05 
+(-Infinity,1E-06]:6
+(1E-06,1E-05]:7
+(1E-05,0.0001]:2
+(0.0001,0.001]:0
+(0.001,0.005]:0
+(0.005,0.01]:0
+(0.01,0.025]:0
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+(2025-12-28T19:18:58.9163704Z, 2025-12-28T19:19:10.7201294Z] aspnetcore.components.type: Microsoft.AspNetCore.Components.Authorization.AuthorizeRouteView
+Value: Sum: 0.00022629999999999997 Count: 3 Min: 1.06E-05 Max: 0.0002024 
+(-Infinity,1E-06]:0
+(1E-06,1E-05]:0
+(1E-05,0.0001]:2
+(0.0001,0.001]:1
+(0.001,0.005]:0
+(0.005,0.01]:0
+(0.01,0.025]:0
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+(2025-12-28T19:18:58.9163704Z, 2025-12-28T19:19:10.7201294Z] aspnetcore.components.type: Microsoft.AspNetCore.Components.Routing.FocusOnNavigate
+Value: Sum: 0.00010560000000000002 Count: 3 Min: 5.8E-06 Max: 8.89E-05 
+(-Infinity,1E-06]:0
+(1E-06,1E-05]:1
+(1E-05,0.0001]:2
+(0.0001,0.001]:0
+(0.001,0.005]:0
+(0.005,0.01]:0
+(0.01,0.025]:0
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+(2025-12-28T19:18:58.9163704Z, 2025-12-28T19:19:10.7201294Z] aspnetcore.components.type: Microsoft.AspNetCore.Components.Authorization.AuthorizeRouteView+AuthorizeRouteViewCore
+Value: Sum: 0.0009408 Count: 3 Min: 0.0001538 Max: 0.0006138 
+(-Infinity,1E-06]:0
+(1E-06,1E-05]:0
+(1E-05,0.0001]:0
+(0.0001,0.001]:3
+(0.001,0.005]:0
+(0.005,0.01]:0
+(0.01,0.025]:0
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+(2025-12-28T19:18:58.9163704Z, 2025-12-28T19:19:10.7201294Z] aspnetcore.components.type: Microsoft.AspNetCore.Components.LayoutView
+Value: Sum: 8.010000000000001E-05 Count: 3 Min: 5.8E-06 Max: 6.27E-05 
+(-Infinity,1E-06]:0
+(1E-06,1E-05]:1
+(1E-05,0.0001]:2
+(0.0001,0.001]:0
+(0.001,0.005]:0
+(0.005,0.01]:0
+(0.01,0.025]:0
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+(2025-12-28T19:18:58.9163704Z, 2025-12-28T19:19:10.7201294Z] aspnetcore.components.type: MyBlog.Web.Components.Layout.MainLayout
+Value: Sum: 4.1400000000000003E-05 Count: 3 Min: 3E-06 Max: 3.44E-05 
+(-Infinity,1E-06]:0
+(1E-06,1E-05]:2
+(1E-05,0.0001]:1
+(0.0001,0.001]:0
+(0.001,0.005]:0
+(0.005,0.01]:0
+(0.01,0.025]:0
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+(2025-12-28T19:18:58.9163704Z, 2025-12-28T19:19:10.7201294Z] aspnetcore.components.type: Microsoft.AspNetCore.Components.Authorization.AuthorizeView
+Value: Sum: 0.0016013000000000002 Count: 3 Min: 2.85E-05 Max: 0.0015359 
+(-Infinity,1E-06]:0
+(1E-06,1E-05]:0
+(1E-05,0.0001]:2
+(0.0001,0.001]:0
+(0.001,0.005]:1
+(0.005,0.01]:0
+(0.01,0.025]:0
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+(2025-12-28T19:18:58.9163704Z, 2025-12-28T19:19:10.7201294Z] aspnetcore.components.type: MyBlog.Web.Components.Pages.Home
+Value: Sum: 0.0891944 Count: 1 Min: 0.0891944 Max: 0.0891944 
+(-Infinity,1E-06]:0
+(1E-06,1E-05]:0
+(1E-05,0.0001]:0
+(0.0001,0.001]:0
+(0.001,0.005]:0
+(0.005,0.01]:0
+(0.01,0.025]:0
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:1
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+(2025-12-28T19:18:58.9163704Z, 2025-12-28T19:19:10.7201294Z] aspnetcore.components.type: Microsoft.AspNetCore.Components.Forms.AntiforgeryToken
+Value: Sum: 3.0900000000000006E-05 Count: 3 Min: 2.6E-06 Max: 1.86E-05 
+(-Infinity,1E-06]:0
+(1E-06,1E-05]:2
+(1E-05,0.0001]:1
+(0.0001,0.001]:0
+(0.001,0.005]:0
+(0.005,0.01]:0
+(0.01,0.025]:0
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+(2025-12-28T19:18:58.9163704Z, 2025-12-28T19:19:10.7201294Z] aspnetcore.components.type: Microsoft.AspNetCore.Components.Web.PageTitle
+Value: Sum: 8.27E-05 Count: 3 Min: 8E-06 Max: 6.64E-05 
+(-Infinity,1E-06]:0
+(1E-06,1E-05]:2
+(1E-05,0.0001]:1
+(0.0001,0.001]:0
+(0.001,0.005]:0
+(0.005,0.01]:0
+(0.01,0.025]:0
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+(2025-12-28T19:18:58.9163704Z, 2025-12-28T19:19:10.7201294Z] aspnetcore.components.type: Microsoft.AspNetCore.Components.Sections.SectionContent
+Value: Sum: 8.450000000000001E-05 Count: 3 Min: 1.02E-05 Max: 5.46E-05 
+(-Infinity,1E-06]:0
+(1E-06,1E-05]:0
+(1E-05,0.0001]:3
+(0.0001,0.001]:0
+(0.001,0.005]:0
+(0.005,0.01]:0
+(0.01,0.025]:0
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+(2025-12-28T19:18:58.9163704Z, 2025-12-28T19:19:10.7201294Z] aspnetcore.components.type: MyBlog.Web.Components.App
+Value: Sum: 0.1734116 Count: 3 Min: 0.0133019 Max: 0.1234683 
+(-Infinity,1E-06]:0
+(1E-06,1E-05]:0
+(1E-05,0.0001]:0
+(0.0001,0.001]:0
+(0.001,0.005]:0
+(0.005,0.01]:0
+(0.01,0.025]:1
+(0.025,0.05]:1
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:1
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+(2025-12-28T19:18:58.9163704Z, 2025-12-28T19:19:10.7201294Z] aspnetcore.components.type: MyBlog.Web.Components.Pages.Admin.Dashboard
+Value: Sum: 0.0108354 Count: 1 Min: 0.0108354 Max: 0.0108354 
+(-Infinity,1E-06]:0
+(1E-06,1E-05]:0
+(1E-05,0.0001]:0
+(0.0001,0.001]:0
+(0.001,0.005]:0
+(0.005,0.01]:0
+(0.01,0.025]:1
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+(2025-12-28T19:18:58.9163704Z, 2025-12-28T19:19:10.7201294Z] aspnetcore.components.type: MyBlog.Web.Components.Pages.Admin.PostEditor
+Value: Sum: 0.0009647 Count: 1 Min: 0.0009647 Max: 0.0009647 
+(-Infinity,1E-06]:0
+(1E-06,1E-05]:0
+(1E-05,0.0001]:0
+(0.0001,0.001]:1
+(0.001,0.005]:0
+(0.005,0.01]:0
+(0.01,0.025]:0
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+(2025-12-28T19:18:58.9163704Z, 2025-12-28T19:19:10.7201294Z] aspnetcore.components.type: MyBlog.Web.Components.Shared.MarkdownRenderer
+Value: Sum: 8.67E-05 Count: 1 Min: 8.67E-05 Max: 8.67E-05 
+(-Infinity,1E-06]:0
+(1E-06,1E-05]:0
+(1E-05,0.0001]:1
+(0.0001,0.001]:0
+(0.001,0.005]:0
+(0.005,0.01]:0
+(0.01,0.025]:0
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+
+Metric Name: aspnetcore.components.render_diff.duration, Description: Duration of rendering component tree and producing HTML diff. It includes business logic of the changed components., Unit: s, Metric Type: Histogram
+Instrumentation scope (Meter):
+	Name: Microsoft.AspNetCore.Components.Lifecycle
+(2025-12-28T19:18:58.9163861Z, 2025-12-28T19:19:10.7201306Z] error.type: System.Threading.Tasks.TaskCanceledException
+Value: Sum: 0.171622 Count: 3 Min: 0.0132565 Max: 0.1217814 
+(-Infinity,1E-06]:0
+(1E-06,1E-05]:0
+(1E-05,0.0001]:0
+(0.0001,0.001]:0
+(0.001,0.005]:0
+(0.005,0.01]:0
+(0.01,0.025]:1
+(0.025,0.05]:1
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:1
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+
+Metric Name: aspnetcore.components.render_diff.size, Description: Number of HTML elements modified during a rendering batch., Unit: {elements}, Metric Type: Histogram
+Instrumentation scope (Meter):
+	Name: Microsoft.AspNetCore.Components.Lifecycle
+(2025-12-28T19:18:58.9175238Z, 2025-12-28T19:19:10.7201319Z] error.type: System.Threading.Tasks.TaskCanceledException
+Value: Sum: 70 Count: 3 Min: 23 Max: 24 
+(-Infinity,0]:0
+(0,1]:0
+(1,2]:0
+(2,4]:0
+(4,6]:0
+(6,8]:0
+(8,10]:0
+(10,20]:0
+(20,30]:3
+(30,40]:0
+(40,50]:0
+(50,100]:0
+(100,+Infinity]:0
+
+
+Metric Name: aspnetcore.authorization.attempts, Description: The total number of authorization attempts., Unit: {attempt}, Metric Type: LongSum
+Instrumentation scope (Meter):
+	Name: Microsoft.AspNetCore.Authorization
+(2025-12-28T19:18:58.9572014Z, 2025-12-28T19:19:10.7201329Z] aspnetcore.authorization.result: success aspnetcore.user.is_authenticated: true
+Value: 7
+Resource associated with Metrics:
+	service.name: MyBlog.Web
+	service.namespace: 1.0.0
+	service.instance.id: a6937a58-6edf-4d06-bcef-b83910caf153
+	telemetry.sdk.name: opentelemetry
+	telemetry.sdk.language: dotnet
+	telemetry.sdk.version: 1.14.0
+
+Metric Name: aspnetcore.memory_pool.pooled, Description: Number of bytes currently pooled and available for reuse., Unit: By, Metric Type: LongSumNonMonotonic
+Instrumentation scope (Meter):
+	Name: Microsoft.AspNetCore.MemoryPool
+(2025-12-28T19:18:50.7327588Z, 2025-12-28T19:19:20.7204498Z] aspnetcore.memory_pool.owner: kestrel
+Value: 0
+
+Metric Name: aspnetcore.memory_pool.allocated, Description: Total number of bytes allocated by the memory pool. Allocation occurs when a memory rental request exceeds the available pooled memory., Unit: By, Metric Type: LongSum
+Instrumentation scope (Meter):
+	Name: Microsoft.AspNetCore.MemoryPool
+(2025-12-28T19:18:50.7336521Z, 2025-12-28T19:19:20.7204523Z] aspnetcore.memory_pool.owner: kestrel
+Value: 4096
+
+Metric Name: aspnetcore.memory_pool.evicted, Description: Total number of bytes evicted from the memory pool. Eviction occurs when idle pooled memory is reclaimed. Evicted memory is available for garbage collection., Unit: By, Metric Type: LongSum
+Instrumentation scope (Meter):
+	Name: Microsoft.AspNetCore.MemoryPool
+(2025-12-28T19:18:50.7336646Z, 2025-12-28T19:19:20.7204530Z] aspnetcore.memory_pool.owner: kestrel
+Value: 4096
+
+Metric Name: aspnetcore.memory_pool.rented, Description: Total number of bytes rented from the memory pool., Unit: By, Metric Type: LongSum
+Instrumentation scope (Meter):
+	Name: Microsoft.AspNetCore.MemoryPool
+(2025-12-28T19:18:50.7336720Z, 2025-12-28T19:19:20.7204536Z] aspnetcore.memory_pool.owner: kestrel
+Value: 57344
+
+Metric Name: kestrel.active_connections, Description: Number of connections that are currently active on the server., Unit: {connection}, Metric Type: LongSumNonMonotonic
+Instrumentation scope (Meter):
+	Name: Microsoft.AspNetCore.Server.Kestrel
+(2025-12-28T19:18:50.7336815Z, 2025-12-28T19:19:20.7204540Z] network.transport: tcp network.type: ipv4 server.address: 127.0.0.1 server.port: 5000
+Value: 1
+
+Metric Name: kestrel.queued_connections, Description: Number of connections that are currently queued and are waiting to start., Unit: {connection}, Metric Type: LongSumNonMonotonic
+Instrumentation scope (Meter):
+	Name: Microsoft.AspNetCore.Server.Kestrel
+(2025-12-28T19:18:50.7341167Z, 2025-12-28T19:19:20.7204549Z] network.transport: tcp network.type: ipv4 server.address: 127.0.0.1 server.port: 5000
+Value: 0
+
+Metric Name: http.server.active_requests, Description: Number of active HTTP server requests., Unit: {request}, Metric Type: LongSumNonMonotonic
+Instrumentation scope (Meter):
+	Name: Microsoft.AspNetCore.Hosting
+(2025-12-28T19:18:50.7348034Z, 2025-12-28T19:19:20.7204585Z] http.request.method: GET url.scheme: http
+Value: 0
+
+Metric Name: http.server.request.duration, Description: Duration of HTTP server requests., Unit: s, Metric Type: Histogram
+Instrumentation scope (Meter):
+	Name: Microsoft.AspNetCore.Hosting
+(2025-12-28T19:18:50.7348123Z, 2025-12-28T19:19:20.7204623Z] http.request.method: GET http.response.status_code: 200 http.route: / network.protocol.version: 1.1 url.scheme: http
+Value: Sum: 0.2105816 Count: 1 Min: 0.2105816 Max: 0.2105816 
+(-Infinity,0.005]:0
+(0.005,0.01]:0
+(0.01,0.025]:0
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:1
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+(2025-12-28T19:18:50.7348123Z, 2025-12-28T19:19:20.7204623Z] aspnetcore.request.is_unhandled: true http.request.method: GET http.response.status_code: 404 network.protocol.version: 1.1 url.scheme: http
+Value: Sum: 0.012699900000000002 Count: 4 Min: 0.0005277 Max: 0.0070735 
+(-Infinity,0.005]:3
+(0.005,0.01]:1
+(0.01,0.025]:0
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+(2025-12-28T19:18:50.7348123Z, 2025-12-28T19:19:20.7204623Z] http.request.method: GET http.response.status_code: 200 http.route: /admin network.protocol.version: 1.1 url.scheme: http
+Value: Sum: 0.0483198 Count: 1 Min: 0.0483198 Max: 0.0483198 
+(-Infinity,0.005]:0
+(0.005,0.01]:0
+(0.01,0.025]:0
+(0.025,0.05]:1
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+(2025-12-28T19:18:50.7348123Z, 2025-12-28T19:19:20.7204623Z] http.request.method: GET http.response.status_code: 200 http.route: /admin/posts/new network.protocol.version: 1.1 url.scheme: http
+Value: Sum: 0.0209227 Count: 1 Min: 0.0209227 Max: 0.0209227 
+(-Infinity,0.005]:0
+(0.005,0.01]:0
+(0.01,0.025]:1
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+
+Metric Name: aspnetcore.routing.match_attempts, Description: Number of requests that were attempted to be matched to an endpoint., Unit: {match_attempt}, Metric Type: LongSum
+Instrumentation scope (Meter):
+	Name: Microsoft.AspNetCore.Routing
+(2025-12-28T19:18:50.8209931Z, 2025-12-28T19:19:20.7204637Z] aspnetcore.routing.is_fallback: false aspnetcore.routing.match_status: success http.route: /
+Value: 1
+(2025-12-28T19:18:50.8209931Z, 2025-12-28T19:19:20.7204637Z] aspnetcore.routing.match_status: failure
+Value: 4
+(2025-12-28T19:18:50.8209931Z, 2025-12-28T19:19:20.7204637Z] aspnetcore.routing.is_fallback: false aspnetcore.routing.match_status: success http.route: /admin
+Value: 1
+(2025-12-28T19:18:50.8209931Z, 2025-12-28T19:19:20.7204637Z] aspnetcore.routing.is_fallback: false aspnetcore.routing.match_status: success http.route: /admin/posts/new
+Value: 1
+
+Metric Name: aspnetcore.authentication.authenticate.duration, Description: The authentication duration for a request., Unit: s, Metric Type: Histogram
+Instrumentation scope (Meter):
+	Name: Microsoft.AspNetCore.Authentication
+(2025-12-28T19:18:58.8975151Z, 2025-12-28T19:19:20.7204652Z] aspnetcore.authentication.result: success aspnetcore.authentication.scheme: Cookies
+Value: Sum: 0.0091553 Count: 7 Min: 0.0002194 Max: 0.006714 
+(-Infinity,0.005]:6
+(0.005,0.01]:1
+(0.01,0.025]:0
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+
+Metric Name: aspnetcore.components.navigate, Description: Total number of route changes., Unit: {route}, Metric Type: LongSum
+Instrumentation scope (Meter):
+	Name: Microsoft.AspNetCore.Components
+(2025-12-28T19:18:58.9161011Z, 2025-12-28T19:19:20.7204671Z] aspnetcore.components.route: / aspnetcore.components.type: MyBlog.Web.Components.Pages.Home
+Value: 1
+(2025-12-28T19:18:58.9161011Z, 2025-12-28T19:19:20.7204671Z] aspnetcore.components.route: /admin aspnetcore.components.type: MyBlog.Web.Components.Pages.Admin.Dashboard
+Value: 1
+(2025-12-28T19:18:58.9161011Z, 2025-12-28T19:19:20.7204671Z] aspnetcore.components.route: /admin/posts/new aspnetcore.components.type: MyBlog.Web.Components.Pages.Admin.PostEditor
+Value: 1
+
+Metric Name: aspnetcore.components.update_parameters.duration, Description: Duration of processing component parameters. It includes business logic of the component., Unit: s, Metric Type: Histogram
+Instrumentation scope (Meter):
+	Name: Microsoft.AspNetCore.Components.Lifecycle
+(2025-12-28T19:18:58.9163704Z, 2025-12-28T19:19:20.7204771Z] aspnetcore.components.type: Microsoft.AspNetCore.Components.Web.HeadOutlet
+Value: Sum: 0.0002029 Count: 3 Min: 4.5E-06 Max: 0.0001859 
+(-Infinity,1E-06]:0
+(1E-06,1E-05]:1
+(1E-05,0.0001]:1
+(0.0001,0.001]:1
+(0.001,0.005]:0
+(0.005,0.01]:0
+(0.01,0.025]:0
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+(2025-12-28T19:18:58.9163704Z, 2025-12-28T19:19:20.7204771Z] aspnetcore.components.type: MyBlog.Web.Components.Routes
+Value: Sum: 2.0700000000000002E-05 Count: 3 Min: 1.6E-06 Max: 1.74E-05 
+(-Infinity,1E-06]:0
+(1E-06,1E-05]:2
+(1E-05,0.0001]:1
+(0.0001,0.001]:0
+(0.001,0.005]:0
+(0.005,0.01]:0
+(0.01,0.025]:0
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+(2025-12-28T19:18:58.9163704Z, 2025-12-28T19:19:20.7204771Z] aspnetcore.components.type: Microsoft.AspNetCore.Components.Sections.SectionOutlet
+Value: Sum: 9.34E-05 Count: 6 Min: 1.1E-06 Max: 6.11E-05 
+(-Infinity,1E-06]:0
+(1E-06,1E-05]:4
+(1E-05,0.0001]:2
+(0.0001,0.001]:0
+(0.001,0.005]:0
+(0.005,0.01]:0
+(0.01,0.025]:0
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+(2025-12-28T19:18:58.9163704Z, 2025-12-28T19:19:20.7204771Z] aspnetcore.components.type: Microsoft.AspNetCore.Components.Routing.Router
+Value: Sum: 0.0083027 Count: 3 Min: 0.0006175 Max: 0.0064451 
+(-Infinity,1E-06]:0
+(1E-06,1E-05]:0
+(1E-05,0.0001]:0
+(0.0001,0.001]:1
+(0.001,0.005]:1
+(0.005,0.01]:1
+(0.01,0.025]:0
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+(2025-12-28T19:18:58.9163704Z, 2025-12-28T19:19:20.7204771Z] aspnetcore.components.type: Microsoft.AspNetCore.Components.Sections.SectionOutlet+SectionOutletContentRenderer
+Value: Sum: 8.520000000000001E-05 Count: 15 Min: 1E-07 Max: 3.37E-05 
+(-Infinity,1E-06]:6
+(1E-06,1E-05]:7
+(1E-05,0.0001]:2
+(0.0001,0.001]:0
+(0.001,0.005]:0
+(0.005,0.01]:0
+(0.01,0.025]:0
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+(2025-12-28T19:18:58.9163704Z, 2025-12-28T19:19:20.7204771Z] aspnetcore.components.type: Microsoft.AspNetCore.Components.Authorization.AuthorizeRouteView
+Value: Sum: 0.00022629999999999997 Count: 3 Min: 1.06E-05 Max: 0.0002024 
+(-Infinity,1E-06]:0
+(1E-06,1E-05]:0
+(1E-05,0.0001]:2
+(0.0001,0.001]:1
+(0.001,0.005]:0
+(0.005,0.01]:0
+(0.01,0.025]:0
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+(2025-12-28T19:18:58.9163704Z, 2025-12-28T19:19:20.7204771Z] aspnetcore.components.type: Microsoft.AspNetCore.Components.Routing.FocusOnNavigate
+Value: Sum: 0.00010560000000000002 Count: 3 Min: 5.8E-06 Max: 8.89E-05 
+(-Infinity,1E-06]:0
+(1E-06,1E-05]:1
+(1E-05,0.0001]:2
+(0.0001,0.001]:0
+(0.001,0.005]:0
+(0.005,0.01]:0
+(0.01,0.025]:0
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+(2025-12-28T19:18:58.9163704Z, 2025-12-28T19:19:20.7204771Z] aspnetcore.components.type: Microsoft.AspNetCore.Components.Authorization.AuthorizeRouteView+AuthorizeRouteViewCore
+Value: Sum: 0.0009408 Count: 3 Min: 0.0001538 Max: 0.0006138 
+(-Infinity,1E-06]:0
+(1E-06,1E-05]:0
+(1E-05,0.0001]:0
+(0.0001,0.001]:3
+(0.001,0.005]:0
+(0.005,0.01]:0
+(0.01,0.025]:0
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+(2025-12-28T19:18:58.9163704Z, 2025-12-28T19:19:20.7204771Z] aspnetcore.components.type: Microsoft.AspNetCore.Components.LayoutView
+Value: Sum: 8.010000000000001E-05 Count: 3 Min: 5.8E-06 Max: 6.27E-05 
+(-Infinity,1E-06]:0
+(1E-06,1E-05]:1
+(1E-05,0.0001]:2
+(0.0001,0.001]:0
+(0.001,0.005]:0
+(0.005,0.01]:0
+(0.01,0.025]:0
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+(2025-12-28T19:18:58.9163704Z, 2025-12-28T19:19:20.7204771Z] aspnetcore.components.type: MyBlog.Web.Components.Layout.MainLayout
+Value: Sum: 4.1400000000000003E-05 Count: 3 Min: 3E-06 Max: 3.44E-05 
+(-Infinity,1E-06]:0
+(1E-06,1E-05]:2
+(1E-05,0.0001]:1
+(0.0001,0.001]:0
+(0.001,0.005]:0
+(0.005,0.01]:0
+(0.01,0.025]:0
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+(2025-12-28T19:18:58.9163704Z, 2025-12-28T19:19:20.7204771Z] aspnetcore.components.type: Microsoft.AspNetCore.Components.Authorization.AuthorizeView
+Value: Sum: 0.0016013000000000002 Count: 3 Min: 2.85E-05 Max: 0.0015359 
+(-Infinity,1E-06]:0
+(1E-06,1E-05]:0
+(1E-05,0.0001]:2
+(0.0001,0.001]:0
+(0.001,0.005]:1
+(0.005,0.01]:0
+(0.01,0.025]:0
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+(2025-12-28T19:18:58.9163704Z, 2025-12-28T19:19:20.7204771Z] aspnetcore.components.type: MyBlog.Web.Components.Pages.Home
+Value: Sum: 0.0891944 Count: 1 Min: 0.0891944 Max: 0.0891944 
+(-Infinity,1E-06]:0
+(1E-06,1E-05]:0
+(1E-05,0.0001]:0
+(0.0001,0.001]:0
+(0.001,0.005]:0
+(0.005,0.01]:0
+(0.01,0.025]:0
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:1
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+(2025-12-28T19:18:58.9163704Z, 2025-12-28T19:19:20.7204771Z] aspnetcore.components.type: Microsoft.AspNetCore.Components.Forms.AntiforgeryToken
+Value: Sum: 3.0900000000000006E-05 Count: 3 Min: 2.6E-06 Max: 1.86E-05 
+(-Infinity,1E-06]:0
+(1E-06,1E-05]:2
+(1E-05,0.0001]:1
+(0.0001,0.001]:0
+(0.001,0.005]:0
+(0.005,0.01]:0
+(0.01,0.025]:0
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+(2025-12-28T19:18:58.9163704Z, 2025-12-28T19:19:20.7204771Z] aspnetcore.components.type: Microsoft.AspNetCore.Components.Web.PageTitle
+Value: Sum: 8.27E-05 Count: 3 Min: 8E-06 Max: 6.64E-05 
+(-Infinity,1E-06]:0
+(1E-06,1E-05]:2
+(1E-05,0.0001]:1
+(0.0001,0.001]:0
+(0.001,0.005]:0
+(0.005,0.01]:0
+(0.01,0.025]:0
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+(2025-12-28T19:18:58.9163704Z, 2025-12-28T19:19:20.7204771Z] aspnetcore.components.type: Microsoft.AspNetCore.Components.Sections.SectionContent
+Value: Sum: 8.450000000000001E-05 Count: 3 Min: 1.02E-05 Max: 5.46E-05 
+(-Infinity,1E-06]:0
+(1E-06,1E-05]:0
+(1E-05,0.0001]:3
+(0.0001,0.001]:0
+(0.001,0.005]:0
+(0.005,0.01]:0
+(0.01,0.025]:0
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+(2025-12-28T19:18:58.9163704Z, 2025-12-28T19:19:20.7204771Z] aspnetcore.components.type: MyBlog.Web.Components.App
+Value: Sum: 0.1734116 Count: 3 Min: 0.0133019 Max: 0.1234683 
+(-Infinity,1E-06]:0
+(1E-06,1E-05]:0
+(1E-05,0.0001]:0
+(0.0001,0.001]:0
+(0.001,0.005]:0
+(0.005,0.01]:0
+(0.01,0.025]:1
+(0.025,0.05]:1
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:1
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+(2025-12-28T19:18:58.9163704Z, 2025-12-28T19:19:20.7204771Z] aspnetcore.components.type: MyBlog.Web.Components.Pages.Admin.Dashboard
+Value: Sum: 0.0108354 Count: 1 Min: 0.0108354 Max: 0.0108354 
+(-Infinity,1E-06]:0
+(1E-06,1E-05]:0
+(1E-05,0.0001]:0
+(0.0001,0.001]:0
+(0.001,0.005]:0
+(0.005,0.01]:0
+(0.01,0.025]:1
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+(2025-12-28T19:18:58.9163704Z, 2025-12-28T19:19:20.7204771Z] aspnetcore.components.type: MyBlog.Web.Components.Pages.Admin.PostEditor
+Value: Sum: 0.0009647 Count: 1 Min: 0.0009647 Max: 0.0009647 
+(-Infinity,1E-06]:0
+(1E-06,1E-05]:0
+(1E-05,0.0001]:0
+(0.0001,0.001]:1
+(0.001,0.005]:0
+(0.005,0.01]:0
+(0.01,0.025]:0
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+(2025-12-28T19:18:58.9163704Z, 2025-12-28T19:19:20.7204771Z] aspnetcore.components.type: MyBlog.Web.Components.Shared.MarkdownRenderer
+Value: Sum: 8.67E-05 Count: 1 Min: 8.67E-05 Max: 8.67E-05 
+(-Infinity,1E-06]:0
+(1E-06,1E-05]:0
+(1E-05,0.0001]:1
+(0.0001,0.001]:0
+(0.001,0.005]:0
+(0.005,0.01]:0
+(0.01,0.025]:0
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+
+Metric Name: aspnetcore.components.render_diff.duration, Description: Duration of rendering component tree and producing HTML diff. It includes business logic of the changed components., Unit: s, Metric Type: Histogram
+Instrumentation scope (Meter):
+	Name: Microsoft.AspNetCore.Components.Lifecycle
+(2025-12-28T19:18:58.9163861Z, 2025-12-28T19:19:20.7204779Z] error.type: System.Threading.Tasks.TaskCanceledException
+Value: Sum: 0.171622 Count: 3 Min: 0.0132565 Max: 0.1217814 
+(-Infinity,1E-06]:0
+(1E-06,1E-05]:0
+(1E-05,0.0001]:0
+(0.0001,0.001]:0
+(0.001,0.005]:0
+(0.005,0.01]:0
+(0.01,0.025]:1
+(0.025,0.05]:1
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:1
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+
+Metric Name: aspnetcore.components.render_diff.size, Description: Number of HTML elements modified during a rendering batch., Unit: {elements}, Metric Type: Histogram
+Instrumentation scope (Meter):
+	Name: Microsoft.AspNetCore.Components.Lifecycle
+(2025-12-28T19:18:58.9175238Z, 2025-12-28T19:19:20.7204785Z] error.type: System.Threading.Tasks.TaskCanceledException
+Value: Sum: 70 Count: 3 Min: 23 Max: 24 
+(-Infinity,0]:0
+(0,1]:0
+(1,2]:0
+(2,4]:0
+(4,6]:0
+(6,8]:0
+(8,10]:0
+(10,20]:0
+(20,30]:3
+(30,40]:0
+(40,50]:0
+(50,100]:0
+(100,+Infinity]:0
+
+
+Metric Name: aspnetcore.authorization.attempts, Description: The total number of authorization attempts., Unit: {attempt}, Metric Type: LongSum
+Instrumentation scope (Meter):
+	Name: Microsoft.AspNetCore.Authorization
+(2025-12-28T19:18:58.9572014Z, 2025-12-28T19:19:20.7204792Z] aspnetcore.authorization.result: success aspnetcore.user.is_authenticated: true
+Value: 7
+^Cinfo: Microsoft.Hosting.Lifetime[0]
+      Application is shutting down...
+LogRecord.Timestamp:               2025-12-28T19:19:20.8795389Z
+LogRecord.CategoryName:            Microsoft.Hosting.Lifetime
+LogRecord.Severity:                Info
+LogRecord.SeverityText:            Information
+LogRecord.FormattedMessage:        Application is shutting down...
+LogRecord.Body:                    Application is shutting down...
+LogRecord.Attributes (Key:Value):
+    OriginalFormat (a.k.a Body): Application is shutting down...
+
+Resource associated with LogRecord:
+service.name: MyBlog.Web
+service.namespace: 1.0.0
+service.instance.id: a6937a58-6edf-4d06-bcef-b83910caf153
+telemetry.sdk.name: opentelemetry
+telemetry.sdk.language: dotnet
+telemetry.sdk.version: 1.14.0
+
+Resource associated with Metrics:
+	service.name: MyBlog.Web
+	service.namespace: 1.0.0
+	service.instance.id: a6937a58-6edf-4d06-bcef-b83910caf153
+	telemetry.sdk.name: opentelemetry
+	telemetry.sdk.language: dotnet
+	telemetry.sdk.version: 1.14.0
+
+Metric Name: aspnetcore.memory_pool.pooled, Description: Number of bytes currently pooled and available for reuse., Unit: By, Metric Type: LongSumNonMonotonic
+Instrumentation scope (Meter):
+	Name: Microsoft.AspNetCore.MemoryPool
+(2025-12-28T19:18:50.7327588Z, 2025-12-28T19:19:20.9002062Z] aspnetcore.memory_pool.owner: kestrel
+Value: 0
+
+Metric Name: aspnetcore.memory_pool.allocated, Description: Total number of bytes allocated by the memory pool. Allocation occurs when a memory rental request exceeds the available pooled memory., Unit: By, Metric Type: LongSum
+Instrumentation scope (Meter):
+	Name: Microsoft.AspNetCore.MemoryPool
+(2025-12-28T19:18:50.7336521Z, 2025-12-28T19:19:20.9002071Z] aspnetcore.memory_pool.owner: kestrel
+Value: 4096
+
+Metric Name: aspnetcore.memory_pool.evicted, Description: Total number of bytes evicted from the memory pool. Eviction occurs when idle pooled memory is reclaimed. Evicted memory is available for garbage collection., Unit: By, Metric Type: LongSum
+Instrumentation scope (Meter):
+	Name: Microsoft.AspNetCore.MemoryPool
+(2025-12-28T19:18:50.7336646Z, 2025-12-28T19:19:20.9002076Z] aspnetcore.memory_pool.owner: kestrel
+Value: 4096
+
+Metric Name: aspnetcore.memory_pool.rented, Description: Total number of bytes rented from the memory pool., Unit: By, Metric Type: LongSum
+Instrumentation scope (Meter):
+	Name: Microsoft.AspNetCore.MemoryPool
+(2025-12-28T19:18:50.7336720Z, 2025-12-28T19:19:20.9002084Z] aspnetcore.memory_pool.owner: kestrel
+Value: 57344
+
+Metric Name: kestrel.active_connections, Description: Number of connections that are currently active on the server., Unit: {connection}, Metric Type: LongSumNonMonotonic
+Instrumentation scope (Meter):
+	Name: Microsoft.AspNetCore.Server.Kestrel
+(2025-12-28T19:18:50.7336815Z, 2025-12-28T19:19:20.9002088Z] network.transport: tcp network.type: ipv4 server.address: 127.0.0.1 server.port: 5000
+Value: 0
+
+Metric Name: kestrel.connection.duration, Description: The duration of connections on the server., Unit: s, Metric Type: Histogram
+Instrumentation scope (Meter):
+	Name: Microsoft.AspNetCore.Server.Kestrel
+(2025-12-28T19:18:50.7340944Z, 2025-12-28T19:19:20.9002094Z] network.protocol.name: http network.protocol.version: 1.1 network.transport: tcp network.type: ipv4 server.address: 127.0.0.1 server.port: 5000
+Value: Sum: 22.0295495 Count: 1 Min: 22.0295495 Max: 22.0295495 
+(-Infinity,0.01]:0
+(0.01,0.02]:0
+(0.02,0.05]:0
+(0.05,0.1]:0
+(0.1,0.2]:0
+(0.2,0.5]:0
+(0.5,1]:0
+(1,2]:0
+(2,5]:0
+(5,10]:0
+(10,30]:1
+(30,60]:0
+(60,120]:0
+(120,300]:0
+(300,+Infinity]:0
+
+
+Metric Name: kestrel.queued_connections, Description: Number of connections that are currently queued and are waiting to start., Unit: {connection}, Metric Type: LongSumNonMonotonic
+Instrumentation scope (Meter):
+	Name: Microsoft.AspNetCore.Server.Kestrel
+(2025-12-28T19:18:50.7341167Z, 2025-12-28T19:19:20.9002102Z] network.transport: tcp network.type: ipv4 server.address: 127.0.0.1 server.port: 5000
+Value: 0
+
+Metric Name: http.server.active_requests, Description: Number of active HTTP server requests., Unit: {request}, Metric Type: LongSumNonMonotonic
+Instrumentation scope (Meter):
+	Name: Microsoft.AspNetCore.Hosting
+(2025-12-28T19:18:50.7348034Z, 2025-12-28T19:19:20.9002120Z] http.request.method: GET url.scheme: http
+Value: 0
+
+Metric Name: http.server.request.duration, Description: Duration of HTTP server requests., Unit: s, Metric Type: Histogram
+Instrumentation scope (Meter):
+	Name: Microsoft.AspNetCore.Hosting
+(2025-12-28T19:18:50.7348123Z, 2025-12-28T19:19:20.9002134Z] http.request.method: GET http.response.status_code: 200 http.route: / network.protocol.version: 1.1 url.scheme: http
+Value: Sum: 0.2105816 Count: 1 Min: 0.2105816 Max: 0.2105816 
+(-Infinity,0.005]:0
+(0.005,0.01]:0
+(0.01,0.025]:0
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:1
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+(2025-12-28T19:18:50.7348123Z, 2025-12-28T19:19:20.9002134Z] aspnetcore.request.is_unhandled: true http.request.method: GET http.response.status_code: 404 network.protocol.version: 1.1 url.scheme: http
+Value: Sum: 0.012699900000000002 Count: 4 Min: 0.0005277 Max: 0.0070735 
+(-Infinity,0.005]:3
+(0.005,0.01]:1
+(0.01,0.025]:0
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+(2025-12-28T19:18:50.7348123Z, 2025-12-28T19:19:20.9002134Z] http.request.method: GET http.response.status_code: 200 http.route: /admin network.protocol.version: 1.1 url.scheme: http
+Value: Sum: 0.0483198 Count: 1 Min: 0.0483198 Max: 0.0483198 
+(-Infinity,0.005]:0
+(0.005,0.01]:0
+(0.01,0.025]:0
+(0.025,0.05]:1
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+(2025-12-28T19:18:50.7348123Z, 2025-12-28T19:19:20.9002134Z] http.request.method: GET http.response.status_code: 200 http.route: /admin/posts/new network.protocol.version: 1.1 url.scheme: http
+Value: Sum: 0.0209227 Count: 1 Min: 0.0209227 Max: 0.0209227 
+(-Infinity,0.005]:0
+(0.005,0.01]:0
+(0.01,0.025]:1
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+
+Metric Name: aspnetcore.routing.match_attempts, Description: Number of requests that were attempted to be matched to an endpoint., Unit: {match_attempt}, Metric Type: LongSum
+Instrumentation scope (Meter):
+	Name: Microsoft.AspNetCore.Routing
+(2025-12-28T19:18:50.8209931Z, 2025-12-28T19:19:20.9002146Z] aspnetcore.routing.is_fallback: false aspnetcore.routing.match_status: success http.route: /
+Value: 1
+(2025-12-28T19:18:50.8209931Z, 2025-12-28T19:19:20.9002146Z] aspnetcore.routing.match_status: failure
+Value: 4
+(2025-12-28T19:18:50.8209931Z, 2025-12-28T19:19:20.9002146Z] aspnetcore.routing.is_fallback: false aspnetcore.routing.match_status: success http.route: /admin
+Value: 1
+(2025-12-28T19:18:50.8209931Z, 2025-12-28T19:19:20.9002146Z] aspnetcore.routing.is_fallback: false aspnetcore.routing.match_status: success http.route: /admin/posts/new
+Value: 1
+
+Metric Name: aspnetcore.authentication.authenticate.duration, Description: The authentication duration for a request., Unit: s, Metric Type: Histogram
+Instrumentation scope (Meter):
+	Name: Microsoft.AspNetCore.Authentication
+(2025-12-28T19:18:58.8975151Z, 2025-12-28T19:19:20.9002157Z] aspnetcore.authentication.result: success aspnetcore.authentication.scheme: Cookies
+Value: Sum: 0.0091553 Count: 7 Min: 0.0002194 Max: 0.006714 
+(-Infinity,0.005]:6
+(0.005,0.01]:1
+(0.01,0.025]:0
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+
+Metric Name: aspnetcore.components.navigate, Description: Total number of route changes., Unit: {route}, Metric Type: LongSum
+Instrumentation scope (Meter):
+	Name: Microsoft.AspNetCore.Components
+(2025-12-28T19:18:58.9161011Z, 2025-12-28T19:19:20.9002178Z] aspnetcore.components.route: / aspnetcore.components.type: MyBlog.Web.Components.Pages.Home
+Value: 1
+(2025-12-28T19:18:58.9161011Z, 2025-12-28T19:19:20.9002178Z] aspnetcore.components.route: /admin aspnetcore.components.type: MyBlog.Web.Components.Pages.Admin.Dashboard
+Value: 1
+(2025-12-28T19:18:58.9161011Z, 2025-12-28T19:19:20.9002178Z] aspnetcore.components.route: /admin/posts/new aspnetcore.components.type: MyBlog.Web.Components.Pages.Admin.PostEditor
+Value: 1
+
+Metric Name: aspnetcore.components.update_parameters.duration, Description: Duration of processing component parameters. It includes business logic of the component., Unit: s, Metric Type: Histogram
+Instrumentation scope (Meter):
+	Name: Microsoft.AspNetCore.Components.Lifecycle
+(2025-12-28T19:18:58.9163704Z, 2025-12-28T19:19:20.9002230Z] aspnetcore.components.type: Microsoft.AspNetCore.Components.Web.HeadOutlet
+Value: Sum: 0.0002029 Count: 3 Min: 4.5E-06 Max: 0.0001859 
+(-Infinity,1E-06]:0
+(1E-06,1E-05]:1
+(1E-05,0.0001]:1
+(0.0001,0.001]:1
+(0.001,0.005]:0
+(0.005,0.01]:0
+(0.01,0.025]:0
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+(2025-12-28T19:18:58.9163704Z, 2025-12-28T19:19:20.9002230Z] aspnetcore.components.type: MyBlog.Web.Components.Routes
+Value: Sum: 2.0700000000000002E-05 Count: 3 Min: 1.6E-06 Max: 1.74E-05 
+(-Infinity,1E-06]:0
+(1E-06,1E-05]:2
+(1E-05,0.0001]:1
+(0.0001,0.001]:0
+(0.001,0.005]:0
+(0.005,0.01]:0
+(0.01,0.025]:0
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+(2025-12-28T19:18:58.9163704Z, 2025-12-28T19:19:20.9002230Z] aspnetcore.components.type: Microsoft.AspNetCore.Components.Sections.SectionOutlet
+Value: Sum: 9.34E-05 Count: 6 Min: 1.1E-06 Max: 6.11E-05 
+(-Infinity,1E-06]:0
+(1E-06,1E-05]:4
+(1E-05,0.0001]:2
+(0.0001,0.001]:0
+(0.001,0.005]:0
+(0.005,0.01]:0
+(0.01,0.025]:0
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+(2025-12-28T19:18:58.9163704Z, 2025-12-28T19:19:20.9002230Z] aspnetcore.components.type: Microsoft.AspNetCore.Components.Routing.Router
+Value: Sum: 0.0083027 Count: 3 Min: 0.0006175 Max: 0.0064451 
+(-Infinity,1E-06]:0
+(1E-06,1E-05]:0
+(1E-05,0.0001]:0
+(0.0001,0.001]:1
+(0.001,0.005]:1
+(0.005,0.01]:1
+(0.01,0.025]:0
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+(2025-12-28T19:18:58.9163704Z, 2025-12-28T19:19:20.9002230Z] aspnetcore.components.type: Microsoft.AspNetCore.Components.Sections.SectionOutlet+SectionOutletContentRenderer
+Value: Sum: 8.520000000000001E-05 Count: 15 Min: 1E-07 Max: 3.37E-05 
+(-Infinity,1E-06]:6
+(1E-06,1E-05]:7
+(1E-05,0.0001]:2
+(0.0001,0.001]:0
+(0.001,0.005]:0
+(0.005,0.01]:0
+(0.01,0.025]:0
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+(2025-12-28T19:18:58.9163704Z, 2025-12-28T19:19:20.9002230Z] aspnetcore.components.type: Microsoft.AspNetCore.Components.Authorization.AuthorizeRouteView
+Value: Sum: 0.00022629999999999997 Count: 3 Min: 1.06E-05 Max: 0.0002024 
+(-Infinity,1E-06]:0
+(1E-06,1E-05]:0
+(1E-05,0.0001]:2
+(0.0001,0.001]:1
+(0.001,0.005]:0
+(0.005,0.01]:0
+(0.01,0.025]:0
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+(2025-12-28T19:18:58.9163704Z, 2025-12-28T19:19:20.9002230Z] aspnetcore.components.type: Microsoft.AspNetCore.Components.Routing.FocusOnNavigate
+Value: Sum: 0.00010560000000000002 Count: 3 Min: 5.8E-06 Max: 8.89E-05 
+(-Infinity,1E-06]:0
+(1E-06,1E-05]:1
+(1E-05,0.0001]:2
+(0.0001,0.001]:0
+(0.001,0.005]:0
+(0.005,0.01]:0
+(0.01,0.025]:0
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+(2025-12-28T19:18:58.9163704Z, 2025-12-28T19:19:20.9002230Z] aspnetcore.components.type: Microsoft.AspNetCore.Components.Authorization.AuthorizeRouteView+AuthorizeRouteViewCore
+Value: Sum: 0.0009408 Count: 3 Min: 0.0001538 Max: 0.0006138 
+(-Infinity,1E-06]:0
+(1E-06,1E-05]:0
+(1E-05,0.0001]:0
+(0.0001,0.001]:3
+(0.001,0.005]:0
+(0.005,0.01]:0
+(0.01,0.025]:0
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+(2025-12-28T19:18:58.9163704Z, 2025-12-28T19:19:20.9002230Z] aspnetcore.components.type: Microsoft.AspNetCore.Components.LayoutView
+Value: Sum: 8.010000000000001E-05 Count: 3 Min: 5.8E-06 Max: 6.27E-05 
+(-Infinity,1E-06]:0
+(1E-06,1E-05]:1
+(1E-05,0.0001]:2
+(0.0001,0.001]:0
+(0.001,0.005]:0
+(0.005,0.01]:0
+(0.01,0.025]:0
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+(2025-12-28T19:18:58.9163704Z, 2025-12-28T19:19:20.9002230Z] aspnetcore.components.type: MyBlog.Web.Components.Layout.MainLayout
+Value: Sum: 4.1400000000000003E-05 Count: 3 Min: 3E-06 Max: 3.44E-05 
+(-Infinity,1E-06]:0
+(1E-06,1E-05]:2
+(1E-05,0.0001]:1
+(0.0001,0.001]:0
+(0.001,0.005]:0
+(0.005,0.01]:0
+(0.01,0.025]:0
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+(2025-12-28T19:18:58.9163704Z, 2025-12-28T19:19:20.9002230Z] aspnetcore.components.type: Microsoft.AspNetCore.Components.Authorization.AuthorizeView
+Value: Sum: 0.0016013000000000002 Count: 3 Min: 2.85E-05 Max: 0.0015359 
+(-Infinity,1E-06]:0
+(1E-06,1E-05]:0
+(1E-05,0.0001]:2
+(0.0001,0.001]:0
+(0.001,0.005]:1
+(0.005,0.01]:0
+(0.01,0.025]:0
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+(2025-12-28T19:18:58.9163704Z, 2025-12-28T19:19:20.9002230Z] aspnetcore.components.type: MyBlog.Web.Components.Pages.Home
+Value: Sum: 0.0891944 Count: 1 Min: 0.0891944 Max: 0.0891944 
+(-Infinity,1E-06]:0
+(1E-06,1E-05]:0
+(1E-05,0.0001]:0
+(0.0001,0.001]:0
+(0.001,0.005]:0
+(0.005,0.01]:0
+(0.01,0.025]:0
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:1
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+(2025-12-28T19:18:58.9163704Z, 2025-12-28T19:19:20.9002230Z] aspnetcore.components.type: Microsoft.AspNetCore.Components.Forms.AntiforgeryToken
+Value: Sum: 3.0900000000000006E-05 Count: 3 Min: 2.6E-06 Max: 1.86E-05 
+(-Infinity,1E-06]:0
+(1E-06,1E-05]:2
+(1E-05,0.0001]:1
+(0.0001,0.001]:0
+(0.001,0.005]:0
+(0.005,0.01]:0
+(0.01,0.025]:0
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+(2025-12-28T19:18:58.9163704Z, 2025-12-28T19:19:20.9002230Z] aspnetcore.components.type: Microsoft.AspNetCore.Components.Web.PageTitle
+Value: Sum: 8.27E-05 Count: 3 Min: 8E-06 Max: 6.64E-05 
+(-Infinity,1E-06]:0
+(1E-06,1E-05]:2
+(1E-05,0.0001]:1
+(0.0001,0.001]:0
+(0.001,0.005]:0
+(0.005,0.01]:0
+(0.01,0.025]:0
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+(2025-12-28T19:18:58.9163704Z, 2025-12-28T19:19:20.9002230Z] aspnetcore.components.type: Microsoft.AspNetCore.Components.Sections.SectionContent
+Value: Sum: 8.450000000000001E-05 Count: 3 Min: 1.02E-05 Max: 5.46E-05 
+(-Infinity,1E-06]:0
+(1E-06,1E-05]:0
+(1E-05,0.0001]:3
+(0.0001,0.001]:0
+(0.001,0.005]:0
+(0.005,0.01]:0
+(0.01,0.025]:0
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+(2025-12-28T19:18:58.9163704Z, 2025-12-28T19:19:20.9002230Z] aspnetcore.components.type: MyBlog.Web.Components.App
+Value: Sum: 0.1734116 Count: 3 Min: 0.0133019 Max: 0.1234683 
+(-Infinity,1E-06]:0
+(1E-06,1E-05]:0
+(1E-05,0.0001]:0
+(0.0001,0.001]:0
+(0.001,0.005]:0
+(0.005,0.01]:0
+(0.01,0.025]:1
+(0.025,0.05]:1
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:1
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+(2025-12-28T19:18:58.9163704Z, 2025-12-28T19:19:20.9002230Z] aspnetcore.components.type: MyBlog.Web.Components.Pages.Admin.Dashboard
+Value: Sum: 0.0108354 Count: 1 Min: 0.0108354 Max: 0.0108354 
+(-Infinity,1E-06]:0
+(1E-06,1E-05]:0
+(1E-05,0.0001]:0
+(0.0001,0.001]:0
+(0.001,0.005]:0
+(0.005,0.01]:0
+(0.01,0.025]:1
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+(2025-12-28T19:18:58.9163704Z, 2025-12-28T19:19:20.9002230Z] aspnetcore.components.type: MyBlog.Web.Components.Pages.Admin.PostEditor
+Value: Sum: 0.0009647 Count: 1 Min: 0.0009647 Max: 0.0009647 
+(-Infinity,1E-06]:0
+(1E-06,1E-05]:0
+(1E-05,0.0001]:0
+(0.0001,0.001]:1
+(0.001,0.005]:0
+(0.005,0.01]:0
+(0.01,0.025]:0
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+(2025-12-28T19:18:58.9163704Z, 2025-12-28T19:19:20.9002230Z] aspnetcore.components.type: MyBlog.Web.Components.Shared.MarkdownRenderer
+Value: Sum: 8.67E-05 Count: 1 Min: 8.67E-05 Max: 8.67E-05 
+(-Infinity,1E-06]:0
+(1E-06,1E-05]:0
+(1E-05,0.0001]:1
+(0.0001,0.001]:0
+(0.001,0.005]:0
+(0.005,0.01]:0
+(0.01,0.025]:0
+(0.025,0.05]:0
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:0
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+
+Metric Name: aspnetcore.components.render_diff.duration, Description: Duration of rendering component tree and producing HTML diff. It includes business logic of the changed components., Unit: s, Metric Type: Histogram
+Instrumentation scope (Meter):
+	Name: Microsoft.AspNetCore.Components.Lifecycle
+(2025-12-28T19:18:58.9163861Z, 2025-12-28T19:19:20.9002236Z] error.type: System.Threading.Tasks.TaskCanceledException
+Value: Sum: 0.171622 Count: 3 Min: 0.0132565 Max: 0.1217814 
+(-Infinity,1E-06]:0
+(1E-06,1E-05]:0
+(1E-05,0.0001]:0
+(0.0001,0.001]:0
+(0.001,0.005]:0
+(0.005,0.01]:0
+(0.01,0.025]:1
+(0.025,0.05]:1
+(0.05,0.075]:0
+(0.075,0.1]:0
+(0.1,0.25]:1
+(0.25,0.5]:0
+(0.5,0.75]:0
+(0.75,1]:0
+(1,2.5]:0
+(2.5,5]:0
+(5,7.5]:0
+(7.5,10]:0
+(10,+Infinity]:0
+
+
+Metric Name: aspnetcore.components.render_diff.size, Description: Number of HTML elements modified during a rendering batch., Unit: {elements}, Metric Type: Histogram
+Instrumentation scope (Meter):
+	Name: Microsoft.AspNetCore.Components.Lifecycle
+(2025-12-28T19:18:58.9175238Z, 2025-12-28T19:19:20.9002241Z] error.type: System.Threading.Tasks.TaskCanceledException
+Value: Sum: 70 Count: 3 Min: 23 Max: 24 
+(-Infinity,0]:0
+(0,1]:0
+(1,2]:0
+(2,4]:0
+(4,6]:0
+(6,8]:0
+(8,10]:0
+(10,20]:0
+(20,30]:3
+(30,40]:0
+(40,50]:0
+(50,100]:0
+(100,+Infinity]:0
+
+
+Metric Name: aspnetcore.authorization.attempts, Description: The total number of authorization attempts., Unit: {attempt}, Metric Type: LongSum
+Instrumentation scope (Meter):
+	Name: Microsoft.AspNetCore.Authorization
+(2025-12-28T19:18:58.9572014Z, 2025-12-28T19:19:20.9002245Z] aspnetcore.authorization.result: success aspnetcore.user.is_authenticated: true
+Value: 7
+kushal@syn-2600-6c56-9840-001d-0000-0000-0000-1157:~/src/dotnet/MyBlog/src/MyBlog.Web$ 
