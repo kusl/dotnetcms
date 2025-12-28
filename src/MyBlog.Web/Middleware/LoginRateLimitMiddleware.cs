@@ -20,6 +20,8 @@ public sealed class LoginRateLimitMiddleware
     private const int AttemptsBeforeDelay = 5;
     private const int MaxDelaySeconds = 30;
 
+    // Use this for the standard DI activation
+    [ActivatorUtilitiesConstructor]
     public LoginRateLimitMiddleware(RequestDelegate next, ILogger<LoginRateLimitMiddleware> logger)
         : this(next, logger, null)
     {
