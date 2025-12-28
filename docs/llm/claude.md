@@ -2122,3 +2122,49 @@ I have made some changes so please use the latest 'dump.txt' as the starting poi
 I noticed that some forms such as creating and editing pages doesn't work. 
 Upon inspection, I see that `name` is missing. Can you please generate a script that fixes this issue for all the forms on this website? 
 Thank you and please do not hallucinate. 
+
+I'll search the project knowledge to find the latest dump.txt file and understand the form issues you're describing.Let me search for more specific information about the forms in the dump.txt file to see all the Razor pages with forms.Let me search for more details on all the forms in the project, particularly the page creation and editing forms.Now I have a good understanding of the codebase. Based on my analysis, I can see several forms that have the same issue - missing `name` attributes. Let me identify all forms that use `method="post"` with `@bind` but without `name` attributes:
+
+1. **Login.razor** - Already identified, uses `@bind` without `name`
+2. **ChangePassword.razor** - Uses `@bind` without `name`  
+3. **PostEditor.razor** - Uses `@onclick="Save"` (interactive, not a form POST - this is fine)
+
+However, looking at the `PostEditor.razor` more carefully, it uses `@onclick="Save"` with a button, not a traditional form submission. This means it relies on Blazor interactivity, not HTTP POST. The same pattern appears in `ImageManager.razor`.
+
+Let me create a comprehensive fix script for all the forms that need `name` attributes:I've created the script. Let me explain what I found and what the script fixes:
+
+**Forms analyzed in your codebase:**
+
+| Page | Form Type | Issue? |
+|------|-----------|--------|
+| `Login.razor` | `method="post"` with `@formname` | ✅ **Needs fix** - missing `name` attributes |
+| `ChangePassword.razor` | `method="post"` with `@formname` | ✅ **Needs fix** - missing `name` attributes |
+| `PostEditor.razor` | Uses `@onclick="Save"` button | ❌ No fix needed - uses interactive Blazor, not HTTP POST |
+| `ImageManager.razor` | Uses `<InputFile>` component | ❌ No fix needed - uses Blazor component, not standard form |
+| `PostList.razor` | Uses `@onclick` for delete | ❌ No fix needed - uses interactive Blazor |
+
+**What the script fixes:**
+
+1. **Login.razor**
+   - Adds `name="username"` to the username input
+   - Adds `name="password"` to the password input
+   - Adds `[SupplyParameterFromForm]` properties to receive the POST data
+   - Updates `HandleLogin()` to use form values when available
+
+2. **ChangePassword.razor**
+   - Adds `name="currentPassword"` to the current password input
+   - Adds `name="newPassword"` to the new password input
+   - Adds `name="confirmPassword"` to the confirm password input
+   - Adds `[SupplyParameterFromForm]` properties to receive the POST data
+   - Updates `HandleSubmit()` to use form values when available
+
+**Why this is needed:**
+
+In Blazor Server Static SSR mode, when a form uses `method="post"`, the browser performs a standard HTTP POST. The browser only includes form fields that have a `name` attribute in the POST data. The `@bind` directive sets up two-way data binding for interactive Blazor but doesn't add the `name` attribute needed for traditional form submissions.
+
+To run the script:
+```bash
+chmod +x fix-all-forms.sh
+./fix-all-forms.sh
+```
+
