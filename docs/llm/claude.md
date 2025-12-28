@@ -2168,3 +2168,16 @@ chmod +x fix-all-forms.sh
 ./fix-all-forms.sh
 ```
 
+I am not sure what the problem is but the end result is I can't see previews for the posts I am editing and I definitely cannot save the posts I create / edit. Please look at the problem thoroughly and fix it completely. 
+also logout does not work correctly 
+Looks like there’s a problem with this site
+https://kush.runasp.net/logout sent back an error.
+Error code: 400 Bad Request
+    Check to make sure you’ve typed the website address correctly.
+Looks like there’s a problem with this site
+http://localhost:5000/logout sent back an error.
+Error code: 400 Bad Request
+    Check to make sure you’ve typed the website address correctly.
+this works on the server `https://kush.runasp.net/_framework/blazor.web.js` but gives a not found locally `http://localhost:5000/_framework/blazor.web.js` 
+but yeah creating a new post doesn't work either locally or on the server. 
+please fix all these issues thoroughly and do not hallucinate. 
