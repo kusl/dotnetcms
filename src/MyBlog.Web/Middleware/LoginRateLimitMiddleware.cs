@@ -10,6 +10,7 @@ public sealed class LoginRateLimitMiddleware
 {
     private readonly RequestDelegate _next;
     private readonly ILogger<LoginRateLimitMiddleware> _logger;
+    private readonly Func<TimeSpan, CancellationToken, Task>? _delayFunc;
 
     // Track attempts per IP: IP -> (attempt count, window start)
     private static readonly ConcurrentDictionary<string, (int Count, DateTime WindowStart)> _attempts = new();
@@ -20,9 +21,21 @@ public sealed class LoginRateLimitMiddleware
     private const int MaxDelaySeconds = 30;
 
     public LoginRateLimitMiddleware(RequestDelegate next, ILogger<LoginRateLimitMiddleware> logger)
+        : this(next, logger, null)
+    {
+    }
+
+    /// <summary>
+    /// Constructor with injectable delay function for testing.
+    /// </summary>
+    internal LoginRateLimitMiddleware(
+        RequestDelegate next,
+        ILogger<LoginRateLimitMiddleware> logger,
+        Func<TimeSpan, CancellationToken, Task>? delayFunc)
     {
         _next = next;
         _logger = logger;
+        _delayFunc = delayFunc;
     }
 
     public async Task InvokeAsync(HttpContext context)
@@ -42,7 +55,16 @@ public sealed class LoginRateLimitMiddleware
             _logger.LogInformation(
                 "Rate limiting login attempt from {IP}, delaying {Seconds}s",
                 ip, delay.TotalSeconds);
-            await Task.Delay(delay, context.RequestAborted);
+
+            // Use injected delay function if available (for testing), otherwise real delay
+            if (_delayFunc != null)
+            {
+                await _delayFunc(delay, context.RequestAborted);
+            }
+            else
+            {
+                await Task.Delay(delay, context.RequestAborted);
+            }
         }
 
         // Always proceed - never block
@@ -74,7 +96,10 @@ public sealed class LoginRateLimitMiddleware
         return context.Connection.RemoteIpAddress?.ToString() ?? "unknown";
     }
 
-    private static TimeSpan CalculateDelay(string ip)
+    /// <summary>
+    /// Calculates the delay for a given IP. Exposed for testing.
+    /// </summary>
+    internal static TimeSpan CalculateDelay(string ip)
     {
         if (!_attempts.TryGetValue(ip, out var record))
         {
@@ -100,7 +125,10 @@ public sealed class LoginRateLimitMiddleware
         return TimeSpan.FromSeconds(delaySeconds);
     }
 
-    private static void RecordAttempt(string ip)
+    /// <summary>
+    /// Records a login attempt for the given IP. Exposed for testing.
+    /// </summary>
+    internal static void RecordAttempt(string ip)
     {
         var now = DateTime.UtcNow;
 
@@ -122,6 +150,14 @@ public sealed class LoginRateLimitMiddleware
         {
             CleanupOldEntries();
         }
+    }
+
+    /// <summary>
+    /// Clears all tracked attempts. For testing only.
+    /// </summary>
+    internal static void ClearAttempts()
+    {
+        _attempts.Clear();
     }
 
     private static void CleanupOldEntries()
