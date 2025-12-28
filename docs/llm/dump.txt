@@ -1,6 +1,6 @@
 ===============================================================================
 PROJECT EXPORT
-Generated: Sun Dec 28 07:44:06 AM CST 2025
+Generated: Sun Dec 28 07:52:04 AM CST 2025
 Project Path: /home/kushal/src/dotnet/MyBlog
 ===============================================================================
 
@@ -890,7 +890,7 @@ MODIFIED: 2025-12-28 06:46:50
 ================================================================================
 FILE: src/Directory.Build.props
 SIZE: .54 KB
-MODIFIED: 2025-12-28 07:42:57
+MODIFIED: 2025-12-28 07:44:06
 ================================================================================
 
 <Project>
@@ -914,7 +914,7 @@ MODIFIED: 2025-12-28 07:42:57
 ================================================================================
 FILE: src/Directory.Packages.props
 SIZE: 1.05 KB
-MODIFIED: 2025-12-28 07:42:57
+MODIFIED: 2025-12-28 07:44:06
 ================================================================================
 
 <Project>
@@ -944,7 +944,7 @@ MODIFIED: 2025-12-28 07:42:57
 ================================================================================
 FILE: src/.editorconfig
 SIZE: .52 KB
-MODIFIED: 2025-12-28 07:42:57
+MODIFIED: 2025-12-28 07:44:06
 ================================================================================
 
 root = true
@@ -5213,7 +5213,7 @@ echo "=============================================="
 ================================================================================
 FILE: src/.github/workflows/build-deploy.yml
 SIZE: 2.64 KB
-MODIFIED: 2025-12-28 07:42:57
+MODIFIED: 2025-12-28 07:44:06
 ================================================================================
 
 name: Build, Test, and Deploy
@@ -5305,7 +5305,7 @@ jobs:
 ================================================================================
 FILE: src/global.json
 SIZE: .07 KB
-MODIFIED: 2025-12-28 07:42:57
+MODIFIED: 2025-12-28 07:44:06
 ================================================================================
 
 {
@@ -5319,7 +5319,7 @@ MODIFIED: 2025-12-28 07:42:57
 ================================================================================
 FILE: src/MyBlog.Core/Constants/AppConstants.cs
 SIZE: .73 KB
-MODIFIED: 2025-12-28 07:42:57
+MODIFIED: 2025-12-28 07:44:06
 ================================================================================
 
 namespace MyBlog.Core.Constants;
@@ -5350,7 +5350,7 @@ public static class AppConstants
 ================================================================================
 FILE: src/MyBlog.Core/Interfaces/IAuthService.cs
 SIZE: .49 KB
-MODIFIED: 2025-12-28 07:42:57
+MODIFIED: 2025-12-28 07:44:06
 ================================================================================
 
 using MyBlog.Core.Models;
@@ -5374,7 +5374,7 @@ public interface IAuthService
 ================================================================================
 FILE: src/MyBlog.Core/Interfaces/IImageRepository.cs
 SIZE: .69 KB
-MODIFIED: 2025-12-28 07:42:57
+MODIFIED: 2025-12-28 07:44:06
 ================================================================================
 
 using MyBlog.Core.Models;
@@ -5403,7 +5403,7 @@ public interface IImageRepository
 ================================================================================
 FILE: src/MyBlog.Core/Interfaces/IMarkdownService.cs
 SIZE: .24 KB
-MODIFIED: 2025-12-28 07:42:57
+MODIFIED: 2025-12-28 07:44:06
 ================================================================================
 
 namespace MyBlog.Core.Interfaces;
@@ -5421,7 +5421,7 @@ public interface IMarkdownService
 ================================================================================
 FILE: src/MyBlog.Core/Interfaces/IPasswordService.cs
 SIZE: .38 KB
-MODIFIED: 2025-12-28 07:42:57
+MODIFIED: 2025-12-28 07:44:06
 ================================================================================
 
 namespace MyBlog.Core.Interfaces;
@@ -5442,7 +5442,7 @@ public interface IPasswordService
 ================================================================================
 FILE: src/MyBlog.Core/Interfaces/IPostRepository.cs
 SIZE: 1.56 KB
-MODIFIED: 2025-12-28 07:42:57
+MODIFIED: 2025-12-28 07:44:06
 ================================================================================
 
 using MyBlog.Core.Models;
@@ -5489,7 +5489,7 @@ public interface IPostRepository
 ================================================================================
 FILE: src/MyBlog.Core/Interfaces/ISlugService.cs
 SIZE: .24 KB
-MODIFIED: 2025-12-28 07:42:57
+MODIFIED: 2025-12-28 07:44:06
 ================================================================================
 
 namespace MyBlog.Core.Interfaces;
@@ -5507,7 +5507,7 @@ public interface ISlugService
 ================================================================================
 FILE: src/MyBlog.Core/Interfaces/ITelemetryLogRepository.cs
 SIZE: .67 KB
-MODIFIED: 2025-12-28 07:42:57
+MODIFIED: 2025-12-28 07:44:06
 ================================================================================
 
 using MyBlog.Core.Models;
@@ -5534,7 +5534,7 @@ public interface ITelemetryLogRepository
 ================================================================================
 FILE: src/MyBlog.Core/Interfaces/IUserRepository.cs
 SIZE: .71 KB
-MODIFIED: 2025-12-28 07:42:57
+MODIFIED: 2025-12-28 07:44:06
 ================================================================================
 
 using MyBlog.Core.Models;
@@ -5563,7 +5563,7 @@ public interface IUserRepository
 ================================================================================
 FILE: src/MyBlog.Core/Models/Image.cs
 SIZE: 1.15 KB
-MODIFIED: 2025-12-28 07:42:57
+MODIFIED: 2025-12-28 07:44:06
 ================================================================================
 
 namespace MyBlog.Core.Models;
@@ -5605,7 +5605,7 @@ public sealed class Image
 ================================================================================
 FILE: src/MyBlog.Core/Models/Post.cs
 SIZE: 1.49 KB
-MODIFIED: 2025-12-28 07:42:57
+MODIFIED: 2025-12-28 07:44:06
 ================================================================================
 
 namespace MyBlog.Core.Models;
@@ -5656,7 +5656,7 @@ public sealed class Post
 ================================================================================
 FILE: src/MyBlog.Core/Models/PostDto.cs
 SIZE: .95 KB
-MODIFIED: 2025-12-28 07:42:57
+MODIFIED: 2025-12-28 07:44:06
 ================================================================================
 
 namespace MyBlog.Core.Models;
@@ -5702,7 +5702,7 @@ public sealed record PostDetailDto(
 ================================================================================
 FILE: src/MyBlog.Core/Models/TelemetryLog.cs
 SIZE: 1.17 KB
-MODIFIED: 2025-12-28 07:42:57
+MODIFIED: 2025-12-28 07:44:06
 ================================================================================
 
 namespace MyBlog.Core.Models;
@@ -5744,7 +5744,7 @@ public sealed class TelemetryLog
 ================================================================================
 FILE: src/MyBlog.Core/Models/User.cs
 SIZE: 1.12 KB
-MODIFIED: 2025-12-28 07:42:57
+MODIFIED: 2025-12-28 07:44:06
 ================================================================================
 
 namespace MyBlog.Core.Models;
@@ -5783,7 +5783,7 @@ public sealed class User
 ================================================================================
 FILE: src/MyBlog.Core/MyBlog.Core.csproj
 SIZE: .12 KB
-MODIFIED: 2025-12-28 07:42:57
+MODIFIED: 2025-12-28 07:44:06
 ================================================================================
 
 <Project Sdk="Microsoft.NET.Sdk">
@@ -5796,7 +5796,7 @@ MODIFIED: 2025-12-28 07:42:57
 ================================================================================
 FILE: src/MyBlog.Core/Services/MarkdownService.cs
 SIZE: 6.04 KB
-MODIFIED: 2025-12-28 07:42:57
+MODIFIED: 2025-12-28 07:44:06
 ================================================================================
 
 using System.Text;
@@ -6005,7 +6005,7 @@ public sealed partial class MarkdownService : IMarkdownService
 ================================================================================
 FILE: src/MyBlog.Core/Services/SlugService.cs
 SIZE: 1.59 KB
-MODIFIED: 2025-12-28 07:42:57
+MODIFIED: 2025-12-28 07:44:06
 ================================================================================
 
 using System.Globalization;
@@ -6069,7 +6069,7 @@ public sealed partial class SlugService : ISlugService
 ================================================================================
 FILE: src/MyBlog.Infrastructure/Data/BlogDbContext.cs
 SIZE: 3.11 KB
-MODIFIED: 2025-12-28 07:42:57
+MODIFIED: 2025-12-28 07:44:06
 ================================================================================
 
 using Microsoft.EntityFrameworkCore;
@@ -6161,7 +6161,7 @@ public sealed class BlogDbContext : DbContext
 ================================================================================
 FILE: src/MyBlog.Infrastructure/Data/DatabasePathResolver.cs
 SIZE: 1.90 KB
-MODIFIED: 2025-12-28 07:42:57
+MODIFIED: 2025-12-28 07:44:06
 ================================================================================
 
 namespace MyBlog.Infrastructure.Data;
@@ -6228,7 +6228,7 @@ public static class DatabasePathResolver
 ================================================================================
 FILE: src/MyBlog.Infrastructure/MyBlog.Infrastructure.csproj
 SIZE: .44 KB
-MODIFIED: 2025-12-28 07:42:57
+MODIFIED: 2025-12-28 07:44:06
 ================================================================================
 
 <Project Sdk="Microsoft.NET.Sdk">
@@ -6251,7 +6251,7 @@ MODIFIED: 2025-12-28 07:42:57
 ================================================================================
 FILE: src/MyBlog.Infrastructure/Repositories/ImageRepository.cs
 SIZE: 1.61 KB
-MODIFIED: 2025-12-28 07:42:57
+MODIFIED: 2025-12-28 07:44:06
 ================================================================================
 
 using Microsoft.EntityFrameworkCore;
@@ -6313,7 +6313,7 @@ public sealed class ImageRepository : IImageRepository
 ================================================================================
 FILE: src/MyBlog.Infrastructure/Repositories/PostRepository.cs
 SIZE: 4.56 KB
-MODIFIED: 2025-12-28 07:42:57
+MODIFIED: 2025-12-28 07:44:06
 ================================================================================
 
 using Microsoft.EntityFrameworkCore;
@@ -6470,7 +6470,7 @@ public sealed class PostRepository : IPostRepository
 ================================================================================
 FILE: src/MyBlog.Infrastructure/Repositories/TelemetryLogRepository.cs
 SIZE: 1.43 KB
-MODIFIED: 2025-12-28 07:42:57
+MODIFIED: 2025-12-28 07:44:06
 ================================================================================
 
 using Microsoft.EntityFrameworkCore;
@@ -6525,7 +6525,7 @@ public sealed class TelemetryLogRepository : ITelemetryLogRepository
 ================================================================================
 FILE: src/MyBlog.Infrastructure/Repositories/UserRepository.cs
 SIZE: 1.41 KB
-MODIFIED: 2025-12-28 07:42:57
+MODIFIED: 2025-12-28 07:44:06
 ================================================================================
 
 using Microsoft.EntityFrameworkCore;
@@ -6581,7 +6581,7 @@ public sealed class UserRepository : IUserRepository
 ================================================================================
 FILE: src/MyBlog.Infrastructure/ServiceCollectionExtensions.cs
 SIZE: 1.85 KB
-MODIFIED: 2025-12-28 07:42:57
+MODIFIED: 2025-12-28 07:44:06
 ================================================================================
 
 using Microsoft.EntityFrameworkCore;
@@ -6642,7 +6642,7 @@ public static class ServiceCollectionExtensions
 ================================================================================
 FILE: src/MyBlog.Infrastructure/Services/AuthService.cs
 SIZE: 1.97 KB
-MODIFIED: 2025-12-28 07:42:57
+MODIFIED: 2025-12-28 07:44:06
 ================================================================================
 
 using Microsoft.Extensions.Configuration;
@@ -6714,7 +6714,7 @@ public sealed class AuthService : IAuthService
 ================================================================================
 FILE: src/MyBlog.Infrastructure/Services/PasswordService.cs
 SIZE: .82 KB
-MODIFIED: 2025-12-28 07:42:57
+MODIFIED: 2025-12-28 07:44:06
 ================================================================================
 
 using Microsoft.AspNetCore.Identity;
@@ -6749,7 +6749,7 @@ public sealed class PasswordService : IPasswordService
 ================================================================================
 FILE: src/MyBlog.Infrastructure/Services/TelemetryCleanupService.cs
 SIZE: 2.11 KB
-MODIFIED: 2025-12-28 07:42:57
+MODIFIED: 2025-12-28 07:44:06
 ================================================================================
 
 using Microsoft.Extensions.Configuration;
@@ -6822,7 +6822,7 @@ public sealed class TelemetryCleanupService : BackgroundService
 ================================================================================
 FILE: src/MyBlog.Infrastructure/Telemetry/DatabaseLogExporter.cs
 SIZE: 2.11 KB
-MODIFIED: 2025-12-28 07:42:57
+MODIFIED: 2025-12-28 07:44:06
 ================================================================================
 
 using System.Text.Json;
@@ -6902,7 +6902,7 @@ public sealed class DatabaseLogExporter : BaseExporter<LogRecord>
 ================================================================================
 FILE: src/MyBlog.Infrastructure/Telemetry/FileLogExporter.cs
 SIZE: 3.61 KB
-MODIFIED: 2025-12-28 07:42:57
+MODIFIED: 2025-12-28 07:44:06
 ================================================================================
 
 using System.Text;
@@ -7044,7 +7044,7 @@ public sealed class FileLogExporter : BaseExporter<LogRecord>
 ================================================================================
 FILE: src/MyBlog.Infrastructure/Telemetry/TelemetryPathResolver.cs
 SIZE: 2.00 KB
-MODIFIED: 2025-12-28 07:42:57
+MODIFIED: 2025-12-28 07:44:06
 ================================================================================
 
 namespace MyBlog.Infrastructure.Telemetry;
@@ -7122,7 +7122,7 @@ public static class TelemetryPathResolver
 ================================================================================
 FILE: src/MyBlog.slnx
 SIZE: .24 KB
-MODIFIED: 2025-12-28 07:42:57
+MODIFIED: 2025-12-28 07:44:06
 ================================================================================
 
 <Solution>
@@ -7136,7 +7136,7 @@ MODIFIED: 2025-12-28 07:42:57
 ================================================================================
 FILE: src/MyBlog.Tests/Integration/AuthServiceTests.cs
 SIZE: 3.55 KB
-MODIFIED: 2025-12-28 07:42:57
+MODIFIED: 2025-12-28 07:44:06
 ================================================================================
 
 using Microsoft.EntityFrameworkCore;
@@ -7265,7 +7265,7 @@ public class AuthServiceTests : IAsyncDisposable
 ================================================================================
 FILE: src/MyBlog.Tests/Integration/PostRepositoryTests.cs
 SIZE: 4.35 KB
-MODIFIED: 2025-12-28 07:42:57
+MODIFIED: 2025-12-28 07:44:06
 ================================================================================
 
 using Microsoft.EntityFrameworkCore;
@@ -7430,7 +7430,7 @@ public class PostRepositoryTests : IAsyncDisposable
 ================================================================================
 FILE: src/MyBlog.Tests/Integration/TelemetryCleanupTests.cs
 SIZE: 2.86 KB
-MODIFIED: 2025-12-28 07:42:57
+MODIFIED: 2025-12-28 07:44:06
 ================================================================================
 
 using Microsoft.EntityFrameworkCore;
@@ -7541,7 +7541,7 @@ public class TelemetryCleanupTests : IAsyncDisposable
 ================================================================================
 FILE: src/MyBlog.Tests/MyBlog.Tests.csproj
 SIZE: .55 KB
-MODIFIED: 2025-12-28 07:42:57
+MODIFIED: 2025-12-28 07:44:06
 ================================================================================
 
 <Project Sdk="Microsoft.NET.Sdk">
@@ -7566,7 +7566,7 @@ MODIFIED: 2025-12-28 07:42:57
 ================================================================================
 FILE: src/MyBlog.Tests/Unit/MarkdownServiceTests.cs
 SIZE: 3.30 KB
-MODIFIED: 2025-12-28 07:42:57
+MODIFIED: 2025-12-28 07:44:06
 ================================================================================
 
 using MyBlog.Core.Services;
@@ -7696,7 +7696,7 @@ public class MarkdownServiceTests
 ================================================================================
 FILE: src/MyBlog.Tests/Unit/PasswordServiceTests.cs
 SIZE: 1.35 KB
-MODIFIED: 2025-12-28 07:42:57
+MODIFIED: 2025-12-28 07:44:06
 ================================================================================
 
 using MyBlog.Infrastructure.Services;
@@ -7759,7 +7759,7 @@ public class PasswordServiceTests
 ================================================================================
 FILE: src/MyBlog.Tests/Unit/SlugServiceTests.cs
 SIZE: 1.85 KB
-MODIFIED: 2025-12-28 07:42:57
+MODIFIED: 2025-12-28 07:44:06
 ================================================================================
 
 using MyBlog.Core.Services;
@@ -7837,7 +7837,7 @@ public class SlugServiceTests
 ================================================================================
 FILE: src/MyBlog.Web/appsettings.Development.json
 SIZE: .11 KB
-MODIFIED: 2025-12-28 07:42:57
+MODIFIED: 2025-12-28 07:44:06
 ================================================================================
 
 {
@@ -7853,7 +7853,7 @@ MODIFIED: 2025-12-28 07:42:57
 ================================================================================
 FILE: src/MyBlog.Web/appsettings.json
 SIZE: .54 KB
-MODIFIED: 2025-12-28 07:42:57
+MODIFIED: 2025-12-28 07:44:06
 ================================================================================
 
 {
@@ -7887,7 +7887,7 @@ MODIFIED: 2025-12-28 07:42:57
 ================================================================================
 FILE: src/MyBlog.Web/MyBlog.Web.csproj
 SIZE: .41 KB
-MODIFIED: 2025-12-28 07:42:57
+MODIFIED: 2025-12-28 07:44:06
 ================================================================================
 
 <Project Sdk="Microsoft.NET.Sdk.Web">
@@ -7909,7 +7909,7 @@ MODIFIED: 2025-12-28 07:42:57
 ================================================================================
 FILE: src/MyBlog.Web/Program.cs
 SIZE: 3.51 KB
-MODIFIED: 2025-12-28 07:42:57
+MODIFIED: 2025-12-28 07:44:06
 ================================================================================
 
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -8033,7 +8033,7 @@ app.Run();
 ================================================================================
 FILE: src/MyBlog.Web/wwwroot/css/site.css
 SIZE: 9.19 KB
-MODIFIED: 2025-12-28 07:42:57
+MODIFIED: 2025-12-28 07:44:06
 ================================================================================
 
 /* =============================================================================
@@ -8566,7 +8566,7 @@ a:hover {
 ================================================================================
 FILE: src/run.sh
 SIZE: .10 KB
-MODIFIED: 2025-12-28 07:42:57
+MODIFIED: 2025-12-28 07:44:06
 ================================================================================
 
 #!/bin/bash
@@ -8578,7 +8578,7 @@ dotnet run
 ================================================================================
 FILE: src/test.sh
 SIZE: .08 KB
-MODIFIED: 2025-12-28 07:42:57
+MODIFIED: 2025-12-28 07:44:06
 ================================================================================
 
 #!/bin/bash
@@ -8588,7 +8588,7 @@ dotnet test MyBlog.slnx -v normal
 
 
 ===============================================================================
-EXPORT COMPLETED: Sun Dec 28 07:44:06 AM CST 2025
+EXPORT COMPLETED: Sun Dec 28 07:52:05 AM CST 2025
 Total Files Found: 55
 Files Exported: 55
 Files Skipped: 0 (binary or large files)

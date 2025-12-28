@@ -32,7 +32,7 @@ public sealed class DatabaseLogExporter : BaseExporter<LogRecord>
             {
                 var log = new TelemetryLog
                 {
-                    TimestampUtc = record.Timestamp.UtcDateTime,
+                    TimestampUtc = record.Timestamp.ToUniversalTime(),
                     Level = record.LogLevel.ToString(),
                     Category = record.CategoryName ?? "Unknown",
                     Message = record.FormattedMessage ?? record.Body ?? "",
