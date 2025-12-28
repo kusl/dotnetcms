@@ -1,6 +1,6 @@
 ===============================================================================
 PROJECT EXPORT
-Generated: Sun Dec 28 09:31:37 AM CST 2025
+Generated: Sun Dec 28 09:37:55 AM CST 2025
 Project Path: /home/kushal/src/dotnet/MyBlog
 ===============================================================================
 
@@ -390,8 +390,8 @@ echo ""
 
 ================================================================================
 FILE: .github/workflows/build-deploy.yml
-SIZE: 2.71 KB
-MODIFIED: 2025-12-28 09:06:33
+SIZE: 2.72 KB
+MODIFIED: 2025-12-28 09:37:08
 ================================================================================
 
 name: Build, Test, and Deploy
@@ -469,9 +469,9 @@ jobs:
           }
           
           Write-Host "Deploying to $env:DEPLOY_HOST..."
-          
+
           $sourceArg = "-source:contentPath=$env:DEPLOY_SOURCE"
-          $destArg = "-dest:contentPath=$env:DEPLOY_SITE,computerName=https://$($env:DEPLOY_HOST):8172/msdeploy.axd,userName=$env:DEPLOY_USER,password=$env:DEPLOY_PASSWORD,authType=Basic"
+          $destArg = "-dest:contentPath=$env:DEPLOY_SITE,computerName=https://$($env:DEPLOY_HOST):8172/MsDeploy.axd?site=$env:DEPLOY_SITE,userName=$env:DEPLOY_USER,password=$env:DEPLOY_PASSWORD,AuthType='Basic'"
           
           & $msdeployPath -verb:sync $sourceArg $destArg -allowUntrusted -enableRule:DoNotDeleteRule
           
@@ -8582,7 +8582,7 @@ dotnet test MyBlog.slnx -v normal
 
 
 ===============================================================================
-EXPORT COMPLETED: Sun Dec 28 09:31:37 AM CST 2025
+EXPORT COMPLETED: Sun Dec 28 09:37:56 AM CST 2025
 Total Files Found: 55
 Files Exported: 55
 Files Skipped: 0 (binary or large files)
