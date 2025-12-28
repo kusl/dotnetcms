@@ -13,4 +13,18 @@ public interface IAuthService
 
     /// <summary>Ensures the default admin user exists.</summary>
     Task EnsureAdminUserAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>Changes a user's password.</summary>
+    /// <returns>True if password was changed, false if current password was incorrect.</returns>
+    Task<bool> ChangePasswordAsync(
+        Guid userId,
+        string currentPassword,
+        string newPassword,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>Resets a user's password without requiring the current password (admin function).</summary>
+    Task ResetPasswordAsync(
+        Guid userId,
+        string newPassword,
+        CancellationToken cancellationToken = default);
 }
