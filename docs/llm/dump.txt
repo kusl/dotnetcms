@@ -1,6 +1,6 @@
 ===============================================================================
 PROJECT EXPORT
-Generated: Sun Dec 28 10:34:23 AM CST 2025
+Generated: Sun Dec 28 10:49:35 AM CST 2025
 Project Path: /home/kushal/src/dotnet/MyBlog
 ===============================================================================
 
@@ -994,7 +994,7 @@ $RECYCLE.BIN/
 ================================================================================
 FILE: README.md
 SIZE: 6.51 KB
-MODIFIED: 2025-12-28 10:33:37
+MODIFIED: 2025-12-28 10:45:04
 ================================================================================
 
 # MyBlog
@@ -7679,8 +7679,8 @@ public class AuthServiceTests : IAsyncDisposable
 
 ================================================================================
 FILE: src/MyBlog.Tests/Integration/PasswordChangeTests.cs
-SIZE: 6.15 KB
-MODIFIED: 2025-12-28 10:33:37
+SIZE: 6.10 KB
+MODIFIED: 2025-12-28 10:34:32
 ================================================================================
 
 using Microsoft.EntityFrameworkCore;
@@ -7732,7 +7732,7 @@ public class PasswordChangeTests : IAsyncDisposable
         var ct = TestContext.Current.CancellationToken;
         var originalPassword = "OriginalPass123!";
         var newPassword = "NewPassword456!";
-        
+
         var user = new User
         {
             Id = Guid.NewGuid(),
@@ -7756,7 +7756,7 @@ public class PasswordChangeTests : IAsyncDisposable
         var ct = TestContext.Current.CancellationToken;
         var originalPassword = "OriginalPass123!";
         var newPassword = "NewPassword456!";
-        
+
         var user = new User
         {
             Id = Guid.NewGuid(),
@@ -7774,7 +7774,7 @@ public class PasswordChangeTests : IAsyncDisposable
         // Should authenticate with new password
         var authenticated = await _sut.AuthenticateAsync("testuser", newPassword, ct);
         Assert.NotNull(authenticated);
-        
+
         // Should NOT authenticate with old password
         var oldAuth = await _sut.AuthenticateAsync("testuser", originalPassword, ct);
         Assert.Null(oldAuth);
@@ -7786,7 +7786,7 @@ public class PasswordChangeTests : IAsyncDisposable
         var ct = TestContext.Current.CancellationToken;
         var correctPassword = "CorrectPass123!";
         var wrongPassword = "WrongPassword!";
-        
+
         var user = new User
         {
             Id = Guid.NewGuid(),
@@ -7809,7 +7809,7 @@ public class PasswordChangeTests : IAsyncDisposable
     {
         var ct = TestContext.Current.CancellationToken;
         var correctPassword = "CorrectPass123!";
-        
+
         var user = new User
         {
             Id = Guid.NewGuid(),
@@ -7843,7 +7843,7 @@ public class PasswordChangeTests : IAsyncDisposable
         var ct = TestContext.Current.CancellationToken;
         var originalPassword = "OriginalPass123!";
         var newPassword = "ResetPassword789!";
-        
+
         var user = new User
         {
             Id = Guid.NewGuid(),
@@ -10150,7 +10150,7 @@ echo "=============================================="
 
 
 ===============================================================================
-EXPORT COMPLETED: Sun Dec 28 10:34:24 AM CST 2025
+EXPORT COMPLETED: Sun Dec 28 10:49:36 AM CST 2025
 Total Files Found: 58
 Files Exported: 58
 Files Skipped: 0 (binary or large files)
