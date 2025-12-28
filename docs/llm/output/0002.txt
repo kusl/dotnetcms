@@ -5347,4 +5347,193 @@ The given project `MyBlog.Web` has no updates given the current sources.
 real	0m3.460s
 user	0m2.404s
 sys	0m0.456s
+kushal@syn-2600-6c56-9840-001d-0000-0000-0000-1157:~/src/dotnet/MyBlog/src$ cd ~/src/dotnet/MyBlog/; time bash export.sh; cd ~/src/dotnet/MyBlog/src/; time dotnet format; time dotnet restore; time dotnet clean; time dotnet build; time dotnet test; time dotnet list package; time dotnet list package --outdated;
+==============================================
+  Project Export for LLM Analysis
+==============================================
+
+Project Path: /home/kushal/src/dotnet/MyBlog
+Output File:  docs/llm/dump.txt
+
+Generating directory structure...
+Collecting files...
+Found 60 files to export
+
+Processing (1/60): export.sh
+Processing (2/60): .github/workflows/build-deploy.yml
+Processing (3/60): .gitignore
+Processing (4/60): README.md
+Processing (5/60): src/Directory.Build.props
+Processing (6/60): src/Directory.Packages.props
+Processing (7/60): src/.editorconfig
+Processing (8/60): src/fix-changepassword-and-tests.sh
+Processing (9/60): src/generate-myblog.sh
+Processing (10/60): src/.github/workflows/build-deploy.yml
+Processing (11/60): src/global.json
+Processing (12/60): src/MyBlog.Core/Constants/AppConstants.cs
+Processing (13/60): src/MyBlog.Core/Interfaces/IAuthService.cs
+Processing (14/60): src/MyBlog.Core/Interfaces/IImageRepository.cs
+Processing (15/60): src/MyBlog.Core/Interfaces/IMarkdownService.cs
+Processing (16/60): src/MyBlog.Core/Interfaces/IPasswordService.cs
+Processing (17/60): src/MyBlog.Core/Interfaces/IPostRepository.cs
+Processing (18/60): src/MyBlog.Core/Interfaces/ISlugService.cs
+Processing (19/60): src/MyBlog.Core/Interfaces/ITelemetryLogRepository.cs
+Processing (20/60): src/MyBlog.Core/Interfaces/IUserRepository.cs
+Processing (21/60): src/MyBlog.Core/Models/Image.cs
+Processing (22/60): src/MyBlog.Core/Models/Post.cs
+Processing (23/60): src/MyBlog.Core/Models/PostDto.cs
+Processing (24/60): src/MyBlog.Core/Models/TelemetryLog.cs
+Processing (25/60): src/MyBlog.Core/Models/User.cs
+Processing (26/60): src/MyBlog.Core/MyBlog.Core.csproj
+Processing (27/60): src/MyBlog.Core/Services/MarkdownService.cs
+Processing (28/60): src/MyBlog.Core/Services/SlugService.cs
+Processing (29/60): src/MyBlog.Infrastructure/Data/BlogDbContext.cs
+Processing (30/60): src/MyBlog.Infrastructure/Data/DatabasePathResolver.cs
+Processing (31/60): src/MyBlog.Infrastructure/MyBlog.Infrastructure.csproj
+Processing (32/60): src/MyBlog.Infrastructure/Repositories/ImageRepository.cs
+Processing (33/60): src/MyBlog.Infrastructure/Repositories/PostRepository.cs
+Processing (34/60): src/MyBlog.Infrastructure/Repositories/TelemetryLogRepository.cs
+Processing (35/60): src/MyBlog.Infrastructure/Repositories/UserRepository.cs
+Processing (36/60): src/MyBlog.Infrastructure/ServiceCollectionExtensions.cs
+Processing (37/60): src/MyBlog.Infrastructure/Services/AuthService.cs
+Processing (38/60): src/MyBlog.Infrastructure/Services/PasswordService.cs
+Processing (39/60): src/MyBlog.Infrastructure/Services/TelemetryCleanupService.cs
+Processing (40/60): src/MyBlog.Infrastructure/Telemetry/DatabaseLogExporter.cs
+Processing (41/60): src/MyBlog.Infrastructure/Telemetry/FileLogExporter.cs
+Processing (42/60): src/MyBlog.Infrastructure/Telemetry/TelemetryPathResolver.cs
+Processing (43/60): src/MyBlog.slnx
+Processing (44/60): src/MyBlog.Tests/Integration/AuthServiceLongPasswordTests.cs
+Processing (45/60): src/MyBlog.Tests/Integration/AuthServiceTests.cs
+Processing (46/60): src/MyBlog.Tests/Integration/PasswordChangeTests.cs
+Processing (47/60): src/MyBlog.Tests/Integration/PostRepositoryTests.cs
+Processing (48/60): src/MyBlog.Tests/Integration/TelemetryCleanupTests.cs
+Processing (49/60): src/MyBlog.Tests/MyBlog.Tests.csproj
+Processing (50/60): src/MyBlog.Tests/Unit/MarkdownServiceTests.cs
+Processing (51/60): src/MyBlog.Tests/Unit/PasswordServiceTests.cs
+Processing (52/60): src/MyBlog.Tests/Unit/SlugServiceTests.cs
+Processing (53/60): src/MyBlog.Web/appsettings.Development.json
+Processing (54/60): src/MyBlog.Web/appsettings.json
+Processing (55/60): src/MyBlog.Web/MyBlog.Web.csproj
+Processing (56/60): src/MyBlog.Web/Program.cs
+Processing (57/60): src/MyBlog.Web/wwwroot/css/site.css
+Processing (58/60): src/run.sh
+Processing (59/60): src/test.sh
+Processing (60/60): src/upgrade-myblog.sh
+
+==============================================
+  Export Complete!
+==============================================
+
+Output file:    docs/llm/dump.txt
+Files exported: 60
+Files skipped:  0
+Output size:    319.40 KB
+
+File types included:
+  • Source code: .cs, .fs, .vb
+  • UI/XAML: .axaml, .xaml, .paml
+  • Projects: .csproj, .slnx, .sln, .props, .targets
+  • Config: .json, .yaml, .yml, .xml, .config
+  • Docs: .md, .txt
+  • Scripts: .sh, .ps1, .cmd, .bat
+  • Other: .sql, .resx, .css, .scss, Dockerfile, etc.
+
+
+real	0m0.624s
+user	0m0.364s
+sys	0m0.387s
+
+real	0m8.255s
+user	0m12.452s
+sys	0m1.132s
+Restore complete (0.5s)
+
+Build succeeded in 0.6s
+
+real	0m0.813s
+user	0m0.854s
+sys	0m0.149s
+
+Build succeeded in 0.6s
+
+real	0m0.764s
+user	0m0.769s
+sys	0m0.135s
+Restore complete (0.6s)
+  MyBlog.Core net10.0 succeeded (0.3s) → MyBlog.Core/bin/Debug/net10.0/MyBlog.Core.dll
+  MyBlog.Infrastructure net10.0 succeeded (0.2s) → MyBlog.Infrastructure/bin/Debug/net10.0/MyBlog.Infrastructure.dll
+  MyBlog.Tests net10.0 succeeded (0.2s) → MyBlog.Tests/bin/Debug/net10.0/MyBlog.Tests.dll
+  MyBlog.Web net10.0 succeeded (0.5s) → MyBlog.Web/bin/Debug/net10.0/MyBlog.Web.dll
+
+Build succeeded in 1.8s
+
+real	0m1.960s
+user	0m1.456s
+sys	0m0.302s
+Restore complete (0.5s)
+  MyBlog.Core net10.0 succeeded (0.1s) → MyBlog.Core/bin/Debug/net10.0/MyBlog.Core.dll
+  MyBlog.Infrastructure net10.0 succeeded (0.0s) → MyBlog.Infrastructure/bin/Debug/net10.0/MyBlog.Infrastructure.dll
+  MyBlog.Tests net10.0 succeeded (0.1s) → MyBlog.Tests/bin/Debug/net10.0/MyBlog.Tests.dll
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.5+1b188a7b0a (64-bit .NET 10.0.1)
+[xUnit.net 00:00:00.17]   Discovering: MyBlog.Tests
+[xUnit.net 00:00:00.36]   Discovered:  MyBlog.Tests
+[xUnit.net 00:00:00.54]   Starting:    MyBlog.Tests
+[xUnit.net 00:00:08.17]   Finished:    MyBlog.Tests (ID = '24cedafe73dab5684218bb3cf04cfd49ae8ce3b87ae799399cb2e301cbc1e755')
+  MyBlog.Tests test net10.0 succeeded (8.8s)
+
+Test summary: total: 61, failed: 0, succeeded: 61, skipped: 0, duration: 8.8s
+Build succeeded in 9.8s
+
+real	0m9.952s
+user	0m1.460s
+sys	0m0.263s
+Restore complete (0.5s)
+
+Build succeeded in 0.6s
+Project 'MyBlog.Core' has the following package references
+   [net10.0]: No packages were found for this framework.
+Project 'MyBlog.Infrastructure' has the following package references
+   [net10.0]: 
+   Top-level Package                           Requested   Resolved
+   > Microsoft.AspNetCore.Identity             2.3.1       2.3.1   
+   > Microsoft.EntityFrameworkCore.Sqlite      10.0.1      10.0.1  
+   > OpenTelemetry                             1.14.0      1.14.0  
+
+Project 'MyBlog.Tests' has the following package references
+   [net10.0]: 
+   Top-level Package                           Requested   Resolved
+   > Microsoft.EntityFrameworkCore.Sqlite      10.0.1      10.0.1  
+   > Microsoft.NET.Test.Sdk                    18.0.1      18.0.1  
+   > xunit.runner.visualstudio                 3.1.5       3.1.5   
+   > xunit.v3                                  3.2.1       3.2.1   
+
+Project 'MyBlog.Web' has the following package references
+   [net10.0]: 
+   Top-level Package                                  Requested    Resolved
+   > Microsoft.AspNetCore.App.Internal.Assets   (A)   [10.0.1, )   10.0.1  
+   > OpenTelemetry.Exporter.Console                   1.14.0       1.14.0  
+   > OpenTelemetry.Extensions.Hosting                 1.14.0       1.14.0  
+   > OpenTelemetry.Instrumentation.AspNetCore         1.14.0       1.14.0  
+   > OpenTelemetry.Instrumentation.Http               1.14.0       1.14.0  
+
+(A) : Auto-referenced package.
+
+real	0m1.845s
+user	0m1.831s
+sys	0m0.329s
+Restore complete (0.5s)
+
+Build succeeded in 0.7s
+
+The following sources were used:
+   https://api.nuget.org/v3/index.json
+
+The given project `MyBlog.Core` has no updates given the current sources.
+The given project `MyBlog.Infrastructure` has no updates given the current sources.
+The given project `MyBlog.Tests` has no updates given the current sources.
+The given project `MyBlog.Web` has no updates given the current sources.
+
+real	0m2.063s
+user	0m2.027s
+sys	0m0.377s
 kushal@syn-2600-6c56-9840-001d-0000-0000-0000-1157:~/src/dotnet/MyBlog/src$ 

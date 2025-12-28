@@ -1,6 +1,6 @@
 ===============================================================================
 PROJECT EXPORT
-Generated: Sun Dec 28 10:56:29 AM CST 2025
+Generated: Sun Dec 28 10:58:02 AM CST 2025
 Project Path: /home/kushal/src/dotnet/MyBlog
 ===============================================================================
 
@@ -8069,8 +8069,8 @@ MODIFIED: 2025-12-28 07:44:06
 
 ================================================================================
 FILE: src/MyBlog.Tests/Integration/AuthServiceLongPasswordTests.cs
-SIZE: 11.12 KB
-MODIFIED: 2025-12-28 10:55:16
+SIZE: 11.13 KB
+MODIFIED: 2025-12-28 10:57:49
 ================================================================================
 
 using Microsoft.EntityFrameworkCore;
@@ -8079,6 +8079,7 @@ using MyBlog.Core.Models;
 using MyBlog.Infrastructure.Data;
 using MyBlog.Infrastructure.Repositories;
 using MyBlog.Infrastructure.Services;
+using Xunit;
 
 namespace MyBlog.Tests.Integration;
 
@@ -11004,7 +11005,7 @@ echo "=============================================="
 
 
 ===============================================================================
-EXPORT COMPLETED: Sun Dec 28 10:56:30 AM CST 2025
+EXPORT COMPLETED: Sun Dec 28 10:58:02 AM CST 2025
 Total Files Found: 60
 Files Exported: 60
 Files Skipped: 0 (binary or large files)
