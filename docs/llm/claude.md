@@ -2118,3 +2118,7 @@ Run the script and your tests should complete in seconds instead of 15+ minutes.
 
 
 
+I have made some changes so please use the latest 'dump.txt' as the starting point. 
+I noticed that some forms such as creating and editing pages doesn't work. 
+Upon inspection, I see that `name` is missing. Can you please generate a script that fixes this issue for all the forms on this website? 
+Thank you and please do not hallucinate. 
