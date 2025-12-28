@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using OpenTelemetry;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
@@ -16,18 +15,17 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 
-builder.Logging.AddOpenTelemetry(logging =>
+builder.Logging.AddOpenTelemetry(options =>
 {
-    logging.SetResourceBuilder(
+    options.SetResourceBuilder(
         ResourceBuilder.CreateDefault()
-            .AddService(serviceName: "MyBlog.Web"));
+            .AddService("MyBlog.Web"));
 
-    logging.IncludeFormattedMessage = true;
-    logging.IncludeScopes = true;
-    logging.ParseStateValues = true;
+    options.IncludeFormattedMessage = true;
+    options.IncludeScopes = true;
+    options.ParseStateValues = true;
 
-    // Exporters
-    logging.AddConsoleExporter();
+    options.AddConsoleExporter();
 });
 
 // ------------------------------------------------------------
@@ -63,7 +61,6 @@ builder.Services.AddSwaggerGen();
 
 // ------------------------------------------------------------
 // Application services
-// (keep your existing registrations here)
 // ------------------------------------------------------------
 // builder.Services.AddScoped<IMyService, MyService>();
 
@@ -83,4 +80,3 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
-

@@ -14,6 +14,17 @@
     <PackageVersion Include="OpenTelemetry" Version="1.14.0" />
     <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.14.0" />
     <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.14.0" />
+    <ItemGroup>
+  <!-- OpenTelemetry exporters -->
+  <PackageVersion Include="OpenTelemetry.Exporter.Console" Version="1.14.0" />
+
+  <!-- OpenTelemetry instrumentation -->
+  <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.14.0" />
+
+  <!-- Swagger -->
+  <PackageVersion Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+</ItemGroup>
+
     
     <!-- Testing (xUnit v3) -->
     <PackageVersion Include="xunit.v3" Version="3.2.1" />
