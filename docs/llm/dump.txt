@@ -1,6 +1,6 @@
 ===============================================================================
 PROJECT EXPORT
-Generated: Sun Dec 28 11:13:04 AM CST 2025
+Generated: Sun Dec 28 11:14:35 AM CST 2025
 Project Path: /home/kushal/src/dotnet/MyBlog
 ===============================================================================
 
@@ -8381,8 +8381,8 @@ MODIFIED: 2025-12-28 07:44:06
 
 ================================================================================
 FILE: src/MyBlog.Tests/Integration/AuthServiceLongPasswordTests.cs
-SIZE: 11.11 KB
-MODIFIED: 2025-12-28 11:12:01
+SIZE: 11.12 KB
+MODIFIED: 2025-12-28 11:13:41
 ================================================================================
 
 using Microsoft.EntityFrameworkCore;
@@ -8391,6 +8391,7 @@ using MyBlog.Core.Models;
 using MyBlog.Infrastructure.Data;
 using MyBlog.Infrastructure.Repositories;
 using MyBlog.Infrastructure.Services;
+using Xunit;
 
 namespace MyBlog.Tests.Integration;
 
@@ -9338,14 +9339,15 @@ MODIFIED: 2025-12-28 08:03:54
 
 ================================================================================
 FILE: src/MyBlog.Tests/Unit/LoginRateLimitMiddlewareTests.cs
-SIZE: 3.56 KB
-MODIFIED: 2025-12-28 11:12:01
+SIZE: 3.55 KB
+MODIFIED: 2025-12-28 11:14:01
 ================================================================================
 
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using MyBlog.Web.Middleware;
+using Xunit;
 
 namespace MyBlog.Tests.Unit;
 
@@ -9432,7 +9434,7 @@ public sealed class LoginRateLimitMiddlewareTests
         for (var i = 0; i < 100; i++)
         {
             var context = CreateHttpContext("/login", "POST", uniqueIp);
-            
+
             // Use a timeout to ensure we're not blocked forever
             using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(60));
             try
@@ -9453,7 +9455,7 @@ public sealed class LoginRateLimitMiddlewareTests
         var context = new DefaultHttpContext();
         context.Request.Path = path;
         context.Request.Method = method;
-        
+
         if (remoteIp != null)
         {
             context.Connection.RemoteIpAddress = System.Net.IPAddress.Parse(remoteIp);
@@ -9972,10 +9974,9 @@ MODIFIED: 2025-12-28 08:26:41
 ================================================================================
 FILE: src/MyBlog.Web/Program.cs
 SIZE: 3.15 KB
-MODIFIED: 2025-12-28 11:12:01
+MODIFIED: 2025-12-28 11:13:13
 ================================================================================
 
-using MyBlog.Web.Middleware;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using MyBlog.Core.Constants;
@@ -9984,6 +9985,7 @@ using MyBlog.Infrastructure;
 using MyBlog.Infrastructure.Data;
 using MyBlog.Infrastructure.Telemetry;
 using MyBlog.Web.Components;
+using MyBlog.Web.Middleware;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
@@ -11605,7 +11607,7 @@ echo "=============================================="
 
 
 ===============================================================================
-EXPORT COMPLETED: Sun Dec 28 11:13:05 AM CST 2025
+EXPORT COMPLETED: Sun Dec 28 11:14:36 AM CST 2025
 Total Files Found: 62
 Files Exported: 62
 Files Skipped: 0 (binary or large files)
