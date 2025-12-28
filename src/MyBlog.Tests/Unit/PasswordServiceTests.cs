@@ -27,9 +27,9 @@ public class PasswordServiceTests
     {
         var password = "TestPassword123";
         var hash = _sut.HashPassword(password);
-        
+
         var result = _sut.VerifyPassword(hash, password);
-        
+
         Assert.True(result);
     }
 
@@ -37,9 +37,9 @@ public class PasswordServiceTests
     public void VerifyPassword_WithWrongPassword_ReturnsFalse()
     {
         var hash = _sut.HashPassword("TestPassword123");
-        
+
         var result = _sut.VerifyPassword(hash, "WrongPassword");
-        
+
         Assert.False(result);
     }
 
@@ -47,9 +47,9 @@ public class PasswordServiceTests
     public void VerifyPassword_WithEmptyPassword_ReturnsFalse()
     {
         var hash = _sut.HashPassword("TestPassword123");
-        
+
         var result = _sut.VerifyPassword(hash, "");
-        
+
         Assert.False(result);
     }
 }
