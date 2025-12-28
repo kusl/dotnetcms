@@ -298,3 +298,343 @@ Include tests for:
 Generate ONLY the shell script content. No explanations before or after. The script should be complete and immediately runnable with `bash src/generate-myblog.sh`.
 
 
+thank you for the comprehensive answer. 
+upon reviewing your prompts, I want to make some adjustments / clarificatons 
+1. use the new slnx format for solution, not sln 
+2. do not use any css library, write all the css yourself. 
+3. no node / npm dependency is perfect, and is exactly what I want 
+4. always use the latest available nuget packages 
+for example, https://www.nuget.org/packages/microsoft.entityframeworkcore.sqlite is at 10.0.1
+it feels like a small detail so try your best. 
+for github actions as well, use the latest actions. 
+prefer writing code yourself over using prebuilt actions 
+there are limits -- for example upload artifact and download artifact 
+at some point we have to use built in github actions which I understand but things like softprops actions 
+if they can write actions that use the primitive github actions to make something nice, so can we 
+efcore with sqlite is perfect. 
+telemetry logs should rotate meaning we delete old telemetry logs after some days (30 days configurable in app settings)
+use `-latest` operating systems in github actions such as `macos-latest` and don't specify a certain os version
+
+using all this information, please generate the prompt again. please and thank you. please be comprehensive, please do NOT hallucinate. 
+
+
+I'll refine the prompt with your clarifications. Let me first check the latest package versions to ensure accuracy.Now I have all the latest version information. Let me create the refined prompt:I've created the refined, comprehensive prompt with all your clarifications incorporated. Here's a summary of the key changes I made:
+
+**Changes based on your feedback:**
+
+1. **Solution format**: Changed from `.sln` to `.slnx` format explicitly
+
+2. **CSS**: Removed all CSS library references, explicitly stated "Write ALL CSS yourself - NO Bootstrap, Tailwind, or any CSS framework" and "NO CDN dependencies"
+
+3. **No npm/node**: Added explicit "NO npm/node dependencies whatsoever"
+
+4. **Latest package versions** (verified via search):
+   - Microsoft.EntityFrameworkCore.Sqlite: 10.0.1
+   - Microsoft.Extensions.Hosting: 10.0.1
+   - OpenTelemetry: 1.14.0
+   - OpenTelemetry.Extensions.Hosting: 1.14.0
+   - xunit.v3: 3.2.1
+   - Microsoft.NET.Test.Sdk: 18.0.1
+
+5. **Latest GitHub Actions** (verified via search):
+   - actions/checkout@v6
+   - actions/setup-dotnet@v5
+   - actions/upload-artifact@v4
+
+6. **OS versions**: Changed to `-latest` variants (ubuntu-latest, windows-latest, macos-latest)
+
+7. **Custom deployment**: Replaced the third-party `rasmusbuchholdt/simply-web-deploy` action with direct PowerShell msdeploy.exe calls, following your principle of writing code over using prebuilt actions
+
+8. **Telemetry log rotation**: Added configurable retention (default 30 days) with cleanup on startup and daily via IHostedService
+
+9. **Removed Polly**: Added to banned list since you prefer writing code ourselves
+
+The prompt is now precise, comprehensive, and should generate a complete working application in one shot. Would you like me to make any additional adjustments?
+
+
+
+
+
+
+
+
+# One-Shot Prompt: Generate Complete .NET 10 Blazor CMS Application
+
+Generate a single bash shell script (`src/generate-myblog.sh`) that creates a complete, production-ready blog/CMS application. The script will run on Fedora Linux and write all files to the `src/` folder only.
+
+## Project Overview
+
+**Application**: MyBlog - A cross-platform blog/CMS built with .NET 10 and Blazor Server  
+**Target**: Self-contained deployment to MonsterASP.NET (win-x86) and local development (Linux/macOS/Windows)
+
+## Architecture Requirements
+
+### Solution Structure (use .slnx format, NOT .sln)
+```
+src/
+├── MyBlog.slnx
+├── Directory.Build.props
+├── Directory.Packages.props
+├── global.json
+├── .editorconfig
+├── MyBlog.Core/                 # Domain models, interfaces, constants
+├── MyBlog.Infrastructure/       # SQLite data access, OpenTelemetry exporters
+├── MyBlog.Web/                  # Blazor Server app (main entry point)
+├── MyBlog.Tests/                # xUnit v3 tests
+└── .github/workflows/
+    └── build-deploy.yml
+```
+
+### Data Storage (SQLite Only - No External Dependencies)
+**Posts table**: Id (GUID PK), Title (nvarchar 200), Slug (nvarchar 200 unique), Content (nvarchar max, Markdown), Summary (nvarchar 500), AuthorId (GUID FK), CreatedAtUtc (datetime), UpdatedAtUtc (datetime), PublishedAtUtc (datetime nullable), IsPublished (bit)
+
+**Users table**: Id (GUID PK), Username (nvarchar 50 unique), PasswordHash (nvarchar 256, using ASP.NET Core Identity's PasswordHasher<User>), Email (nvarchar 256), DisplayName (nvarchar 100), CreatedAtUtc (datetime)
+
+**Images table**: Id (GUID PK), FileName (nvarchar 256), ContentType (nvarchar 100), Data (BLOB - byte[]), PostId (GUID FK nullable), UploadedAtUtc (datetime), UploadedByUserId (GUID FK)
+
+**TelemetryLogs table**: Id (integer autoincrement PK), TimestampUtc (datetime), Level (nvarchar 20), Category (nvarchar 256), Message (nvarchar max), Exception (nvarchar max nullable), TraceId (nvarchar 64 nullable), SpanId (nvarchar 32 nullable), Properties (nvarchar max, JSON)
+
+Use EF Core with SQLite. Database file location priority:
+1. XDG_DATA_HOME/MyBlog/myblog.db on Linux
+2. %LOCALAPPDATA%/MyBlog/myblog.db on Windows  
+3. ~/Library/Application Support/MyBlog/myblog.db on macOS
+4. Fallback: ./data/myblog.db relative to executable
+
+### Authentication (Minimal - No Full ASP.NET Core Identity)
+- Cookie-based authentication using `Microsoft.AspNetCore.Authentication.Cookies`
+- Use ONLY `Microsoft.AspNetCore.Identity.IPasswordHasher<User>` for password hashing (do NOT install full Identity framework)
+- Login required for: Create, Edit, Delete posts; Upload images
+- No login required for: Reading posts, viewing images
+- Seed default admin on first run: username=`admin`, password from `MYBLOG_ADMIN_PASSWORD` env var or default `ChangeMe123!`
+- Session timeout: configurable in appsettings.json (default 30 minutes)
+
+### Blazor Server Pages and Features
+**Public pages (no auth)**:
+- Home: Paginated post list (10 per page), showing title, summary, date, author
+- Post detail: Display by slug URL, render Markdown to HTML
+- About: Static page
+
+**Admin pages (auth required)**:
+- Dashboard: Post count, recent posts
+- Post editor: Create/edit with live Markdown preview (split pane)
+- Post list: Table with edit/delete actions
+- Image manager: Upload, list, delete images
+
+**Components**:
+- Custom Markdown renderer (NO third-party libraries - implement basic: headings h1-h6, bold, italic, links, images, code blocks, blockquotes, unordered lists, horizontal rules)
+- Post card component
+- Pagination component
+
+**Critical**: Works with or without HTTPS (configurable via `appsettings.json`, not hardcoded). MonsterASP.NET free tier only supports HTTP.
+
+### CSS Styling (Custom - No Libraries)
+- Write ALL CSS yourself - NO Bootstrap, Tailwind, or any CSS framework
+- NO CDN dependencies
+- NO npm/node dependencies whatsoever
+- Clean, minimal, responsive design
+- CSS variables for theming (light mode only is fine)
+- Mobile-friendly with media queries
+
+### OpenTelemetry (Following open-telemetry-hello-world Pattern)
+Custom file exporters for traces, metrics, and logs - adapt patterns from provided FileActivityExporter, FileLogExporter, FileMetricExporter.
+
+**ALSO** write telemetry to SQLite TelemetryLogs table for queryability.
+
+**Telemetry log rotation**: Delete logs older than N days (configurable in appsettings.json, default 30 days). Run cleanup on application startup and daily via IHostedService.
+
+**XDG-compliant directory selection with graceful fallback**:
+1. Try XDG_DATA_HOME/MyBlog/telemetry (or platform equivalent)
+2. Fallback to ./telemetry/ in current directory  
+3. If both fail, continue without file logging (console only) - NEVER crash due to telemetry failures
+
+### Strict Package Rules - Central Package Management
+
+**Directory.Packages.props - ALLOWED packages ONLY (use these exact latest versions)**:
+```xml
+<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- Core Framework (.NET 10) -->
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.1" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.1" />
+    <PackageVersion Include="Microsoft.AspNetCore.Identity" Version="2.3.1" />
+    <PackageVersion Include="Microsoft.Extensions.Hosting" Version="10.0.1" />
+    
+    <!-- OpenTelemetry (official packages only) -->
+    <PackageVersion Include="OpenTelemetry" Version="1.14.0" />
+    <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.14.0" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.14.0" />
+    
+    <!-- Testing (xUnit v3) -->
+    <PackageVersion Include="xunit.v3" Version="3.2.1" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
+  </ItemGroup>
+</Project>
+```
+
+**BANNED packages (do NOT use under any circumstances)**:
+- FluentAssertions, Moq, NSubstitute, FakeItEasy (use xUnit assertions + manual test doubles)
+- MassTransit, MediatR, AutoMapper, Mapster
+- Markdig, Markdig.Wpf, or ANY Markdown library (write custom parser)
+- Bootstrap, Tailwind, or any CSS framework
+- Any UI component library (Radzen, MudBlazor, etc.)
+- Any package with non-MIT/Apache-2.0/BSD license
+- Polly (write simple retry logic manually if needed)
+
+### GitHub Actions Workflow (use `-latest` OS versions, latest action versions)
+
+Write custom deployment logic instead of using third-party actions like softprops/action-gh-release. Use GitHub's primitive actions (checkout, setup-dotnet, upload-artifact) where necessary.
+
+```yaml
+name: Build, Test, and Deploy
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+    branches: ['**']
+
+jobs:
+  build-test:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '10.0.x'
+      - run: dotnet restore src/MyBlog.slnx
+      - run: dotnet build src/MyBlog.slnx -c Release --no-restore
+      - run: dotnet test src/MyBlog.slnx -c Release --no-build --logger trx --results-directory TestResults
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results-${{ matrix.os }}
+          path: TestResults
+
+  deploy:
+    needs: build-test
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop'
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '10.0.x'
+      - run: dotnet publish src/MyBlog.Web/MyBlog.Web.csproj -c Release -o ./publish -r win-x86 --self-contained false
+      
+      # Custom WebDeploy using msdeploy.exe directly (no third-party actions)
+      - name: Deploy via WebDeploy
+        shell: pwsh
+        run: |
+          $msdeployPath = "C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe"
+          & $msdeployPath -verb:sync `
+            -source:contentPath="${{ github.workspace }}\publish" `
+            -dest:contentPath="${{ secrets.WEBSITE_NAME }}",computerName="https://${{ secrets.SERVER_COMPUTER_NAME }}:8172/msdeploy.axd",userName="${{ secrets.SERVER_USERNAME }}",password="${{ secrets.SERVER_PASSWORD }}",authType="Basic" `
+            -allowUntrusted
+```
+
+### Code Quality Requirements
+- All async methods accept and pass `CancellationToken` to the end
+- All database operations are async (use async EF Core methods)
+- Use `IAsyncDisposable` where appropriate
+- Interfaces for all services (enables testability)
+- No static state except for ActivitySource/Meter definitions
+- Comprehensive XML documentation on public APIs
+- Use `record` types for DTOs and value objects
+- Use init-only properties where appropriate  
+- Nullable reference types enabled (`<Nullable>enable</Nullable>`)
+- Treat warnings as errors (`<TreatWarningsAsErrors>true</TreatWarningsAsErrors>`)
+- File-scoped namespaces
+- Target .NET 10 (`<TargetFramework>net10.0</TargetFramework>`)
+
+### Testing Requirements (xUnit v3)
+Include comprehensive tests for:
+- **PasswordService**: Verify hash creation, verify correct password succeeds, verify wrong password fails
+- **PostRepository**: CRUD operations using in-memory SQLite (`Data Source=:memory:`)
+- **MarkdownParser**: Basic cases - headings (h1-h6), bold (**text**), italic (*text*), links [text](url), code blocks (``` and inline `), blockquotes (>), unordered lists (- item), horizontal rules (---)
+- **AuthenticationService**: Login success with correct credentials, login failure with wrong password, login failure with unknown user
+- **SlugService**: Generate slug from title (lowercase, spaces to hyphens, remove special chars, handle unicode)
+- **TelemetryCleanupService**: Verify old logs deleted, recent logs retained
+
+Use plain xUnit assertions (`Assert.Equal`, `Assert.True`, `Assert.NotNull`, etc.) - NO FluentAssertions.
+
+### Shell Script Requirements
+The generated `src/generate-myblog.sh` script must:
+
+1. Start with proper bash header:
+   ```bash
+   #!/bin/bash
+   set -euo pipefail
+   ```
+
+2. Print clear progress messages explaining each step and WHY it's being done
+
+3. Create all directories first before writing files
+
+4. Write each file using heredocs with proper quoting:
+   ```bash
+   cat << 'EOF' > filename
+   content here
+   EOF
+   ```
+
+5. Be idempotent (safe to run multiple times - overwrite existing files)
+
+6. Set executable permissions where needed
+
+7. End with clear instructions on:
+   - How to restore packages
+   - How to run migrations  
+   - How to run the application
+   - How to run tests
+   - Default admin credentials
+
+8. Total script should be self-contained and create a fully working application
+
+### appsettings.json Configuration Structure
+```json
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "Data Source=myblog.db"
+  },
+  "Authentication": {
+    "SessionTimeoutMinutes": 30,
+    "DefaultAdminPassword": "ChangeMe123!"
+  },
+  "Telemetry": {
+    "RetentionDays": 30,
+    "EnableFileLogging": true,
+    "EnableDatabaseLogging": true
+  },
+  "Application": {
+    "Title": "MyBlog",
+    "PostsPerPage": 10,
+    "RequireHttps": false
+  },
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning",
+      "Microsoft.EntityFrameworkCore": "Warning"
+    }
+  }
+}
+```
+
+## Output Format
+Generate ONLY the complete shell script content. 
+- No explanations before or after the script
+- No markdown code fences around the entire output
+- The script should be immediately runnable with: `chmod +x src/generate-myblog.sh && ./src/generate-myblog.sh`
+- Script creates everything needed for a fully functional application
+
+
+
+
+
