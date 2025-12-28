@@ -1198,7 +1198,7 @@ wait I think I know why
 $destArg = "-dest:contentPath=$env:DEPLOY_SITE,computerName=https://$($env:DEPLOY_HOST):8172/msdeploy.axd,userName=$env:DEPLOY_USER,password=$env:DEPLOY_PASSWORD,authType=Basic"
 ```
 
-I guess this is progress... 
+I guess this is progress... but what are we doing wrong here? Can you please check `dump.txt` for the latest code and below for our errors and my thought process? 
 ```
 Run $msdeployPath = "C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe"
   $msdeployPath = "C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe"
@@ -1339,3 +1339,52 @@ if ($skipPatternsInput) {
 
 & $msdeploy $msdeployArguments
 ```
+
+
+
+
+
+
+
+
+
+I see the issue! Comparing your code to the `simply-web-deploy` scripts, there are **two key differences**:
+
+## 1. **Missing `?site=` parameter in the computerName URL**
+
+Your code:
+```powershell
+computerName=https://$($env:DEPLOY_HOST):8172/msdeploy.axd
+```
+
+Simply-web-deploy code:
+```powershell
+$computerNameArgument = "$computerName/MsDeploy.axd?site=$recycleApp"
+```
+
+The `?site=SITENAME` query parameter is crucial for authorization. Without it, the Web Management Service doesn't know which site's permissions to check.
+
+## 2. **Missing explicit `AuthType='Basic'`**
+
+Your code has `authType=Basic` but simply-web-deploy uses `AuthType='Basic'` (with quotes around Basic).
+
+---
+
+## Here's the fix:
+
+```powershell
+$sourceArg = "-source:contentPath=$env:DEPLOY_SOURCE"
+$destArg = "-dest:contentPath=$env:DEPLOY_SITE,computerName=https://$($env:DEPLOY_HOST):8172/MsDeploy.axd?site=$env:DEPLOY_SITE,userName=$env:DEPLOY_USER,password=$env:DEPLOY_PASSWORD,AuthType='Basic'"
+```
+
+The key change is adding `?site=$env:DEPLOY_SITE` to the computerName URL. This tells IIS Web Management Service which site context to use for authorization, which resolves the 401 Unauthorized error.
+
+---
+
+**Also double-check your secrets:**
+- `WEBSITE_NAME` should be just the site name (e.g., `siteXXXX`), not a path
+- `SERVER_COMPUTER_NAME` should be the hostname only (e.g., `siteXXXX.siteasp.net`), without `https://` since your script adds that
+
+
+
+
