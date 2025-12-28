@@ -2258,3 +2258,14 @@ dotnet run --project src/MyBlog.Web
 Then deploy to your server. All features should now work: login, logout, creating/editing posts with live preview, and image management.
 
 
+I reverted your change to login. It was broken. I reverted it and now I can log in again. This is on the server. Local is broken beyond repair. Forget about localhost for now. 
+I found a new problem. The blog claims it is markdown but it is nothing like markdown. 
+for example I wrote this post 
+```
+1. Welcome to my new blog 
+1. It is written in markdown 
+1. Clearly, the markdown does not work 
+1. Otherwise, this list would be displayed as a real ordered list with 1, 2, 3, 4. and not just 1, 1, 1, 1. What are you even doing Claude? 
+```
+yes, it shows 1. 1. 1. 1. 
+if it was real markdown, it should have displayed as a list, right? 
