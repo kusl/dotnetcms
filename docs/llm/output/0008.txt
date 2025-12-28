@@ -193,4 +193,74 @@ The given project `MyBlog.Web` has no updates given the current sources.
 real	0m1.994s
 user	0m2.018s
 sys	0m0.337s
-kushal@syn-2600-6c56-9840-001d-0000-0000-0000-1157:~/src/dotnet/MyBlog/src$ 
+kushal@syn-2600-6c56-9840-001d-0000-0000-0000-1157:~/src/dotnet/MyBlog/src$ cd .. 
+kushal@syn-2600-6c56-9840-001d-0000-0000-0000-1157:~/src/dotnet/MyBlog$ time bash fix-blazor-interactivity.sh 
+==============================================
+  MyBlog: Fix Blazor Interactivity Issues
+==============================================
+
+[1/7] Updating Program.cs with logout endpoint...
+      Done.
+[2/7] Updating App.razor...
+      Done.
+[3/7] Updating _Imports.razor...
+      Done.
+[4/7] Fixing PostEditor.razor...
+      Done.
+[5/7] Fixing PostList.razor...
+      Done.
+[6/7] Fixing ImageManager.razor...
+      Done.
+[7/7] Fixing Login.razor with name attributes...
+      Done.
+
+==============================================
+  All Blazor issues fixed!
+==============================================
+
+Changes made:
+
+  1. Program.cs:
+     - Added MapPost('/logout') endpoint to handle logout form POST
+     - This fixes the 400 Bad Request on logout
+
+  2. App.razor:
+     - Added @rendermode='InteractiveServer' to Routes and HeadOutlet
+     - This enables interactive Blazor features globally
+
+  3. _Imports.razor:
+     - Added 'using static Microsoft.AspNetCore.Components.Web.RenderMode'
+     - Makes InteractiveServer available without full namespace
+
+  4. PostEditor.razor:
+     - Added loading and saving states
+     - Added error handling with try/catch
+     - Now properly works with interactive mode
+
+  5. PostList.razor:
+     - Added deleting state to prevent double-clicks
+
+  6. ImageManager.razor:
+     - Added uploading and deleting states
+     - Added better error handling
+
+  7. Login.razor:
+     - Added name attributes for SSR form submission
+     - Added SupplyParameterFromForm for form values
+
+Why these fixes work:
+  - The logout form in MainLayout POSTs to /logout, which now has an endpoint
+  - Interactive render mode enables @onclick, @bind:event, and other JS-backed features
+  - The blazor.web.js file is served by MapRazorComponents middleware
+
+To apply these fixes:
+  1. Run this script: chmod +x fix-blazor-interactivity.sh && ./fix-blazor-interactivity.sh
+  2. Rebuild: dotnet build src/MyBlog.slnx
+  3. Run locally: dotnet run --project src/MyBlog.Web
+  4. Deploy to server
+
+
+real	0m0.019s
+user	0m0.005s
+sys	0m0.005s
+kushal@syn-2600-6c56-9840-001d-0000-0000-0000-1157:~/src/dotnet/MyBlog$ 

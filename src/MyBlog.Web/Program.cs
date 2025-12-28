@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using MyBlog.Core.Constants;
@@ -67,7 +68,6 @@ builder.Logging.AddOpenTelemetry(logging =>
 var app = builder.Build();
 
 // Initialize database and ensure admin user exists
-// Use a scope to resolve scoped services during startup
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<BlogDbContext>();
@@ -93,6 +93,22 @@ app.UseLoginRateLimit();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseAntiforgery();
+
+// Map logout endpoint - handles POST from the logout form in MainLayout
+app.MapPost("/logout", async (HttpContext context) =>
+{
+    await context.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+    return Results.Redirect("/");
+}).RequireAuthorization();
+
+// Image endpoint
+app.MapGet("/api/images/{id:guid}", async (Guid id, IImageRepository repo, CancellationToken ct) =>
+{
+    var image = await repo.GetByIdAsync(id, ct);
+    return image is null
+        ? Results.NotFound()
+        : Results.File(image.Data, image.ContentType, image.FileName);
+});
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();

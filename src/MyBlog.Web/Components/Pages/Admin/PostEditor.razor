@@ -11,56 +11,78 @@
 
 <h1>@(_isEdit ? "Edit Post" : "New Post")</h1>
 
-<div class="post-editor">
-    <div class="editor-form">
-        <div class="form-group">
-            <label for="title">Title</label>
-            <input type="text" id="title" @bind="_title" @bind:event="oninput" />
+@if (_loading)
+{
+    <p>Loading...</p>
+}
+else if (_isEdit && _existingPost is null)
+{
+    <p>Post not found.</p>
+    <a href="/admin/posts">Back to Posts</a>
+}
+else
+{
+    <div class="post-editor">
+        <div class="editor-form">
+            <div class="form-group">
+                <label for="title">Title</label>
+                <input type="text" id="title" @bind="_title" @bind:event="oninput" />
+            </div>
+
+            <div class="form-group">
+                <label for="summary">Summary</label>
+                <textarea id="summary" @bind="_summary" rows="2"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="content">Content (Markdown)</label>
+                <textarea id="content" @bind="_content" @bind:event="oninput" rows="20"></textarea>
+            </div>
+
+            <div class="form-group checkbox">
+                <label>
+                    <input type="checkbox" @bind="_isPublished" />
+                    Published
+                </label>
+            </div>
+
+            <div class="form-actions">
+                <button @onclick="Save" class="btn btn-primary" disabled="@_saving">
+                    @(_saving ? "Saving..." : "Save")
+                </button>
+                <a href="/admin/posts" class="btn">Cancel</a>
+            </div>
+
+            @if (!string.IsNullOrEmpty(_error))
+            {
+                <div class="error-message">@_error</div>
+            }
         </div>
 
-        <div class="form-group">
-            <label for="summary">Summary</label>
-            <textarea id="summary" @bind="_summary" rows="2"></textarea>
-        </div>
-
-        <div class="form-group">
-            <label for="content">Content (Markdown)</label>
-            <textarea id="content" @bind="_content" @bind:event="oninput" rows="20"></textarea>
-        </div>
-
-        <div class="form-group checkbox">
-            <label>
-                <input type="checkbox" @bind="_isPublished" />
-                Published
-            </label>
-        </div>
-
-        <div class="form-actions">
-            <button @onclick="Save" class="btn btn-primary">Save</button>
-            <a href="/admin/posts" class="btn">Cancel</a>
+        <div class="editor-preview">
+            <h3>Preview</h3>
+            <div class="preview-content">
+                <MarkdownRenderer Content="@_content" />
+            </div>
         </div>
     </div>
-
-    <div class="editor-preview">
-        <h3>Preview</h3>
-        <div class="preview-content">
-            <MarkdownRenderer Content="@_content" />
-        </div>
-    </div>
-</div>
+}
 
 @code {
     [Parameter]
     public Guid? Id { get; set; }
 
     private bool _isEdit => Id.HasValue;
+    private bool _loading = true;
+    private bool _saving;
     private string _title = "";
     private string _summary = "";
     private string _content = "";
     private bool _isPublished;
+    private string? _error;
     private Post? _existingPost;
 
-    protected override async Task OnParametersSetAsync()
+    protected override async Task OnInitializedAsync()
     {
         if (_isEdit)
         {
@@ -73,48 +95,75 @@
                 _isPublished = _existingPost.IsPublished;
             }
         }
+        _loading = false;
     }
 
     private async Task Save()
     {
-        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
-        var userIdClaim = authState.User.FindFirst(ClaimTypes.NameIdentifier);
-        var userId = Guid.Parse(userIdClaim!.Value);
-
-        if (_isEdit && _existingPost is not null)
+        if (string.IsNullOrWhiteSpace(_title))
         {
-            _existingPost.Title = _title;
-            _existingPost.Slug = SlugService.GenerateSlug(_title);
-            _existingPost.Summary = _summary;
-            _existingPost.Content = _content;
-            _existingPost.IsPublished = _isPublished;
-            _existingPost.UpdatedAtUtc = DateTime.UtcNow;
-            if (_isPublished && !_existingPost.PublishedAtUtc.HasValue)
+            _error = "Title is required.";
+            return;
+        }
+
+        _saving = true;
+        _error = null;
+
+        try
+        {
+            var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+            var userIdClaim = authState.User.FindFirst(ClaimTypes.NameIdentifier);
+            
+            if (userIdClaim is null || !Guid.TryParse(userIdClaim.Value, out var userId))
             {
-                _existingPost.PublishedAtUtc = DateTime.UtcNow;
+                _error = "Unable to identify current user. Please log in again.";
+                _saving = false;
+                return;
             }
 
-            await PostRepository.UpdateAsync(_existingPost);
-        }
-        else
-        {
-            var post = new Post
+            if (_isEdit && _existingPost is not null)
             {
-                Id = Guid.NewGuid(),
-                Title = _title,
-                Slug = SlugService.GenerateSlug(_title),
-                Summary = _summary,
-                Content = _content,
-                AuthorId = userId,
-                CreatedAtUtc = DateTime.UtcNow,
-                UpdatedAtUtc = DateTime.UtcNow,
-                IsPublished = _isPublished,
-                PublishedAtUtc = _isPublished ? DateTime.UtcNow : null
-            };
+                _existingPost.Title = _title;
+                _existingPost.Slug = SlugService.GenerateSlug(_title);
+                _existingPost.Summary = _summary;
+                _existingPost.Content = _content;
+                _existingPost.IsPublished = _isPublished;
+                _existingPost.UpdatedAtUtc = DateTime.UtcNow;
+                if (_isPublished && !_existingPost.PublishedAtUtc.HasValue)
+                {
+                    _existingPost.PublishedAtUtc = DateTime.UtcNow;
+                }
 
-            await PostRepository.CreateAsync(post);
+                await PostRepository.UpdateAsync(_existingPost);
+            }
+            else
+            {
+                var post = new Post
+                {
+                    Id = Guid.NewGuid(),
+                    Title = _title,
+                    Slug = SlugService.GenerateSlug(_title),
+                    Summary = _summary,
+                    Content = _content,
+                    AuthorId = userId,
+                    CreatedAtUtc = DateTime.UtcNow,
+                    UpdatedAtUtc = DateTime.UtcNow,
+                    IsPublished = _isPublished,
+                    PublishedAtUtc = _isPublished ? DateTime.UtcNow : null
+                };
+
+                await PostRepository.CreateAsync(post);
+            }
+
+            Navigation.NavigateTo("/admin/posts");
         }
-
-        Navigation.NavigateTo("/admin/posts");
+        catch (Exception ex)
+        {
+            _error = $"Failed to save: {ex.Message}";
+        }
+        finally
+        {
+            _saving = false;
+        }
     }
 }

@@ -37,7 +37,7 @@ else
                     <td>@(post.IsPublished ? "Published" : "Draft")</td>
                     <td>
                         <a href="/admin/posts/edit/@post.Id">Edit</a>
-                        <button @onclick="() => DeletePost(post.Id)" class="btn-link danger">Delete</button>
+                        <button @onclick="() => DeletePost(post.Id)" class="btn-link danger" disabled="@_deleting">Delete</button>
                     </td>
                 </tr>
             }
@@ -47,6 +47,7 @@ else
 
 @code {
     private IReadOnlyList<PostListItemDto>? _posts;
+    private bool _deleting;
 
     protected override async Task OnInitializedAsync()
     {
@@ -60,7 +61,15 @@ else
 
     private async Task DeletePost(Guid id)
     {
-        await PostRepository.DeleteAsync(id);
-        await LoadPosts();
+        _deleting = true;
+        try
+        {
+            await PostRepository.DeleteAsync(id);
+            await LoadPosts();
+        }
+        finally
+        {
+            _deleting = false;
+        }
     }
 }

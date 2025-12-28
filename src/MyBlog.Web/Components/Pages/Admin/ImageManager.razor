@@ -10,7 +10,11 @@
 
 <div class="image-upload">
     <h3>Upload New Image</h3>
-    <InputFile OnChange="HandleFileUpload" accept="image/*" />
+    <InputFile OnChange="HandleFileUpload" accept="image/*" disabled="@_uploading" />
+    @if (_uploading)
+    {
+        <p>Uploading...</p>
+    }
     @if (!string.IsNullOrEmpty(_uploadStatus))
     {
         <p class="@(_uploadError ? "error" : "success")">@_uploadStatus</p>
@@ -36,7 +40,7 @@ else
                 <div class="image-info">
                     <p>@image.FileName</p>
                     <code>/api/images/@image.Id</code>
-                    <button @onclick="() => DeleteImage(image.Id)" class="btn-link danger">Delete</button>
+                    <button @onclick="() => DeleteImage(image.Id)" class="btn-link danger" disabled="@_deleting">Delete</button>
                 </div>
             </div>
         }
@@ -47,6 +51,8 @@ else
     private IReadOnlyList<Image>? _images;
     private string? _uploadStatus;
     private bool _uploadError;
+    private bool _uploading;
+    private bool _deleting;
 
     protected override async Task OnInitializedAsync()
     {
@@ -62,48 +68,75 @@ else
     {
         _uploadStatus = null;
         _uploadError = false;
+        _uploading = true;
 
-        var file = e.File;
-        if (file.Size > AppConstants.MaxImageSizeBytes)
+        try
         {
-            _uploadStatus = "File too large. Maximum size is 5MB.";
-            _uploadError = true;
-            return;
+            var file = e.File;
+            if (file.Size > AppConstants.MaxImageSizeBytes)
+            {
+                _uploadStatus = "File too large. Maximum size is 5MB.";
+                _uploadError = true;
+                return;
+            }
+
+            if (!AppConstants.AllowedImageTypes.Contains(file.ContentType))
+            {
+                _uploadStatus = "Invalid file type. Only JPEG, PNG, GIF, and WebP are allowed.";
+                _uploadError = true;
+                return;
+            }
+
+            var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+            var userIdClaim = authState.User.FindFirst(ClaimTypes.NameIdentifier);
+            
+            if (userIdClaim is null || !Guid.TryParse(userIdClaim.Value, out var userId))
+            {
+                _uploadStatus = "Unable to identify current user. Please log in again.";
+                _uploadError = true;
+                return;
+            }
+
+            using var stream = file.OpenReadStream(AppConstants.MaxImageSizeBytes);
+            using var ms = new MemoryStream();
+            await stream.CopyToAsync(ms);
+
+            var image = new Image
+            {
+                Id = Guid.NewGuid(),
+                FileName = file.Name,
+                ContentType = file.ContentType,
+                Data = ms.ToArray(),
+                UploadedAtUtc = DateTime.UtcNow,
+                UploadedByUserId = userId
+            };
+
+            await ImageRepository.CreateAsync(image);
+            _uploadStatus = "Image uploaded successfully!";
+            await LoadImages();
         }
-
-        if (!AppConstants.AllowedImageTypes.Contains(file.ContentType))
+        catch (Exception ex)
         {
-            _uploadStatus = "Invalid file type. Only JPEG, PNG, GIF, and WebP are allowed.";
+            _uploadStatus = $"Upload failed: {ex.Message}";
             _uploadError = true;
-            return;
         }
-
-        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
-        var userIdClaim = authState.User.FindFirst(ClaimTypes.NameIdentifier);
-        var userId = Guid.Parse(userIdClaim!.Value);
-
-        using var stream = file.OpenReadStream(AppConstants.MaxImageSizeBytes);
-        using var ms = new MemoryStream();
-        await stream.CopyToAsync(ms);
-
-        var image = new Image
+        finally
         {
-            Id = Guid.NewGuid(),
-            FileName = file.Name,
-            ContentType = file.ContentType,
-            Data = ms.ToArray(),
-            UploadedAtUtc = DateTime.UtcNow,
-            UploadedByUserId = userId
-        };
-
-        await ImageRepository.CreateAsync(image);
-        _uploadStatus = "Image uploaded successfully!";
-        await LoadImages();
+            _uploading = false;
+        }
     }
 
     private async Task DeleteImage(Guid id)
     {
-        await ImageRepository.DeleteAsync(id);
-        await LoadImages();
+        _deleting = true;
+        try
+        {
+            await ImageRepository.DeleteAsync(id);
+            await LoadImages();
+        }
+        finally
+        {
+            _deleting = false;
+        }
     }
 }
