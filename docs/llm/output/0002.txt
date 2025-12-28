@@ -6831,4 +6831,466 @@ The given project `MyBlog.Web` has no updates given the current sources.
 real	0m3.357s
 user	0m2.326s
 sys	0m0.417s
+kushal@syn-2600-6c56-9840-001d-0000-0000-0000-1157:~/src/dotnet/MyBlog/src$ cd ~/src/dotnet/MyBlog/; time bash export.sh; cd ~/src/dotnet/MyBlog/src/; time dotnet format; time dotnet restore; time dotnet clean; time dotnet build; time dotnet test; time dotnet list package; time dotnet list package --outdated;
+==============================================
+  Project Export for LLM Analysis
+==============================================
+
+Project Path: /home/kushal/src/dotnet/MyBlog
+Output File:  docs/llm/dump.txt
+
+Generating directory structure...
+Collecting files...
+Found 62 files to export
+
+Processing (1/62): export.sh
+Processing (2/62): .github/workflows/build-deploy.yml
+Processing (3/62): .gitignore
+Processing (4/62): README.md
+Processing (5/62): src/Directory.Build.props
+Processing (6/62): src/Directory.Packages.props
+Processing (7/62): src/.editorconfig
+Processing (8/62): src/fix-changepassword-and-tests.sh
+Processing (9/62): src/generate-myblog.sh
+Processing (10/62): src/.github/workflows/build-deploy.yml
+Processing (11/62): src/global.json
+Processing (12/62): src/MyBlog.Core/Constants/AppConstants.cs
+Processing (13/62): src/MyBlog.Core/Interfaces/IAuthService.cs
+Processing (14/62): src/MyBlog.Core/Interfaces/IImageRepository.cs
+Processing (15/62): src/MyBlog.Core/Interfaces/IMarkdownService.cs
+Processing (16/62): src/MyBlog.Core/Interfaces/IPasswordService.cs
+Processing (17/62): src/MyBlog.Core/Interfaces/IPostRepository.cs
+Processing (18/62): src/MyBlog.Core/Interfaces/ISlugService.cs
+Processing (19/62): src/MyBlog.Core/Interfaces/ITelemetryLogRepository.cs
+Processing (20/62): src/MyBlog.Core/Interfaces/IUserRepository.cs
+Processing (21/62): src/MyBlog.Core/Models/Image.cs
+Processing (22/62): src/MyBlog.Core/Models/Post.cs
+Processing (23/62): src/MyBlog.Core/Models/PostDto.cs
+Processing (24/62): src/MyBlog.Core/Models/TelemetryLog.cs
+Processing (25/62): src/MyBlog.Core/Models/User.cs
+Processing (26/62): src/MyBlog.Core/MyBlog.Core.csproj
+Processing (27/62): src/MyBlog.Core/Services/MarkdownService.cs
+Processing (28/62): src/MyBlog.Core/Services/SlugService.cs
+Processing (29/62): src/MyBlog.Infrastructure/Data/BlogDbContext.cs
+Processing (30/62): src/MyBlog.Infrastructure/Data/DatabasePathResolver.cs
+Processing (31/62): src/MyBlog.Infrastructure/MyBlog.Infrastructure.csproj
+Processing (32/62): src/MyBlog.Infrastructure/Repositories/ImageRepository.cs
+Processing (33/62): src/MyBlog.Infrastructure/Repositories/PostRepository.cs
+Processing (34/62): src/MyBlog.Infrastructure/Repositories/TelemetryLogRepository.cs
+Processing (35/62): src/MyBlog.Infrastructure/Repositories/UserRepository.cs
+Processing (36/62): src/MyBlog.Infrastructure/ServiceCollectionExtensions.cs
+Processing (37/62): src/MyBlog.Infrastructure/Services/AuthService.cs
+Processing (38/62): src/MyBlog.Infrastructure/Services/PasswordService.cs
+Processing (39/62): src/MyBlog.Infrastructure/Services/TelemetryCleanupService.cs
+Processing (40/62): src/MyBlog.Infrastructure/Telemetry/DatabaseLogExporter.cs
+Processing (41/62): src/MyBlog.Infrastructure/Telemetry/FileLogExporter.cs
+Processing (42/62): src/MyBlog.Infrastructure/Telemetry/TelemetryPathResolver.cs
+Processing (43/62): src/MyBlog.slnx
+Processing (44/62): src/MyBlog.Tests/Integration/AuthServiceLongPasswordTests.cs
+Processing (45/62): src/MyBlog.Tests/Integration/AuthServiceTests.cs
+Processing (46/62): src/MyBlog.Tests/Integration/PasswordChangeTests.cs
+Processing (47/62): src/MyBlog.Tests/Integration/PostRepositoryTests.cs
+Processing (48/62): src/MyBlog.Tests/Integration/TelemetryCleanupTests.cs
+Processing (49/62): src/MyBlog.Tests/MyBlog.Tests.csproj
+Processing (50/62): src/MyBlog.Tests/Unit/LoginRateLimitMiddlewareTests.cs
+Processing (51/62): src/MyBlog.Tests/Unit/MarkdownServiceTests.cs
+Processing (52/62): src/MyBlog.Tests/Unit/PasswordServiceTests.cs
+Processing (53/62): src/MyBlog.Tests/Unit/SlugServiceTests.cs
+Processing (54/62): src/MyBlog.Web/appsettings.Development.json
+Processing (55/62): src/MyBlog.Web/appsettings.json
+Processing (56/62): src/MyBlog.Web/Middleware/LoginRateLimitMiddleware.cs
+Processing (57/62): src/MyBlog.Web/MyBlog.Web.csproj
+Processing (58/62): src/MyBlog.Web/Program.cs
+Processing (59/62): src/MyBlog.Web/wwwroot/css/site.css
+Processing (60/62): src/run.sh
+Processing (61/62): src/test.sh
+Processing (62/62): src/upgrade-myblog.sh
+
+==============================================
+  Export Complete!
+==============================================
+
+Output file:    docs/llm/dump.txt
+Files exported: 62
+Files skipped:  0
+Output size:    337.80 KB
+
+File types included:
+  • Source code: .cs, .fs, .vb
+  • UI/XAML: .axaml, .xaml, .paml
+  • Projects: .csproj, .slnx, .sln, .props, .targets
+  • Config: .json, .yaml, .yml, .xml, .config
+  • Docs: .md, .txt
+  • Scripts: .sh, .ps1, .cmd, .bat
+  • Other: .sql, .resx, .css, .scss, Dockerfile, etc.
+
+
+real	0m0.718s
+user	0m0.391s
+sys	0m0.462s
+
+real	0m7.672s
+user	0m12.412s
+sys	0m1.017s
+Restore complete (0.5s)
+
+Build succeeded in 0.6s
+
+real	0m0.745s
+user	0m0.803s
+sys	0m0.136s
+
+Build succeeded in 0.5s
+
+real	0m0.713s
+user	0m0.706s
+sys	0m0.141s
+Restore complete (0.5s)
+  MyBlog.Core net10.0 succeeded (2.9s) → MyBlog.Core/bin/Debug/net10.0/MyBlog.Core.dll
+  MyBlog.Infrastructure net10.0 succeeded (0.4s) → MyBlog.Infrastructure/bin/Debug/net10.0/MyBlog.Infrastructure.dll
+  MyBlog.Web net10.0 succeeded (2.3s) → MyBlog.Web/bin/Debug/net10.0/MyBlog.Web.dll
+  MyBlog.Tests net10.0 succeeded (0.5s) → MyBlog.Tests/bin/Debug/net10.0/MyBlog.Tests.dll
+
+Build succeeded in 6.8s
+
+real	0m6.929s
+user	0m2.476s
+sys	0m0.344s
+Restore complete (0.5s)
+  MyBlog.Core net10.0 succeeded (0.1s) → MyBlog.Core/bin/Debug/net10.0/MyBlog.Core.dll
+  MyBlog.Infrastructure net10.0 succeeded (0.1s) → MyBlog.Infrastructure/bin/Debug/net10.0/MyBlog.Infrastructure.dll
+  MyBlog.Web net10.0 succeeded (0.3s) → MyBlog.Web/bin/Debug/net10.0/MyBlog.Web.dll
+  MyBlog.Tests net10.0 succeeded (0.1s) → MyBlog.Tests/bin/Debug/net10.0/MyBlog.Tests.dll
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.1.5+1b188a7b0a (64-bit .NET 10.0.1)
+[xUnit.net 00:00:00.16]   Discovering: MyBlog.Tests
+[xUnit.net 00:00:00.34]   Discovered:  MyBlog.Tests
+[xUnit.net 00:00:00.50]   Starting:    MyBlog.Tests
+[xUnit.net 00:43:04.72]   Finished:    MyBlog.Tests (ID = '24cedafe73dab5684218bb3cf04cfd49ae8ce3b87ae799399cb2e301cbc1e755')
+  MyBlog.Tests test net10.0 succeeded (2585.3s)
+
+Test summary: total: 66, failed: 0, succeeded: 66, skipped: 0, duration: 2585.3s
+Build succeeded in 2586.5s
+
+real	43m6.701s
+user	0m7.015s
+sys	0m3.844s
+Restore complete (0.4s)
+
+Build succeeded in 0.5s
+Project 'MyBlog.Core' has the following package references
+   [net10.0]: No packages were found for this framework.
+Project 'MyBlog.Infrastructure' has the following package references
+   [net10.0]: 
+   Top-level Package                           Requested   Resolved
+   > Microsoft.AspNetCore.Identity             2.3.1       2.3.1   
+   > Microsoft.EntityFrameworkCore.Sqlite      10.0.1      10.0.1  
+   > OpenTelemetry                             1.14.0      1.14.0  
+
+Project 'MyBlog.Tests' has the following package references
+   [net10.0]: 
+   Top-level Package                           Requested   Resolved
+   > Microsoft.EntityFrameworkCore.Sqlite      10.0.1      10.0.1  
+   > Microsoft.NET.Test.Sdk                    18.0.1      18.0.1  
+   > xunit.runner.visualstudio                 3.1.5       3.1.5   
+   > xunit.v3                                  3.2.1       3.2.1   
+
+Project 'MyBlog.Web' has the following package references
+   [net10.0]: 
+   Top-level Package                                  Requested    Resolved
+   > Microsoft.AspNetCore.App.Internal.Assets   (A)   [10.0.1, )   10.0.1  
+   > OpenTelemetry.Exporter.Console                   1.14.0       1.14.0  
+   > OpenTelemetry.Extensions.Hosting                 1.14.0       1.14.0  
+   > OpenTelemetry.Instrumentation.AspNetCore         1.14.0       1.14.0  
+   > OpenTelemetry.Instrumentation.Http               1.14.0       1.14.0  
+
+(A) : Auto-referenced package.
+
+real	0m2.383s
+user	0m2.478s
+sys	0m0.456s
+Restore complete (0.4s)
+
+Build succeeded in 0.5s
+
+The following sources were used:
+   https://api.nuget.org/v3/index.json
+
+The given project `MyBlog.Core` has no updates given the current sources.
+The given project `MyBlog.Infrastructure` has no updates given the current sources.
+The given project `MyBlog.Tests` has no updates given the current sources.
+The given project `MyBlog.Web` has no updates given the current sources.
+
+real	0m3.161s
+user	0m2.277s
+sys	0m0.355s
+kushal@syn-2600-6c56-9840-001d-0000-0000-0000-1157:~/src/dotnet/MyBlog/src$ cd .. 
+kushal@syn-2600-6c56-9840-001d-0000-0000-0000-1157:~/src/dotnet/MyBlog$ time bash fix-rate-limit.sh 
+==============================================
+  Fixing Rate Limit Middleware Tests
+==============================================
+
+[1/2] Updating LoginRateLimitMiddleware to be testable...
+      Done.
+[2/2] Updating tests to skip actual delays...
+      Done.
+
+==============================================
+  Fix Complete!
+==============================================
+
+Changes made:
+
+  1. Updated LoginRateLimitMiddleware:
+     - Added injectable delay function (internal constructor)
+     - Added ClearAttempts() method for test isolation
+     - Made CalculateDelay() internal for direct testing
+
+  2. Rewrote LoginRateLimitMiddlewareTests:
+     - Uses no-op delay function (records delays but doesn't wait)
+     - Tests run in milliseconds instead of minutes
+     - Added IDisposable to clean up state between tests
+     - Added more specific tests for delay progression
+
+The key insight: the old tests were actually calling Task.Delay()
+with real delays (1s, 2s, 4s, 8s... 30s) for 100 iterations.
+That adds up to ~45+ minutes of waiting!
+
+Next steps:
+  1. Run: chmod +x fix-rate-limit-tests.sh && ./fix-rate-limit-tests.sh
+  2. Run: cd src && dotnet test
+
+
+real	0m0.017s
+user	0m0.003s
+sys	0m0.004s
+kushal@syn-2600-6c56-9840-001d-0000-0000-0000-1157:~/src/dotnet/MyBlog$ cd ~/src/dotnet/MyBlog/; time bash export.sh; cd ~/src/dotnet/MyBlog/src/; time dotnet format; time dotnet restore; time dotnet clean; time dotnet build; time dotnet test; time dotnet list package; time dotnet list package --outdated;
+==============================================
+  Project Export for LLM Analysis
+==============================================
+
+Project Path: /home/kushal/src/dotnet/MyBlog
+Output File:  docs/llm/dump.txt
+
+Generating directory structure...
+Collecting files...
+Found 63 files to export
+
+Processing (1/63): export.sh
+Processing (2/63): .github/workflows/build-deploy.yml
+Processing (3/63): .gitignore
+Processing (4/63): README.md
+Processing (5/63): src/Directory.Build.props
+Processing (6/63): src/Directory.Packages.props
+Processing (7/63): src/.editorconfig
+Processing (8/63): src/fix-changepassword-and-tests.sh
+Processing (9/63): src/fix-rate-limit.sh
+Processing (10/63): src/generate-myblog.sh
+Processing (11/63): src/.github/workflows/build-deploy.yml
+Processing (12/63): src/global.json
+Processing (13/63): src/MyBlog.Core/Constants/AppConstants.cs
+Processing (14/63): src/MyBlog.Core/Interfaces/IAuthService.cs
+Processing (15/63): src/MyBlog.Core/Interfaces/IImageRepository.cs
+Processing (16/63): src/MyBlog.Core/Interfaces/IMarkdownService.cs
+Processing (17/63): src/MyBlog.Core/Interfaces/IPasswordService.cs
+Processing (18/63): src/MyBlog.Core/Interfaces/IPostRepository.cs
+Processing (19/63): src/MyBlog.Core/Interfaces/ISlugService.cs
+Processing (20/63): src/MyBlog.Core/Interfaces/ITelemetryLogRepository.cs
+Processing (21/63): src/MyBlog.Core/Interfaces/IUserRepository.cs
+Processing (22/63): src/MyBlog.Core/Models/Image.cs
+Processing (23/63): src/MyBlog.Core/Models/Post.cs
+Processing (24/63): src/MyBlog.Core/Models/PostDto.cs
+Processing (25/63): src/MyBlog.Core/Models/TelemetryLog.cs
+Processing (26/63): src/MyBlog.Core/Models/User.cs
+Processing (27/63): src/MyBlog.Core/MyBlog.Core.csproj
+Processing (28/63): src/MyBlog.Core/Services/MarkdownService.cs
+Processing (29/63): src/MyBlog.Core/Services/SlugService.cs
+Processing (30/63): src/MyBlog.Infrastructure/Data/BlogDbContext.cs
+Processing (31/63): src/MyBlog.Infrastructure/Data/DatabasePathResolver.cs
+Processing (32/63): src/MyBlog.Infrastructure/MyBlog.Infrastructure.csproj
+Processing (33/63): src/MyBlog.Infrastructure/Repositories/ImageRepository.cs
+Processing (34/63): src/MyBlog.Infrastructure/Repositories/PostRepository.cs
+Processing (35/63): src/MyBlog.Infrastructure/Repositories/TelemetryLogRepository.cs
+Processing (36/63): src/MyBlog.Infrastructure/Repositories/UserRepository.cs
+Processing (37/63): src/MyBlog.Infrastructure/ServiceCollectionExtensions.cs
+Processing (38/63): src/MyBlog.Infrastructure/Services/AuthService.cs
+Processing (39/63): src/MyBlog.Infrastructure/Services/PasswordService.cs
+Processing (40/63): src/MyBlog.Infrastructure/Services/TelemetryCleanupService.cs
+Processing (41/63): src/MyBlog.Infrastructure/Telemetry/DatabaseLogExporter.cs
+Processing (42/63): src/MyBlog.Infrastructure/Telemetry/FileLogExporter.cs
+Processing (43/63): src/MyBlog.Infrastructure/Telemetry/TelemetryPathResolver.cs
+Processing (44/63): src/MyBlog.slnx
+Processing (45/63): src/MyBlog.Tests/Integration/AuthServiceLongPasswordTests.cs
+Processing (46/63): src/MyBlog.Tests/Integration/AuthServiceTests.cs
+Processing (47/63): src/MyBlog.Tests/Integration/PasswordChangeTests.cs
+Processing (48/63): src/MyBlog.Tests/Integration/PostRepositoryTests.cs
+Processing (49/63): src/MyBlog.Tests/Integration/TelemetryCleanupTests.cs
+Processing (50/63): src/MyBlog.Tests/MyBlog.Tests.csproj
+Processing (51/63): src/MyBlog.Tests/Unit/LoginRateLimitMiddlewareTests.cs
+Processing (52/63): src/MyBlog.Tests/Unit/MarkdownServiceTests.cs
+Processing (53/63): src/MyBlog.Tests/Unit/PasswordServiceTests.cs
+Processing (54/63): src/MyBlog.Tests/Unit/SlugServiceTests.cs
+Processing (55/63): src/MyBlog.Web/appsettings.Development.json
+Processing (56/63): src/MyBlog.Web/appsettings.json
+Processing (57/63): src/MyBlog.Web/Middleware/LoginRateLimitMiddleware.cs
+Processing (58/63): src/MyBlog.Web/MyBlog.Web.csproj
+Processing (59/63): src/MyBlog.Web/Program.cs
+Processing (60/63): src/MyBlog.Web/wwwroot/css/site.css
+Processing (61/63): src/run.sh
+Processing (62/63): src/test.sh
+Processing (63/63): src/upgrade-myblog.sh
+
+==============================================
+  Export Complete!
+==============================================
+
+Output file:    docs/llm/dump.txt
+Files exported: 63
+Files skipped:  0
+Output size:    357.09 KB
+
+File types included:
+  • Source code: .cs, .fs, .vb
+  • UI/XAML: .axaml, .xaml, .paml
+  • Projects: .csproj, .slnx, .sln, .props, .targets
+  • Config: .json, .yaml, .yml, .xml, .config
+  • Docs: .md, .txt
+  • Scripts: .sh, .ps1, .cmd, .bat
+  • Other: .sql, .resx, .css, .scss, Dockerfile, etc.
+
+
+real	0m0.629s
+user	0m0.367s
+sys	0m0.399s
+Unable to fix CS0246. Code fix CSharpMakeMethodAsynchronousCodeFixProvider didn't return a Fix All action.
+Unable to fix CS0246. Code fix CSharpGenerateVariableCodeFixProvider doesn't support Fix All in Solution.
+Unable to fix CS0246. Code fix CSharpMakeMethodAsynchronousCodeFixProvider didn't return a Fix All action.
+Unable to fix CS0246. Code fix CSharpGenerateVariableCodeFixProvider doesn't support Fix All in Solution.
+Unable to fix CS0246. Code fix CSharpMakeMethodAsynchronousCodeFixProvider didn't return a Fix All action.
+Unable to fix CS0246. Code fix CSharpGenerateVariableCodeFixProvider doesn't support Fix All in Solution.
+Unable to fix CS0246. Code fix CSharpMakeMethodAsynchronousCodeFixProvider didn't return a Fix All action.
+Unable to fix CS0246. Code fix CSharpGenerateVariableCodeFixProvider doesn't support Fix All in Solution.
+
+real	0m6.761s
+user	0m10.984s
+sys	0m0.938s
+Restore complete (0.4s)
+
+Build succeeded in 0.5s
+
+real	0m0.675s
+user	0m0.697s
+sys	0m0.167s
+
+Build succeeded in 0.5s
+
+real	0m0.640s
+user	0m0.654s
+sys	0m0.121s
+Restore complete (0.5s)
+  MyBlog.Core net10.0 succeeded (2.7s) → MyBlog.Core/bin/Debug/net10.0/MyBlog.Core.dll
+  MyBlog.Infrastructure net10.0 succeeded (0.4s) → MyBlog.Infrastructure/bin/Debug/net10.0/MyBlog.Infrastructure.dll
+  MyBlog.Web net10.0 succeeded (2.2s) → MyBlog.Web/bin/Debug/net10.0/MyBlog.Web.dll
+  MyBlog.Tests net10.0 failed with 18 error(s) (0.3s)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/Unit/LoginRateLimitMiddlewareTests.cs(49,6): error CS0246: The type or namespace name 'FactAttribute' could not be found (are you missing a using directive or an assembly reference?)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/Unit/LoginRateLimitMiddlewareTests.cs(49,6): error CS0246: The type or namespace name 'Fact' could not be found (are you missing a using directive or an assembly reference?)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/Unit/LoginRateLimitMiddlewareTests.cs(60,6): error CS0246: The type or namespace name 'FactAttribute' could not be found (are you missing a using directive or an assembly reference?)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/Unit/LoginRateLimitMiddlewareTests.cs(60,6): error CS0246: The type or namespace name 'Fact' could not be found (are you missing a using directive or an assembly reference?)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/Unit/LoginRateLimitMiddlewareTests.cs(71,6): error CS0246: The type or namespace name 'FactAttribute' could not be found (are you missing a using directive or an assembly reference?)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/Unit/LoginRateLimitMiddlewareTests.cs(71,6): error CS0246: The type or namespace name 'Fact' could not be found (are you missing a using directive or an assembly reference?)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/Unit/LoginRateLimitMiddlewareTests.cs(87,6): error CS0246: The type or namespace name 'FactAttribute' could not be found (are you missing a using directive or an assembly reference?)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/Unit/LoginRateLimitMiddlewareTests.cs(87,6): error CS0246: The type or namespace name 'Fact' could not be found (are you missing a using directive or an assembly reference?)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/Unit/LoginRateLimitMiddlewareTests.cs(104,6): error CS0246: The type or namespace name 'FactAttribute' could not be found (are you missing a using directive or an assembly reference?)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/Unit/LoginRateLimitMiddlewareTests.cs(104,6): error CS0246: The type or namespace name 'Fact' could not be found (are you missing a using directive or an assembly reference?)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/Unit/LoginRateLimitMiddlewareTests.cs(127,6): error CS0246: The type or namespace name 'FactAttribute' could not be found (are you missing a using directive or an assembly reference?)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/Unit/LoginRateLimitMiddlewareTests.cs(127,6): error CS0246: The type or namespace name 'Fact' could not be found (are you missing a using directive or an assembly reference?)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/Unit/LoginRateLimitMiddlewareTests.cs(148,6): error CS0246: The type or namespace name 'FactAttribute' could not be found (are you missing a using directive or an assembly reference?)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/Unit/LoginRateLimitMiddlewareTests.cs(148,6): error CS0246: The type or namespace name 'Fact' could not be found (are you missing a using directive or an assembly reference?)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/Unit/LoginRateLimitMiddlewareTests.cs(164,6): error CS0246: The type or namespace name 'FactAttribute' could not be found (are you missing a using directive or an assembly reference?)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/Unit/LoginRateLimitMiddlewareTests.cs(164,6): error CS0246: The type or namespace name 'Fact' could not be found (are you missing a using directive or an assembly reference?)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/Unit/LoginRateLimitMiddlewareTests.cs(188,6): error CS0246: The type or namespace name 'FactAttribute' could not be found (are you missing a using directive or an assembly reference?)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/Unit/LoginRateLimitMiddlewareTests.cs(188,6): error CS0246: The type or namespace name 'Fact' could not be found (are you missing a using directive or an assembly reference?)
+
+Build failed with 18 error(s) in 6.1s
+
+real	0m6.301s
+user	0m2.151s
+sys	0m0.306s
+Restore complete (0.5s)
+  MyBlog.Core net10.0 succeeded (0.1s) → MyBlog.Core/bin/Debug/net10.0/MyBlog.Core.dll
+  MyBlog.Infrastructure net10.0 succeeded (0.1s) → MyBlog.Infrastructure/bin/Debug/net10.0/MyBlog.Infrastructure.dll
+  MyBlog.Web net10.0 succeeded (0.3s) → MyBlog.Web/bin/Debug/net10.0/MyBlog.Web.dll
+  MyBlog.Tests net10.0 failed with 18 error(s) (0.1s)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/Unit/LoginRateLimitMiddlewareTests.cs(49,6): error CS0246: The type or namespace name 'FactAttribute' could not be found (are you missing a using directive or an assembly reference?)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/Unit/LoginRateLimitMiddlewareTests.cs(49,6): error CS0246: The type or namespace name 'Fact' could not be found (are you missing a using directive or an assembly reference?)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/Unit/LoginRateLimitMiddlewareTests.cs(60,6): error CS0246: The type or namespace name 'FactAttribute' could not be found (are you missing a using directive or an assembly reference?)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/Unit/LoginRateLimitMiddlewareTests.cs(60,6): error CS0246: The type or namespace name 'Fact' could not be found (are you missing a using directive or an assembly reference?)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/Unit/LoginRateLimitMiddlewareTests.cs(71,6): error CS0246: The type or namespace name 'FactAttribute' could not be found (are you missing a using directive or an assembly reference?)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/Unit/LoginRateLimitMiddlewareTests.cs(71,6): error CS0246: The type or namespace name 'Fact' could not be found (are you missing a using directive or an assembly reference?)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/Unit/LoginRateLimitMiddlewareTests.cs(87,6): error CS0246: The type or namespace name 'FactAttribute' could not be found (are you missing a using directive or an assembly reference?)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/Unit/LoginRateLimitMiddlewareTests.cs(87,6): error CS0246: The type or namespace name 'Fact' could not be found (are you missing a using directive or an assembly reference?)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/Unit/LoginRateLimitMiddlewareTests.cs(104,6): error CS0246: The type or namespace name 'FactAttribute' could not be found (are you missing a using directive or an assembly reference?)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/Unit/LoginRateLimitMiddlewareTests.cs(104,6): error CS0246: The type or namespace name 'Fact' could not be found (are you missing a using directive or an assembly reference?)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/Unit/LoginRateLimitMiddlewareTests.cs(127,6): error CS0246: The type or namespace name 'FactAttribute' could not be found (are you missing a using directive or an assembly reference?)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/Unit/LoginRateLimitMiddlewareTests.cs(127,6): error CS0246: The type or namespace name 'Fact' could not be found (are you missing a using directive or an assembly reference?)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/Unit/LoginRateLimitMiddlewareTests.cs(148,6): error CS0246: The type or namespace name 'FactAttribute' could not be found (are you missing a using directive or an assembly reference?)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/Unit/LoginRateLimitMiddlewareTests.cs(148,6): error CS0246: The type or namespace name 'Fact' could not be found (are you missing a using directive or an assembly reference?)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/Unit/LoginRateLimitMiddlewareTests.cs(164,6): error CS0246: The type or namespace name 'FactAttribute' could not be found (are you missing a using directive or an assembly reference?)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/Unit/LoginRateLimitMiddlewareTests.cs(164,6): error CS0246: The type or namespace name 'Fact' could not be found (are you missing a using directive or an assembly reference?)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/Unit/LoginRateLimitMiddlewareTests.cs(188,6): error CS0246: The type or namespace name 'FactAttribute' could not be found (are you missing a using directive or an assembly reference?)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/Unit/LoginRateLimitMiddlewareTests.cs(188,6): error CS0246: The type or namespace name 'Fact' could not be found (are you missing a using directive or an assembly reference?)
+
+Build failed with 18 error(s) in 1.2s
+
+real	0m1.377s
+user	0m1.266s
+sys	0m0.262s
+Restore complete (0.4s)
+
+Build succeeded in 0.5s
+Project 'MyBlog.Core' has the following package references
+   [net10.0]: No packages were found for this framework.
+Project 'MyBlog.Infrastructure' has the following package references
+   [net10.0]: 
+   Top-level Package                           Requested   Resolved
+   > Microsoft.AspNetCore.Identity             2.3.1       2.3.1   
+   > Microsoft.EntityFrameworkCore.Sqlite      10.0.1      10.0.1  
+   > OpenTelemetry                             1.14.0      1.14.0  
+
+Project 'MyBlog.Tests' has the following package references
+   [net10.0]: 
+   Top-level Package                           Requested   Resolved
+   > Microsoft.EntityFrameworkCore.Sqlite      10.0.1      10.0.1  
+   > Microsoft.NET.Test.Sdk                    18.0.1      18.0.1  
+   > xunit.runner.visualstudio                 3.1.5       3.1.5   
+   > xunit.v3                                  3.2.1       3.2.1   
+
+Project 'MyBlog.Web' has the following package references
+   [net10.0]: 
+   Top-level Package                                  Requested    Resolved
+   > Microsoft.AspNetCore.App.Internal.Assets   (A)   [10.0.1, )   10.0.1  
+   > OpenTelemetry.Exporter.Console                   1.14.0       1.14.0  
+   > OpenTelemetry.Extensions.Hosting                 1.14.0       1.14.0  
+   > OpenTelemetry.Instrumentation.AspNetCore         1.14.0       1.14.0  
+   > OpenTelemetry.Instrumentation.Http               1.14.0       1.14.0  
+
+(A) : Auto-referenced package.
+
+real	0m1.478s
+user	0m1.486s
+sys	0m0.308s
+Restore complete (0.4s)
+
+Build succeeded in 0.5s
+
+The following sources were used:
+   https://api.nuget.org/v3/index.json
+
+The given project `MyBlog.Core` has no updates given the current sources.
+The given project `MyBlog.Infrastructure` has no updates given the current sources.
+The given project `MyBlog.Tests` has no updates given the current sources.
+The given project `MyBlog.Web` has no updates given the current sources.
+
+real	0m1.525s
+user	0m1.519s
+sys	0m0.300s
 kushal@syn-2600-6c56-9840-001d-0000-0000-0000-1157:~/src/dotnet/MyBlog/src$ 
