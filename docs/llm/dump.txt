@@ -1,6 +1,6 @@
 ===============================================================================
 PROJECT EXPORT
-Generated: Sun Dec 28 08:39:30 AM CST 2025
+Generated: Sun Dec 28 08:40:46 AM CST 2025
 Project Path: /home/kushal/src/dotnet/MyBlog
 ===============================================================================
 
@@ -916,7 +916,7 @@ MODIFIED: 2025-12-28 07:44:06
 ================================================================================
 FILE: src/Directory.Packages.props
 SIZE: 1.29 KB
-MODIFIED: 2025-12-28 08:26:54
+MODIFIED: 2025-12-28 08:40:28
 ================================================================================
 
 <Project>
@@ -941,7 +941,7 @@ MODIFIED: 2025-12-28 08:26:54
     <!-- Testing (xUnit v3) -->
     <PackageVersion Include="xunit.v3" Version="3.2.1" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
-    <PackageVersion Include="xunit.runner.visualstudio" Version="3.0.0" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
   </ItemGroup>
 </Project>
 
@@ -7140,7 +7140,7 @@ MODIFIED: 2025-12-28 07:44:06
 ================================================================================
 FILE: src/MyBlog.Tests/Integration/AuthServiceTests.cs
 SIZE: 3.85 KB
-MODIFIED: 2025-12-28 08:38:37
+MODIFIED: 2025-12-28 08:39:37
 ================================================================================
 
 using Microsoft.EntityFrameworkCore;
@@ -7270,10 +7270,11 @@ public class AuthServiceTests : IAsyncDisposable
     }
 }
 
+
 ================================================================================
 FILE: src/MyBlog.Tests/Integration/PostRepositoryTests.cs
 SIZE: 4.88 KB
-MODIFIED: 2025-12-28 08:39:06
+MODIFIED: 2025-12-28 08:39:37
 ================================================================================
 
 using Microsoft.EntityFrameworkCore;
@@ -7439,6 +7440,7 @@ public class PostRepositoryTests : IAsyncDisposable
         };
     }
 }
+
 
 ================================================================================
 FILE: src/MyBlog.Tests/Integration/TelemetryCleanupTests.cs
@@ -7916,7 +7918,7 @@ MODIFIED: 2025-12-28 08:26:41
 ================================================================================
 FILE: src/MyBlog.Web/Program.cs
 SIZE: 3.09 KB
-MODIFIED: 2025-12-28 08:38:55
+MODIFIED: 2025-12-28 08:39:37
 ================================================================================
 
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -8017,6 +8019,7 @@ app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
 app.Run();
+
 
 ================================================================================
 FILE: src/MyBlog.Web/wwwroot/css/site.css
@@ -8576,7 +8579,7 @@ dotnet test MyBlog.slnx -v normal
 
 
 ===============================================================================
-EXPORT COMPLETED: Sun Dec 28 08:39:30 AM CST 2025
+EXPORT COMPLETED: Sun Dec 28 08:40:46 AM CST 2025
 Total Files Found: 55
 Files Exported: 55
 Files Skipped: 0 (binary or large files)
