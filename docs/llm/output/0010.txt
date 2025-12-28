@@ -1082,4 +1082,248 @@ The given project `MyBlog.Web` has no updates given the current sources.
 real	0m1.927s
 user	0m1.904s
 sys	0m0.364s
-kushal@syn-2600-6c56-9840-001d-0000-0000-0000-1157:~/src/dotnet/MyBlog/src$ 
+kushal@syn-2600-6c56-9840-001d-0000-0000-0000-1157:~/src/dotnet/MyBlog/src$ cd ..
+kushal@syn-2600-6c56-9840-001d-0000-0000-0000-1157:~/src/dotnet/MyBlog$ time bash fix-
+fix-all-forms.sh             fix-blazor-interactivity.sh  fix-login-logout.sh          fix-ordered-lists.sh         fix-program-cs.sh            
+kushal@syn-2600-6c56-9840-001d-0000-0000-0000-1157:~/src/dotnet/MyBlog$ time bash fix-program-cs.sh 
+==============================================
+  MyBlog: Fix Program.cs Build Errors
+==============================================
+
+[1/2] Rewriting Program.cs with correct class references...
+      Done.
+[2/2] Checking FileLogExporter constructor...
+      FileLogExporter already accepts string directory path.
+
+==============================================
+  Fix Complete!
+==============================================
+
+Changes made:
+
+  1. Program.cs:
+     - Removed reference to non-existent FileActivityExporter
+     - Removed reference to non-existent FileMetricExporter
+     - Removed reference to non-existent TelemetryPaths
+     - Removed reference to non-existent DbSeeder
+     - Using TelemetryPathResolver.GetTelemetryDirectory() instead
+     - Using IAuthService.EnsureAdminUserAsync() for seeding
+     - Using AddHostedService<TelemetryCleanupService>() instead of manual start
+     - Using console exporters for tracing/metrics (no file exporters exist)
+     - FileLogExporter is used for log files only
+
+Next steps:
+  1. Run: chmod +x fix-program-cs.sh && ./fix-program-cs.sh
+  2. Build: dotnet build src/MyBlog.slnx
+  3. Test: dotnet run --project src/MyBlog.Web
+
+fix-program-cs.sh: line 188: EOF: command not found
+
+real	0m0.014s
+user	0m0.002s
+sys	0m0.003s
+kushal@syn-2600-6c56-9840-001d-0000-0000-0000-1157:~/src/dotnet/MyBlog$ cd ~/src/dotnet/MyBlog/; time bash export.sh; cd ~/src/dotnet/MyBlog/src/; time dotnet format; time dotnet restore; time dotnet clean; time dotnet build; time dotnet test; time dotnet list package; time dotnet list package --outdated;
+==============================================
+  Project Export for LLM Analysis
+==============================================
+
+Project Path: /home/kushal/src/dotnet/MyBlog
+Output File:  docs/llm/dump.txt
+
+Generating directory structure...
+Collecting files...
+Found 68 files to export
+
+Processing (1/68): export.sh
+Processing (2/68): fix-all-forms.sh
+Processing (3/68): fix-blazor-interactivity.sh
+Processing (4/68): fix-login-logout.sh
+Processing (5/68): fix-ordered-lists.sh
+Processing (6/68): fix-program-cs.sh
+Processing (7/68): .github/workflows/build-deploy.yml
+Processing (8/68): .gitignore
+Processing (9/68): README.md
+Processing (10/68): src/Directory.Build.props
+Processing (11/68): src/Directory.Packages.props
+Processing (12/68): src/.editorconfig
+Processing (13/68): src/fix-changepassword-and-tests.sh
+Processing (14/68): src/fix-rate-limit.sh
+Processing (15/68): src/generate-myblog.sh
+Processing (16/68): src/.github/workflows/build-deploy.yml
+Processing (17/68): src/global.json
+Processing (18/68): src/MyBlog.Core/Constants/AppConstants.cs
+Processing (19/68): src/MyBlog.Core/Interfaces/IAuthService.cs
+Processing (20/68): src/MyBlog.Core/Interfaces/IImageRepository.cs
+Processing (21/68): src/MyBlog.Core/Interfaces/IMarkdownService.cs
+Processing (22/68): src/MyBlog.Core/Interfaces/IPasswordService.cs
+Processing (23/68): src/MyBlog.Core/Interfaces/IPostRepository.cs
+Processing (24/68): src/MyBlog.Core/Interfaces/ISlugService.cs
+Processing (25/68): src/MyBlog.Core/Interfaces/ITelemetryLogRepository.cs
+Processing (26/68): src/MyBlog.Core/Interfaces/IUserRepository.cs
+Processing (27/68): src/MyBlog.Core/Models/Image.cs
+Processing (28/68): src/MyBlog.Core/Models/Post.cs
+Processing (29/68): src/MyBlog.Core/Models/PostDto.cs
+Processing (30/68): src/MyBlog.Core/Models/TelemetryLog.cs
+Processing (31/68): src/MyBlog.Core/Models/User.cs
+Processing (32/68): src/MyBlog.Core/MyBlog.Core.csproj
+Processing (33/68): src/MyBlog.Core/Services/MarkdownService.cs
+Processing (34/68): src/MyBlog.Core/Services/SlugService.cs
+Processing (35/68): src/MyBlog.Infrastructure/Data/BlogDbContext.cs
+Processing (36/68): src/MyBlog.Infrastructure/Data/DatabasePathResolver.cs
+Processing (37/68): src/MyBlog.Infrastructure/MyBlog.Infrastructure.csproj
+Processing (38/68): src/MyBlog.Infrastructure/Repositories/ImageRepository.cs
+Processing (39/68): src/MyBlog.Infrastructure/Repositories/PostRepository.cs
+Processing (40/68): src/MyBlog.Infrastructure/Repositories/TelemetryLogRepository.cs
+Processing (41/68): src/MyBlog.Infrastructure/Repositories/UserRepository.cs
+Processing (42/68): src/MyBlog.Infrastructure/ServiceCollectionExtensions.cs
+Processing (43/68): src/MyBlog.Infrastructure/Services/AuthService.cs
+Processing (44/68): src/MyBlog.Infrastructure/Services/PasswordService.cs
+Processing (45/68): src/MyBlog.Infrastructure/Services/TelemetryCleanupService.cs
+Processing (46/68): src/MyBlog.Infrastructure/Telemetry/DatabaseLogExporter.cs
+Processing (47/68): src/MyBlog.Infrastructure/Telemetry/FileLogExporter.cs
+Processing (48/68): src/MyBlog.Infrastructure/Telemetry/TelemetryPathResolver.cs
+Processing (49/68): src/MyBlog.slnx
+Processing (50/68): src/MyBlog.Tests/Integration/AuthServiceLongPasswordTests.cs
+Processing (51/68): src/MyBlog.Tests/Integration/AuthServiceTests.cs
+Processing (52/68): src/MyBlog.Tests/Integration/PasswordChangeTests.cs
+Processing (53/68): src/MyBlog.Tests/Integration/PostRepositoryTests.cs
+Processing (54/68): src/MyBlog.Tests/Integration/TelemetryCleanupTests.cs
+Processing (55/68): src/MyBlog.Tests/MyBlog.Tests.csproj
+Processing (56/68): src/MyBlog.Tests/Unit/LoginRateLimitMiddlewareTests.cs
+Processing (57/68): src/MyBlog.Tests/Unit/MarkdownServiceTests.cs
+Processing (58/68): src/MyBlog.Tests/Unit/PasswordServiceTests.cs
+Processing (59/68): src/MyBlog.Tests/Unit/SlugServiceTests.cs
+Processing (60/68): src/MyBlog.Web/appsettings.Development.json
+Processing (61/68): src/MyBlog.Web/appsettings.json
+Processing (62/68): src/MyBlog.Web/Middleware/LoginRateLimitMiddleware.cs
+Processing (63/68): src/MyBlog.Web/MyBlog.Web.csproj
+Processing (64/68): src/MyBlog.Web/Program.cs
+Processing (65/68): src/MyBlog.Web/wwwroot/css/site.css
+Processing (66/68): src/run.sh
+Processing (67/68): src/test.sh
+Processing (68/68): src/upgrade-myblog.sh
+
+==============================================
+  Export Complete!
+==============================================
+
+Output file:    docs/llm/dump.txt
+Files exported: 68
+Files skipped:  0
+Output size:    417.74 KB
+
+File types included:
+  • Source code: .cs, .fs, .vb
+  • UI/XAML: .axaml, .xaml, .paml
+  • Projects: .csproj, .slnx, .sln, .props, .targets
+  • Config: .json, .yaml, .yml, .xml, .config
+  • Docs: .md, .txt
+  • Scripts: .sh, .ps1, .cmd, .bat
+  • Other: .sql, .resx, .css, .scss, Dockerfile, etc.
+
+
+real	0m0.717s
+user	0m0.406s
+sys	0m0.449s
+Unable to fix CS1503. Code fix GenerateConstructorCodeFixProvider doesn't support Fix All in Solution.
+Unable to fix CS1503. Code fix CSharpAddParameterCodeFixProvider doesn't support Fix All in Solution.
+Unable to fix CS1503. Code fix GenerateMethodCodeFixProvider doesn't support Fix All in Solution.
+Unable to fix CS1503. Code fix GenerateConstructorCodeFixProvider doesn't support Fix All in Solution.
+Unable to fix CS1503. Code fix CSharpAddParameterCodeFixProvider doesn't support Fix All in Solution.
+Unable to fix CS1503. Code fix GenerateMethodCodeFixProvider doesn't support Fix All in Solution.
+Unable to fix CS1503. Code fix GenerateConstructorCodeFixProvider doesn't support Fix All in Solution.
+Unable to fix CS1503. Code fix CSharpAddParameterCodeFixProvider doesn't support Fix All in Solution.
+Unable to fix CS1503. Code fix GenerateMethodCodeFixProvider doesn't support Fix All in Solution.
+Unable to fix CS1503. Code fix GenerateConstructorCodeFixProvider doesn't support Fix All in Solution.
+Unable to fix CS1503. Code fix CSharpAddParameterCodeFixProvider doesn't support Fix All in Solution.
+Unable to fix CS1503. Code fix GenerateMethodCodeFixProvider doesn't support Fix All in Solution.
+
+real	0m9.594s
+user	0m14.160s
+sys	0m1.050s
+Restore complete (0.5s)
+
+Build succeeded in 0.6s
+
+real	0m0.799s
+user	0m0.838s
+sys	0m0.148s
+
+Build succeeded in 0.6s
+
+real	0m0.745s
+user	0m0.758s
+sys	0m0.126s
+Restore complete (0.5s)
+  MyBlog.Core net10.0 succeeded (0.3s) → MyBlog.Core/bin/Debug/net10.0/MyBlog.Core.dll
+  MyBlog.Infrastructure net10.0 succeeded (0.2s) → MyBlog.Infrastructure/bin/Debug/net10.0/MyBlog.Infrastructure.dll
+  MyBlog.Web net10.0 failed with 1 error(s) (0.6s)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/Program.cs(79,30): error CS1503: Argument 1: cannot convert from 'MyBlog.Infrastructure.Telemetry.FileLogExporter' to 'OpenTelemetry.BaseProcessor<OpenTelemetry.Logs.LogRecord>'
+
+Build failed with 1 error(s) in 1.9s
+
+real	0m2.040s
+user	0m1.678s
+sys	0m0.252s
+Restore complete (0.5s)
+  MyBlog.Core net10.0 succeeded (0.2s) → MyBlog.Core/bin/Debug/net10.0/MyBlog.Core.dll
+  MyBlog.Infrastructure net10.0 succeeded (0.1s) → MyBlog.Infrastructure/bin/Debug/net10.0/MyBlog.Infrastructure.dll
+  MyBlog.Web net10.0 failed with 1 error(s) (0.4s)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/Program.cs(79,30): error CS1503: Argument 1: cannot convert from 'MyBlog.Infrastructure.Telemetry.FileLogExporter' to 'OpenTelemetry.BaseProcessor<OpenTelemetry.Logs.LogRecord>'
+
+Build failed with 1 error(s) in 1.3s
+
+real	0m1.520s
+user	0m1.290s
+sys	0m0.270s
+Restore complete (0.5s)
+
+Build succeeded in 0.6s
+Project 'MyBlog.Core' has the following package references
+   [net10.0]: No packages were found for this framework.
+Project 'MyBlog.Infrastructure' has the following package references
+   [net10.0]: 
+   Top-level Package                           Requested   Resolved
+   > Microsoft.AspNetCore.Identity             2.3.1       2.3.1   
+   > Microsoft.EntityFrameworkCore.Sqlite      10.0.1      10.0.1  
+   > OpenTelemetry                             1.14.0      1.14.0  
+
+Project 'MyBlog.Tests' has the following package references
+   [net10.0]: 
+   Top-level Package                           Requested   Resolved
+   > Microsoft.EntityFrameworkCore.Sqlite      10.0.1      10.0.1  
+   > Microsoft.NET.Test.Sdk                    18.0.1      18.0.1  
+   > xunit.runner.visualstudio                 3.1.5       3.1.5   
+   > xunit.v3                                  3.2.1       3.2.1   
+
+Project 'MyBlog.Web' has the following package references
+   [net10.0]: 
+   Top-level Package                                  Requested    Resolved
+   > Microsoft.AspNetCore.App.Internal.Assets   (A)   [10.0.1, )   10.0.1  
+   > OpenTelemetry.Exporter.Console                   1.14.0       1.14.0  
+   > OpenTelemetry.Extensions.Hosting                 1.14.0       1.14.0  
+   > OpenTelemetry.Instrumentation.AspNetCore         1.14.0       1.14.0  
+   > OpenTelemetry.Instrumentation.Http               1.14.0       1.14.0  
+
+(A) : Auto-referenced package.
+
+real	0m1.840s
+user	0m1.790s
+sys	0m0.379s
+Restore complete (0.5s)
+
+Build succeeded in 0.6s
+
+The following sources were used:
+   https://api.nuget.org/v3/index.json
+
+The given project `MyBlog.Core` has no updates given the current sources.
+The given project `MyBlog.Infrastructure` has no updates given the current sources.
+The given project `MyBlog.Tests` has no updates given the current sources.
+The given project `MyBlog.Web` has no updates given the current sources.
+
+real	0m1.952s
+user	0m1.925s
+sys	0m0.381s
+kushal@syn-2600-6c56-9840-001d-0000-0000-0000-1157:~/src/dotnet/MyBlog/src$ cd ..
+
