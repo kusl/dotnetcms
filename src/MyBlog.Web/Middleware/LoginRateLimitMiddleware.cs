@@ -1,0 +1,153 @@
+using System.Collections.Concurrent;
+
+namespace MyBlog.Web.Middleware;
+
+/// <summary>
+/// Rate limiting middleware for login attempts.
+/// Slows down requests but NEVER blocks users completely.
+/// </summary>
+public sealed class LoginRateLimitMiddleware
+{
+    private readonly RequestDelegate _next;
+    private readonly ILogger<LoginRateLimitMiddleware> _logger;
+
+    // Track attempts per IP: IP -> (attempt count, window start)
+    private static readonly ConcurrentDictionary<string, (int Count, DateTime WindowStart)> _attempts = new();
+
+    // Configuration
+    private const int WindowMinutes = 15;
+    private const int AttemptsBeforeDelay = 5;
+    private const int MaxDelaySeconds = 30;
+
+    public LoginRateLimitMiddleware(RequestDelegate next, ILogger<LoginRateLimitMiddleware> logger)
+    {
+        _next = next;
+        _logger = logger;
+    }
+
+    public async Task InvokeAsync(HttpContext context)
+    {
+        // Only rate limit POST requests to login endpoint
+        if (!IsLoginPostRequest(context))
+        {
+            await _next(context);
+            return;
+        }
+
+        var ip = GetClientIp(context);
+        var delay = CalculateDelay(ip);
+
+        if (delay > TimeSpan.Zero)
+        {
+            _logger.LogInformation(
+                "Rate limiting login attempt from {IP}, delaying {Seconds}s",
+                ip, delay.TotalSeconds);
+            await Task.Delay(delay, context.RequestAborted);
+        }
+
+        // Always proceed - never block
+        await _next(context);
+
+        // Record the attempt after processing
+        RecordAttempt(ip);
+    }
+
+    private static bool IsLoginPostRequest(HttpContext context)
+    {
+        return context.Request.Method == HttpMethods.Post &&
+               context.Request.Path.StartsWithSegments("/login", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static string GetClientIp(HttpContext context)
+    {
+        // Check for forwarded IP (behind proxy/load balancer)
+        var forwardedFor = context.Request.Headers["X-Forwarded-For"].FirstOrDefault();
+        if (!string.IsNullOrEmpty(forwardedFor))
+        {
+            var ip = forwardedFor.Split(',')[0].Trim();
+            if (!string.IsNullOrEmpty(ip))
+            {
+                return ip;
+            }
+        }
+
+        return context.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+    }
+
+    private static TimeSpan CalculateDelay(string ip)
+    {
+        if (!_attempts.TryGetValue(ip, out var record))
+        {
+            return TimeSpan.Zero;
+        }
+
+        // Reset if window expired
+        if (DateTime.UtcNow - record.WindowStart > TimeSpan.FromMinutes(WindowMinutes))
+        {
+            _attempts.TryRemove(ip, out _);
+            return TimeSpan.Zero;
+        }
+
+        // No delay for first few attempts
+        if (record.Count < AttemptsBeforeDelay)
+        {
+            return TimeSpan.Zero;
+        }
+
+        // Progressive delay: 1s, 2s, 4s, 8s, ... capped at MaxDelaySeconds
+        var delayMultiplier = record.Count - AttemptsBeforeDelay;
+        var delaySeconds = Math.Min(Math.Pow(2, delayMultiplier), MaxDelaySeconds);
+        return TimeSpan.FromSeconds(delaySeconds);
+    }
+
+    private static void RecordAttempt(string ip)
+    {
+        var now = DateTime.UtcNow;
+
+        _attempts.AddOrUpdate(
+            ip,
+            _ => (1, now),
+            (_, existing) =>
+            {
+                // Reset window if expired
+                if (now - existing.WindowStart > TimeSpan.FromMinutes(WindowMinutes))
+                {
+                    return (1, now);
+                }
+                return (existing.Count + 1, existing.WindowStart);
+            });
+
+        // Cleanup old entries periodically (every 100th request)
+        if (Random.Shared.Next(100) == 0)
+        {
+            CleanupOldEntries();
+        }
+    }
+
+    private static void CleanupOldEntries()
+    {
+        var cutoff = DateTime.UtcNow.AddMinutes(-WindowMinutes * 2);
+        foreach (var kvp in _attempts)
+        {
+            if (kvp.Value.WindowStart < cutoff)
+            {
+                _attempts.TryRemove(kvp.Key, out _);
+            }
+        }
+    }
+}
+
+/// <summary>
+/// Extension methods for LoginRateLimitMiddleware.
+/// </summary>
+public static class LoginRateLimitMiddlewareExtensions
+{
+    /// <summary>
+    /// Adds login rate limiting middleware that slows down repeated attempts
+    /// but never completely blocks users.
+    /// </summary>
+    public static IApplicationBuilder UseLoginRateLimit(this IApplicationBuilder app)
+    {
+        return app.UseMiddleware<LoginRateLimitMiddleware>();
+    }
+}

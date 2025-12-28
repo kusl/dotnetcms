@@ -4,12 +4,12 @@ using MyBlog.Core.Models;
 using MyBlog.Infrastructure.Data;
 using MyBlog.Infrastructure.Repositories;
 using MyBlog.Infrastructure.Services;
-using Xunit;
 
 namespace MyBlog.Tests.Integration;
 
 /// <summary>
 /// Tests for long password support and account lockout behavior.
+/// Uses in-memory SQLite for cross-platform compatibility (Windows/Linux/macOS).
 /// </summary>
 public sealed class AuthServiceLongPasswordTests : IAsyncDisposable
 {
@@ -19,11 +19,13 @@ public sealed class AuthServiceLongPasswordTests : IAsyncDisposable
 
     public AuthServiceLongPasswordTests()
     {
+        // Use in-memory SQLite - works on all platforms without file locking issues
         var options = new DbContextOptionsBuilder<BlogDbContext>()
-            .UseSqlite($"Data Source={Guid.NewGuid()}.db")
+            .UseSqlite("Data Source=:memory:")
             .Options;
 
         _context = new BlogDbContext(options);
+        _context.Database.OpenConnection();
         _context.Database.EnsureCreated();
 
         _passwordService = new PasswordService();
@@ -40,12 +42,7 @@ public sealed class AuthServiceLongPasswordTests : IAsyncDisposable
 
     public async ValueTask DisposeAsync()
     {
-        var dbPath = _context.Database.GetConnectionString()?.Replace("Data Source=", "");
         await _context.DisposeAsync();
-        if (!string.IsNullOrEmpty(dbPath) && File.Exists(dbPath))
-        {
-            File.Delete(dbPath);
-        }
     }
 
     // =========================================================================

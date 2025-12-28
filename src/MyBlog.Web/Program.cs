@@ -1,3 +1,4 @@
+using MyBlog.Web.Middleware;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using MyBlog.Core.Constants;
@@ -88,6 +89,7 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseStaticFiles();
+app.UseLoginRateLimit();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseAntiforgery();
