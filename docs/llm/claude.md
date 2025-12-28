@@ -2358,3 +2358,15 @@ Then test:
 
 
 
+yeah, no, you broke it 
+  MyBlog.Web net10.0 failed with 8 error(s) (0.4s)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/Program.cs(56,27): error CS0246: The type or namespace name 'FileActivityExporter' could not be found (are you missing a using directive or an assembly reference?)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/Program.cs(56,48): error CS0103: The name 'TelemetryPaths' does not exist in the current context
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/Program.cs(60,10): error CS1061: 'MeterProviderBuilder' does not contain a definition for 'AddRuntimeInstrumentation' and no accessible extension method 'AddRuntimeInstrumentation' accepting a first argument of type 'MeterProviderBuilder' could be found (are you missing a using directive or an assembly reference?)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/Program.cs(62,17): error CS0246: The type or namespace name 'FileMetricExporter' could not be found (are you missing a using directive or an assembly reference?)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/Program.cs(62,36): error CS0103: The name 'TelemetryPaths' does not exist in the current context
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/Program.cs(69,46): error CS0103: The name 'TelemetryPaths' does not exist in the current context
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/Program.cs(79,11): error CS0103: The name 'DbSeeder' does not exist in the current context
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/Program.cs(83,54): error CS0246: The type or namespace name 'TelemetryCleanupService' could not be found (are you missing a using directive or an assembly reference?)
+Build failed with 8 error(s) in 1.3s
+please review the latest dump.txt and fix it properly. 
