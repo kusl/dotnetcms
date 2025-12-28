@@ -1032,5 +1032,184 @@ Build succeeded in 2.7s
 real	0m2.891s
 user	0m1.212s
 sys	0m0.225s
-kushal@syn-2600-6c56-9840-001d-0000-0000-0000-1157:~/src/dotnet/MyBlog/src$ 
+kushal@syn-2600-6c56-9840-001d-0000-0000-0000-1157:~/src/dotnet/MyBlog/src$ cd ~/src/dotnet/MyBlog/; time bash export.sh; cd ~/src/dotnet/MyBlog/src/; time dotnet format; time dotnet restore; time dotnet clean; time dotnet build; time dotnet test;
+==============================================
+  Project Export for LLM Analysis
+==============================================
 
+Project Path: /home/kushal/src/dotnet/MyBlog
+Output File:  docs/llm/dump.txt
+
+Generating directory structure...
+Collecting files...
+Found 55 files to export
+
+Processing (1/55): export.sh
+Processing (2/55): .gitignore
+Processing (3/55): README.md
+Processing (4/55): src/Directory.Build.props
+Processing (5/55): src/Directory.Packages.props
+Processing (6/55): src/.editorconfig
+Processing (7/55): src/generate-myblog.sh
+Processing (8/55): src/.github/workflows/build-deploy.yml
+Processing (9/55): src/global.json
+Processing (10/55): src/MyBlog.Core/Constants/AppConstants.cs
+Processing (11/55): src/MyBlog.Core/Interfaces/IAuthService.cs
+Processing (12/55): src/MyBlog.Core/Interfaces/IImageRepository.cs
+Processing (13/55): src/MyBlog.Core/Interfaces/IMarkdownService.cs
+Processing (14/55): src/MyBlog.Core/Interfaces/IPasswordService.cs
+Processing (15/55): src/MyBlog.Core/Interfaces/IPostRepository.cs
+Processing (16/55): src/MyBlog.Core/Interfaces/ISlugService.cs
+Processing (17/55): src/MyBlog.Core/Interfaces/ITelemetryLogRepository.cs
+Processing (18/55): src/MyBlog.Core/Interfaces/IUserRepository.cs
+Processing (19/55): src/MyBlog.Core/Models/Image.cs
+Processing (20/55): src/MyBlog.Core/Models/Post.cs
+Processing (21/55): src/MyBlog.Core/Models/PostDto.cs
+Processing (22/55): src/MyBlog.Core/Models/TelemetryLog.cs
+Processing (23/55): src/MyBlog.Core/Models/User.cs
+Processing (24/55): src/MyBlog.Core/MyBlog.Core.csproj
+Processing (25/55): src/MyBlog.Core/Services/MarkdownService.cs
+Processing (26/55): src/MyBlog.Core/Services/SlugService.cs
+Processing (27/55): src/MyBlog.Infrastructure/Data/BlogDbContext.cs
+Processing (28/55): src/MyBlog.Infrastructure/Data/DatabasePathResolver.cs
+Processing (29/55): src/MyBlog.Infrastructure/MyBlog.Infrastructure.csproj
+Processing (30/55): src/MyBlog.Infrastructure/Repositories/ImageRepository.cs
+Processing (31/55): src/MyBlog.Infrastructure/Repositories/PostRepository.cs
+Processing (32/55): src/MyBlog.Infrastructure/Repositories/TelemetryLogRepository.cs
+Processing (33/55): src/MyBlog.Infrastructure/Repositories/UserRepository.cs
+Processing (34/55): src/MyBlog.Infrastructure/ServiceCollectionExtensions.cs
+Processing (35/55): src/MyBlog.Infrastructure/Services/AuthService.cs
+Processing (36/55): src/MyBlog.Infrastructure/Services/PasswordService.cs
+Processing (37/55): src/MyBlog.Infrastructure/Services/TelemetryCleanupService.cs
+Processing (38/55): src/MyBlog.Infrastructure/Telemetry/DatabaseLogExporter.cs
+Processing (39/55): src/MyBlog.Infrastructure/Telemetry/FileLogExporter.cs
+Processing (40/55): src/MyBlog.Infrastructure/Telemetry/TelemetryPathResolver.cs
+Processing (41/55): src/MyBlog.slnx
+Processing (42/55): src/MyBlog.Tests/Integration/AuthServiceTests.cs
+Processing (43/55): src/MyBlog.Tests/Integration/PostRepositoryTests.cs
+Processing (44/55): src/MyBlog.Tests/Integration/TelemetryCleanupTests.cs
+Processing (45/55): src/MyBlog.Tests/MyBlog.Tests.csproj
+Processing (46/55): src/MyBlog.Tests/Unit/MarkdownServiceTests.cs
+Processing (47/55): src/MyBlog.Tests/Unit/PasswordServiceTests.cs
+Processing (48/55): src/MyBlog.Tests/Unit/SlugServiceTests.cs
+Processing (49/55): src/MyBlog.Web/appsettings.Development.json
+Processing (50/55): src/MyBlog.Web/appsettings.json
+Processing (51/55): src/MyBlog.Web/MyBlog.Web.csproj
+Processing (52/55): src/MyBlog.Web/Program.cs
+Processing (53/55): src/MyBlog.Web/wwwroot/css/site.css
+Processing (54/55): src/run.sh
+Processing (55/55): src/test.sh
+
+==============================================
+  Export Complete!
+==============================================
+
+Output file:    docs/llm/dump.txt
+Files exported: 55
+Files skipped:  0
+Output size:    238.71 KB
+
+File types included:
+  • Source code: .cs, .fs, .vb
+  • UI/XAML: .axaml, .xaml, .paml
+  • Projects: .csproj, .slnx, .sln, .props, .targets
+  • Config: .json, .yaml, .yml, .xml, .config
+  • Docs: .md, .txt
+  • Scripts: .sh, .ps1, .cmd, .bat
+  • Other: .sql, .resx, .css, .scss, Dockerfile, etc.
+
+
+real	0m0.534s
+user	0m0.293s
+sys	0m0.362s
+Unable to fix xUnit1051. Code fix UseCancellationTokenFixer doesn't support Fix All in Solution.
+
+real	0m6.523s
+user	0m10.284s
+sys	0m0.874s
+Restore complete (0.4s)
+
+Build succeeded in 0.5s
+
+real	0m0.668s
+user	0m0.703s
+sys	0m0.144s
+
+Build succeeded in 0.4s
+
+real	0m0.597s
+user	0m0.643s
+sys	0m0.096s
+Restore complete (0.4s)
+  MyBlog.Core net10.0 succeeded (0.2s) → MyBlog.Core/bin/Debug/net10.0/MyBlog.Core.dll
+  MyBlog.Infrastructure net10.0 succeeded (0.1s) → MyBlog.Infrastructure/bin/Debug/net10.0/MyBlog.Infrastructure.dll
+  MyBlog.Tests net10.0 succeeded with 38 warning(s) (0.2s) → MyBlog.Tests/bin/Debug/net10.0/MyBlog.Tests.dll
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/Integration/AuthServiceTests.cs(57,15): warning xUnit1051: Calls to methods which accept CancellationToken should use TestContext.Current.CancellationToken to allow test cancellation to be more responsive. (https://xunit.net/xunit.analyzers/rules/xUnit1051)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/Integration/AuthServiceTests.cs(59,28): warning xUnit1051: Calls to methods which accept CancellationToken should use TestContext.Current.CancellationToken to allow test cancellation to be more responsive. (https://xunit.net/xunit.analyzers/rules/xUnit1051)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/Integration/PostRepositoryTests.cs(50,28): warning xUnit1051: Calls to methods which accept CancellationToken should use TestContext.Current.CancellationToken to allow test cancellation to be more responsive. (https://xunit.net/xunit.analyzers/rules/xUnit1051)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/Integration/PostRepositoryTests.cs(53,27): warning xUnit1051: Calls to methods which accept CancellationToken should use TestContext.Current.CancellationToken to allow test cancellation to be more responsive. (https://xunit.net/xunit.analyzers/rules/xUnit1051)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/Integration/PostRepositoryTests.cs(62,15): warning xUnit1051: Calls to methods which accept CancellationToken should use TestContext.Current.CancellationToken to allow test cancellation to be more responsive. (https://xunit.net/xunit.analyzers/rules/xUnit1051)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/Integration/PostRepositoryTests.cs(64,28): warning xUnit1051: Calls to methods which accept CancellationToken should use TestContext.Current.CancellationToken to allow test cancellation to be more responsive. (https://xunit.net/xunit.analyzers/rules/xUnit1051)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/Integration/AuthServiceTests.cs(88,28): warning xUnit1051: Calls to methods which accept CancellationToken should use TestContext.Current.CancellationToken to allow test cancellation to be more responsive. (https://xunit.net/xunit.analyzers/rules/xUnit1051)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/Integration/AuthServiceTests.cs(78,15): warning xUnit1051: Calls to methods which accept CancellationToken should use TestContext.Current.CancellationToken to allow test cancellation to be more responsive. (https://xunit.net/xunit.analyzers/rules/xUnit1051)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/Integration/AuthServiceTests.cs(80,28): warning xUnit1051: Calls to methods which accept CancellationToken should use TestContext.Current.CancellationToken to allow test cancellation to be more responsive. (https://xunit.net/xunit.analyzers/rules/xUnit1051)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/Integration/PostRepositoryTests.cs(73,28): warning xUnit1051: Calls to methods which accept CancellationToken should use TestContext.Current.CancellationToken to allow test cancellation to be more responsive. (https://xunit.net/xunit.analyzers/rules/xUnit1051)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/Integration/TelemetryCleanupTests.cs(54,15): warning xUnit1051: Calls to methods which accept CancellationToken should use TestContext.Current.CancellationToken to allow test cancellation to be more responsive. (https://xunit.net/xunit.analyzers/rules/xUnit1051)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/Integration/TelemetryCleanupTests.cs(57,29): warning xUnit1051: Calls to methods which accept CancellationToken should use TestContext.Current.CancellationToken to allow test cancellation to be more responsive. (https://xunit.net/xunit.analyzers/rules/xUnit1051)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/Integration/TelemetryCleanupTests.cs(60,31): warning xUnit1051: Calls to methods which accept CancellationToken should use TestContext.Current.CancellationToken to allow test cancellation to be more responsive. (https://xunit.net/xunit.analyzers/rules/xUnit1051)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/Integration/PostRepositoryTests.cs(81,15): warning xUnit1051: Calls to methods which accept CancellationToken should use TestContext.Current.CancellationToken to allow test cancellation to be more responsive. (https://xunit.net/xunit.analyzers/rules/xUnit1051)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/Integration/PostRepositoryTests.cs(83,28): warning xUnit1051: Calls to methods which accept CancellationToken should use TestContext.Current.CancellationToken to allow test cancellation to be more responsive. (https://xunit.net/xunit.analyzers/rules/xUnit1051)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/Integration/AuthServiceTests.cs(95,15): warning xUnit1051: Calls to methods which accept CancellationToken should use TestContext.Current.CancellationToken to allow test cancellation to be more responsive. (https://xunit.net/xunit.analyzers/rules/xUnit1051)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/Integration/AuthServiceTests.cs(97,27): warning xUnit1051: Calls to methods which accept CancellationToken should use TestContext.Current.CancellationToken to allow test cancellation to be more responsive. (https://xunit.net/xunit.analyzers/rules/xUnit1051)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/Integration/AuthServiceTests.cs(114,15): warning xUnit1051: Calls to methods which accept CancellationToken should use TestContext.Current.CancellationToken to allow test cancellation to be more responsive. (https://xunit.net/xunit.analyzers/rules/xUnit1051)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/Integration/AuthServiceTests.cs(116,15): warning xUnit1051: Calls to methods which accept CancellationToken should use TestContext.Current.CancellationToken to allow test cancellation to be more responsive. (https://xunit.net/xunit.analyzers/rules/xUnit1051)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/Integration/AuthServiceTests.cs(118,31): warning xUnit1051: Calls to methods which accept CancellationToken should use TestContext.Current.CancellationToken to allow test cancellation to be more responsive. (https://xunit.net/xunit.analyzers/rules/xUnit1051)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/Integration/TelemetryCleanupTests.cs(75,15): warning xUnit1051: Calls to methods which accept CancellationToken should use TestContext.Current.CancellationToken to allow test cancellation to be more responsive. (https://xunit.net/xunit.analyzers/rules/xUnit1051)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/Integration/TelemetryCleanupTests.cs(78,29): warning xUnit1051: Calls to methods which accept CancellationToken should use TestContext.Current.CancellationToken to allow test cancellation to be more responsive. (https://xunit.net/xunit.analyzers/rules/xUnit1051)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/Integration/TelemetryCleanupTests.cs(81,31): warning xUnit1051: Calls to methods which accept CancellationToken should use TestContext.Current.CancellationToken to allow test cancellation to be more responsive. (https://xunit.net/xunit.analyzers/rules/xUnit1051)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/Integration/PostRepositoryTests.cs(94,15): warning xUnit1051: Calls to methods which accept CancellationToken should use TestContext.Current.CancellationToken to allow test cancellation to be more responsive. (https://xunit.net/xunit.analyzers/rules/xUnit1051)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/Integration/PostRepositoryTests.cs(95,15): warning xUnit1051: Calls to methods which accept CancellationToken should use TestContext.Current.CancellationToken to allow test cancellation to be more responsive. (https://xunit.net/xunit.analyzers/rules/xUnit1051)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/Integration/PostRepositoryTests.cs(97,36): warning xUnit1051: Calls to methods which accept CancellationToken should use TestContext.Current.CancellationToken to allow test cancellation to be more responsive. (https://xunit.net/xunit.analyzers/rules/xUnit1051)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/Integration/TelemetryCleanupTests.cs(96,15): warning xUnit1051: Calls to methods which accept CancellationToken should use TestContext.Current.CancellationToken to allow test cancellation to be more responsive. (https://xunit.net/xunit.analyzers/rules/xUnit1051)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/Integration/TelemetryCleanupTests.cs(98,27): warning xUnit1051: Calls to methods which accept CancellationToken should use TestContext.Current.CancellationToken to allow test cancellation to be more responsive. (https://xunit.net/xunit.analyzers/rules/xUnit1051)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/Integration/PostRepositoryTests.cs(121,15): warning xUnit1051: Calls to methods which accept CancellationToken should use TestContext.Current.CancellationToken to allow test cancellation to be more responsive. (https://xunit.net/xunit.analyzers/rules/xUnit1051)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/Integration/PostRepositoryTests.cs(123,15): warning xUnit1051: Calls to methods which accept CancellationToken should use TestContext.Current.CancellationToken to allow test cancellation to be more responsive. (https://xunit.net/xunit.analyzers/rules/xUnit1051)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/Integration/PostRepositoryTests.cs(125,29): warning xUnit1051: Calls to methods which accept CancellationToken should use TestContext.Current.CancellationToken to allow test cancellation to be more responsive. (https://xunit.net/xunit.analyzers/rules/xUnit1051)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/Integration/PostRepositoryTests.cs(108,15): warning xUnit1051: Calls to methods which accept CancellationToken should use TestContext.Current.CancellationToken to allow test cancellation to be more responsive. (https://xunit.net/xunit.analyzers/rules/xUnit1051)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/Integration/PostRepositoryTests.cs(111,15): warning xUnit1051: Calls to methods which accept CancellationToken should use TestContext.Current.CancellationToken to allow test cancellation to be more responsive. (https://xunit.net/xunit.analyzers/rules/xUnit1051)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/Integration/PostRepositoryTests.cs(113,29): warning xUnit1051: Calls to methods which accept CancellationToken should use TestContext.Current.CancellationToken to allow test cancellation to be more responsive. (https://xunit.net/xunit.analyzers/rules/xUnit1051)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/Integration/PostRepositoryTests.cs(132,15): warning xUnit1051: Calls to methods which accept CancellationToken should use TestContext.Current.CancellationToken to allow test cancellation to be more responsive. (https://xunit.net/xunit.analyzers/rules/xUnit1051)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/Integration/PostRepositoryTests.cs(133,15): warning xUnit1051: Calls to methods which accept CancellationToken should use TestContext.Current.CancellationToken to allow test cancellation to be more responsive. (https://xunit.net/xunit.analyzers/rules/xUnit1051)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/Integration/PostRepositoryTests.cs(134,15): warning xUnit1051: Calls to methods which accept CancellationToken should use TestContext.Current.CancellationToken to allow test cancellation to be more responsive. (https://xunit.net/xunit.analyzers/rules/xUnit1051)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/Integration/PostRepositoryTests.cs(136,27): warning xUnit1051: Calls to methods which accept CancellationToken should use TestContext.Current.CancellationToken to allow test cancellation to be more responsive. (https://xunit.net/xunit.analyzers/rules/xUnit1051)
+  MyBlog.Web net10.0 failed with 6 error(s) (0.4s)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/Program.cs(30,13): error CS1061: 'OpenTelemetryLoggerOptions' does not contain a definition for 'AddConsoleExporter' and no accessible extension method 'AddConsoleExporter' accepting a first argument of type 'OpenTelemetryLoggerOptions' could be found (are you missing a using directive or an assembly reference?)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/Program.cs(45,14): error CS1061: 'TracerProviderBuilder' does not contain a definition for 'AddHttpClientInstrumentation' and no accessible extension method 'AddHttpClientInstrumentation' accepting a first argument of type 'TracerProviderBuilder' could be found (are you missing a using directive or an assembly reference?)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/Program.cs(52,14): error CS1061: 'MeterProviderBuilder' does not contain a definition for 'AddHttpClientInstrumentation' and no accessible extension method 'AddHttpClientInstrumentation' accepting a first argument of type 'MeterProviderBuilder' could be found (are you missing a using directive or an assembly reference?)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/Program.cs(62,18): error CS1061: 'IServiceCollection' does not contain a definition for 'AddSwaggerGen' and no accessible extension method 'AddSwaggerGen' accepting a first argument of type 'IServiceCollection' could be found (are you missing a using directive or an assembly reference?)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/Program.cs(77,9): error CS1061: 'WebApplication' does not contain a definition for 'UseSwagger' and no accessible extension method 'UseSwagger' accepting a first argument of type 'WebApplication' could be found (are you missing a using directive or an assembly reference?)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/Program.cs(78,9): error CS1061: 'WebApplication' does not contain a definition for 'UseSwaggerUI' and no accessible extension method 'UseSwaggerUI' accepting a first argument of type 'WebApplication' could be found (are you missing a using directive or an assembly reference?)
+
+Build failed with 6 error(s) and 38 warning(s) in 1.4s
+
+real	0m1.517s
+user	0m1.160s
+sys	0m0.239s
+Restore complete (0.4s)
+  MyBlog.Core net10.0 succeeded (0.1s) → MyBlog.Core/bin/Debug/net10.0/MyBlog.Core.dll
+  MyBlog.Infrastructure net10.0 succeeded (0.0s) → MyBlog.Infrastructure/bin/Debug/net10.0/MyBlog.Infrastructure.dll
+  MyBlog.Tests net10.0 succeeded (0.1s) → MyBlog.Tests/bin/Debug/net10.0/MyBlog.Tests.dll
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v3.0.0+e341b939fe (64-bit .NET 10.0.1)
+[xUnit.net 00:00:00.13]   Discovering: MyBlog.Tests
+[xUnit.net 00:00:00.29]   Discovered:  MyBlog.Tests
+[xUnit.net 00:00:00.44]   Starting:    MyBlog.Tests
+[xUnit.net 00:00:01.34]   Finished:    MyBlog.Tests
+  MyBlog.Tests test net10.0 succeeded (1.9s)
+
+Test summary: total: 45, failed: 0, succeeded: 45, skipped: 0, duration: 1.9s
+Build succeeded in 2.7s
+
+real	0m2.856s
+user	0m1.202s
+sys	0m0.213s
+kushal@syn-2600-6c56-9840-001d-0000-0000-0000-1157:~/src/dotnet/MyBlog/src$ 
