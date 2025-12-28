@@ -1,6 +1,6 @@
 ===============================================================================
 PROJECT EXPORT
-Generated: Sun Dec 28 08:13:41 AM CST 2025
+Generated: Sun Dec 28 08:15:38 AM CST 2025
 Project Path: /home/kushal/src/dotnet/MyBlog
 ===============================================================================
 
@@ -915,8 +915,8 @@ MODIFIED: 2025-12-28 07:44:06
 
 ================================================================================
 FILE: src/Directory.Packages.props
-SIZE: 1.48 KB
-MODIFIED: 2025-12-28 08:12:53
+SIZE: 1.45 KB
+MODIFIED: 2025-12-28 08:14:42
 ================================================================================
 
 <Project>
@@ -935,7 +935,7 @@ MODIFIED: 2025-12-28 08:12:53
     <PackageVersion Include="OpenTelemetry" Version="1.14.0" />
     <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.14.0" />
     <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.14.0" />
-    <ItemGroup>
+    
   <!-- OpenTelemetry exporters -->
   <PackageVersion Include="OpenTelemetry.Exporter.Console" Version="1.14.0" />
 
@@ -944,7 +944,6 @@ MODIFIED: 2025-12-28 08:12:53
 
   <!-- Swagger -->
   <PackageVersion Include="Swashbuckle.AspNetCore" Version="6.6.2" />
-</ItemGroup>
 
     
     <!-- Testing (xUnit v3) -->
@@ -8569,7 +8568,7 @@ dotnet test MyBlog.slnx -v normal
 
 
 ===============================================================================
-EXPORT COMPLETED: Sun Dec 28 08:13:41 AM CST 2025
+EXPORT COMPLETED: Sun Dec 28 08:15:38 AM CST 2025
 Total Files Found: 55
 Files Exported: 55
 Files Skipped: 0 (binary or large files)
