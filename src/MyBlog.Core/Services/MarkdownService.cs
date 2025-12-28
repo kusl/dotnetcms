@@ -7,10 +7,13 @@ namespace MyBlog.Core.Services;
 
 /// <summary>
 /// Custom Markdown to HTML renderer.
-/// Supports: headings, bold, italic, links, images, code blocks, blockquotes, lists, horizontal rules.
+/// Supports: headings, bold, italic, links, images, code blocks, blockquotes, 
+/// unordered lists, ordered lists, horizontal rules.
 /// </summary>
 public sealed partial class MarkdownService : IMarkdownService
 {
+    private enum ListType { None, Unordered, Ordered }
+
     /// <inheritdoc />
     public string ToHtml(string markdown)
     {
@@ -22,7 +25,7 @@ public sealed partial class MarkdownService : IMarkdownService
         var lines = markdown.Replace("\r\n", "\n").Split('\n');
         var result = new StringBuilder();
         var inCodeBlock = false;
-        var inList = false;
+        var currentListType = ListType.None;
         var codeBlockContent = new StringBuilder();
 
         foreach (var rawLine in lines)
@@ -42,11 +45,7 @@ public sealed partial class MarkdownService : IMarkdownService
                 }
                 else
                 {
-                    if (inList)
-                    {
-                        result.AppendLine("</ul>");
-                        inList = false;
-                    }
+                    result.Append(CloseList(ref currentListType));
                     inCodeBlock = true;
                 }
                 continue;
@@ -61,11 +60,7 @@ public sealed partial class MarkdownService : IMarkdownService
             // Handle horizontal rules
             if (HorizontalRulePattern().IsMatch(line))
             {
-                if (inList)
-                {
-                    result.AppendLine("</ul>");
-                    inList = false;
-                }
+                result.Append(CloseList(ref currentListType));
                 result.AppendLine("<hr />");
                 continue;
             }
@@ -74,59 +69,62 @@ public sealed partial class MarkdownService : IMarkdownService
             var headingMatch = HeadingPattern().Match(line);
             if (headingMatch.Success)
             {
-                if (inList)
-                {
-                    result.AppendLine("</ul>");
-                    inList = false;
-                }
+                result.Append(CloseList(ref currentListType));
                 var level = headingMatch.Groups[1].Value.Length;
-                var text = ProcessInline(headingMatch.Groups[2].Value.Trim());
-                result.AppendLine($"<h{level}>{text}</h{level}>");
+                var headingText = ProcessInline(headingMatch.Groups[2].Value);
+                result.AppendLine($"<h{level}>{headingText}</h{level}>");
                 continue;
             }
 
             // Handle blockquotes
-            if (line.StartsWith('>'))
+            if (line.StartsWith("> "))
             {
-                if (inList)
-                {
-                    result.AppendLine("</ul>");
-                    inList = false;
-                }
-                var quoteText = ProcessInline(line[1..].TrimStart());
+                result.Append(CloseList(ref currentListType));
+                var quoteText = ProcessInline(line[2..]);
                 result.AppendLine($"<blockquote><p>{quoteText}</p></blockquote>");
                 continue;
             }
 
-            // Handle unordered lists
-            var listMatch = UnorderedListPattern().Match(line);
-            if (listMatch.Success)
+            // Handle unordered list items (- or *)
+            var unorderedMatch = UnorderedListPattern().Match(line);
+            if (unorderedMatch.Success)
             {
-                if (!inList)
+                if (currentListType != ListType.Unordered)
                 {
+                    result.Append(CloseList(ref currentListType));
                     result.AppendLine("<ul>");
-                    inList = true;
+                    currentListType = ListType.Unordered;
                 }
-                var itemText = ProcessInline(listMatch.Groups[1].Value);
+                var itemText = ProcessInline(unorderedMatch.Groups[1].Value);
+                result.AppendLine($"<li>{itemText}</li>");
+                continue;
+            }
+
+            // Handle ordered list items (1. 2. 3. etc.)
+            var orderedMatch = OrderedListPattern().Match(line);
+            if (orderedMatch.Success)
+            {
+                if (currentListType != ListType.Ordered)
+                {
+                    result.Append(CloseList(ref currentListType));
+                    result.AppendLine("<ol>");
+                    currentListType = ListType.Ordered;
+                }
+                var itemText = ProcessInline(orderedMatch.Groups[1].Value);
                 result.AppendLine($"<li>{itemText}</li>");
                 continue;
             }
 
             // Close list if no longer in list item
-            if (inList && !string.IsNullOrWhiteSpace(line))
+            if (currentListType != ListType.None && !string.IsNullOrWhiteSpace(line))
             {
-                result.AppendLine("</ul>");
-                inList = false;
+                result.Append(CloseList(ref currentListType));
             }
 
             // Handle empty lines
             if (string.IsNullOrWhiteSpace(line))
             {
-                if (inList)
-                {
-                    result.AppendLine("</ul>");
-                    inList = false;
-                }
+                result.Append(CloseList(ref currentListType));
                 continue;
             }
 
@@ -136,10 +134,7 @@ public sealed partial class MarkdownService : IMarkdownService
         }
 
         // Close any open list
-        if (inList)
-        {
-            result.AppendLine("</ul>");
-        }
+        result.Append(CloseList(ref currentListType));
 
         // Close any unclosed code block
         if (inCodeBlock)
@@ -150,6 +145,18 @@ public sealed partial class MarkdownService : IMarkdownService
         }
 
         return result.ToString();
+    }
+
+    private static string CloseList(ref ListType listType)
+    {
+        var result = listType switch
+        {
+            ListType.Unordered => "</ul>\n",
+            ListType.Ordered => "</ol>\n",
+            _ => ""
+        };
+        listType = ListType.None;
+        return result;
     }
 
     private static string ProcessInline(string text)
@@ -180,6 +187,9 @@ public sealed partial class MarkdownService : IMarkdownService
 
     [GeneratedRegex(@"^[-*]\s+(.+)$")]
     private static partial Regex UnorderedListPattern();
+
+    [GeneratedRegex(@"^\d+\.\s+(.+)$")]
+    private static partial Regex OrderedListPattern();
 
     [GeneratedRegex(@"^[-*_]{3,}\s*$")]
     private static partial Regex HorizontalRulePattern();
