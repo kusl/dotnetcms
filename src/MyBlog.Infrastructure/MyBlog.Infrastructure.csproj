@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>MyBlog.Infrastructure</RootNamespace>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity" />
+    <PackageReference Include="OpenTelemetry" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\MyBlog.Core\MyBlog.Core.csproj" />
+  </ItemGroup>
+</Project>

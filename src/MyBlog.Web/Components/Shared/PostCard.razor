@@ -1,0 +1,23 @@
+<article class="post-card">
+    <h2 class="post-card-title">
+        <a href="/post/@Post.Slug">@Post.Title</a>
+    </h2>
+    <div class="post-card-meta">
+        <span class="author">By @Post.AuthorDisplayName</span>
+        @if (Post.PublishedAtUtc.HasValue)
+        {
+            <span class="date">@Post.PublishedAtUtc.Value.ToString("MMMM d, yyyy")</span>
+        }
+        @if (!Post.IsPublished)
+        {
+            <span class="draft-badge">Draft</span>
+        }
+    </div>
+    <p class="post-card-summary">@Post.Summary</p>
+    <a href="/post/@Post.Slug" class="read-more">Read more →</a>
+</article>
+
+@code {
+    [Parameter, EditorRequired]
+    public PostListItemDto Post { get; set; } = default!;
+}

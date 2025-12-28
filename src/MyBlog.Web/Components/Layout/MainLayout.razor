@@ -1,0 +1,39 @@
+@inherits LayoutComponentBase
+@inject IConfiguration Configuration
+@inject NavigationManager Navigation
+
+<div class="layout">
+    <header class="header">
+        <div class="container">
+            <a href="/" class="logo">@(Configuration["Application:Title"] ?? "MyBlog")</a>
+            <nav class="nav">
+                <a href="/">Home</a>
+                <a href="/about">About</a>
+                <AuthorizeView>
+                    <Authorized>
+                        <a href="/admin">Admin</a>
+                        <form method="post" action="/logout" class="logout-form">
+                            <AntiforgeryToken />
+                            <button type="submit">Logout</button>
+                        </form>
+                    </Authorized>
+                    <NotAuthorized>
+                        <a href="/login">Login</a>
+                    </NotAuthorized>
+                </AuthorizeView>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="container">
+            @Body
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; @DateTime.Now.Year @(Configuration["Application:Title"] ?? "MyBlog")</p>
+        </div>
+    </footer>
+</div>

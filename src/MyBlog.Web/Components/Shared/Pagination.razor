@@ -1,0 +1,30 @@
+@if (TotalPages > 1)
+{
+    <nav class="pagination" aria-label="Page navigation">
+        @if (CurrentPage > 1)
+        {
+            <a href="@GetPageUrl(CurrentPage - 1)" class="page-link">← Previous</a>
+        }
+        
+        <span class="page-info">Page @CurrentPage of @TotalPages</span>
+        
+        @if (CurrentPage < TotalPages)
+        {
+            <a href="@GetPageUrl(CurrentPage + 1)" class="page-link">Next →</a>
+        }
+    </nav>
+}
+
+@code {
+    [Parameter, EditorRequired]
+    public int CurrentPage { get; set; }
+
+    [Parameter, EditorRequired]
+    public int TotalPages { get; set; }
+
+    [Parameter]
+    public string BaseUrl { get; set; } = "/";
+
+    private string GetPageUrl(int page) =>
+        page == 1 ? BaseUrl : $"{BaseUrl}?page={page}";
+}

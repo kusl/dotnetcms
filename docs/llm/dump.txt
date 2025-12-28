@@ -1,6 +1,6 @@
 ===============================================================================
 PROJECT EXPORT
-Generated: Sun Dec 28 07:24:05 AM CST 2025
+Generated: Sun Dec 28 07:42:57 AM CST 2025
 Project Path: /home/kushal/src/dotnet/MyBlog
 ===============================================================================
 
@@ -17,6 +17,7 @@ DIRECTORY STRUCTURE:
 │       ├── kush.runasp.net-WebDeploy.publishSettings
 │       └── open-telemetry-hello-world.txt
 ├── src
+│   ├── generate-myblog.sh
 │   └── .gitkeep
 ├── export.sh
 ├── .gitignore
@@ -794,10 +795,4248 @@ MODIFIED: 2025-12-28 06:46:50
 
 
 
+================================================================================
+FILE: src/generate-myblog.sh
+SIZE: 118.95 KB
+MODIFIED: 2025-12-28 07:41:44
+================================================================================
+
+#!/bin/bash
+set -euo pipefail
+
+# =============================================================================
+# MyBlog Generator Script
+# =============================================================================
+# This script generates a complete .NET 10 Blazor Server CMS/Blog application.
+# It creates all source files, configurations, tests, and GitHub Actions workflows.
+#
+# Usage: bash src/generate-myblog.sh
+# =============================================================================
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SRC_DIR="$SCRIPT_DIR"
+
+echo "=============================================="
+echo "  MyBlog Generator - .NET 10 Blazor CMS"
+echo "=============================================="
+echo ""
+echo "Target directory: $SRC_DIR"
+echo "Starting generation at: $(date)"
+echo ""
+
+# =============================================================================
+# Step 1: Create Directory Structure
+# =============================================================================
+echo "[1/8] Creating directory structure..."
+echo "      WHY: Organizing code into separate projects follows clean architecture"
+echo "           principles and enables independent testing and deployment."
+
+mkdir -p "$SRC_DIR/MyBlog.Core/Models"
+mkdir -p "$SRC_DIR/MyBlog.Core/Interfaces"
+mkdir -p "$SRC_DIR/MyBlog.Core/Services"
+mkdir -p "$SRC_DIR/MyBlog.Core/Constants"
+mkdir -p "$SRC_DIR/MyBlog.Infrastructure/Data"
+mkdir -p "$SRC_DIR/MyBlog.Infrastructure/Repositories"
+mkdir -p "$SRC_DIR/MyBlog.Infrastructure/Services"
+mkdir -p "$SRC_DIR/MyBlog.Infrastructure/Telemetry"
+mkdir -p "$SRC_DIR/MyBlog.Web/Components/Layout"
+mkdir -p "$SRC_DIR/MyBlog.Web/Components/Pages"
+mkdir -p "$SRC_DIR/MyBlog.Web/Components/Pages/Admin"
+mkdir -p "$SRC_DIR/MyBlog.Web/Components/Shared"
+mkdir -p "$SRC_DIR/MyBlog.Web/wwwroot/css"
+mkdir -p "$SRC_DIR/MyBlog.Tests/Unit"
+mkdir -p "$SRC_DIR/MyBlog.Tests/Integration"
+mkdir -p "$SRC_DIR/.github/workflows"
+
+echo "      Created project directories."
+
+# =============================================================================
+# Step 2: Create Solution and Build Files
+# =============================================================================
+echo ""
+echo "[2/8] Creating solution and build configuration files..."
+echo "      WHY: Central package management ensures consistent versions across all"
+echo "           projects and simplifies dependency updates."
+
+# MyBlog.slnx - New .NET solution format
+cat << 'EOF' > "$SRC_DIR/MyBlog.slnx"
+<Solution>
+  <Project Path="MyBlog.Core/MyBlog.Core.csproj" />
+  <Project Path="MyBlog.Infrastructure/MyBlog.Infrastructure.csproj" />
+  <Project Path="MyBlog.Web/MyBlog.Web.csproj" />
+  <Project Path="MyBlog.Tests/MyBlog.Tests.csproj" />
+</Solution>
+EOF
+
+# global.json - Pin SDK version
+cat << 'EOF' > "$SRC_DIR/global.json"
+{
+  "sdk": {
+    "version": "10.0.100",
+    "rollForward": "latestFeature"
+  }
+}
+EOF
+
+# Directory.Build.props - Shared build properties
+cat << 'EOF' > "$SRC_DIR/Directory.Build.props"
+<Project>
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <AnalysisLevel>latest</AnalysisLevel>
+  </PropertyGroup>
+  
+  <PropertyGroup Condition="$(MSBuildProjectName.Contains('.Tests'))">
+    <IsPackable>false</IsPackable>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+  </PropertyGroup>
+</Project>
+EOF
+
+# Directory.Packages.props - Central package management
+cat << 'EOF' > "$SRC_DIR/Directory.Packages.props"
+<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- Core Framework (.NET 10) -->
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.1" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.1" />
+    <PackageVersion Include="Microsoft.AspNetCore.Identity" Version="2.3.1" />
+    <PackageVersion Include="Microsoft.Extensions.Hosting" Version="10.0.1" />
+    
+    <!-- OpenTelemetry (official packages only) -->
+    <PackageVersion Include="OpenTelemetry" Version="1.14.0" />
+    <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.14.0" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.14.0" />
+    
+    <!-- Testing (xUnit v3) -->
+    <PackageVersion Include="xunit.v3" Version="3.2.1" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
+  </ItemGroup>
+</Project>
+EOF
+
+# .editorconfig
+cat << 'EOF' > "$SRC_DIR/.editorconfig"
+root = true
+
+[*]
+indent_style = space
+indent_size = 4
+end_of_line = lf
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true
+
+[*.{cs,csx}]
+dotnet_sort_system_directives_first = true
+csharp_using_directive_placement = outside_namespace
+csharp_style_namespace_declarations = file_scoped:warning
+csharp_style_var_for_built_in_types = true:suggestion
+csharp_style_var_when_type_is_apparent = true:suggestion
+csharp_prefer_braces = true:warning
+
+[*.{json,yaml,yml}]
+indent_size = 2
+
+[*.md]
+trim_trailing_whitespace = false
+EOF
+
+echo "      Created solution and build files."
+
+# =============================================================================
+# Step 3: Create MyBlog.Core Project
+# =============================================================================
+echo ""
+echo "[3/8] Creating MyBlog.Core project (domain models and interfaces)..."
+echo "      WHY: The Core project contains domain entities and interfaces with no"
+echo "           external dependencies, enabling clean separation of concerns."
+
+# MyBlog.Core.csproj
+cat << 'EOF' > "$SRC_DIR/MyBlog.Core/MyBlog.Core.csproj"
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>MyBlog.Core</RootNamespace>
+  </PropertyGroup>
+</Project>
+EOF
+
+# Models/User.cs
+cat << 'EOF' > "$SRC_DIR/MyBlog.Core/Models/User.cs"
+namespace MyBlog.Core.Models;
+
+/// <summary>
+/// Represents a user who can create and manage blog posts.
+/// </summary>
+public sealed class User
+{
+    /// <summary>Gets or sets the unique identifier for the user.</summary>
+    public Guid Id { get; set; }
+
+    /// <summary>Gets or sets the unique username for authentication.</summary>
+    public required string Username { get; set; }
+
+    /// <summary>Gets or sets the hashed password.</summary>
+    public required string PasswordHash { get; set; }
+
+    /// <summary>Gets or sets the user's email address.</summary>
+    public required string Email { get; set; }
+
+    /// <summary>Gets or sets the display name shown on posts.</summary>
+    public required string DisplayName { get; set; }
+
+    /// <summary>Gets or sets when the user account was created.</summary>
+    public DateTime CreatedAtUtc { get; set; }
+
+    /// <summary>Navigation property for posts authored by this user.</summary>
+    public ICollection<Post> Posts { get; set; } = [];
+
+    /// <summary>Navigation property for images uploaded by this user.</summary>
+    public ICollection<Image> UploadedImages { get; set; } = [];
+}
+EOF
+
+# Models/Post.cs
+cat << 'EOF' > "$SRC_DIR/MyBlog.Core/Models/Post.cs"
+namespace MyBlog.Core.Models;
+
+/// <summary>
+/// Represents a blog post with Markdown content.
+/// </summary>
+public sealed class Post
+{
+    /// <summary>Gets or sets the unique identifier for the post.</summary>
+    public Guid Id { get; set; }
+
+    /// <summary>Gets or sets the post title.</summary>
+    public required string Title { get; set; }
+
+    /// <summary>Gets or sets the URL-friendly slug.</summary>
+    public required string Slug { get; set; }
+
+    /// <summary>Gets or sets the Markdown content of the post.</summary>
+    public required string Content { get; set; }
+
+    /// <summary>Gets or sets a brief summary for listings.</summary>
+    public required string Summary { get; set; }
+
+    /// <summary>Gets or sets the author's user ID.</summary>
+    public Guid AuthorId { get; set; }
+
+    /// <summary>Gets or sets when the post was created.</summary>
+    public DateTime CreatedAtUtc { get; set; }
+
+    /// <summary>Gets or sets when the post was last updated.</summary>
+    public DateTime UpdatedAtUtc { get; set; }
+
+    /// <summary>Gets or sets when the post was published (null if draft).</summary>
+    public DateTime? PublishedAtUtc { get; set; }
+
+    /// <summary>Gets or sets whether the post is publicly visible.</summary>
+    public bool IsPublished { get; set; }
+
+    /// <summary>Navigation property for the author.</summary>
+    public User? Author { get; set; }
+
+    /// <summary>Navigation property for attached images.</summary>
+    public ICollection<Image> Images { get; set; } = [];
+}
+EOF
+
+# Models/Image.cs
+cat << 'EOF' > "$SRC_DIR/MyBlog.Core/Models/Image.cs"
+namespace MyBlog.Core.Models;
+
+/// <summary>
+/// Represents an image stored as a BLOB in the database.
+/// </summary>
+public sealed class Image
+{
+    /// <summary>Gets or sets the unique identifier for the image.</summary>
+    public Guid Id { get; set; }
+
+    /// <summary>Gets or sets the original file name.</summary>
+    public required string FileName { get; set; }
+
+    /// <summary>Gets or sets the MIME content type.</summary>
+    public required string ContentType { get; set; }
+
+    /// <summary>Gets or sets the binary image data.</summary>
+    public required byte[] Data { get; set; }
+
+    /// <summary>Gets or sets the associated post ID (optional).</summary>
+    public Guid? PostId { get; set; }
+
+    /// <summary>Gets or sets when the image was uploaded.</summary>
+    public DateTime UploadedAtUtc { get; set; }
+
+    /// <summary>Gets or sets the ID of the user who uploaded the image.</summary>
+    public Guid UploadedByUserId { get; set; }
+
+    /// <summary>Navigation property for the associated post.</summary>
+    public Post? Post { get; set; }
+
+    /// <summary>Navigation property for the uploader.</summary>
+    public User? UploadedBy { get; set; }
+}
+EOF
+
+# Models/TelemetryLog.cs
+cat << 'EOF' > "$SRC_DIR/MyBlog.Core/Models/TelemetryLog.cs"
+namespace MyBlog.Core.Models;
+
+/// <summary>
+/// Represents a telemetry log entry stored in the database.
+/// </summary>
+public sealed class TelemetryLog
+{
+    /// <summary>Gets or sets the auto-increment primary key.</summary>
+    public int Id { get; set; }
+
+    /// <summary>Gets or sets the UTC timestamp of the log entry.</summary>
+    public DateTime TimestampUtc { get; set; }
+
+    /// <summary>Gets or sets the log level (Information, Warning, Error, etc.).</summary>
+    public required string Level { get; set; }
+
+    /// <summary>Gets or sets the category/source of the log.</summary>
+    public required string Category { get; set; }
+
+    /// <summary>Gets or sets the log message.</summary>
+    public required string Message { get; set; }
+
+    /// <summary>Gets or sets the exception details if any.</summary>
+    public string? Exception { get; set; }
+
+    /// <summary>Gets or sets the distributed trace ID.</summary>
+    public string? TraceId { get; set; }
+
+    /// <summary>Gets or sets the span ID within the trace.</summary>
+    public string? SpanId { get; set; }
+
+    /// <summary>Gets or sets additional properties as JSON.</summary>
+    public string? Properties { get; set; }
+}
+EOF
+
+# DTOs
+cat << 'EOF' > "$SRC_DIR/MyBlog.Core/Models/PostDto.cs"
+namespace MyBlog.Core.Models;
+
+/// <summary>Data transfer object for post listings.</summary>
+public sealed record PostListItemDto(
+    Guid Id,
+    string Title,
+    string Slug,
+    string Summary,
+    string AuthorDisplayName,
+    DateTime? PublishedAtUtc,
+    bool IsPublished);
+
+/// <summary>Data transfer object for creating a new post.</summary>
+public sealed record CreatePostDto(
+    string Title,
+    string Content,
+    string Summary,
+    bool IsPublished);
+
+/// <summary>Data transfer object for updating a post.</summary>
+public sealed record UpdatePostDto(
+    string Title,
+    string Content,
+    string Summary,
+    bool IsPublished);
+
+/// <summary>Data transfer object for post details.</summary>
+public sealed record PostDetailDto(
+    Guid Id,
+    string Title,
+    string Slug,
+    string Content,
+    string Summary,
+    string AuthorDisplayName,
+    DateTime CreatedAtUtc,
+    DateTime UpdatedAtUtc,
+    DateTime? PublishedAtUtc,
+    bool IsPublished);
+EOF
+
+# Constants/AppConstants.cs
+cat << 'EOF' > "$SRC_DIR/MyBlog.Core/Constants/AppConstants.cs"
+namespace MyBlog.Core.Constants;
+
+/// <summary>
+/// Application-wide constants.
+/// </summary>
+public static class AppConstants
+{
+    /// <summary>The name of the authentication cookie.</summary>
+    public const string AuthCookieName = "MyBlog.Auth";
+
+    /// <summary>The admin role claim value.</summary>
+    public const string AdminRole = "Admin";
+
+    /// <summary>Default page size for listings.</summary>
+    public const int DefaultPageSize = 10;
+
+    /// <summary>Maximum image size in bytes (5MB).</summary>
+    public const int MaxImageSizeBytes = 5 * 1024 * 1024;
+
+    /// <summary>Allowed image content types.</summary>
+    public static readonly string[] AllowedImageTypes =
+        ["image/jpeg", "image/png", "image/gif", "image/webp"];
+}
+EOF
+
+# Interfaces/IPostRepository.cs
+cat << 'EOF' > "$SRC_DIR/MyBlog.Core/Interfaces/IPostRepository.cs"
+using MyBlog.Core.Models;
+
+namespace MyBlog.Core.Interfaces;
+
+/// <summary>
+/// Repository interface for post operations.
+/// </summary>
+public interface IPostRepository
+{
+    /// <summary>Gets a paginated list of published posts.</summary>
+    Task<(IReadOnlyList<PostListItemDto> Posts, int TotalCount)> GetPublishedPostsAsync(
+        int page, int pageSize, CancellationToken cancellationToken = default);
+
+    /// <summary>Gets all posts for admin view.</summary>
+    Task<IReadOnlyList<PostListItemDto>> GetAllPostsAsync(
+        CancellationToken cancellationToken = default);
+
+    /// <summary>Gets a post by its slug.</summary>
+    Task<PostDetailDto?> GetBySlugAsync(string slug, CancellationToken cancellationToken = default);
+
+    /// <summary>Gets a post by its ID.</summary>
+    Task<Post?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
+
+    /// <summary>Creates a new post.</summary>
+    Task<Post> CreateAsync(Post post, CancellationToken cancellationToken = default);
+
+    /// <summary>Updates an existing post.</summary>
+    Task UpdateAsync(Post post, CancellationToken cancellationToken = default);
+
+    /// <summary>Deletes a post by ID.</summary>
+    Task DeleteAsync(Guid id, CancellationToken cancellationToken = default);
+
+    /// <summary>Gets the total count of posts.</summary>
+    Task<int> GetCountAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>Gets recent posts for dashboard.</summary>
+    Task<IReadOnlyList<PostListItemDto>> GetRecentPostsAsync(
+        int count, CancellationToken cancellationToken = default);
+}
+EOF
+
+# Interfaces/IUserRepository.cs
+cat << 'EOF' > "$SRC_DIR/MyBlog.Core/Interfaces/IUserRepository.cs"
+using MyBlog.Core.Models;
+
+namespace MyBlog.Core.Interfaces;
+
+/// <summary>
+/// Repository interface for user operations.
+/// </summary>
+public interface IUserRepository
+{
+    /// <summary>Gets a user by username.</summary>
+    Task<User?> GetByUsernameAsync(string username, CancellationToken cancellationToken = default);
+
+    /// <summary>Gets a user by ID.</summary>
+    Task<User?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
+
+    /// <summary>Creates a new user.</summary>
+    Task<User> CreateAsync(User user, CancellationToken cancellationToken = default);
+
+    /// <summary>Checks if any users exist.</summary>
+    Task<bool> AnyUsersExistAsync(CancellationToken cancellationToken = default);
+}
+EOF
+
+# Interfaces/IImageRepository.cs
+cat << 'EOF' > "$SRC_DIR/MyBlog.Core/Interfaces/IImageRepository.cs"
+using MyBlog.Core.Models;
+
+namespace MyBlog.Core.Interfaces;
+
+/// <summary>
+/// Repository interface for image operations.
+/// </summary>
+public interface IImageRepository
+{
+    /// <summary>Gets all images.</summary>
+    Task<IReadOnlyList<Image>> GetAllAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>Gets an image by ID.</summary>
+    Task<Image?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
+
+    /// <summary>Creates a new image.</summary>
+    Task<Image> CreateAsync(Image image, CancellationToken cancellationToken = default);
+
+    /// <summary>Deletes an image by ID.</summary>
+    Task DeleteAsync(Guid id, CancellationToken cancellationToken = default);
+}
+EOF
+
+# Interfaces/ITelemetryLogRepository.cs
+cat << 'EOF' > "$SRC_DIR/MyBlog.Core/Interfaces/ITelemetryLogRepository.cs"
+using MyBlog.Core.Models;
+
+namespace MyBlog.Core.Interfaces;
+
+/// <summary>
+/// Repository interface for telemetry log operations.
+/// </summary>
+public interface ITelemetryLogRepository
+{
+    /// <summary>Writes a log entry to the database.</summary>
+    Task WriteAsync(TelemetryLog log, CancellationToken cancellationToken = default);
+
+    /// <summary>Deletes logs older than the specified date.</summary>
+    Task<int> DeleteOlderThanAsync(DateTime cutoffUtc, CancellationToken cancellationToken = default);
+
+    /// <summary>Gets recent logs for viewing.</summary>
+    Task<IReadOnlyList<TelemetryLog>> GetRecentAsync(
+        int count, CancellationToken cancellationToken = default);
+}
+EOF
+
+# Interfaces/IPasswordService.cs
+cat << 'EOF' > "$SRC_DIR/MyBlog.Core/Interfaces/IPasswordService.cs"
+namespace MyBlog.Core.Interfaces;
+
+/// <summary>
+/// Service interface for password hashing and verification.
+/// </summary>
+public interface IPasswordService
+{
+    /// <summary>Hashes a plain text password.</summary>
+    string HashPassword(string password);
+
+    /// <summary>Verifies a password against a hash.</summary>
+    bool VerifyPassword(string hashedPassword, string providedPassword);
+}
+EOF
+
+# Interfaces/ISlugService.cs
+cat << 'EOF' > "$SRC_DIR/MyBlog.Core/Interfaces/ISlugService.cs"
+namespace MyBlog.Core.Interfaces;
+
+/// <summary>
+/// Service interface for generating URL-friendly slugs.
+/// </summary>
+public interface ISlugService
+{
+    /// <summary>Generates a slug from a title.</summary>
+    string GenerateSlug(string title);
+}
+EOF
+
+# Interfaces/IMarkdownService.cs
+cat << 'EOF' > "$SRC_DIR/MyBlog.Core/Interfaces/IMarkdownService.cs"
+namespace MyBlog.Core.Interfaces;
+
+/// <summary>
+/// Service interface for rendering Markdown to HTML.
+/// </summary>
+public interface IMarkdownService
+{
+    /// <summary>Converts Markdown text to HTML.</summary>
+    string ToHtml(string markdown);
+}
+EOF
+
+# Interfaces/IAuthService.cs
+cat << 'EOF' > "$SRC_DIR/MyBlog.Core/Interfaces/IAuthService.cs"
+using MyBlog.Core.Models;
+
+namespace MyBlog.Core.Interfaces;
+
+/// <summary>
+/// Service interface for authentication operations.
+/// </summary>
+public interface IAuthService
+{
+    /// <summary>Attempts to authenticate a user.</summary>
+    Task<User?> AuthenticateAsync(
+        string username, string password, CancellationToken cancellationToken = default);
+
+    /// <summary>Ensures the default admin user exists.</summary>
+    Task EnsureAdminUserAsync(CancellationToken cancellationToken = default);
+}
+EOF
+
+# Services/SlugService.cs
+cat << 'EOF' > "$SRC_DIR/MyBlog.Core/Services/SlugService.cs"
+using System.Globalization;
+using System.Text;
+using System.Text.RegularExpressions;
+using MyBlog.Core.Interfaces;
+
+namespace MyBlog.Core.Services;
+
+/// <summary>
+/// Generates URL-friendly slugs from text.
+/// </summary>
+public sealed partial class SlugService : ISlugService
+{
+    /// <inheritdoc />
+    public string GenerateSlug(string title)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(title);
+
+        // Normalize unicode and convert to lowercase
+        var normalized = title.Normalize(NormalizationForm.FormD);
+        var sb = new StringBuilder();
+
+        foreach (var c in normalized)
+        {
+            var category = CharUnicodeInfo.GetUnicodeCategory(c);
+            if (category != UnicodeCategory.NonSpacingMark)
+            {
+                sb.Append(c);
+            }
+        }
+
+        var result = sb.ToString().Normalize(NormalizationForm.FormC).ToLowerInvariant();
+
+        // Replace spaces and underscores with hyphens
+        result = SpacePattern().Replace(result, "-");
+
+        // Remove all non-alphanumeric characters except hyphens
+        result = NonAlphanumericPattern().Replace(result, "");
+
+        // Replace multiple hyphens with single hyphen
+        result = MultipleHyphenPattern().Replace(result, "-");
+
+        // Trim hyphens from ends
+        result = result.Trim('-');
+
+        return result;
+    }
+
+    [GeneratedRegex(@"[\s_]+")]
+    private static partial Regex SpacePattern();
+
+    [GeneratedRegex(@"[^a-z0-9\-]")]
+    private static partial Regex NonAlphanumericPattern();
+
+    [GeneratedRegex(@"-+")]
+    private static partial Regex MultipleHyphenPattern();
+}
+EOF
+
+# Services/MarkdownService.cs
+cat << 'EOF' > "$SRC_DIR/MyBlog.Core/Services/MarkdownService.cs"
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Web;
+using MyBlog.Core.Interfaces;
+
+namespace MyBlog.Core.Services;
+
+/// <summary>
+/// Custom Markdown to HTML renderer.
+/// Supports: headings, bold, italic, links, images, code blocks, blockquotes, lists, horizontal rules.
+/// </summary>
+public sealed partial class MarkdownService : IMarkdownService
+{
+    /// <inheritdoc />
+    public string ToHtml(string markdown)
+    {
+        if (string.IsNullOrWhiteSpace(markdown))
+        {
+            return string.Empty;
+        }
+
+        var lines = markdown.Replace("\r\n", "\n").Split('\n');
+        var result = new StringBuilder();
+        var inCodeBlock = false;
+        var inList = false;
+        var codeBlockContent = new StringBuilder();
+
+        foreach (var rawLine in lines)
+        {
+            var line = rawLine;
+
+            // Handle fenced code blocks
+            if (line.StartsWith("```"))
+            {
+                if (inCodeBlock)
+                {
+                    result.Append("<pre><code>");
+                    result.Append(HttpUtility.HtmlEncode(codeBlockContent.ToString().TrimEnd()));
+                    result.AppendLine("</code></pre>");
+                    codeBlockContent.Clear();
+                    inCodeBlock = false;
+                }
+                else
+                {
+                    if (inList)
+                    {
+                        result.AppendLine("</ul>");
+                        inList = false;
+                    }
+                    inCodeBlock = true;
+                }
+                continue;
+            }
+
+            if (inCodeBlock)
+            {
+                codeBlockContent.AppendLine(line);
+                continue;
+            }
+
+            // Handle horizontal rules
+            if (HorizontalRulePattern().IsMatch(line))
+            {
+                if (inList)
+                {
+                    result.AppendLine("</ul>");
+                    inList = false;
+                }
+                result.AppendLine("<hr />");
+                continue;
+            }
+
+            // Handle headings
+            var headingMatch = HeadingPattern().Match(line);
+            if (headingMatch.Success)
+            {
+                if (inList)
+                {
+                    result.AppendLine("</ul>");
+                    inList = false;
+                }
+                var level = headingMatch.Groups[1].Value.Length;
+                var text = ProcessInline(headingMatch.Groups[2].Value.Trim());
+                result.AppendLine($"<h{level}>{text}</h{level}>");
+                continue;
+            }
+
+            // Handle blockquotes
+            if (line.StartsWith('>'))
+            {
+                if (inList)
+                {
+                    result.AppendLine("</ul>");
+                    inList = false;
+                }
+                var quoteText = ProcessInline(line[1..].TrimStart());
+                result.AppendLine($"<blockquote><p>{quoteText}</p></blockquote>");
+                continue;
+            }
+
+            // Handle unordered lists
+            var listMatch = UnorderedListPattern().Match(line);
+            if (listMatch.Success)
+            {
+                if (!inList)
+                {
+                    result.AppendLine("<ul>");
+                    inList = true;
+                }
+                var itemText = ProcessInline(listMatch.Groups[1].Value);
+                result.AppendLine($"<li>{itemText}</li>");
+                continue;
+            }
+
+            // Close list if no longer in list item
+            if (inList && !string.IsNullOrWhiteSpace(line))
+            {
+                result.AppendLine("</ul>");
+                inList = false;
+            }
+
+            // Handle empty lines
+            if (string.IsNullOrWhiteSpace(line))
+            {
+                if (inList)
+                {
+                    result.AppendLine("</ul>");
+                    inList = false;
+                }
+                continue;
+            }
+
+            // Regular paragraph
+            var paragraphText = ProcessInline(line);
+            result.AppendLine($"<p>{paragraphText}</p>");
+        }
+
+        // Close any open list
+        if (inList)
+        {
+            result.AppendLine("</ul>");
+        }
+
+        // Close any unclosed code block
+        if (inCodeBlock)
+        {
+            result.Append("<pre><code>");
+            result.Append(HttpUtility.HtmlEncode(codeBlockContent.ToString().TrimEnd()));
+            result.AppendLine("</code></pre>");
+        }
+
+        return result.ToString();
+    }
+
+    private static string ProcessInline(string text)
+    {
+        // Escape HTML first
+        text = HttpUtility.HtmlEncode(text);
+
+        // Process inline code (must be before bold/italic to avoid conflicts)
+        text = InlineCodePattern().Replace(text, "<code>$1</code>");
+
+        // Process images ![alt](url)
+        text = ImagePattern().Replace(text, "<img src=\"$2\" alt=\"$1\" />");
+
+        // Process links [text](url)
+        text = LinkPattern().Replace(text, "<a href=\"$2\">$1</a>");
+
+        // Process bold **text** or __text__
+        text = BoldPattern().Replace(text, "<strong>$1</strong>");
+
+        // Process italic *text* or _text_
+        text = ItalicPattern().Replace(text, "<em>$1</em>");
+
+        return text;
+    }
+
+    [GeneratedRegex(@"^(#{1,6})\s+(.+)$")]
+    private static partial Regex HeadingPattern();
+
+    [GeneratedRegex(@"^[-*]\s+(.+)$")]
+    private static partial Regex UnorderedListPattern();
+
+    [GeneratedRegex(@"^[-*_]{3,}\s*$")]
+    private static partial Regex HorizontalRulePattern();
+
+    [GeneratedRegex(@"`([^`]+)`")]
+    private static partial Regex InlineCodePattern();
+
+    [GeneratedRegex(@"!\[([^\]]*)\]\(([^)]+)\)")]
+    private static partial Regex ImagePattern();
+
+    [GeneratedRegex(@"\[([^\]]+)\]\(([^)]+)\)")]
+    private static partial Regex LinkPattern();
+
+    [GeneratedRegex(@"\*\*([^*]+)\*\*|__([^_]+)__")]
+    private static partial Regex BoldPattern();
+
+    [GeneratedRegex(@"(?<!\*)\*(?!\*)([^*]+)(?<!\*)\*(?!\*)|(?<!_)_(?!_)([^_]+)(?<!_)_(?!_)")]
+    private static partial Regex ItalicPattern();
+}
+EOF
+
+echo "      Created MyBlog.Core project with models, interfaces, and services."
+
+# =============================================================================
+# Step 4: Create MyBlog.Infrastructure Project
+# =============================================================================
+echo ""
+echo "[4/8] Creating MyBlog.Infrastructure project (data access and services)..."
+echo "      WHY: Infrastructure contains implementation details like database access,"
+echo "           keeping the Core project free of external dependencies."
+
+# MyBlog.Infrastructure.csproj
+cat << 'EOF' > "$SRC_DIR/MyBlog.Infrastructure/MyBlog.Infrastructure.csproj"
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>MyBlog.Infrastructure</RootNamespace>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity" />
+    <PackageReference Include="OpenTelemetry" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\MyBlog.Core\MyBlog.Core.csproj" />
+  </ItemGroup>
+</Project>
+EOF
+
+# Data/BlogDbContext.cs
+cat << 'EOF' > "$SRC_DIR/MyBlog.Infrastructure/Data/BlogDbContext.cs"
+using Microsoft.EntityFrameworkCore;
+using MyBlog.Core.Models;
+
+namespace MyBlog.Infrastructure.Data;
+
+/// <summary>
+/// Entity Framework Core database context for the blog.
+/// </summary>
+public sealed class BlogDbContext : DbContext
+{
+    /// <summary>Initializes a new instance of the BlogDbContext.</summary>
+    public BlogDbContext(DbContextOptions<BlogDbContext> options) : base(options)
+    {
+    }
+
+    /// <summary>Gets or sets the Users table.</summary>
+    public DbSet<User> Users => Set<User>();
+
+    /// <summary>Gets or sets the Posts table.</summary>
+    public DbSet<Post> Posts => Set<Post>();
+
+    /// <summary>Gets or sets the Images table.</summary>
+    public DbSet<Image> Images => Set<Image>();
+
+    /// <summary>Gets or sets the TelemetryLogs table.</summary>
+    public DbSet<TelemetryLog> TelemetryLogs => Set<TelemetryLog>();
+
+    /// <inheritdoc />
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+
+        // User configuration
+        modelBuilder.Entity<User>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Username).HasMaxLength(50).IsRequired();
+            entity.HasIndex(e => e.Username).IsUnique();
+            entity.Property(e => e.PasswordHash).HasMaxLength(256).IsRequired();
+            entity.Property(e => e.Email).HasMaxLength(256).IsRequired();
+            entity.Property(e => e.DisplayName).HasMaxLength(100).IsRequired();
+        });
+
+        // Post configuration
+        modelBuilder.Entity<Post>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Title).HasMaxLength(200).IsRequired();
+            entity.Property(e => e.Slug).HasMaxLength(200).IsRequired();
+            entity.HasIndex(e => e.Slug).IsUnique();
+            entity.Property(e => e.Summary).HasMaxLength(500).IsRequired();
+            entity.HasOne(e => e.Author)
+                .WithMany(u => u.Posts)
+                .HasForeignKey(e => e.AuthorId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        // Image configuration
+        modelBuilder.Entity<Image>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.FileName).HasMaxLength(256).IsRequired();
+            entity.Property(e => e.ContentType).HasMaxLength(100).IsRequired();
+            entity.HasOne(e => e.Post)
+                .WithMany(p => p.Images)
+                .HasForeignKey(e => e.PostId)
+                .OnDelete(DeleteBehavior.SetNull);
+            entity.HasOne(e => e.UploadedBy)
+                .WithMany(u => u.UploadedImages)
+                .HasForeignKey(e => e.UploadedByUserId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        // TelemetryLog configuration
+        modelBuilder.Entity<TelemetryLog>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Id).ValueGeneratedOnAdd();
+            entity.Property(e => e.Level).HasMaxLength(20).IsRequired();
+            entity.Property(e => e.Category).HasMaxLength(256).IsRequired();
+            entity.HasIndex(e => e.TimestampUtc);
+        });
+    }
+}
+EOF
+
+# Data/DatabasePathResolver.cs
+cat << 'EOF' > "$SRC_DIR/MyBlog.Infrastructure/Data/DatabasePathResolver.cs"
+namespace MyBlog.Infrastructure.Data;
+
+/// <summary>
+/// Resolves the database file path following XDG conventions.
+/// </summary>
+public static class DatabasePathResolver
+{
+    /// <summary>
+    /// Gets the path for the SQLite database file.
+    /// Priority: XDG_DATA_HOME > Platform-specific > Local fallback
+    /// </summary>
+    public static string GetDatabasePath()
+    {
+        var dataDir = GetDataDirectory();
+        Directory.CreateDirectory(dataDir);
+        return Path.Combine(dataDir, "myblog.db");
+    }
+
+    /// <summary>
+    /// Gets the data directory following platform conventions.
+    /// </summary>
+    public static string GetDataDirectory()
+    {
+        string baseDir;
+
+        if (OperatingSystem.IsWindows())
+        {
+            baseDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+        }
+        else if (OperatingSystem.IsMacOS())
+        {
+            baseDir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+        }
+        else
+        {
+            // Linux/Unix: Use XDG_DATA_HOME or fallback
+            var xdgDataHome = Environment.GetEnvironmentVariable("XDG_DATA_HOME");
+            baseDir = !string.IsNullOrEmpty(xdgDataHome)
+                ? xdgDataHome
+                : Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".local", "share");
+        }
+
+        // If we can't write to the preferred location, use local directory
+        var preferredDir = Path.Combine(baseDir, "MyBlog");
+        try
+        {
+            Directory.CreateDirectory(preferredDir);
+            var testFile = Path.Combine(preferredDir, ".write-test");
+            File.WriteAllText(testFile, "test");
+            File.Delete(testFile);
+            return preferredDir;
+        }
+        catch
+        {
+            // Fallback to local directory
+            return Path.Combine(AppContext.BaseDirectory, "data");
+        }
+    }
+}
+EOF
+
+# Repositories/PostRepository.cs
+cat << 'EOF' > "$SRC_DIR/MyBlog.Infrastructure/Repositories/PostRepository.cs"
+using Microsoft.EntityFrameworkCore;
+using MyBlog.Core.Interfaces;
+using MyBlog.Core.Models;
+using MyBlog.Infrastructure.Data;
+
+namespace MyBlog.Infrastructure.Repositories;
+
+/// <summary>
+/// EF Core implementation of the post repository.
+/// </summary>
+public sealed class PostRepository : IPostRepository
+{
+    private readonly BlogDbContext _context;
+
+    /// <summary>Initializes a new instance of PostRepository.</summary>
+    public PostRepository(BlogDbContext context)
+    {
+        _context = context;
+    }
+
+    /// <inheritdoc />
+    public async Task<(IReadOnlyList<PostListItemDto> Posts, int TotalCount)> GetPublishedPostsAsync(
+        int page, int pageSize, CancellationToken cancellationToken = default)
+    {
+        var query = _context.Posts
+            .AsNoTracking()
+            .Where(p => p.IsPublished)
+            .OrderByDescending(p => p.PublishedAtUtc);
+
+        var totalCount = await query.CountAsync(cancellationToken);
+
+        var posts = await query
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .Include(p => p.Author)
+            .Select(p => new PostListItemDto(
+                p.Id,
+                p.Title,
+                p.Slug,
+                p.Summary,
+                p.Author!.DisplayName,
+                p.PublishedAtUtc,
+                p.IsPublished))
+            .ToListAsync(cancellationToken);
+
+        return (posts, totalCount);
+    }
+
+    /// <inheritdoc />
+    public async Task<IReadOnlyList<PostListItemDto>> GetAllPostsAsync(
+        CancellationToken cancellationToken = default)
+    {
+        return await _context.Posts
+            .AsNoTracking()
+            .OrderByDescending(p => p.UpdatedAtUtc)
+            .Include(p => p.Author)
+            .Select(p => new PostListItemDto(
+                p.Id,
+                p.Title,
+                p.Slug,
+                p.Summary,
+                p.Author!.DisplayName,
+                p.PublishedAtUtc,
+                p.IsPublished))
+            .ToListAsync(cancellationToken);
+    }
+
+    /// <inheritdoc />
+    public async Task<PostDetailDto?> GetBySlugAsync(
+        string slug, CancellationToken cancellationToken = default)
+    {
+        return await _context.Posts
+            .AsNoTracking()
+            .Where(p => p.Slug == slug)
+            .Include(p => p.Author)
+            .Select(p => new PostDetailDto(
+                p.Id,
+                p.Title,
+                p.Slug,
+                p.Content,
+                p.Summary,
+                p.Author!.DisplayName,
+                p.CreatedAtUtc,
+                p.UpdatedAtUtc,
+                p.PublishedAtUtc,
+                p.IsPublished))
+            .FirstOrDefaultAsync(cancellationToken);
+    }
+
+    /// <inheritdoc />
+    public async Task<Post?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        return await _context.Posts
+            .Include(p => p.Author)
+            .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
+    }
+
+    /// <inheritdoc />
+    public async Task<Post> CreateAsync(Post post, CancellationToken cancellationToken = default)
+    {
+        _context.Posts.Add(post);
+        await _context.SaveChangesAsync(cancellationToken);
+        return post;
+    }
+
+    /// <inheritdoc />
+    public async Task UpdateAsync(Post post, CancellationToken cancellationToken = default)
+    {
+        _context.Posts.Update(post);
+        await _context.SaveChangesAsync(cancellationToken);
+    }
+
+    /// <inheritdoc />
+    public async Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        var post = await _context.Posts.FindAsync([id], cancellationToken);
+        if (post is not null)
+        {
+            _context.Posts.Remove(post);
+            await _context.SaveChangesAsync(cancellationToken);
+        }
+    }
+
+    /// <inheritdoc />
+    public async Task<int> GetCountAsync(CancellationToken cancellationToken = default)
+    {
+        return await _context.Posts.CountAsync(cancellationToken);
+    }
+
+    /// <inheritdoc />
+    public async Task<IReadOnlyList<PostListItemDto>> GetRecentPostsAsync(
+        int count, CancellationToken cancellationToken = default)
+    {
+        return await _context.Posts
+            .AsNoTracking()
+            .OrderByDescending(p => p.UpdatedAtUtc)
+            .Take(count)
+            .Include(p => p.Author)
+            .Select(p => new PostListItemDto(
+                p.Id,
+                p.Title,
+                p.Slug,
+                p.Summary,
+                p.Author!.DisplayName,
+                p.PublishedAtUtc,
+                p.IsPublished))
+            .ToListAsync(cancellationToken);
+    }
+}
+EOF
+
+# Repositories/UserRepository.cs
+cat << 'EOF' > "$SRC_DIR/MyBlog.Infrastructure/Repositories/UserRepository.cs"
+using Microsoft.EntityFrameworkCore;
+using MyBlog.Core.Interfaces;
+using MyBlog.Core.Models;
+using MyBlog.Infrastructure.Data;
+
+namespace MyBlog.Infrastructure.Repositories;
+
+/// <summary>
+/// EF Core implementation of the user repository.
+/// </summary>
+public sealed class UserRepository : IUserRepository
+{
+    private readonly BlogDbContext _context;
+
+    /// <summary>Initializes a new instance of UserRepository.</summary>
+    public UserRepository(BlogDbContext context)
+    {
+        _context = context;
+    }
+
+    /// <inheritdoc />
+    public async Task<User?> GetByUsernameAsync(
+        string username, CancellationToken cancellationToken = default)
+    {
+        return await _context.Users
+            .FirstOrDefaultAsync(u => u.Username == username, cancellationToken);
+    }
+
+    /// <inheritdoc />
+    public async Task<User?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        return await _context.Users.FindAsync([id], cancellationToken);
+    }
+
+    /// <inheritdoc />
+    public async Task<User> CreateAsync(User user, CancellationToken cancellationToken = default)
+    {
+        _context.Users.Add(user);
+        await _context.SaveChangesAsync(cancellationToken);
+        return user;
+    }
+
+    /// <inheritdoc />
+    public async Task<bool> AnyUsersExistAsync(CancellationToken cancellationToken = default)
+    {
+        return await _context.Users.AnyAsync(cancellationToken);
+    }
+}
+EOF
+
+# Repositories/ImageRepository.cs
+cat << 'EOF' > "$SRC_DIR/MyBlog.Infrastructure/Repositories/ImageRepository.cs"
+using Microsoft.EntityFrameworkCore;
+using MyBlog.Core.Interfaces;
+using MyBlog.Core.Models;
+using MyBlog.Infrastructure.Data;
+
+namespace MyBlog.Infrastructure.Repositories;
+
+/// <summary>
+/// EF Core implementation of the image repository.
+/// </summary>
+public sealed class ImageRepository : IImageRepository
+{
+    private readonly BlogDbContext _context;
+
+    /// <summary>Initializes a new instance of ImageRepository.</summary>
+    public ImageRepository(BlogDbContext context)
+    {
+        _context = context;
+    }
+
+    /// <inheritdoc />
+    public async Task<IReadOnlyList<Image>> GetAllAsync(CancellationToken cancellationToken = default)
+    {
+        return await _context.Images
+            .AsNoTracking()
+            .OrderByDescending(i => i.UploadedAtUtc)
+            .ToListAsync(cancellationToken);
+    }
+
+    /// <inheritdoc />
+    public async Task<Image?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        return await _context.Images.FindAsync([id], cancellationToken);
+    }
+
+    /// <inheritdoc />
+    public async Task<Image> CreateAsync(Image image, CancellationToken cancellationToken = default)
+    {
+        _context.Images.Add(image);
+        await _context.SaveChangesAsync(cancellationToken);
+        return image;
+    }
+
+    /// <inheritdoc />
+    public async Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        var image = await _context.Images.FindAsync([id], cancellationToken);
+        if (image is not null)
+        {
+            _context.Images.Remove(image);
+            await _context.SaveChangesAsync(cancellationToken);
+        }
+    }
+}
+EOF
+
+# Repositories/TelemetryLogRepository.cs
+cat << 'EOF' > "$SRC_DIR/MyBlog.Infrastructure/Repositories/TelemetryLogRepository.cs"
+using Microsoft.EntityFrameworkCore;
+using MyBlog.Core.Interfaces;
+using MyBlog.Core.Models;
+using MyBlog.Infrastructure.Data;
+
+namespace MyBlog.Infrastructure.Repositories;
+
+/// <summary>
+/// EF Core implementation of the telemetry log repository.
+/// </summary>
+public sealed class TelemetryLogRepository : ITelemetryLogRepository
+{
+    private readonly BlogDbContext _context;
+
+    /// <summary>Initializes a new instance of TelemetryLogRepository.</summary>
+    public TelemetryLogRepository(BlogDbContext context)
+    {
+        _context = context;
+    }
+
+    /// <inheritdoc />
+    public async Task WriteAsync(TelemetryLog log, CancellationToken cancellationToken = default)
+    {
+        _context.TelemetryLogs.Add(log);
+        await _context.SaveChangesAsync(cancellationToken);
+    }
+
+    /// <inheritdoc />
+    public async Task<int> DeleteOlderThanAsync(
+        DateTime cutoffUtc, CancellationToken cancellationToken = default)
+    {
+        return await _context.TelemetryLogs
+            .Where(l => l.TimestampUtc < cutoffUtc)
+            .ExecuteDeleteAsync(cancellationToken);
+    }
+
+    /// <inheritdoc />
+    public async Task<IReadOnlyList<TelemetryLog>> GetRecentAsync(
+        int count, CancellationToken cancellationToken = default)
+    {
+        return await _context.TelemetryLogs
+            .AsNoTracking()
+            .OrderByDescending(l => l.TimestampUtc)
+            .Take(count)
+            .ToListAsync(cancellationToken);
+    }
+}
+EOF
+
+# Services/PasswordService.cs
+cat << 'EOF' > "$SRC_DIR/MyBlog.Infrastructure/Services/PasswordService.cs"
+using Microsoft.AspNetCore.Identity;
+using MyBlog.Core.Interfaces;
+using MyBlog.Core.Models;
+
+namespace MyBlog.Infrastructure.Services;
+
+/// <summary>
+/// Password hashing service using ASP.NET Core Identity's PasswordHasher.
+/// </summary>
+public sealed class PasswordService : IPasswordService
+{
+    private readonly PasswordHasher<User> _hasher = new();
+
+    /// <inheritdoc />
+    public string HashPassword(string password)
+    {
+        return _hasher.HashPassword(null!, password);
+    }
+
+    /// <inheritdoc />
+    public bool VerifyPassword(string hashedPassword, string providedPassword)
+    {
+        var result = _hasher.VerifyHashedPassword(null!, hashedPassword, providedPassword);
+        return result == PasswordVerificationResult.Success ||
+               result == PasswordVerificationResult.SuccessRehashNeeded;
+    }
+}
+EOF
+
+# Services/AuthService.cs
+cat << 'EOF' > "$SRC_DIR/MyBlog.Infrastructure/Services/AuthService.cs"
+using Microsoft.Extensions.Configuration;
+using MyBlog.Core.Interfaces;
+using MyBlog.Core.Models;
+
+namespace MyBlog.Infrastructure.Services;
+
+/// <summary>
+/// Authentication service implementation.
+/// </summary>
+public sealed class AuthService : IAuthService
+{
+    private readonly IUserRepository _userRepository;
+    private readonly IPasswordService _passwordService;
+    private readonly IConfiguration _configuration;
+
+    /// <summary>Initializes a new instance of AuthService.</summary>
+    public AuthService(
+        IUserRepository userRepository,
+        IPasswordService passwordService,
+        IConfiguration configuration)
+    {
+        _userRepository = userRepository;
+        _passwordService = passwordService;
+        _configuration = configuration;
+    }
+
+    /// <inheritdoc />
+    public async Task<User?> AuthenticateAsync(
+        string username, string password, CancellationToken cancellationToken = default)
+    {
+        var user = await _userRepository.GetByUsernameAsync(username, cancellationToken);
+        if (user is null)
+        {
+            return null;
+        }
+
+        return _passwordService.VerifyPassword(user.PasswordHash, password) ? user : null;
+    }
+
+    /// <inheritdoc />
+    public async Task EnsureAdminUserAsync(CancellationToken cancellationToken = default)
+    {
+        if (await _userRepository.AnyUsersExistAsync(cancellationToken))
+        {
+            return;
+        }
+
+        var defaultPassword = Environment.GetEnvironmentVariable("MYBLOG_ADMIN_PASSWORD")
+            ?? _configuration["Authentication:DefaultAdminPassword"]
+            ?? "ChangeMe123!";
+
+        var admin = new User
+        {
+            Id = Guid.NewGuid(),
+            Username = "admin",
+            PasswordHash = _passwordService.HashPassword(defaultPassword),
+            Email = "admin@localhost",
+            DisplayName = "Administrator",
+            CreatedAtUtc = DateTime.UtcNow
+        };
+
+        await _userRepository.CreateAsync(admin, cancellationToken);
+    }
+}
+EOF
+
+# Services/TelemetryCleanupService.cs
+cat << 'EOF' > "$SRC_DIR/MyBlog.Infrastructure/Services/TelemetryCleanupService.cs"
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using MyBlog.Core.Interfaces;
+
+namespace MyBlog.Infrastructure.Services;
+
+/// <summary>
+/// Background service that cleans up old telemetry logs.
+/// </summary>
+public sealed class TelemetryCleanupService : BackgroundService
+{
+    private readonly IServiceScopeFactory _scopeFactory;
+    private readonly ILogger<TelemetryCleanupService> _logger;
+    private readonly int _retentionDays;
+
+    /// <summary>Initializes a new instance of TelemetryCleanupService.</summary>
+    public TelemetryCleanupService(
+        IServiceScopeFactory scopeFactory,
+        IConfiguration configuration,
+        ILogger<TelemetryCleanupService> logger)
+    {
+        _scopeFactory = scopeFactory;
+        _logger = logger;
+        _retentionDays = configuration.GetValue("Telemetry:RetentionDays", 30);
+    }
+
+    /// <inheritdoc />
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    {
+        // Run cleanup immediately on startup
+        await CleanupAsync(stoppingToken);
+
+        // Then run daily
+        using var timer = new PeriodicTimer(TimeSpan.FromDays(1));
+        while (await timer.WaitForNextTickAsync(stoppingToken))
+        {
+            await CleanupAsync(stoppingToken);
+        }
+    }
+
+    private async Task CleanupAsync(CancellationToken cancellationToken)
+    {
+        try
+        {
+            using var scope = _scopeFactory.CreateScope();
+            var repository = scope.ServiceProvider.GetRequiredService<ITelemetryLogRepository>();
+
+            var cutoff = DateTime.UtcNow.AddDays(-_retentionDays);
+            var deleted = await repository.DeleteOlderThanAsync(cutoff, cancellationToken);
+
+            if (deleted > 0)
+            {
+                _logger.LogInformation(
+                    "Telemetry cleanup: deleted {Count} logs older than {Days} days",
+                    deleted, _retentionDays);
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error during telemetry cleanup");
+        }
+    }
+}
+EOF
+
+# Telemetry/TelemetryPathResolver.cs
+cat << 'EOF' > "$SRC_DIR/MyBlog.Infrastructure/Telemetry/TelemetryPathResolver.cs"
+namespace MyBlog.Infrastructure.Telemetry;
+
+/// <summary>
+/// Resolves the telemetry directory path following XDG conventions.
+/// </summary>
+public static class TelemetryPathResolver
+{
+    /// <summary>
+    /// Attempts to get a writable telemetry directory.
+    /// Returns null if no writable directory can be found.
+    /// </summary>
+    public static string? GetTelemetryDirectory()
+    {
+        // Try XDG/platform-specific location first
+        var preferredDir = GetPreferredDirectory();
+        if (TryCreateAndVerify(preferredDir))
+        {
+            return preferredDir;
+        }
+
+        // Fallback to local directory
+        var localDir = Path.Combine(AppContext.BaseDirectory, "telemetry");
+        if (TryCreateAndVerify(localDir))
+        {
+            return localDir;
+        }
+
+        // No writable directory available
+        return null;
+    }
+
+    private static string GetPreferredDirectory()
+    {
+        string baseDir;
+
+        if (OperatingSystem.IsWindows())
+        {
+            baseDir = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+        }
+        else if (OperatingSystem.IsMacOS())
+        {
+            baseDir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+        }
+        else
+        {
+            var xdgDataHome = Environment.GetEnvironmentVariable("XDG_DATA_HOME");
+            baseDir = !string.IsNullOrEmpty(xdgDataHome)
+                ? xdgDataHome
+                : Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".local", "share");
+        }
+
+        return Path.Combine(baseDir, "MyBlog", "telemetry");
+    }
+
+    private static bool TryCreateAndVerify(string path)
+    {
+        try
+        {
+            Directory.CreateDirectory(path);
+            var testFile = Path.Combine(path, $".write-test-{Guid.NewGuid()}");
+            File.WriteAllText(testFile, "test");
+            File.Delete(testFile);
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+}
+EOF
+
+# Telemetry/DatabaseLogExporter.cs
+cat << 'EOF' > "$SRC_DIR/MyBlog.Infrastructure/Telemetry/DatabaseLogExporter.cs"
+using System.Text.Json;
+using Microsoft.Extensions.DependencyInjection;
+using MyBlog.Core.Models;
+using MyBlog.Infrastructure.Data;
+using OpenTelemetry;
+using OpenTelemetry.Logs;
+
+namespace MyBlog.Infrastructure.Telemetry;
+
+/// <summary>
+/// OpenTelemetry log exporter that writes to SQLite database.
+/// </summary>
+public sealed class DatabaseLogExporter : BaseExporter<LogRecord>
+{
+    private readonly IServiceScopeFactory _scopeFactory;
+
+    /// <summary>Initializes a new instance of DatabaseLogExporter.</summary>
+    public DatabaseLogExporter(IServiceScopeFactory scopeFactory)
+    {
+        _scopeFactory = scopeFactory;
+    }
+
+    /// <inheritdoc />
+    public override ExportResult Export(in Batch<LogRecord> batch)
+    {
+        try
+        {
+            using var scope = _scopeFactory.CreateScope();
+            var context = scope.ServiceProvider.GetRequiredService<BlogDbContext>();
+
+            foreach (var record in batch)
+            {
+                var log = new TelemetryLog
+                {
+                    TimestampUtc = record.Timestamp.UtcDateTime,
+                    Level = record.LogLevel.ToString(),
+                    Category = record.CategoryName ?? "Unknown",
+                    Message = record.FormattedMessage ?? record.Body ?? "",
+                    Exception = record.Exception?.ToString(),
+                    TraceId = record.TraceId.ToString(),
+                    SpanId = record.SpanId.ToString(),
+                    Properties = SerializeAttributes(record)
+                };
+
+                context.TelemetryLogs.Add(log);
+            }
+
+            context.SaveChanges();
+            return ExportResult.Success;
+        }
+        catch
+        {
+            return ExportResult.Failure;
+        }
+    }
+
+    private static string? SerializeAttributes(LogRecord record)
+    {
+        if (record.Attributes is null)
+        {
+            return null;
+        }
+
+        var dict = new Dictionary<string, object?>();
+        foreach (var attr in record.Attributes)
+        {
+            dict[attr.Key] = attr.Value;
+        }
+
+        return dict.Count > 0 ? JsonSerializer.Serialize(dict) : null;
+    }
+}
+EOF
+
+# Telemetry/FileLogExporter.cs
+cat << 'EOF' > "$SRC_DIR/MyBlog.Infrastructure/Telemetry/FileLogExporter.cs"
+using System.Text;
+using System.Text.Json;
+using OpenTelemetry;
+using OpenTelemetry.Logs;
+
+namespace MyBlog.Infrastructure.Telemetry;
+
+/// <summary>
+/// OpenTelemetry log exporter that writes to JSON files.
+/// </summary>
+public sealed class FileLogExporter : BaseExporter<LogRecord>
+{
+    private readonly string _directory;
+    private readonly string _runId;
+    private readonly long _maxFileSizeBytes;
+    private readonly object _lock = new();
+    private StreamWriter? _writer;
+    private long _currentFileSize;
+    private int _fileNumber;
+    private bool _isFirstRecord = true;
+    private readonly JsonSerializerOptions _jsonOptions = new() { WriteIndented = true };
+
+    /// <summary>Initializes a new instance of FileLogExporter.</summary>
+    public FileLogExporter(string directory, long maxFileSizeBytes = 25 * 1024 * 1024)
+    {
+        _directory = directory;
+        _maxFileSizeBytes = maxFileSizeBytes;
+        _runId = DateTime.UtcNow.ToString("yyyyMMdd_HHmmss");
+        Directory.CreateDirectory(_directory);
+    }
+
+    /// <inheritdoc />
+    public override ExportResult Export(in Batch<LogRecord> batch)
+    {
+        try
+        {
+            lock (_lock)
+            {
+                EnsureWriter();
+
+                foreach (var record in batch)
+                {
+                    var obj = new
+                    {
+                        Timestamp = record.Timestamp.ToString("O"),
+                        Level = record.LogLevel.ToString(),
+                        Category = record.CategoryName,
+                        Message = record.FormattedMessage ?? record.Body,
+                        TraceId = record.TraceId.ToString(),
+                        SpanId = record.SpanId.ToString(),
+                        Exception = record.Exception?.ToString()
+                    };
+
+                    var json = JsonSerializer.Serialize(obj, _jsonOptions);
+                    var bytes = Encoding.UTF8.GetByteCount(json) + 2;
+
+                    if (_currentFileSize + bytes > _maxFileSizeBytes)
+                    {
+                        RotateFile();
+                    }
+
+                    if (!_isFirstRecord)
+                    {
+                        _writer!.WriteLine(",");
+                    }
+                    else
+                    {
+                        _isFirstRecord = false;
+                    }
+
+                    _writer!.Write(json);
+                    _currentFileSize += bytes;
+                }
+
+                _writer!.Flush();
+            }
+
+            return ExportResult.Success;
+        }
+        catch
+        {
+            return ExportResult.Failure;
+        }
+    }
+
+    private void EnsureWriter()
+    {
+        if (_writer is null)
+        {
+            OpenNewFile();
+        }
+    }
+
+    private void OpenNewFile()
+    {
+        var fileName = _fileNumber == 0
+            ? $"logs_{_runId}.json"
+            : $"logs_{_runId}_{_fileNumber:D3}.json";
+
+        _writer = new StreamWriter(Path.Combine(_directory, fileName), false, Encoding.UTF8);
+        _writer.WriteLine("[");
+        _currentFileSize = 2;
+        _isFirstRecord = true;
+    }
+
+    private void RotateFile()
+    {
+        CloseWriter();
+        _fileNumber++;
+        OpenNewFile();
+    }
+
+    private void CloseWriter()
+    {
+        if (_writer is not null)
+        {
+            _writer.WriteLine();
+            _writer.WriteLine("]");
+            _writer.Flush();
+            _writer.Dispose();
+            _writer = null;
+        }
+    }
+
+    /// <inheritdoc />
+    protected override bool OnShutdown(int timeoutMilliseconds)
+    {
+        lock (_lock)
+        {
+            CloseWriter();
+        }
+        return true;
+    }
+}
+EOF
+
+# ServiceCollectionExtensions.cs
+cat << 'EOF' > "$SRC_DIR/MyBlog.Infrastructure/ServiceCollectionExtensions.cs"
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using MyBlog.Core.Interfaces;
+using MyBlog.Core.Services;
+using MyBlog.Infrastructure.Data;
+using MyBlog.Infrastructure.Repositories;
+using MyBlog.Infrastructure.Services;
+
+namespace MyBlog.Infrastructure;
+
+/// <summary>
+/// Extension methods for registering infrastructure services.
+/// </summary>
+public static class ServiceCollectionExtensions
+{
+    /// <summary>
+    /// Adds infrastructure services to the DI container.
+    /// </summary>
+    public static IServiceCollection AddInfrastructure(
+        this IServiceCollection services,
+        IConfiguration configuration)
+    {
+        // Database
+        var connectionString = configuration.GetConnectionString("DefaultConnection");
+        if (string.IsNullOrEmpty(connectionString) || connectionString == "Data Source=myblog.db")
+        {
+            // Use XDG-compliant path
+            var dbPath = DatabasePathResolver.GetDatabasePath();
+            connectionString = $"Data Source={dbPath}";
+        }
+
+        services.AddDbContext<BlogDbContext>(options =>
+            options.UseSqlite(connectionString));
+
+        // Repositories
+        services.AddScoped<IPostRepository, PostRepository>();
+        services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IImageRepository, ImageRepository>();
+        services.AddScoped<ITelemetryLogRepository, TelemetryLogRepository>();
+
+        // Services
+        services.AddSingleton<IPasswordService, PasswordService>();
+        services.AddSingleton<ISlugService, SlugService>();
+        services.AddSingleton<IMarkdownService, MarkdownService>();
+        services.AddScoped<IAuthService, AuthService>();
+
+        // Background services
+        services.AddHostedService<TelemetryCleanupService>();
+
+        return services;
+    }
+}
+EOF
+
+echo "      Created MyBlog.Infrastructure project with repositories and services."
+
+# =============================================================================
+# Step 5: Create MyBlog.Web Project
+# =============================================================================
+echo ""
+echo "[5/8] Creating MyBlog.Web project (Blazor Server application)..."
+echo "      WHY: The Web project is the entry point that hosts the Blazor Server"
+echo "           application and handles HTTP requests."
+
+# MyBlog.Web.csproj
+cat << 'EOF' > "$SRC_DIR/MyBlog.Web/MyBlog.Web.csproj"
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <RootNamespace>MyBlog.Web</RootNamespace>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="OpenTelemetry.Extensions.Hosting" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\MyBlog.Infrastructure\MyBlog.Infrastructure.csproj" />
+  </ItemGroup>
+</Project>
+EOF
+
+# Program.cs
+cat << 'EOF' > "$SRC_DIR/MyBlog.Web/Program.cs"
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.EntityFrameworkCore;
+using MyBlog.Core.Constants;
+using MyBlog.Core.Interfaces;
+using MyBlog.Infrastructure;
+using MyBlog.Infrastructure.Data;
+using MyBlog.Infrastructure.Telemetry;
+using MyBlog.Web.Components;
+using OpenTelemetry.Logs;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
+
+var builder = WebApplication.CreateBuilder(args);
+
+// Add services
+builder.Services.AddRazorComponents()
+    .AddInteractiveServerComponents();
+
+builder.Services.AddInfrastructure(builder.Configuration);
+
+// Configure authentication
+var sessionTimeout = builder.Configuration.GetValue("Authentication:SessionTimeoutMinutes", 30);
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.Cookie.Name = AppConstants.AuthCookieName;
+        options.LoginPath = "/login";
+        options.LogoutPath = "/logout";
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(sessionTimeout);
+        options.SlidingExpiration = true;
+        options.Cookie.HttpOnly = true;
+        options.Cookie.SecurePolicy = builder.Configuration.GetValue("Application:RequireHttps", false)
+            ? CookieSecurePolicy.Always
+            : CookieSecurePolicy.SameAsRequest;
+    });
+
+builder.Services.AddAuthorization();
+builder.Services.AddCascadingAuthenticationState();
+
+// Configure OpenTelemetry
+var telemetryDir = TelemetryPathResolver.GetTelemetryDirectory();
+var enableFileLogging = builder.Configuration.GetValue("Telemetry:EnableFileLogging", true);
+var enableDbLogging = builder.Configuration.GetValue("Telemetry:EnableDatabaseLogging", true);
+
+builder.Services.AddOpenTelemetry()
+    .ConfigureResource(r => r.AddService("MyBlog"))
+    .WithTracing(tracing =>
+    {
+        tracing.AddAspNetCoreInstrumentation();
+    })
+    .WithMetrics(metrics =>
+    {
+        metrics.AddAspNetCoreInstrumentation();
+    });
+
+builder.Logging.AddOpenTelemetry(options =>
+{
+    options.IncludeScopes = true;
+    options.IncludeFormattedMessage = true;
+
+    if (enableDbLogging)
+    {
+        options.AddProcessor(new BatchLogRecordExportProcessor(
+            new DatabaseLogExporter(builder.Services.BuildServiceProvider()
+                .GetRequiredService<IServiceScopeFactory>())));
+    }
+
+    if (enableFileLogging && telemetryDir is not null)
+    {
+        options.AddProcessor(new BatchLogRecordExportProcessor(
+            new FileLogExporter(telemetryDir)));
+    }
+});
+
+var app = builder.Build();
+
+// Initialize database
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<BlogDbContext>();
+    await context.Database.EnsureCreatedAsync();
+
+    var authService = scope.ServiceProvider.GetRequiredService<IAuthService>();
+    await authService.EnsureAdminUserAsync();
+}
+
+// Configure pipeline
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler("/Error");
+    if (builder.Configuration.GetValue("Application:RequireHttps", false))
+    {
+        app.UseHsts();
+        app.UseHttpsRedirection();
+    }
+}
+
+app.UseStaticFiles();
+app.UseAuthentication();
+app.UseAuthorization();
+app.UseAntiforgery();
+
+app.MapRazorComponents<App>()
+    .AddInteractiveServerRenderMode();
+
+// Image endpoint
+app.MapGet("/api/images/{id:guid}", async (Guid id, IImageRepository repo, CancellationToken ct) =>
+{
+    var image = await repo.GetByIdAsync(id, ct);
+    return image is null
+        ? Results.NotFound()
+        : Results.File(image.Data, image.ContentType, image.FileName);
+});
+
+app.Run();
+EOF
+
+# appsettings.json
+cat << 'EOF' > "$SRC_DIR/MyBlog.Web/appsettings.json"
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "Data Source=myblog.db"
+  },
+  "Authentication": {
+    "SessionTimeoutMinutes": 30,
+    "DefaultAdminPassword": "ChangeMe123!"
+  },
+  "Telemetry": {
+    "RetentionDays": 30,
+    "EnableFileLogging": true,
+    "EnableDatabaseLogging": true
+  },
+  "Application": {
+    "Title": "MyBlog",
+    "PostsPerPage": 10,
+    "RequireHttps": false
+  },
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning",
+      "Microsoft.EntityFrameworkCore": "Warning"
+    }
+  }
+}
+EOF
+
+# appsettings.Development.json
+cat << 'EOF' > "$SRC_DIR/MyBlog.Web/appsettings.Development.json"
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Debug",
+      "Microsoft.AspNetCore": "Information"
+    }
+  }
+}
+EOF
+
+# Components/App.razor
+cat << 'EOF' > "$SRC_DIR/MyBlog.Web/Components/App.razor"
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@(Title ?? "MyBlog")</title>
+    <base href="/" />
+    <link rel="stylesheet" href="css/site.css" />
+    <HeadOutlet />
+</head>
+<body>
+    <Routes />
+    <script src="_framework/blazor.web.js"></script>
+</body>
+</html>
+
+@code {
+    [CascadingParameter]
+    private HttpContext? HttpContext { get; set; }
+
+    private string? Title => HttpContext?.RequestServices
+        .GetService<IConfiguration>()?["Application:Title"];
+}
+EOF
+
+# Components/Routes.razor
+cat << 'EOF' > "$SRC_DIR/MyBlog.Web/Components/Routes.razor"
+<Router AppAssembly="typeof(Program).Assembly">
+    <Found Context="routeData">
+        <AuthorizeRouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)">
+            <NotAuthorized>
+                <RedirectToLogin />
+            </NotAuthorized>
+        </AuthorizeRouteView>
+        <FocusOnNavigate RouteData="routeData" Selector="h1" />
+    </Found>
+</Router>
+EOF
+
+# Components/_Imports.razor
+cat << 'EOF' > "$SRC_DIR/MyBlog.Web/Components/_Imports.razor"
+@using System.Net.Http
+@using System.Net.Http.Json
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components.Routing
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Components.Web.Virtualization
+@using Microsoft.JSInterop
+@using MyBlog.Core.Constants
+@using MyBlog.Core.Interfaces
+@using MyBlog.Core.Models
+@using MyBlog.Web.Components
+@using MyBlog.Web.Components.Layout
+@using MyBlog.Web.Components.Shared
+EOF
+
+# Components/Layout/MainLayout.razor
+cat << 'EOF' > "$SRC_DIR/MyBlog.Web/Components/Layout/MainLayout.razor"
+@inherits LayoutComponentBase
+@inject IConfiguration Configuration
+@inject NavigationManager Navigation
+
+<div class="layout">
+    <header class="header">
+        <div class="container">
+            <a href="/" class="logo">@(Configuration["Application:Title"] ?? "MyBlog")</a>
+            <nav class="nav">
+                <a href="/">Home</a>
+                <a href="/about">About</a>
+                <AuthorizeView>
+                    <Authorized>
+                        <a href="/admin">Admin</a>
+                        <form method="post" action="/logout" class="logout-form">
+                            <AntiforgeryToken />
+                            <button type="submit">Logout</button>
+                        </form>
+                    </Authorized>
+                    <NotAuthorized>
+                        <a href="/login">Login</a>
+                    </NotAuthorized>
+                </AuthorizeView>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main">
+        <div class="container">
+            @Body
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; @DateTime.Now.Year @(Configuration["Application:Title"] ?? "MyBlog")</p>
+        </div>
+    </footer>
+</div>
+EOF
+
+# Components/Shared/RedirectToLogin.razor
+cat << 'EOF' > "$SRC_DIR/MyBlog.Web/Components/Shared/RedirectToLogin.razor"
+@inject NavigationManager Navigation
+
+@code {
+    protected override void OnInitialized()
+    {
+        Navigation.NavigateTo($"/login?returnUrl={Uri.EscapeDataString(Navigation.Uri)}", forceLoad: true);
+    }
+}
+EOF
+
+# Components/Shared/PostCard.razor
+cat << 'EOF' > "$SRC_DIR/MyBlog.Web/Components/Shared/PostCard.razor"
+<article class="post-card">
+    <h2 class="post-card-title">
+        <a href="/post/@Post.Slug">@Post.Title</a>
+    </h2>
+    <div class="post-card-meta">
+        <span class="author">By @Post.AuthorDisplayName</span>
+        @if (Post.PublishedAtUtc.HasValue)
+        {
+            <span class="date">@Post.PublishedAtUtc.Value.ToString("MMMM d, yyyy")</span>
+        }
+        @if (!Post.IsPublished)
+        {
+            <span class="draft-badge">Draft</span>
+        }
+    </div>
+    <p class="post-card-summary">@Post.Summary</p>
+    <a href="/post/@Post.Slug" class="read-more">Read more →</a>
+</article>
+
+@code {
+    [Parameter, EditorRequired]
+    public PostListItemDto Post { get; set; } = default!;
+}
+EOF
+
+# Components/Shared/Pagination.razor
+cat << 'EOF' > "$SRC_DIR/MyBlog.Web/Components/Shared/Pagination.razor"
+@if (TotalPages > 1)
+{
+    <nav class="pagination" aria-label="Page navigation">
+        @if (CurrentPage > 1)
+        {
+            <a href="@GetPageUrl(CurrentPage - 1)" class="page-link">← Previous</a>
+        }
+        
+        <span class="page-info">Page @CurrentPage of @TotalPages</span>
+        
+        @if (CurrentPage < TotalPages)
+        {
+            <a href="@GetPageUrl(CurrentPage + 1)" class="page-link">Next →</a>
+        }
+    </nav>
+}
+
+@code {
+    [Parameter, EditorRequired]
+    public int CurrentPage { get; set; }
+
+    [Parameter, EditorRequired]
+    public int TotalPages { get; set; }
+
+    [Parameter]
+    public string BaseUrl { get; set; } = "/";
+
+    private string GetPageUrl(int page) =>
+        page == 1 ? BaseUrl : $"{BaseUrl}?page={page}";
+}
+EOF
+
+# Components/Shared/MarkdownRenderer.razor
+cat << 'EOF' > "$SRC_DIR/MyBlog.Web/Components/Shared/MarkdownRenderer.razor"
+@inject IMarkdownService MarkdownService
+
+<div class="markdown-content">
+    @((MarkupString)MarkdownService.ToHtml(Content ?? ""))
+</div>
+
+@code {
+    [Parameter]
+    public string? Content { get; set; }
+}
+EOF
+
+# Components/Pages/Home.razor
+cat << 'EOF' > "$SRC_DIR/MyBlog.Web/Components/Pages/Home.razor"
+@page "/"
+@inject IPostRepository PostRepository
+@inject IConfiguration Configuration
+
+<PageTitle>@(Configuration["Application:Title"] ?? "MyBlog")</PageTitle>
+
+<h1>Welcome to @(Configuration["Application:Title"] ?? "MyBlog")</h1>
+
+@if (_posts is null)
+{
+    <p>Loading...</p>
+}
+else if (_posts.Count == 0)
+{
+    <p>No posts yet. Check back soon!</p>
+}
+else
+{
+    <div class="post-list">
+        @foreach (var post in _posts)
+        {
+            <PostCard Post="post" />
+        }
+    </div>
+
+    <Pagination CurrentPage="_currentPage" TotalPages="_totalPages" BaseUrl="/" />
+}
+
+@code {
+    private IReadOnlyList<PostListItemDto>? _posts;
+    private int _currentPage = 1;
+    private int _totalPages = 1;
+
+    [SupplyParameterFromQuery(Name = "page")]
+    public int? Page { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        _currentPage = Page ?? 1;
+        if (_currentPage < 1) _currentPage = 1;
+
+        var pageSize = Configuration.GetValue("Application:PostsPerPage", 10);
+        var (posts, totalCount) = await PostRepository.GetPublishedPostsAsync(_currentPage, pageSize);
+        
+        _posts = posts;
+        _totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
+    }
+}
+EOF
+
+# Components/Pages/PostDetail.razor
+cat << 'EOF' > "$SRC_DIR/MyBlog.Web/Components/Pages/PostDetail.razor"
+@page "/post/{Slug}"
+@inject IPostRepository PostRepository
+@inject NavigationManager Navigation
+
+@if (_post is null)
+{
+    @if (_notFound)
+    {
+        <PageTitle>Not Found</PageTitle>
+        <h1>Post Not Found</h1>
+        <p>The post you're looking for doesn't exist.</p>
+        <a href="/">← Back to Home</a>
+    }
+    else
+    {
+        <p>Loading...</p>
+    }
+}
+else
+{
+    <PageTitle>@_post.Title</PageTitle>
+    
+    <article class="post-detail">
+        <header class="post-header">
+            <h1>@_post.Title</h1>
+            <div class="post-meta">
+                <span class="author">By @_post.AuthorDisplayName</span>
+                @if (_post.PublishedAtUtc.HasValue)
+                {
+                    <span class="date">Published @_post.PublishedAtUtc.Value.ToString("MMMM d, yyyy")</span>
+                }
+            </div>
+        </header>
+
+        <div class="post-content">
+            <MarkdownRenderer Content="@_post.Content" />
+        </div>
+    </article>
+
+    <a href="/" class="back-link">← Back to Home</a>
+}
+
+@code {
+    [Parameter]
+    public string Slug { get; set; } = "";
+
+    private PostDetailDto? _post;
+    private bool _notFound;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        _post = await PostRepository.GetBySlugAsync(Slug);
+        _notFound = _post is null;
+        
+        // Don't show unpublished posts to public
+        if (_post is not null && !_post.IsPublished)
+        {
+            _post = null;
+            _notFound = true;
+        }
+    }
+}
+EOF
+
+# Components/Pages/About.razor
+cat << 'EOF' > "$SRC_DIR/MyBlog.Web/Components/Pages/About.razor"
+@page "/about"
+@inject IConfiguration Configuration
+
+<PageTitle>About - @(Configuration["Application:Title"] ?? "MyBlog")</PageTitle>
+
+<h1>About</h1>
+
+<p>
+    Welcome to @(Configuration["Application:Title"] ?? "MyBlog"), a simple blog built with 
+    .NET 10 and Blazor Server.
+</p>
+
+<h2>Features</h2>
+<ul>
+    <li>Markdown-based content</li>
+    <li>Image support with database storage</li>
+    <li>OpenTelemetry for observability</li>
+    <li>Cross-platform deployment</li>
+</ul>
+EOF
+
+# Components/Pages/Login.razor
+cat << 'EOF' > "$SRC_DIR/MyBlog.Web/Components/Pages/Login.razor"
+@page "/login"
+@inject IAuthService AuthService
+@inject NavigationManager Navigation
+@inject IHttpContextAccessor HttpContextAccessor
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Authentication
+@using Microsoft.AspNetCore.Authentication.Cookies
+
+<PageTitle>Login</PageTitle>
+
+<div class="login-page">
+    <h1>Login</h1>
+
+    @if (!string.IsNullOrEmpty(_error))
+    {
+        <div class="error-message">@_error</div>
+    }
+
+    <form method="post" @onsubmit="HandleLogin" @formname="login">
+        <AntiforgeryToken />
+        
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" @bind="_username" required />
+        </div>
+
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" @bind="_password" required />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Login</button>
+    </form>
+</div>
+
+@code {
+    private string _username = "";
+    private string _password = "";
+    private string? _error;
+
+    [SupplyParameterFromQuery]
+    public string? ReturnUrl { get; set; }
+
+    private async Task HandleLogin()
+    {
+        var user = await AuthService.AuthenticateAsync(_username, _password);
+        if (user is null)
+        {
+            _error = "Invalid username or password";
+            return;
+        }
+
+        var claims = new List<Claim>
+        {
+            new(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new(ClaimTypes.Name, user.Username),
+            new(ClaimTypes.Role, AppConstants.AdminRole)
+        };
+
+        var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+        var principal = new ClaimsPrincipal(identity);
+
+        var context = HttpContextAccessor.HttpContext;
+        if (context is not null)
+        {
+            await context.SignInAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                principal);
+        }
+
+        var returnUrl = ReturnUrl ?? "/admin";
+        Navigation.NavigateTo(returnUrl, forceLoad: true);
+    }
+}
+EOF
+
+# Components/Pages/Logout.razor
+cat << 'EOF' > "$SRC_DIR/MyBlog.Web/Components/Pages/Logout.razor"
+@page "/logout"
+@inject NavigationManager Navigation
+@inject IHttpContextAccessor HttpContextAccessor
+@using Microsoft.AspNetCore.Authentication
+@using Microsoft.AspNetCore.Authentication.Cookies
+@attribute [Authorize]
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        var context = HttpContextAccessor.HttpContext;
+        if (context is not null)
+        {
+            await context.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        }
+        Navigation.NavigateTo("/", forceLoad: true);
+    }
+}
+EOF
+
+# Components/Pages/Admin/Dashboard.razor
+cat << 'EOF' > "$SRC_DIR/MyBlog.Web/Components/Pages/Admin/Dashboard.razor"
+@page "/admin"
+@attribute [Authorize]
+@inject IPostRepository PostRepository
+
+<PageTitle>Admin Dashboard</PageTitle>
+
+<h1>Admin Dashboard</h1>
+
+<div class="dashboard-stats">
+    <div class="stat-card">
+        <h3>Total Posts</h3>
+        <p class="stat-value">@_postCount</p>
+    </div>
+</div>
+
+<div class="admin-nav">
+    <a href="/admin/posts" class="btn">Manage Posts</a>
+    <a href="/admin/posts/new" class="btn">New Post</a>
+    <a href="/admin/images" class="btn">Manage Images</a>
+</div>
+
+<h2>Recent Posts</h2>
+@if (_recentPosts is null)
+{
+    <p>Loading...</p>
+}
+else if (_recentPosts.Count == 0)
+{
+    <p>No posts yet.</p>
+}
+else
+{
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Status</th>
+                <th>Updated</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var post in _recentPosts)
+            {
+                <tr>
+                    <td><a href="/admin/posts/edit/@post.Id">@post.Title</a></td>
+                    <td>@(post.IsPublished ? "Published" : "Draft")</td>
+                    <td>@(post.PublishedAtUtc?.ToString("MMM d, yyyy") ?? "—")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private int _postCount;
+    private IReadOnlyList<PostListItemDto>? _recentPosts;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _postCount = await PostRepository.GetCountAsync();
+        _recentPosts = await PostRepository.GetRecentPostsAsync(5);
+    }
+}
+EOF
+
+# Components/Pages/Admin/PostList.razor
+cat << 'EOF' > "$SRC_DIR/MyBlog.Web/Components/Pages/Admin/PostList.razor"
+@page "/admin/posts"
+@attribute [Authorize]
+@inject IPostRepository PostRepository
+@inject NavigationManager Navigation
+
+<PageTitle>Manage Posts</PageTitle>
+
+<h1>Manage Posts</h1>
+
+<p><a href="/admin/posts/new" class="btn btn-primary">Create New Post</a></p>
+
+@if (_posts is null)
+{
+    <p>Loading...</p>
+}
+else if (_posts.Count == 0)
+{
+    <p>No posts yet.</p>
+}
+else
+{
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var post in _posts)
+            {
+                <tr>
+                    <td>@post.Title</td>
+                    <td>@post.AuthorDisplayName</td>
+                    <td>@(post.IsPublished ? "Published" : "Draft")</td>
+                    <td>
+                        <a href="/admin/posts/edit/@post.Id">Edit</a>
+                        <button @onclick="() => DeletePost(post.Id)" class="btn-link danger">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private IReadOnlyList<PostListItemDto>? _posts;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadPosts();
+    }
+
+    private async Task LoadPosts()
+    {
+        _posts = await PostRepository.GetAllPostsAsync();
+    }
+
+    private async Task DeletePost(Guid id)
+    {
+        await PostRepository.DeleteAsync(id);
+        await LoadPosts();
+    }
+}
+EOF
+
+# Components/Pages/Admin/PostEditor.razor
+cat << 'EOF' > "$SRC_DIR/MyBlog.Web/Components/Pages/Admin/PostEditor.razor"
+@page "/admin/posts/new"
+@page "/admin/posts/edit/{Id:guid}"
+@attribute [Authorize]
+@inject IPostRepository PostRepository
+@inject ISlugService SlugService
+@inject NavigationManager Navigation
+@inject AuthenticationStateProvider AuthStateProvider
+@using System.Security.Claims
+
+<PageTitle>@(_isEdit ? "Edit Post" : "New Post")</PageTitle>
+
+<h1>@(_isEdit ? "Edit Post" : "New Post")</h1>
+
+<div class="post-editor">
+    <div class="editor-form">
+        <div class="form-group">
+            <label for="title">Title</label>
+            <input type="text" id="title" @bind="_title" @bind:event="oninput" />
+        </div>
+
+        <div class="form-group">
+            <label for="summary">Summary</label>
+            <textarea id="summary" @bind="_summary" rows="2"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="content">Content (Markdown)</label>
+            <textarea id="content" @bind="_content" @bind:event="oninput" rows="20"></textarea>
+        </div>
+
+        <div class="form-group checkbox">
+            <label>
+                <input type="checkbox" @bind="_isPublished" />
+                Published
+            </label>
+        </div>
+
+        <div class="form-actions">
+            <button @onclick="Save" class="btn btn-primary">Save</button>
+            <a href="/admin/posts" class="btn">Cancel</a>
+        </div>
+    </div>
+
+    <div class="editor-preview">
+        <h3>Preview</h3>
+        <div class="preview-content">
+            <MarkdownRenderer Content="@_content" />
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public Guid? Id { get; set; }
+
+    private bool _isEdit => Id.HasValue;
+    private string _title = "";
+    private string _summary = "";
+    private string _content = "";
+    private bool _isPublished;
+    private Post? _existingPost;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (_isEdit)
+        {
+            _existingPost = await PostRepository.GetByIdAsync(Id!.Value);
+            if (_existingPost is not null)
+            {
+                _title = _existingPost.Title;
+                _summary = _existingPost.Summary;
+                _content = _existingPost.Content;
+                _isPublished = _existingPost.IsPublished;
+            }
+        }
+    }
+
+    private async Task Save()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var userIdClaim = authState.User.FindFirst(ClaimTypes.NameIdentifier);
+        var userId = Guid.Parse(userIdClaim!.Value);
+
+        if (_isEdit && _existingPost is not null)
+        {
+            _existingPost.Title = _title;
+            _existingPost.Slug = SlugService.GenerateSlug(_title);
+            _existingPost.Summary = _summary;
+            _existingPost.Content = _content;
+            _existingPost.IsPublished = _isPublished;
+            _existingPost.UpdatedAtUtc = DateTime.UtcNow;
+            if (_isPublished && !_existingPost.PublishedAtUtc.HasValue)
+            {
+                _existingPost.PublishedAtUtc = DateTime.UtcNow;
+            }
+
+            await PostRepository.UpdateAsync(_existingPost);
+        }
+        else
+        {
+            var post = new Post
+            {
+                Id = Guid.NewGuid(),
+                Title = _title,
+                Slug = SlugService.GenerateSlug(_title),
+                Summary = _summary,
+                Content = _content,
+                AuthorId = userId,
+                CreatedAtUtc = DateTime.UtcNow,
+                UpdatedAtUtc = DateTime.UtcNow,
+                IsPublished = _isPublished,
+                PublishedAtUtc = _isPublished ? DateTime.UtcNow : null
+            };
+
+            await PostRepository.CreateAsync(post);
+        }
+
+        Navigation.NavigateTo("/admin/posts");
+    }
+}
+EOF
+
+# Components/Pages/Admin/ImageManager.razor
+cat << 'EOF' > "$SRC_DIR/MyBlog.Web/Components/Pages/Admin/ImageManager.razor"
+@page "/admin/images"
+@attribute [Authorize]
+@inject IImageRepository ImageRepository
+@inject AuthenticationStateProvider AuthStateProvider
+@using System.Security.Claims
+
+<PageTitle>Manage Images</PageTitle>
+
+<h1>Manage Images</h1>
+
+<div class="image-upload">
+    <h3>Upload New Image</h3>
+    <InputFile OnChange="HandleFileUpload" accept="image/*" />
+    @if (!string.IsNullOrEmpty(_uploadStatus))
+    {
+        <p class="@(_uploadError ? "error" : "success")">@_uploadStatus</p>
+    }
+</div>
+
+<h3>Uploaded Images</h3>
+@if (_images is null)
+{
+    <p>Loading...</p>
+}
+else if (_images.Count == 0)
+{
+    <p>No images uploaded yet.</p>
+}
+else
+{
+    <div class="image-grid">
+        @foreach (var image in _images)
+        {
+            <div class="image-card">
+                <img src="/api/images/@image.Id" alt="@image.FileName" />
+                <div class="image-info">
+                    <p>@image.FileName</p>
+                    <code>/api/images/@image.Id</code>
+                    <button @onclick="() => DeleteImage(image.Id)" class="btn-link danger">Delete</button>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@code {
+    private IReadOnlyList<Image>? _images;
+    private string? _uploadStatus;
+    private bool _uploadError;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadImages();
+    }
+
+    private async Task LoadImages()
+    {
+        _images = await ImageRepository.GetAllAsync();
+    }
+
+    private async Task HandleFileUpload(InputFileChangeEventArgs e)
+    {
+        _uploadStatus = null;
+        _uploadError = false;
+
+        var file = e.File;
+        if (file.Size > AppConstants.MaxImageSizeBytes)
+        {
+            _uploadStatus = "File too large. Maximum size is 5MB.";
+            _uploadError = true;
+            return;
+        }
+
+        if (!AppConstants.AllowedImageTypes.Contains(file.ContentType))
+        {
+            _uploadStatus = "Invalid file type. Only JPEG, PNG, GIF, and WebP are allowed.";
+            _uploadError = true;
+            return;
+        }
+
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var userIdClaim = authState.User.FindFirst(ClaimTypes.NameIdentifier);
+        var userId = Guid.Parse(userIdClaim!.Value);
+
+        using var stream = file.OpenReadStream(AppConstants.MaxImageSizeBytes);
+        using var ms = new MemoryStream();
+        await stream.CopyToAsync(ms);
+
+        var image = new Image
+        {
+            Id = Guid.NewGuid(),
+            FileName = file.Name,
+            ContentType = file.ContentType,
+            Data = ms.ToArray(),
+            UploadedAtUtc = DateTime.UtcNow,
+            UploadedByUserId = userId
+        };
+
+        await ImageRepository.CreateAsync(image);
+        _uploadStatus = "Image uploaded successfully!";
+        await LoadImages();
+    }
+
+    private async Task DeleteImage(Guid id)
+    {
+        await ImageRepository.DeleteAsync(id);
+        await LoadImages();
+    }
+}
+EOF
+
+# wwwroot/css/site.css
+cat << 'EOF' > "$SRC_DIR/MyBlog.Web/wwwroot/css/site.css"
+/* =============================================================================
+   MyBlog CSS - Custom styles without any framework
+   ============================================================================= */
+
+/* CSS Variables for theming */
+:root {
+    --color-bg: #ffffff;
+    --color-bg-alt: #f8f9fa;
+    --color-text: #212529;
+    --color-text-muted: #6c757d;
+    --color-primary: #0d6efd;
+    --color-primary-hover: #0b5ed7;
+    --color-border: #dee2e6;
+    --color-danger: #dc3545;
+    --color-success: #198754;
+    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font-mono: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    --max-width: 1200px;
+    --spacing: 1rem;
+    --radius: 0.375rem;
+}
+
+/* Reset and base styles */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+body {
+    margin: 0;
+    font-family: var(--font-sans);
+    color: var(--color-text);
+    background-color: var(--color-bg);
+}
+
+h1, h2, h3, h4, h5, h6 {
+    margin-top: 0;
+    margin-bottom: 0.5em;
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+h1 { font-size: 2.5rem; }
+h2 { font-size: 2rem; }
+h3 { font-size: 1.5rem; }
+
+p {
+    margin-top: 0;
+    margin-bottom: 1rem;
+}
+
+a {
+    color: var(--color-primary);
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Container */
+.container {
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: 0 var(--spacing);
+}
+
+/* Layout */
+.layout {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header */
+.header {
+    background-color: var(--color-bg-alt);
+    border-bottom: 1px solid var(--color-border);
+    padding: var(--spacing) 0;
+}
+
+.header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--spacing);
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-text);
+}
+
+.logo:hover {
+    text-decoration: none;
+}
+
+.nav {
+    display: flex;
+    gap: var(--spacing);
+    align-items: center;
+}
+
+.nav a {
+    color: var(--color-text);
+}
+
+.logout-form {
+    display: inline;
+}
+
+.logout-form button {
+    background: none;
+    border: none;
+    color: var(--color-primary);
+    cursor: pointer;
+    font: inherit;
+    padding: 0;
+}
+
+.logout-form button:hover {
+    text-decoration: underline;
+}
+
+/* Main content */
+.main {
+    flex: 1;
+    padding: calc(var(--spacing) * 2) 0;
+}
+
+/* Footer */
+.footer {
+    background-color: var(--color-bg-alt);
+    border-top: 1px solid var(--color-border);
+    padding: var(--spacing) 0;
+    text-align: center;
+    color: var(--color-text-muted);
+}
+
+/* Buttons */
+.btn {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background-color: var(--color-bg-alt);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    color: var(--color-text);
+    cursor: pointer;
+    font: inherit;
+    text-decoration: none;
+    transition: background-color 0.2s;
+}
+
+.btn:hover {
+    background-color: var(--color-border);
+    text-decoration: none;
+}
+
+.btn-primary {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: var(--color-primary-hover);
+}
+
+.btn-link {
+    background: none;
+    border: none;
+    color: var(--color-primary);
+    cursor: pointer;
+    padding: 0;
+    font: inherit;
+}
+
+.btn-link:hover {
+    text-decoration: underline;
+}
+
+.btn-link.danger {
+    color: var(--color-danger);
+}
+
+/* Forms */
+.form-group {
+    margin-bottom: var(--spacing);
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.25rem;
+    font-weight: 500;
+}
+
+.form-group input[type="text"],
+.form-group input[type="password"],
+.form-group input[type="email"],
+.form-group textarea {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    font: inherit;
+}
+
+.form-group textarea {
+    resize: vertical;
+}
+
+.form-group.checkbox label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.form-group.checkbox input {
+    width: auto;
+}
+
+.form-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: var(--spacing);
+}
+
+/* Post cards */
+.post-list {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--spacing) * 2);
+}
+
+.post-card {
+    padding: var(--spacing);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+}
+
+.post-card-title {
+    margin-bottom: 0.5rem;
+}
+
+.post-card-title a {
+    color: var(--color-text);
+}
+
+.post-card-meta {
+    color: var(--color-text-muted);
+    font-size: 0.875rem;
+    margin-bottom: 0.5rem;
+}
+
+.post-card-meta span {
+    margin-right: 1rem;
+}
+
+.draft-badge {
+    background-color: var(--color-text-muted);
+    color: white;
+    padding: 0.125rem 0.5rem;
+    border-radius: var(--radius);
+    font-size: 0.75rem;
+}
+
+.read-more {
+    font-weight: 500;
+}
+
+/* Pagination */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: var(--spacing);
+    margin-top: calc(var(--spacing) * 2);
+}
+
+.page-info {
+    color: var(--color-text-muted);
+}
+
+/* Post detail */
+.post-detail {
+    max-width: 800px;
+}
+
+.post-header {
+    margin-bottom: calc(var(--spacing) * 2);
+}
+
+.post-meta {
+    color: var(--color-text-muted);
+}
+
+.post-meta span {
+    margin-right: 1rem;
+}
+
+.back-link {
+    display: inline-block;
+    margin-top: calc(var(--spacing) * 2);
+}
+
+/* Markdown content */
+.markdown-content {
+    line-height: 1.7;
+}
+
+.markdown-content h1,
+.markdown-content h2,
+.markdown-content h3,
+.markdown-content h4,
+.markdown-content h5,
+.markdown-content h6 {
+    margin-top: 1.5em;
+}
+
+.markdown-content pre {
+    background-color: var(--color-bg-alt);
+    padding: var(--spacing);
+    border-radius: var(--radius);
+    overflow-x: auto;
+}
+
+.markdown-content code {
+    font-family: var(--font-mono);
+    font-size: 0.875em;
+}
+
+.markdown-content :not(pre) > code {
+    background-color: var(--color-bg-alt);
+    padding: 0.125rem 0.25rem;
+    border-radius: 0.25rem;
+}
+
+.markdown-content blockquote {
+    border-left: 4px solid var(--color-border);
+    margin: 0;
+    padding-left: var(--spacing);
+    color: var(--color-text-muted);
+}
+
+.markdown-content img {
+    max-width: 100%;
+    height: auto;
+}
+
+.markdown-content hr {
+    border: none;
+    border-top: 1px solid var(--color-border);
+    margin: calc(var(--spacing) * 2) 0;
+}
+
+/* Login page */
+.login-page {
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.error-message {
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    color: #842029;
+    padding: var(--spacing);
+    border-radius: var(--radius);
+    margin-bottom: var(--spacing);
+}
+
+/* Admin styles */
+.dashboard-stats {
+    display: flex;
+    gap: var(--spacing);
+    margin-bottom: calc(var(--spacing) * 2);
+}
+
+.stat-card {
+    padding: var(--spacing);
+    background-color: var(--color-bg-alt);
+    border-radius: var(--radius);
+    text-align: center;
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.admin-nav {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: calc(var(--spacing) * 2);
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.admin-table th,
+.admin-table td {
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.admin-table th {
+    background-color: var(--color-bg-alt);
+    font-weight: 600;
+}
+
+/* Post editor */
+.post-editor {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: calc(var(--spacing) * 2);
+}
+
+.editor-preview {
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: var(--spacing);
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.editor-preview h3 {
+    margin-bottom: var(--spacing);
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--color-border);
+}
+
+/* Image manager */
+.image-upload {
+    margin-bottom: calc(var(--spacing) * 2);
+    padding: var(--spacing);
+    background-color: var(--color-bg-alt);
+    border-radius: var(--radius);
+}
+
+.image-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: var(--spacing);
+}
+
+.image-card {
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    overflow: hidden;
+}
+
+.image-card img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+}
+
+.image-info {
+    padding: 0.5rem;
+}
+
+.image-info p {
+    margin: 0 0 0.25rem;
+    font-size: 0.875rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.image-info code {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+    margin-bottom: 0.25rem;
+}
+
+.success {
+    color: var(--color-success);
+}
+
+.error {
+    color: var(--color-danger);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    h1 { font-size: 2rem; }
+    h2 { font-size: 1.5rem; }
+    
+    .header .container {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .nav {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .post-editor {
+        grid-template-columns: 1fr;
+    }
+    
+    .editor-preview {
+        order: -1;
+        max-height: 300px;
+    }
+    
+    .dashboard-stats {
+        flex-direction: column;
+    }
+    
+    .admin-nav {
+        flex-wrap: wrap;
+    }
+}
+EOF
+
+echo "      Created MyBlog.Web project with Blazor components and CSS."
+
+# =============================================================================
+# Step 6: Create MyBlog.Tests Project
+# =============================================================================
+echo ""
+echo "[6/8] Creating MyBlog.Tests project (xUnit v3 tests)..."
+echo "      WHY: Comprehensive tests ensure reliability and enable safe refactoring."
+echo "           Using in-memory SQLite allows fast, isolated integration tests."
+
+# MyBlog.Tests.csproj
+cat << 'EOF' > "$SRC_DIR/MyBlog.Tests/MyBlog.Tests.csproj"
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>MyBlog.Tests</RootNamespace>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="xunit.v3" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\MyBlog.Core\MyBlog.Core.csproj" />
+    <ProjectReference Include="..\MyBlog.Infrastructure\MyBlog.Infrastructure.csproj" />
+  </ItemGroup>
+</Project>
+EOF
+
+# Unit/SlugServiceTests.cs
+cat << 'EOF' > "$SRC_DIR/MyBlog.Tests/Unit/SlugServiceTests.cs"
+using MyBlog.Core.Services;
+using Xunit;
+
+namespace MyBlog.Tests.Unit;
+
+public class SlugServiceTests
+{
+    private readonly SlugService _sut = new();
+
+    [Fact]
+    public void GenerateSlug_WithSimpleTitle_ReturnsLowercaseWithHyphens()
+    {
+        var result = _sut.GenerateSlug("Hello World");
+        Assert.Equal("hello-world", result);
+    }
+
+    [Fact]
+    public void GenerateSlug_WithSpecialCharacters_RemovesThem()
+    {
+        var result = _sut.GenerateSlug("Hello, World! How's it going?");
+        Assert.Equal("hello-world-hows-it-going", result);
+    }
+
+    [Fact]
+    public void GenerateSlug_WithMultipleSpaces_CollapsesToSingleHyphen()
+    {
+        var result = _sut.GenerateSlug("Hello    World");
+        Assert.Equal("hello-world", result);
+    }
+
+    [Fact]
+    public void GenerateSlug_WithUnicode_RemovesDiacritics()
+    {
+        var result = _sut.GenerateSlug("Café résumé");
+        Assert.Equal("cafe-resume", result);
+    }
+
+    [Fact]
+    public void GenerateSlug_WithLeadingTrailingSpaces_TrimsHyphens()
+    {
+        var result = _sut.GenerateSlug("  Hello World  ");
+        Assert.Equal("hello-world", result);
+    }
+
+    [Fact]
+    public void GenerateSlug_WithNumbers_PreservesNumbers()
+    {
+        var result = _sut.GenerateSlug("Top 10 Tips for 2024");
+        Assert.Equal("top-10-tips-for-2024", result);
+    }
+
+    [Fact]
+    public void GenerateSlug_WithUnderscores_ConvertsToHyphens()
+    {
+        var result = _sut.GenerateSlug("hello_world_test");
+        Assert.Equal("hello-world-test", result);
+    }
+
+    [Fact]
+    public void GenerateSlug_WithEmptyString_ThrowsArgumentException()
+    {
+        Assert.Throws<ArgumentException>(() => _sut.GenerateSlug(""));
+    }
+
+    [Fact]
+    public void GenerateSlug_WithWhitespaceOnly_ThrowsArgumentException()
+    {
+        Assert.Throws<ArgumentException>(() => _sut.GenerateSlug("   "));
+    }
+}
+EOF
+
+# Unit/MarkdownServiceTests.cs
+cat << 'EOF' > "$SRC_DIR/MyBlog.Tests/Unit/MarkdownServiceTests.cs"
+using MyBlog.Core.Services;
+using Xunit;
+
+namespace MyBlog.Tests.Unit;
+
+public class MarkdownServiceTests
+{
+    private readonly MarkdownService _sut = new();
+
+    [Fact]
+    public void ToHtml_WithHeading1_ReturnsH1Tag()
+    {
+        var result = _sut.ToHtml("# Hello");
+        Assert.Contains("<h1>Hello</h1>", result);
+    }
+
+    [Fact]
+    public void ToHtml_WithHeading2_ReturnsH2Tag()
+    {
+        var result = _sut.ToHtml("## Hello");
+        Assert.Contains("<h2>Hello</h2>", result);
+    }
+
+    [Fact]
+    public void ToHtml_WithHeading6_ReturnsH6Tag()
+    {
+        var result = _sut.ToHtml("###### Hello");
+        Assert.Contains("<h6>Hello</h6>", result);
+    }
+
+    [Fact]
+    public void ToHtml_WithBoldText_ReturnsStrongTag()
+    {
+        var result = _sut.ToHtml("This is **bold** text");
+        Assert.Contains("<strong>bold</strong>", result);
+    }
+
+    [Fact]
+    public void ToHtml_WithItalicText_ReturnsEmTag()
+    {
+        var result = _sut.ToHtml("This is *italic* text");
+        Assert.Contains("<em>italic</em>", result);
+    }
+
+    [Fact]
+    public void ToHtml_WithLink_ReturnsAnchorTag()
+    {
+        var result = _sut.ToHtml("Check [this link](https://example.com)");
+        Assert.Contains("<a href=\"https://example.com\">this link</a>", result);
+    }
+
+    [Fact]
+    public void ToHtml_WithImage_ReturnsImgTag()
+    {
+        var result = _sut.ToHtml("![alt text](https://example.com/image.png)");
+        Assert.Contains("<img src=\"https://example.com/image.png\" alt=\"alt text\" />", result);
+    }
+
+    [Fact]
+    public void ToHtml_WithInlineCode_ReturnsCodeTag()
+    {
+        var result = _sut.ToHtml("Use `code` here");
+        Assert.Contains("<code>code</code>", result);
+    }
+
+    [Fact]
+    public void ToHtml_WithCodeBlock_ReturnsPreCodeTags()
+    {
+        var markdown = "```\nvar x = 1;\n```";
+        var result = _sut.ToHtml(markdown);
+        Assert.Contains("<pre><code>", result);
+        Assert.Contains("var x = 1;", result);
+        Assert.Contains("</code></pre>", result);
+    }
+
+    [Fact]
+    public void ToHtml_WithBlockquote_ReturnsBlockquoteTag()
+    {
+        var result = _sut.ToHtml("> This is a quote");
+        Assert.Contains("<blockquote><p>This is a quote</p></blockquote>", result);
+    }
+
+    [Fact]
+    public void ToHtml_WithUnorderedList_ReturnsUlLiTags()
+    {
+        var markdown = "- Item 1\n- Item 2";
+        var result = _sut.ToHtml(markdown);
+        Assert.Contains("<ul>", result);
+        Assert.Contains("<li>Item 1</li>", result);
+        Assert.Contains("<li>Item 2</li>", result);
+        Assert.Contains("</ul>", result);
+    }
+
+    [Fact]
+    public void ToHtml_WithHorizontalRule_ReturnsHrTag()
+    {
+        var result = _sut.ToHtml("---");
+        Assert.Contains("<hr />", result);
+    }
+
+    [Fact]
+    public void ToHtml_WithEmptyString_ReturnsEmptyString()
+    {
+        var result = _sut.ToHtml("");
+        Assert.Equal(string.Empty, result);
+    }
+
+    [Fact]
+    public void ToHtml_WithPlainText_ReturnsParagraph()
+    {
+        var result = _sut.ToHtml("Hello world");
+        Assert.Contains("<p>Hello world</p>", result);
+    }
+
+    [Fact]
+    public void ToHtml_WithHtmlCharacters_EscapesThem()
+    {
+        var result = _sut.ToHtml("Use <script> tags");
+        Assert.Contains("&lt;script&gt;", result);
+        Assert.DoesNotContain("<script>", result);
+    }
+}
+EOF
+
+# Unit/PasswordServiceTests.cs
+cat << 'EOF' > "$SRC_DIR/MyBlog.Tests/Unit/PasswordServiceTests.cs"
+using MyBlog.Infrastructure.Services;
+using Xunit;
+
+namespace MyBlog.Tests.Unit;
+
+public class PasswordServiceTests
+{
+    private readonly PasswordService _sut = new();
+
+    [Fact]
+    public void HashPassword_ReturnsNonEmptyHash()
+    {
+        var hash = _sut.HashPassword("TestPassword123");
+        Assert.False(string.IsNullOrEmpty(hash));
+    }
+
+    [Fact]
+    public void HashPassword_ReturnsDifferentHashForSamePassword()
+    {
+        var hash1 = _sut.HashPassword("TestPassword123");
+        var hash2 = _sut.HashPassword("TestPassword123");
+        Assert.NotEqual(hash1, hash2);
+    }
+
+    [Fact]
+    public void VerifyPassword_WithCorrectPassword_ReturnsTrue()
+    {
+        var password = "TestPassword123";
+        var hash = _sut.HashPassword(password);
+        
+        var result = _sut.VerifyPassword(hash, password);
+        
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void VerifyPassword_WithWrongPassword_ReturnsFalse()
+    {
+        var hash = _sut.HashPassword("TestPassword123");
+        
+        var result = _sut.VerifyPassword(hash, "WrongPassword");
+        
+        Assert.False(result);
+    }
+
+    [Fact]
+    public void VerifyPassword_WithEmptyPassword_ReturnsFalse()
+    {
+        var hash = _sut.HashPassword("TestPassword123");
+        
+        var result = _sut.VerifyPassword(hash, "");
+        
+        Assert.False(result);
+    }
+}
+EOF
+
+# Integration/PostRepositoryTests.cs
+cat << 'EOF' > "$SRC_DIR/MyBlog.Tests/Integration/PostRepositoryTests.cs"
+using Microsoft.EntityFrameworkCore;
+using MyBlog.Core.Models;
+using MyBlog.Infrastructure.Data;
+using MyBlog.Infrastructure.Repositories;
+using Xunit;
+
+namespace MyBlog.Tests.Integration;
+
+public class PostRepositoryTests : IAsyncDisposable
+{
+    private readonly BlogDbContext _context;
+    private readonly PostRepository _sut;
+    private readonly User _testUser;
+
+    public PostRepositoryTests()
+    {
+        var options = new DbContextOptionsBuilder<BlogDbContext>()
+            .UseSqlite("Data Source=:memory:")
+            .Options;
+
+        _context = new BlogDbContext(options);
+        _context.Database.OpenConnection();
+        _context.Database.EnsureCreated();
+
+        _testUser = new User
+        {
+            Id = Guid.NewGuid(),
+            Username = "testuser",
+            PasswordHash = "hash",
+            Email = "test@example.com",
+            DisplayName = "Test User",
+            CreatedAtUtc = DateTime.UtcNow
+        };
+        _context.Users.Add(_testUser);
+        _context.SaveChanges();
+
+        _sut = new PostRepository(_context);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await _context.DisposeAsync();
+    }
+
+    [Fact]
+    public async Task CreateAsync_AddsPostToDatabase()
+    {
+        var post = CreateTestPost("Test Post");
+
+        var result = await _sut.CreateAsync(post);
+
+        Assert.NotEqual(Guid.Empty, result.Id);
+        var saved = await _context.Posts.FindAsync(result.Id);
+        Assert.NotNull(saved);
+        Assert.Equal("Test Post", saved.Title);
+    }
+
+    [Fact]
+    public async Task GetByIdAsync_WithExistingId_ReturnsPost()
+    {
+        var post = CreateTestPost("Test Post");
+        await _sut.CreateAsync(post);
+
+        var result = await _sut.GetByIdAsync(post.Id);
+
+        Assert.NotNull(result);
+        Assert.Equal("Test Post", result.Title);
+    }
+
+    [Fact]
+    public async Task GetByIdAsync_WithNonExistingId_ReturnsNull()
+    {
+        var result = await _sut.GetByIdAsync(Guid.NewGuid());
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public async Task GetBySlugAsync_WithExistingSlug_ReturnsPost()
+    {
+        var post = CreateTestPost("Test Post", "test-post");
+        await _sut.CreateAsync(post);
+
+        var result = await _sut.GetBySlugAsync("test-post");
+
+        Assert.NotNull(result);
+        Assert.Equal("Test Post", result.Title);
+    }
+
+    [Fact]
+    public async Task GetPublishedPostsAsync_ReturnsOnlyPublishedPosts()
+    {
+        var published = CreateTestPost("Published", "published", true);
+        var draft = CreateTestPost("Draft", "draft", false);
+        await _sut.CreateAsync(published);
+        await _sut.CreateAsync(draft);
+
+        var (posts, count) = await _sut.GetPublishedPostsAsync(1, 10);
+
+        Assert.Single(posts);
+        Assert.Equal("Published", posts[0].Title);
+        Assert.Equal(1, count);
+    }
+
+    [Fact]
+    public async Task UpdateAsync_ModifiesExistingPost()
+    {
+        var post = CreateTestPost("Original Title");
+        await _sut.CreateAsync(post);
+
+        post.Title = "Updated Title";
+        await _sut.UpdateAsync(post);
+
+        var updated = await _context.Posts.FindAsync(post.Id);
+        Assert.Equal("Updated Title", updated!.Title);
+    }
+
+    [Fact]
+    public async Task DeleteAsync_RemovesPostFromDatabase()
+    {
+        var post = CreateTestPost("To Delete");
+        await _sut.CreateAsync(post);
+
+        await _sut.DeleteAsync(post.Id);
+
+        var deleted = await _context.Posts.FindAsync(post.Id);
+        Assert.Null(deleted);
+    }
+
+    [Fact]
+    public async Task GetCountAsync_ReturnsCorrectCount()
+    {
+        await _sut.CreateAsync(CreateTestPost("Post 1"));
+        await _sut.CreateAsync(CreateTestPost("Post 2"));
+        await _sut.CreateAsync(CreateTestPost("Post 3"));
+
+        var count = await _sut.GetCountAsync();
+
+        Assert.Equal(3, count);
+    }
+
+    private Post CreateTestPost(string title, string? slug = null, bool isPublished = true)
+    {
+        return new Post
+        {
+            Id = Guid.NewGuid(),
+            Title = title,
+            Slug = slug ?? title.ToLower().Replace(" ", "-"),
+            Content = "Test content",
+            Summary = "Test summary",
+            AuthorId = _testUser.Id,
+            CreatedAtUtc = DateTime.UtcNow,
+            UpdatedAtUtc = DateTime.UtcNow,
+            IsPublished = isPublished,
+            PublishedAtUtc = isPublished ? DateTime.UtcNow : null
+        };
+    }
+}
+EOF
+
+# Integration/AuthServiceTests.cs
+cat << 'EOF' > "$SRC_DIR/MyBlog.Tests/Integration/AuthServiceTests.cs"
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using MyBlog.Core.Models;
+using MyBlog.Infrastructure.Data;
+using MyBlog.Infrastructure.Repositories;
+using MyBlog.Infrastructure.Services;
+using Xunit;
+
+namespace MyBlog.Tests.Integration;
+
+public class AuthServiceTests : IAsyncDisposable
+{
+    private readonly BlogDbContext _context;
+    private readonly AuthService _sut;
+    private readonly PasswordService _passwordService;
+
+    public AuthServiceTests()
+    {
+        var options = new DbContextOptionsBuilder<BlogDbContext>()
+            .UseSqlite("Data Source=:memory:")
+            .Options;
+
+        _context = new BlogDbContext(options);
+        _context.Database.OpenConnection();
+        _context.Database.EnsureCreated();
+
+        var userRepository = new UserRepository(_context);
+        _passwordService = new PasswordService();
+        var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["Authentication:DefaultAdminPassword"] = "TestAdmin123!"
+            })
+            .Build();
+
+        _sut = new AuthService(userRepository, _passwordService, configuration);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await _context.DisposeAsync();
+    }
+
+    [Fact]
+    public async Task AuthenticateAsync_WithValidCredentials_ReturnsUser()
+    {
+        var user = new User
+        {
+            Id = Guid.NewGuid(),
+            Username = "testuser",
+            PasswordHash = _passwordService.HashPassword("TestPassword"),
+            Email = "test@example.com",
+            DisplayName = "Test User",
+            CreatedAtUtc = DateTime.UtcNow
+        };
+        _context.Users.Add(user);
+        await _context.SaveChangesAsync();
+
+        var result = await _sut.AuthenticateAsync("testuser", "TestPassword");
+
+        Assert.NotNull(result);
+        Assert.Equal("testuser", result.Username);
+    }
+
+    [Fact]
+    public async Task AuthenticateAsync_WithWrongPassword_ReturnsNull()
+    {
+        var user = new User
+        {
+            Id = Guid.NewGuid(),
+            Username = "testuser",
+            PasswordHash = _passwordService.HashPassword("TestPassword"),
+            Email = "test@example.com",
+            DisplayName = "Test User",
+            CreatedAtUtc = DateTime.UtcNow
+        };
+        _context.Users.Add(user);
+        await _context.SaveChangesAsync();
+
+        var result = await _sut.AuthenticateAsync("testuser", "WrongPassword");
+
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public async Task AuthenticateAsync_WithUnknownUser_ReturnsNull()
+    {
+        var result = await _sut.AuthenticateAsync("nonexistent", "anypassword");
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public async Task EnsureAdminUserAsync_WhenNoUsers_CreatesAdmin()
+    {
+        await _sut.EnsureAdminUserAsync();
+
+        var admin = await _context.Users.FirstOrDefaultAsync(u => u.Username == "admin");
+        Assert.NotNull(admin);
+    }
+
+    [Fact]
+    public async Task EnsureAdminUserAsync_WhenUsersExist_DoesNotCreateAnother()
+    {
+        var existingUser = new User
+        {
+            Id = Guid.NewGuid(),
+            Username = "existing",
+            PasswordHash = "hash",
+            Email = "existing@example.com",
+            DisplayName = "Existing",
+            CreatedAtUtc = DateTime.UtcNow
+        };
+        _context.Users.Add(existingUser);
+        await _context.SaveChangesAsync();
+
+        await _sut.EnsureAdminUserAsync();
+
+        var userCount = await _context.Users.CountAsync();
+        Assert.Equal(1, userCount);
+    }
+}
+EOF
+
+# Integration/TelemetryCleanupTests.cs
+cat << 'EOF' > "$SRC_DIR/MyBlog.Tests/Integration/TelemetryCleanupTests.cs"
+using Microsoft.EntityFrameworkCore;
+using MyBlog.Core.Models;
+using MyBlog.Infrastructure.Data;
+using MyBlog.Infrastructure.Repositories;
+using Xunit;
+
+namespace MyBlog.Tests.Integration;
+
+public class TelemetryCleanupTests : IAsyncDisposable
+{
+    private readonly BlogDbContext _context;
+    private readonly TelemetryLogRepository _sut;
+
+    public TelemetryCleanupTests()
+    {
+        var options = new DbContextOptionsBuilder<BlogDbContext>()
+            .UseSqlite("Data Source=:memory:")
+            .Options;
+
+        _context = new BlogDbContext(options);
+        _context.Database.OpenConnection();
+        _context.Database.EnsureCreated();
+
+        _sut = new TelemetryLogRepository(_context);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await _context.DisposeAsync();
+    }
+
+    [Fact]
+    public async Task DeleteOlderThanAsync_RemovesOldLogs()
+    {
+        // Add old logs
+        var oldLog = new TelemetryLog
+        {
+            TimestampUtc = DateTime.UtcNow.AddDays(-60),
+            Level = "Information",
+            Category = "Test",
+            Message = "Old log"
+        };
+        _context.TelemetryLogs.Add(oldLog);
+
+        // Add recent log
+        var recentLog = new TelemetryLog
+        {
+            TimestampUtc = DateTime.UtcNow.AddDays(-5),
+            Level = "Information",
+            Category = "Test",
+            Message = "Recent log"
+        };
+        _context.TelemetryLogs.Add(recentLog);
+        await _context.SaveChangesAsync();
+
+        var cutoff = DateTime.UtcNow.AddDays(-30);
+        var deleted = await _sut.DeleteOlderThanAsync(cutoff);
+
+        Assert.Equal(1, deleted);
+        var remaining = await _context.TelemetryLogs.CountAsync();
+        Assert.Equal(1, remaining);
+    }
+
+    [Fact]
+    public async Task DeleteOlderThanAsync_KeepsRecentLogs()
+    {
+        var recentLog = new TelemetryLog
+        {
+            TimestampUtc = DateTime.UtcNow.AddDays(-1),
+            Level = "Information",
+            Category = "Test",
+            Message = "Recent log"
+        };
+        _context.TelemetryLogs.Add(recentLog);
+        await _context.SaveChangesAsync();
+
+        var cutoff = DateTime.UtcNow.AddDays(-30);
+        var deleted = await _sut.DeleteOlderThanAsync(cutoff);
+
+        Assert.Equal(0, deleted);
+        var remaining = await _context.TelemetryLogs.CountAsync();
+        Assert.Equal(1, remaining);
+    }
+
+    [Fact]
+    public async Task WriteAsync_AddsLogToDatabase()
+    {
+        var log = new TelemetryLog
+        {
+            TimestampUtc = DateTime.UtcNow,
+            Level = "Error",
+            Category = "Test",
+            Message = "Test error message"
+        };
+
+        await _sut.WriteAsync(log);
+
+        var saved = await _context.TelemetryLogs.FirstOrDefaultAsync();
+        Assert.NotNull(saved);
+        Assert.Equal("Error", saved.Level);
+        Assert.Equal("Test error message", saved.Message);
+    }
+}
+EOF
+
+echo "      Created MyBlog.Tests project with unit and integration tests."
+
+# =============================================================================
+# Step 7: Create GitHub Actions Workflow
+# =============================================================================
+echo ""
+echo "[7/8] Creating GitHub Actions workflow..."
+echo "      WHY: CI/CD automation ensures every change is tested across platforms"
+echo "           and automatically deploys to production on protected branches."
+
+cat << 'EOF' > "$SRC_DIR/.github/workflows/build-deploy.yml"
+name: Build, Test, and Deploy
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+    branches: ['**']
+
+jobs:
+  build-test:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore src/MyBlog.slnx
+
+      - name: Build solution
+        run: dotnet build src/MyBlog.slnx -c Release --no-restore
+
+      - name: Run tests
+        run: dotnet test src/MyBlog.slnx -c Release --no-build --logger trx --results-directory TestResults
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results-${{ matrix.os }}
+          path: TestResults
+          retention-days: 7
+
+  deploy:
+    needs: build-test
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop'
+    runs-on: windows-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Publish application
+        run: dotnet publish src/MyBlog.Web/MyBlog.Web.csproj -c Release -o ./publish -r win-x86 --self-contained false
+
+      - name: Deploy via WebDeploy
+        shell: pwsh
+        run: |
+          # WebDeploy is typically pre-installed on windows-latest
+          $msdeployPath = "C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe"
+          
+          if (-not (Test-Path $msdeployPath)) {
+            Write-Host "Installing Web Deploy..."
+            choco install webdeploy -y --no-progress
+            $msdeployPath = "C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe"
+          }
+          
+          Write-Host "Deploying to ${{ secrets.SERVER_COMPUTER_NAME }}..."
+          
+          & $msdeployPath -verb:sync `
+            -source:contentPath="${{ github.workspace }}\publish" `
+            -dest:contentPath="${{ secrets.WEBSITE_NAME }}",computerName="https://${{ secrets.SERVER_COMPUTER_NAME }}:8172/msdeploy.axd",userName="${{ secrets.SERVER_USERNAME }}",password="${{ secrets.SERVER_PASSWORD }}",authType="Basic" `
+            -allowUntrusted `
+            -enableRule:DoNotDeleteRule
+          
+          if ($LASTEXITCODE -ne 0) {
+            Write-Error "Deployment failed with exit code $LASTEXITCODE"
+            exit 1
+          }
+          
+          Write-Host "Deployment completed successfully!"
+EOF
+
+echo "      Created GitHub Actions workflow for CI/CD."
+
+# =============================================================================
+# Step 8: Final Setup
+# =============================================================================
+echo ""
+echo "[8/8] Setting permissions and creating helper scripts..."
+
+# Make the generator script executable
+chmod +x "$SRC_DIR/generate-myblog.sh" 2>/dev/null || true
+
+# Create a run script
+cat << 'EOF' > "$SRC_DIR/run.sh"
+#!/bin/bash
+# Run the MyBlog application in development mode
+cd "$(dirname "$0")/MyBlog.Web"
+dotnet run
+EOF
+chmod +x "$SRC_DIR/run.sh"
+
+# Create a test script
+cat << 'EOF' > "$SRC_DIR/test.sh"
+#!/bin/bash
+# Run all tests
+cd "$(dirname "$0")"
+dotnet test MyBlog.slnx -v normal
+EOF
+chmod +x "$SRC_DIR/test.sh"
+
+echo "      Created helper scripts."
+
+# =============================================================================
+# Complete!
+# =============================================================================
+echo ""
+echo "=============================================="
+echo "  Generation Complete!"
+echo "=============================================="
+echo ""
+echo "Project structure created in: $SRC_DIR"
+echo ""
+echo "Next steps:"
+echo ""
+echo "  1. Restore packages:"
+echo "     cd $SRC_DIR && dotnet restore MyBlog.slnx"
+echo ""
+echo "  2. Build the solution:"
+echo "     dotnet build MyBlog.slnx"
+echo ""
+echo "  3. Run the application:"
+echo "     cd MyBlog.Web && dotnet run"
+echo "     OR use: ./run.sh"
+echo ""
+echo "  4. Run tests:"
+echo "     dotnet test MyBlog.slnx"
+echo "     OR use: ./test.sh"
+echo ""
+echo "  5. Access the application:"
+echo "     http://localhost:5000 (or the port shown in console)"
+echo ""
+echo "Default admin credentials:"
+echo "  Username: admin"
+echo "  Password: ChangeMe123! (or set MYBLOG_ADMIN_PASSWORD env var)"
+echo ""
+echo "Database location (created on first run):"
+echo "  Linux:   ~/.local/share/MyBlog/myblog.db"
+echo "  macOS:   ~/Library/Application Support/MyBlog/myblog.db"
+echo "  Windows: %LOCALAPPDATA%/MyBlog/myblog.db"
+echo ""
+echo "For GitHub Actions deployment, set these secrets:"
+echo "  - WEBSITE_NAME"
+echo "  - SERVER_COMPUTER_NAME"
+echo "  - SERVER_USERNAME"
+echo "  - SERVER_PASSWORD"
+echo ""
+echo "Generation completed at: $(date)"
+echo "=============================================="
+
+
 ===============================================================================
-EXPORT COMPLETED: Sun Dec 28 07:24:05 AM CST 2025
-Total Files Found: 3
-Files Exported: 3
+EXPORT COMPLETED: Sun Dec 28 07:42:57 AM CST 2025
+Total Files Found: 4
+Files Exported: 4
 Files Skipped: 0 (binary or large files)
 Output File: /home/kushal/src/dotnet/MyBlog/docs/llm/dump.txt
 ===============================================================================

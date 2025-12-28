@@ -1,0 +1,62 @@
+@page "/post/{Slug}"
+@inject IPostRepository PostRepository
+@inject NavigationManager Navigation
+
+@if (_post is null)
+{
+    @if (_notFound)
+    {
+        <PageTitle>Not Found</PageTitle>
+        <h1>Post Not Found</h1>
+        <p>The post you're looking for doesn't exist.</p>
+        <a href="/">← Back to Home</a>
+    }
+    else
+    {
+        <p>Loading...</p>
+    }
+}
+else
+{
+    <PageTitle>@_post.Title</PageTitle>
+    
+    <article class="post-detail">
+        <header class="post-header">
+            <h1>@_post.Title</h1>
+            <div class="post-meta">
+                <span class="author">By @_post.AuthorDisplayName</span>
+                @if (_post.PublishedAtUtc.HasValue)
+                {
+                    <span class="date">Published @_post.PublishedAtUtc.Value.ToString("MMMM d, yyyy")</span>
+                }
+            </div>
+        </header>
+
+        <div class="post-content">
+            <MarkdownRenderer Content="@_post.Content" />
+        </div>
+    </article>
+
+    <a href="/" class="back-link">← Back to Home</a>
+}
+
+@code {
+    [Parameter]
+    public string Slug { get; set; } = "";
+
+    private PostDetailDto? _post;
+    private bool _notFound;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        _post = await PostRepository.GetBySlugAsync(Slug);
+        _notFound = _post is null;
+        
+        // Don't show unpublished posts to public
+        if (_post is not null && !_post.IsPublished)
+        {
+            _post = null;
+            _notFound = true;
+        }
+    }
+}

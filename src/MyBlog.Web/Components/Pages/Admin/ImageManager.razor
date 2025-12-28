@@ -1,0 +1,109 @@
+@page "/admin/images"
+@attribute [Authorize]
+@inject IImageRepository ImageRepository
+@inject AuthenticationStateProvider AuthStateProvider
+@using System.Security.Claims
+
+<PageTitle>Manage Images</PageTitle>
+
+<h1>Manage Images</h1>
+
+<div class="image-upload">
+    <h3>Upload New Image</h3>
+    <InputFile OnChange="HandleFileUpload" accept="image/*" />
+    @if (!string.IsNullOrEmpty(_uploadStatus))
+    {
+        <p class="@(_uploadError ? "error" : "success")">@_uploadStatus</p>
+    }
+</div>
+
+<h3>Uploaded Images</h3>
+@if (_images is null)
+{
+    <p>Loading...</p>
+}
+else if (_images.Count == 0)
+{
+    <p>No images uploaded yet.</p>
+}
+else
+{
+    <div class="image-grid">
+        @foreach (var image in _images)
+        {
+            <div class="image-card">
+                <img src="/api/images/@image.Id" alt="@image.FileName" />
+                <div class="image-info">
+                    <p>@image.FileName</p>
+                    <code>/api/images/@image.Id</code>
+                    <button @onclick="() => DeleteImage(image.Id)" class="btn-link danger">Delete</button>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@code {
+    private IReadOnlyList<Image>? _images;
+    private string? _uploadStatus;
+    private bool _uploadError;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadImages();
+    }
+
+    private async Task LoadImages()
+    {
+        _images = await ImageRepository.GetAllAsync();
+    }
+
+    private async Task HandleFileUpload(InputFileChangeEventArgs e)
+    {
+        _uploadStatus = null;
+        _uploadError = false;
+
+        var file = e.File;
+        if (file.Size > AppConstants.MaxImageSizeBytes)
+        {
+            _uploadStatus = "File too large. Maximum size is 5MB.";
+            _uploadError = true;
+            return;
+        }
+
+        if (!AppConstants.AllowedImageTypes.Contains(file.ContentType))
+        {
+            _uploadStatus = "Invalid file type. Only JPEG, PNG, GIF, and WebP are allowed.";
+            _uploadError = true;
+            return;
+        }
+
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var userIdClaim = authState.User.FindFirst(ClaimTypes.NameIdentifier);
+        var userId = Guid.Parse(userIdClaim!.Value);
+
+        using var stream = file.OpenReadStream(AppConstants.MaxImageSizeBytes);
+        using var ms = new MemoryStream();
+        await stream.CopyToAsync(ms);
+
+        var image = new Image
+        {
+            Id = Guid.NewGuid(),
+            FileName = file.Name,
+            ContentType = file.ContentType,
+            Data = ms.ToArray(),
+            UploadedAtUtc = DateTime.UtcNow,
+            UploadedByUserId = userId
+        };
+
+        await ImageRepository.CreateAsync(image);
+        _uploadStatus = "Image uploaded successfully!";
+        await LoadImages();
+    }
+
+    private async Task DeleteImage(Guid id)
+    {
+        await ImageRepository.DeleteAsync(id);
+        await LoadImages();
+    }
+}

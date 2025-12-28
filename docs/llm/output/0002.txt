@@ -1,0 +1,169 @@
+kushal@syn-2600-6c56-9840-001d-0000-0000-0000-1157:~/src/dotnet/network-monitor/src$ cd ~/src/dotnet/MyBlog/; time sh export.sh
+==============================================
+  Project Export for LLM Analysis
+==============================================
+
+Project Path: /home/kushal/src/dotnet/MyBlog
+Output File:  docs/llm/dump.txt
+
+Generating directory structure...
+Collecting files...
+Found 3 files to export
+
+Processing (1/3): export.sh
+Processing (2/3): .gitignore
+Processing (3/3): README.md
+
+==============================================
+  Export Complete!
+==============================================
+
+Output file:    docs/llm/dump.txt
+Files exported: 3
+Files skipped:  0
+Output size:    18.06 KB
+
+File types included:
+  • Source code: .cs, .fs, .vb
+  • UI/XAML: .axaml, .xaml, .paml
+  • Projects: .csproj, .slnx, .sln, .props, .targets
+  • Config: .json, .yaml, .yml, .xml, .config
+  • Docs: .md, .txt
+  • Scripts: .sh, .ps1, .cmd, .bat
+  • Other: .sql, .resx, .css, .scss, Dockerfile, etc.
+
+
+real	0m0.055s
+user	0m0.023s
+sys	0m0.030s
+kushal@syn-2600-6c56-9840-001d-0000-0000-0000-1157:~/src/dotnet/MyBlog$ cd ~/src/dotnet/MyBlog/; time bash export.sh; time bash src/generate-myblog.sh;
+==============================================
+  Project Export for LLM Analysis
+==============================================
+
+Project Path: /home/kushal/src/dotnet/MyBlog
+Output File:  docs/llm/dump.txt
+
+Generating directory structure...
+Collecting files...
+Found 4 files to export
+
+Processing (1/4): export.sh
+Processing (2/4): .gitignore
+Processing (3/4): README.md
+Processing (4/4): src/generate-myblog.sh
+
+==============================================
+  Export Complete!
+==============================================
+
+Output file:    docs/llm/dump.txt
+Files exported: 4
+Files skipped:  0
+Output size:    137.28 KB
+
+File types included:
+  • Source code: .cs, .fs, .vb
+  • UI/XAML: .axaml, .xaml, .paml
+  • Projects: .csproj, .slnx, .sln, .props, .targets
+  • Config: .json, .yaml, .yml, .xml, .config
+  • Docs: .md, .txt
+  • Scripts: .sh, .ps1, .cmd, .bat
+  • Other: .sql, .resx, .css, .scss, Dockerfile, etc.
+
+
+real	0m0.047s
+user	0m0.026s
+sys	0m0.031s
+==============================================
+  MyBlog Generator - .NET 10 Blazor CMS
+==============================================
+
+Target directory: /home/kushal/src/dotnet/MyBlog/src
+Starting generation at: Sun Dec 28 07:42:57 AM CST 2025
+
+[1/8] Creating directory structure...
+      WHY: Organizing code into separate projects follows clean architecture
+           principles and enables independent testing and deployment.
+      Created project directories.
+
+[2/8] Creating solution and build configuration files...
+      WHY: Central package management ensures consistent versions across all
+           projects and simplifies dependency updates.
+      Created solution and build files.
+
+[3/8] Creating MyBlog.Core project (domain models and interfaces)...
+      WHY: The Core project contains domain entities and interfaces with no
+           external dependencies, enabling clean separation of concerns.
+      Created MyBlog.Core project with models, interfaces, and services.
+
+[4/8] Creating MyBlog.Infrastructure project (data access and services)...
+      WHY: Infrastructure contains implementation details like database access,
+           keeping the Core project free of external dependencies.
+      Created MyBlog.Infrastructure project with repositories and services.
+
+[5/8] Creating MyBlog.Web project (Blazor Server application)...
+      WHY: The Web project is the entry point that hosts the Blazor Server
+           application and handles HTTP requests.
+      Created MyBlog.Web project with Blazor components and CSS.
+
+[6/8] Creating MyBlog.Tests project (xUnit v3 tests)...
+      WHY: Comprehensive tests ensure reliability and enable safe refactoring.
+           Using in-memory SQLite allows fast, isolated integration tests.
+      Created MyBlog.Tests project with unit and integration tests.
+
+[7/8] Creating GitHub Actions workflow...
+      WHY: CI/CD automation ensures every change is tested across platforms
+           and automatically deploys to production on protected branches.
+      Created GitHub Actions workflow for CI/CD.
+
+[8/8] Setting permissions and creating helper scripts...
+      Created helper scripts.
+
+==============================================
+  Generation Complete!
+==============================================
+
+Project structure created in: /home/kushal/src/dotnet/MyBlog/src
+
+Next steps:
+
+  1. Restore packages:
+     cd /home/kushal/src/dotnet/MyBlog/src && dotnet restore MyBlog.slnx
+
+  2. Build the solution:
+     dotnet build MyBlog.slnx
+
+  3. Run the application:
+     cd MyBlog.Web && dotnet run
+     OR use: ./run.sh
+
+  4. Run tests:
+     dotnet test MyBlog.slnx
+     OR use: ./test.sh
+
+  5. Access the application:
+     http://localhost:5000 (or the port shown in console)
+
+Default admin credentials:
+  Username: admin
+  Password: ChangeMe123! (or set MYBLOG_ADMIN_PASSWORD env var)
+
+Database location (created on first run):
+  Linux:   ~/.local/share/MyBlog/myblog.db
+  macOS:   ~/Library/Application Support/MyBlog/myblog.db
+  Windows: %LOCALAPPDATA%/MyBlog/myblog.db
+
+For GitHub Actions deployment, set these secrets:
+  - WEBSITE_NAME
+  - SERVER_COMPUTER_NAME
+  - SERVER_USERNAME
+  - SERVER_PASSWORD
+
+Generation completed at: Sun Dec 28 07:42:57 AM CST 2025
+==============================================
+
+real	0m0.069s
+user	0m0.027s
+sys	0m0.045s
+kushal@syn-2600-6c56-9840-001d-0000-0000-0000-1157:~/src/dotnet/MyBlog$ 

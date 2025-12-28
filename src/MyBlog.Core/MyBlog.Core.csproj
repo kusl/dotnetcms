@@ -1,0 +1,5 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>MyBlog.Core</RootNamespace>
+  </PropertyGroup>
+</Project>

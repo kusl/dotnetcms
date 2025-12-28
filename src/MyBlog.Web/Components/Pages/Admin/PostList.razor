@@ -1,0 +1,66 @@
+@page "/admin/posts"
+@attribute [Authorize]
+@inject IPostRepository PostRepository
+@inject NavigationManager Navigation
+
+<PageTitle>Manage Posts</PageTitle>
+
+<h1>Manage Posts</h1>
+
+<p><a href="/admin/posts/new" class="btn btn-primary">Create New Post</a></p>
+
+@if (_posts is null)
+{
+    <p>Loading...</p>
+}
+else if (_posts.Count == 0)
+{
+    <p>No posts yet.</p>
+}
+else
+{
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var post in _posts)
+            {
+                <tr>
+                    <td>@post.Title</td>
+                    <td>@post.AuthorDisplayName</td>
+                    <td>@(post.IsPublished ? "Published" : "Draft")</td>
+                    <td>
+                        <a href="/admin/posts/edit/@post.Id">Edit</a>
+                        <button @onclick="() => DeletePost(post.Id)" class="btn-link danger">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private IReadOnlyList<PostListItemDto>? _posts;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadPosts();
+    }
+
+    private async Task LoadPosts()
+    {
+        _posts = await PostRepository.GetAllPostsAsync();
+    }
+
+    private async Task DeletePost(Guid id)
+    {
+        await PostRepository.DeleteAsync(id);
+        await LoadPosts();
+    }
+}

@@ -1,0 +1,63 @@
+@page "/admin"
+@attribute [Authorize]
+@inject IPostRepository PostRepository
+
+<PageTitle>Admin Dashboard</PageTitle>
+
+<h1>Admin Dashboard</h1>
+
+<div class="dashboard-stats">
+    <div class="stat-card">
+        <h3>Total Posts</h3>
+        <p class="stat-value">@_postCount</p>
+    </div>
+</div>
+
+<div class="admin-nav">
+    <a href="/admin/posts" class="btn">Manage Posts</a>
+    <a href="/admin/posts/new" class="btn">New Post</a>
+    <a href="/admin/images" class="btn">Manage Images</a>
+</div>
+
+<h2>Recent Posts</h2>
+@if (_recentPosts is null)
+{
+    <p>Loading...</p>
+}
+else if (_recentPosts.Count == 0)
+{
+    <p>No posts yet.</p>
+}
+else
+{
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Status</th>
+                <th>Updated</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var post in _recentPosts)
+            {
+                <tr>
+                    <td><a href="/admin/posts/edit/@post.Id">@post.Title</a></td>
+                    <td>@(post.IsPublished ? "Published" : "Draft")</td>
+                    <td>@(post.PublishedAtUtc?.ToString("MMM d, yyyy") ?? "—")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private int _postCount;
+    private IReadOnlyList<PostListItemDto>? _recentPosts;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _postCount = await PostRepository.GetCountAsync();
+        _recentPosts = await PostRepository.GetRecentPostsAsync(5);
+    }
+}

@@ -1,0 +1,19 @@
+@page "/about"
+@inject IConfiguration Configuration
+
+<PageTitle>About - @(Configuration["Application:Title"] ?? "MyBlog")</PageTitle>
+
+<h1>About</h1>
+
+<p>
+    Welcome to @(Configuration["Application:Title"] ?? "MyBlog"), a simple blog built with 
+    .NET 10 and Blazor Server.
+</p>
+
+<h2>Features</h2>
+<ul>
+    <li>Markdown-based content</li>
+    <li>Image support with database storage</li>
+    <li>OpenTelemetry for observability</li>
+    <li>Cross-platform deployment</li>
+</ul>

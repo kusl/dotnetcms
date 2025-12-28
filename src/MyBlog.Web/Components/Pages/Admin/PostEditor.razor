@@ -1,0 +1,120 @@
+@page "/admin/posts/new"
+@page "/admin/posts/edit/{Id:guid}"
+@attribute [Authorize]
+@inject IPostRepository PostRepository
+@inject ISlugService SlugService
+@inject NavigationManager Navigation
+@inject AuthenticationStateProvider AuthStateProvider
+@using System.Security.Claims
+
+<PageTitle>@(_isEdit ? "Edit Post" : "New Post")</PageTitle>
+
+<h1>@(_isEdit ? "Edit Post" : "New Post")</h1>
+
+<div class="post-editor">
+    <div class="editor-form">
+        <div class="form-group">
+            <label for="title">Title</label>
+            <input type="text" id="title" @bind="_title" @bind:event="oninput" />
+        </div>
+
+        <div class="form-group">
+            <label for="summary">Summary</label>
+            <textarea id="summary" @bind="_summary" rows="2"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="content">Content (Markdown)</label>
+            <textarea id="content" @bind="_content" @bind:event="oninput" rows="20"></textarea>
+        </div>
+
+        <div class="form-group checkbox">
+            <label>
+                <input type="checkbox" @bind="_isPublished" />
+                Published
+            </label>
+        </div>
+
+        <div class="form-actions">
+            <button @onclick="Save" class="btn btn-primary">Save</button>
+            <a href="/admin/posts" class="btn">Cancel</a>
+        </div>
+    </div>
+
+    <div class="editor-preview">
+        <h3>Preview</h3>
+        <div class="preview-content">
+            <MarkdownRenderer Content="@_content" />
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public Guid? Id { get; set; }
+
+    private bool _isEdit => Id.HasValue;
+    private string _title = "";
+    private string _summary = "";
+    private string _content = "";
+    private bool _isPublished;
+    private Post? _existingPost;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (_isEdit)
+        {
+            _existingPost = await PostRepository.GetByIdAsync(Id!.Value);
+            if (_existingPost is not null)
+            {
+                _title = _existingPost.Title;
+                _summary = _existingPost.Summary;
+                _content = _existingPost.Content;
+                _isPublished = _existingPost.IsPublished;
+            }
+        }
+    }
+
+    private async Task Save()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var userIdClaim = authState.User.FindFirst(ClaimTypes.NameIdentifier);
+        var userId = Guid.Parse(userIdClaim!.Value);
+
+        if (_isEdit && _existingPost is not null)
+        {
+            _existingPost.Title = _title;
+            _existingPost.Slug = SlugService.GenerateSlug(_title);
+            _existingPost.Summary = _summary;
+            _existingPost.Content = _content;
+            _existingPost.IsPublished = _isPublished;
+            _existingPost.UpdatedAtUtc = DateTime.UtcNow;
+            if (_isPublished && !_existingPost.PublishedAtUtc.HasValue)
+            {
+                _existingPost.PublishedAtUtc = DateTime.UtcNow;
+            }
+
+            await PostRepository.UpdateAsync(_existingPost);
+        }
+        else
+        {
+            var post = new Post
+            {
+                Id = Guid.NewGuid(),
+                Title = _title,
+                Slug = SlugService.GenerateSlug(_title),
+                Summary = _summary,
+                Content = _content,
+                AuthorId = userId,
+                CreatedAtUtc = DateTime.UtcNow,
+                UpdatedAtUtc = DateTime.UtcNow,
+                IsPublished = _isPublished,
+                PublishedAtUtc = _isPublished ? DateTime.UtcNow : null
+            };
+
+            await PostRepository.CreateAsync(post);
+        }
+
+        Navigation.NavigateTo("/admin/posts");
+    }
+}
