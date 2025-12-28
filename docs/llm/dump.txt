@@ -1,6 +1,6 @@
 ===============================================================================
 PROJECT EXPORT
-Generated: Sun Dec 28 12:48:28 PM CST 2025
+Generated: Sun Dec 28 12:49:31 PM CST 2025
 Project Path: /home/kushal/src/dotnet/MyBlog
 ===============================================================================
 
@@ -10349,7 +10349,7 @@ MODIFIED: 2025-12-28 10:14:51
 ================================================================================
 FILE: src/MyBlog.Web/Middleware/LoginRateLimitMiddleware.cs
 SIZE: 5.57 KB
-MODIFIED: 2025-12-28 12:47:56
+MODIFIED: 2025-12-28 12:49:15
 ================================================================================
 
 using System.Collections.Concurrent;
@@ -10453,7 +10453,7 @@ public sealed class LoginRateLimitMiddleware
     /// <summary>
     /// Calculates the delay for a given IP. Exposed for testing.
     /// </summary>
-    internal static TimeSpan CalculateDelay(string ip)
+    public static TimeSpan CalculateDelay(string ip)
     {
         if (!_attempts.TryGetValue(ip, out var record))
         {
@@ -10509,7 +10509,7 @@ public sealed class LoginRateLimitMiddleware
     /// <summary>
     /// Clears all tracked attempts. For testing only.
     /// </summary>
-    internal static void ClearAttempts()
+    public static void ClearAttempts()
     {
         _attempts.Clear();
     }
@@ -12202,7 +12202,7 @@ echo "=============================================="
 
 
 ===============================================================================
-EXPORT COMPLETED: Sun Dec 28 12:48:29 PM CST 2025
+EXPORT COMPLETED: Sun Dec 28 12:49:32 PM CST 2025
 Total Files Found: 63
 Files Exported: 63
 Files Skipped: 0 (binary or large files)
