@@ -838,3 +838,313 @@ The build should succeed with 0 errors. The xUnit1051 warnings are now also fixe
 
 
 
+I ran into a problem with deploy
+```
+Run # WebDeploy is typically pre-installed on windows-latest
+  # WebDeploy is typically pre-installed on windows-latest
+  $msdeployPath = "C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe"
+  
+  if (-not (Test-Path $msdeployPath)) {
+    Write-Host "Installing Web Deploy..."
+    choco install webdeploy -y --no-progress
+    $msdeployPath = "C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe"
+  }
+  
+  Write-Host "Deploying to ***..."
+  
+  & $msdeployPath -verb:sync `
+    -source:contentPath="D:\a\dotnetcms\dotnetcms\publish" `
+    -dest:contentPath="***",computerName="https://***:8172/msdeploy.axd",userName="***",***,authType="Basic" `
+    -allowUntrusted `
+    -enableRule:DoNotDeleteRule
+  
+  if ($LASTEXITCODE -ne 0) {
+    Write-Error "Deployment failed with exit code $LASTEXITCODE"
+    exit 1
+  }
+  
+  Write-Host "Deployment completed successfully!"
+  shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+  env:
+    DOTNET_ROOT: C:\Program Files\dotnet
+Deploying to ***...
+Error: Unrecognized argument '"-dest:contentPath=\"***\",computerName=\"https://***:8172/msdeploy.axd\",userName=\"***\",***"***\",authType=\"Basic\""'. All arguments must begin with "-".
+Error count: 1.
+Write-Error: Deployment failed with exit code -1
+Error: Process completed with exit code 1.
+```
+
+
+
+
+
+The issue is with how PowerShell is handling the backtick line continuation and the argument quoting. The `-dest` parameter is getting mangled.
+
+**Solution:** Use splatting or a single-line command with proper escaping.
+
+Here's the fix:
+
+```powershell
+$msdeployPath = "C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe"
+
+if (-not (Test-Path $msdeployPath)) {
+  Write-Host "Installing Web Deploy..."
+  choco install webdeploy -y --no-progress
+}
+
+Write-Host "Deploying to $env:DEPLOY_SITE..."
+
+$sourceArg = "-source:contentPath=D:\a\dotnetcms\dotnetcms\publish"
+$destArg = "-dest:contentPath=$env:DEPLOY_SITE,computerName=https://$($env:DEPLOY_HOST):8172/msdeploy.axd,userName=$env:DEPLOY_USER,password=$env:DEPLOY_PASSWORD,authType=Basic"
+
+& $msdeployPath -verb:sync $sourceArg $destArg -allowUntrusted -enableRule:DoNotDeleteRule
+
+if ($LASTEXITCODE -ne 0) {
+  Write-Error "Deployment failed with exit code $LASTEXITCODE"
+  exit 1
+}
+
+Write-Host "Deployment completed successfully!"
+```
+
+**Key changes:**
+1. Build the complex arguments as separate variables first
+2. Remove the backtick continuations which were causing quote escaping issues
+3. Pass arguments without extra quotes around them
+
+**Alternative** — use `Start-Process` for cleaner handling:
+
+```powershell
+$arguments = @(
+  "-verb:sync",
+  "-source:contentPath=D:\a\dotnetcms\dotnetcms\publish",
+  "-dest:contentPath=$env:DEPLOY_SITE,computerName=https://$($env:DEPLOY_HOST):8172/msdeploy.axd,userName=$env:DEPLOY_USER,password=$env:DEPLOY_PASSWORD,authType=Basic",
+  "-allowUntrusted",
+  "-enableRule:DoNotDeleteRule"
+)
+
+$process = Start-Process -FilePath $msdeployPath -ArgumentList $arguments -Wait -PassThru -NoNewWindow
+exit $process.ExitCode
+```
+
+The root cause was the backtick continuation combined with embedded quotes — PowerShell was concatenating and double-escaping the arguments incorrectly.
+
+
+
+
+
+
+
+
+
+
+Can you please give me the full github actions yaml? 
+I have the following secrets 
+SERVER_COMPUTER_NAME
+SERVER_PASSWORD
+SERVER_USERNAME
+WEBSITE_NAME
+
+```yaml
+name: Build, Test, and Deploy
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+    branches: ['**']
+
+jobs:
+  build-test:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore src/MyBlog.slnx
+
+      - name: Build solution
+        run: dotnet build src/MyBlog.slnx -c Release --no-restore
+
+      - name: Run tests
+        run: dotnet test src/MyBlog.slnx -c Release --no-build --logger trx --results-directory TestResults
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results-${{ matrix.os }}
+          path: TestResults
+          retention-days: 7
+
+  deploy:
+    needs: build-test
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop'
+    runs-on: windows-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Publish application
+        run: dotnet publish src/MyBlog.Web/MyBlog.Web.csproj -c Release -o ./publish -r win-x86 --self-contained false
+
+      - name: Deploy via WebDeploy
+        shell: pwsh
+        run: |
+          # WebDeploy is typically pre-installed on windows-latest
+          $msdeployPath = "C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe"
+          
+          if (-not (Test-Path $msdeployPath)) {
+            Write-Host "Installing Web Deploy..."
+            choco install webdeploy -y --no-progress
+            $msdeployPath = "C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe"
+          }
+          
+          Write-Host "Deploying to ${{ secrets.SERVER_COMPUTER_NAME }}..."
+          
+          & $msdeployPath -verb:sync `
+            -source:contentPath="${{ github.workspace }}\publish" `
+            -dest:contentPath="${{ secrets.WEBSITE_NAME }}",computerName="https://${{ secrets.SERVER_COMPUTER_NAME }}:8172/msdeploy.axd",userName="${{ secrets.SERVER_USERNAME }}",password="${{ secrets.SERVER_PASSWORD }}",authType="Basic" `
+            -allowUntrusted `
+            -enableRule:DoNotDeleteRule
+          
+          if ($LASTEXITCODE -ne 0) {
+            Write-Error "Deployment failed with exit code $LASTEXITCODE"
+            exit 1
+          }
+          
+          Write-Host "Deployment completed successfully!"
+```
+
+
+
+
+
+
+
+Here's the fixed workflow:
+
+```yaml
+name: Build, Test, and Deploy
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+    branches: ['**']
+
+jobs:
+  build-test:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore src/MyBlog.slnx
+
+      - name: Build solution
+        run: dotnet build src/MyBlog.slnx -c Release --no-restore
+
+      - name: Run tests
+        run: dotnet test src/MyBlog.slnx -c Release --no-build --logger trx --results-directory TestResults
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results-${{ matrix.os }}
+          path: TestResults
+          retention-days: 7
+
+  deploy:
+    needs: build-test
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop'
+    runs-on: windows-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Publish application
+        run: dotnet publish src/MyBlog.Web/MyBlog.Web.csproj -c Release -o ./publish -r win-x86 --self-contained false
+
+      - name: Deploy via WebDeploy
+        shell: pwsh
+        env:
+          DEPLOY_SOURCE: ${{ github.workspace }}\publish
+          DEPLOY_SITE: ${{ secrets.WEBSITE_NAME }}
+          DEPLOY_HOST: ${{ secrets.SERVER_COMPUTER_NAME }}
+          DEPLOY_USER: ${{ secrets.SERVER_USERNAME }}
+          DEPLOY_PASSWORD: ${{ secrets.SERVER_PASSWORD }}
+        run: |
+          $msdeployPath = "C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe"
+          
+          if (-not (Test-Path $msdeployPath)) {
+            Write-Host "Installing Web Deploy..."
+            choco install webdeploy -y --no-progress
+          }
+          
+          Write-Host "Deploying to $env:DEPLOY_HOST..."
+          
+          $sourceArg = "-source:contentPath=$env:DEPLOY_SOURCE"
+          $destArg = "-dest:contentPath=$env:DEPLOY_SITE,computerName=https://$($env:DEPLOY_HOST):8172/msdeploy.axd,userName=$env:DEPLOY_USER,password=$env:DEPLOY_PASSWORD,authType=Basic"
+          
+          & $msdeployPath -verb:sync $sourceArg $destArg -allowUntrusted -enableRule:DoNotDeleteRule
+          
+          if ($LASTEXITCODE -ne 0) {
+            Write-Error "Deployment failed with exit code $LASTEXITCODE"
+            exit 1
+          }
+          
+          Write-Host "Deployment completed successfully!"
+```
+
+**What changed:**
+
+1. Moved secrets into `env` block — this avoids inline interpolation issues and keeps secrets out of the command line (better security practice)
+
+2. Built arguments as variables (`$sourceArg`, `$destArg`) — prevents PowerShell from mangling the complex `-dest` parameter
+
+3. Removed backtick line continuations — these were causing the quoting/escaping problems
+
+4. Used `$env:VAR` syntax in PowerShell — cleaner than GitHub's `${{ }}` interpolation inside scripts
+
+
+
+
+
+
+
+
+

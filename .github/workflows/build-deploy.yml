@@ -58,23 +58,26 @@ jobs:
 
       - name: Deploy via WebDeploy
         shell: pwsh
+        env:
+          DEPLOY_SOURCE: ${{ github.workspace }}\publish
+          DEPLOY_SITE: ${{ secrets.WEBSITE_NAME }}
+          DEPLOY_HOST: ${{ secrets.SERVER_COMPUTER_NAME }}
+          DEPLOY_USER: ${{ secrets.SERVER_USERNAME }}
+          DEPLOY_PASSWORD: ${{ secrets.SERVER_PASSWORD }}
         run: |
-          # WebDeploy is typically pre-installed on windows-latest
           $msdeployPath = "C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe"
           
           if (-not (Test-Path $msdeployPath)) {
             Write-Host "Installing Web Deploy..."
             choco install webdeploy -y --no-progress
-            $msdeployPath = "C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe"
           }
           
-          Write-Host "Deploying to ${{ secrets.SERVER_COMPUTER_NAME }}..."
+          Write-Host "Deploying to $env:DEPLOY_HOST..."
           
-          & $msdeployPath -verb:sync `
-            -source:contentPath="${{ github.workspace }}\publish" `
-            -dest:contentPath="${{ secrets.WEBSITE_NAME }}",computerName="https://${{ secrets.SERVER_COMPUTER_NAME }}:8172/msdeploy.axd",userName="${{ secrets.SERVER_USERNAME }}",password="${{ secrets.SERVER_PASSWORD }}",authType="Basic" `
-            -allowUntrusted `
-            -enableRule:DoNotDeleteRule
+          $sourceArg = "-source:contentPath=$env:DEPLOY_SOURCE"
+          $destArg = "-dest:contentPath=$env:DEPLOY_SITE,computerName=https://$($env:DEPLOY_HOST):8172/msdeploy.axd,userName=$env:DEPLOY_USER,password=$env:DEPLOY_PASSWORD,authType=Basic"
+          
+          & $msdeployPath -verb:sync $sourceArg $destArg -allowUntrusted -enableRule:DoNotDeleteRule
           
           if ($LASTEXITCODE -ne 0) {
             Write-Error "Deployment failed with exit code $LASTEXITCODE"
