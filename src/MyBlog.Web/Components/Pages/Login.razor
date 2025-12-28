@@ -19,15 +19,15 @@
     <form method="post" @onsubmit="HandleLogin" @formname="login">
         <AntiforgeryToken />
         
-        <div class="form-group">
-            <label for="username">Username</label>
-            <input type="text" id="username" @bind="_username" required />
-        </div>
+<div class="form-group">
+    <label for="username">Username</label>
+    <input type="text" id="username" name="username" @bind="_username" required />
+</div>
 
-        <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" id="password" @bind="_password" required />
-        </div>
+<div class="form-group">
+    <label for="password">Password</label>
+    <input type="password" id="password" name="password" @bind="_password" required />
+</div>
 
         <button type="submit" class="btn btn-primary">Login</button>
     </form>
@@ -41,9 +41,19 @@
     [SupplyParameterFromQuery]
     public string? ReturnUrl { get; set; }
 
+    [SupplyParameterFromForm(Name = "username")]
+    public string? FormUsername { get; set; }
+
+    [SupplyParameterFromForm(Name = "password")]
+    public string? FormPassword { get; set; }
+
     private async Task HandleLogin()
     {
-        var user = await AuthService.AuthenticateAsync(_username, _password);
+        // Use form values if available (SSR form post), otherwise use bound values
+        var username = FormUsername ?? _username;
+        var password = FormPassword ?? _password;
+        
+        var user = await AuthService.AuthenticateAsync(username, password);
         if (user is null)
         {
             _error = "Invalid username or password";

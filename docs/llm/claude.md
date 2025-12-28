@@ -1393,3 +1393,88 @@ However, I am not able to log in.
 can you please check the code in `dump.txt` and the har at `login-har.json` to make sure our log in code and authentication code works correctly? 
 I don't see the username and password in the form data in the browser inspect window. 
 I haven't changed anything in the configuration so the password should be `ChangeMe123!` right? 
+
+
+
+
+
+I found the issue. Looking at the HAR file and the Login.razor code, there's a critical bug.
+
+## The Problem
+
+The form inputs are missing the `name` attribute. In the Login.razor code:
+
+```razor
+<input type="text" id="username" @bind="_username" required />
+<input type="password" id="password" @bind="_password" required />
+```
+
+The `@bind` directive only sets up two-way data binding for Blazor's interactive components, but when using `method="post"` with a traditional HTML form submission, the browser needs the `name` attribute to include fields in the POST data.
+
+Looking at the HAR file's postData, you can see only these fields are being sent:
+- `_handler=login`
+- `__RequestVerificationToken=...`
+
+**The username and password are NOT being sent** because the inputs lack `name` attributes.
+
+## The Fix
+
+Update the Login.razor form inputs to include `name` attributes:
+
+```razor
+<div class="form-group">
+    <label for="username">Username</label>
+    <input type="text" id="username" name="username" @bind="_username" required />
+</div>
+
+<div class="form-group">
+    <label for="password">Password</label>
+    <input type="password" id="password" name="password" @bind="_password" required />
+</div>
+```
+
+Then update the code section to receive these values from the form:
+
+```razor
+@code {
+    private string _username = "";
+    private string _password = "";
+    private string? _error;
+
+    [SupplyParameterFromQuery]
+    public string? ReturnUrl { get; set; }
+
+    [SupplyParameterFromForm(Name = "username")]
+    public string? FormUsername { get; set; }
+
+    [SupplyParameterFromForm(Name = "password")]
+    public string? FormPassword { get; set; }
+
+    private async Task HandleLogin()
+    {
+        // Use form values if available (SSR form post), otherwise use bound values
+        var username = FormUsername ?? _username;
+        var password = FormPassword ?? _password;
+        
+        var user = await AuthService.AuthenticateAsync(username, password);
+        // ... rest of the handler
+    }
+}
+```
+
+## Why This Happens
+
+This is a common issue with Blazor Server Static SSR (Server-Side Rendering) forms. The `@bind` directive works for interactive Blazor components, but when the form does a traditional HTTP POST (which is what happens with `method="post"` in static SSR mode), the browser uses standard HTML form semantics which require the `name` attribute.
+
+And yes, if you haven't changed the configuration, the default password should be `ChangeMe123!` for the `admin` user.
+
+
+
+
+
+
+
+
+
+
+
