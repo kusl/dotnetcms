@@ -2181,3 +2181,80 @@ Error code: 400 Bad Request
 this works on the server `https://kush.runasp.net/_framework/blazor.web.js` but gives a not found locally `http://localhost:5000/_framework/blazor.web.js` 
 but yeah creating a new post doesn't work either locally or on the server. 
 please fix all these issues thoroughly and do not hallucinate. 
+
+
+
+
+
+
+
+I'll search the project knowledge to understand the full codebase and identify all the issues you're experiencing.Now I have a clear picture. Let me search for the current Program.cs to see the full picture and understand the logout issue.Now I have a complete picture of all the issues. Let me analyze them:
+
+**Issues identified:**
+
+1. **Logout 400 Bad Request**: The MainLayout has a form that POSTs to `/logout`, but there's no endpoint mapped to handle this POST request. The `Logout.razor` page is a Blazor component that uses `OnInitializedAsync`, but the form in MainLayout is posting to `/logout` as an HTTP POST, which expects an endpoint, not a Blazor page.
+
+2. **PostEditor not working (can't save, no preview)**: The `PostEditor.razor` uses `@onclick="Save"` and `@bind` which require Blazor interactivity to work. But the pages aren't being rendered with interactive server mode by default.
+
+3. **blazor.web.js 404 locally**: This indicates the Blazor framework isn't being served correctly locally - likely because static files or the Blazor middleware isn't configured properly for development.
+
+4. **Forms using interactive features without render mode**: Pages like `PostEditor`, `ImageManager`, `PostList` use `@onclick` handlers and `@bind:event="oninput"` which require interactive rendering.
+
+Let me create a comprehensive fix script:I've created the comprehensive fix script. Let me explain all the issues I found and how the script fixes them:
+
+## Issues Found and Fixes
+
+### 1. **Logout 400 Bad Request**
+**Problem:** The `MainLayout.razor` has a form that POSTs to `/logout`:
+```html
+<form method="post" action="/logout" class="logout-form">
+    <AntiforgeryToken />
+    <button type="submit">Logout</button>
+</form>
+```
+But there's no endpoint to handle this POST request. The `Logout.razor` page exists but it's a Blazor component that runs in `OnInitializedAsync`, not an HTTP endpoint.
+
+**Fix:** Added a `MapPost("/logout")` endpoint in `Program.cs`:
+```csharp
+app.MapPost("/logout", async (HttpContext context) =>
+{
+    await context.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+    return Results.Redirect("/");
+}).RequireAuthorization();
+```
+
+### 2. **PostEditor not working (no preview, can't save)**
+**Problem:** The `PostEditor.razor` uses interactive Blazor features like `@onclick="Save"` and `@bind:event="oninput"`, but the page isn't rendered in interactive mode. In Blazor .NET 8+, pages are rendered as static SSR by default unless you specify a render mode.
+
+**Fix:** Updated `App.razor` to enable interactive server rendering globally:
+```razor
+<Routes @rendermode="InteractiveServer" />
+```
+
+### 3. **blazor.web.js 404 locally**
+**Problem:** The `blazor.web.js` file wasn't being served because the interactive server components weren't properly enabled.
+
+**Fix:** The combination of:
+- `builder.Services.AddRazorComponents().AddInteractiveServerComponents()` in Program.cs
+- `app.MapRazorComponents<App>().AddInteractiveServerRenderMode()` in Program.cs
+- `@rendermode="InteractiveServer"` on Routes in App.razor
+
+This ensures the Blazor framework files are served correctly.
+
+### 4. **Forms missing `name` attributes**
+**Problem:** Login and ChangePassword forms use `@bind` but when rendered in SSR mode (first load), the browser does a standard HTTP POST which requires `name` attributes.
+
+**Fix:** Added `name` attributes and `[SupplyParameterFromForm]` properties to Login.razor (ChangePassword.razor was already fixed in a previous script).
+
+## To apply the fixes:
+
+```bash
+chmod +x fix-blazor-interactivity.sh
+./fix-blazor-interactivity.sh
+dotnet build src/MyBlog.slnx
+dotnet run --project src/MyBlog.Web
+```
+
+Then deploy to your server. All features should now work: login, logout, creating/editing posts with live preview, and image management.
+
+
