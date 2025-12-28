@@ -167,3 +167,218 @@ real	0m0.069s
 user	0m0.027s
 sys	0m0.045s
 kushal@syn-2600-6c56-9840-001d-0000-0000-0000-1157:~/src/dotnet/MyBlog$ 
+kushal@syn-2600-6c56-9840-001d-0000-0000-0000-1157:~/src/dotnet/MyBlog$ cd ~/src/dotnet/MyBlog/; time bash export.sh; time bash src/generate-myblog.sh; cd ~/src/dotnet/MyBlog/src/; time dotnet restore; time dotnet clean; time dotnet build; time dotnet test;
+==============================================
+  Project Export for LLM Analysis
+==============================================
+
+Project Path: /home/kushal/src/dotnet/MyBlog
+Output File:  docs/llm/dump.txt
+
+Generating directory structure...
+Collecting files...
+Found 55 files to export
+
+Processing (1/55): export.sh
+Processing (2/55): .gitignore
+Processing (3/55): README.md
+Processing (4/55): src/Directory.Build.props
+Processing (5/55): src/Directory.Packages.props
+Processing (6/55): src/.editorconfig
+Processing (7/55): src/generate-myblog.sh
+Processing (8/55): src/.github/workflows/build-deploy.yml
+Processing (9/55): src/global.json
+Processing (10/55): src/MyBlog.Core/Constants/AppConstants.cs
+Processing (11/55): src/MyBlog.Core/Interfaces/IAuthService.cs
+Processing (12/55): src/MyBlog.Core/Interfaces/IImageRepository.cs
+Processing (13/55): src/MyBlog.Core/Interfaces/IMarkdownService.cs
+Processing (14/55): src/MyBlog.Core/Interfaces/IPasswordService.cs
+Processing (15/55): src/MyBlog.Core/Interfaces/IPostRepository.cs
+Processing (16/55): src/MyBlog.Core/Interfaces/ISlugService.cs
+Processing (17/55): src/MyBlog.Core/Interfaces/ITelemetryLogRepository.cs
+Processing (18/55): src/MyBlog.Core/Interfaces/IUserRepository.cs
+Processing (19/55): src/MyBlog.Core/Models/Image.cs
+Processing (20/55): src/MyBlog.Core/Models/Post.cs
+Processing (21/55): src/MyBlog.Core/Models/PostDto.cs
+Processing (22/55): src/MyBlog.Core/Models/TelemetryLog.cs
+Processing (23/55): src/MyBlog.Core/Models/User.cs
+Processing (24/55): src/MyBlog.Core/MyBlog.Core.csproj
+Processing (25/55): src/MyBlog.Core/Services/MarkdownService.cs
+Processing (26/55): src/MyBlog.Core/Services/SlugService.cs
+Processing (27/55): src/MyBlog.Infrastructure/Data/BlogDbContext.cs
+Processing (28/55): src/MyBlog.Infrastructure/Data/DatabasePathResolver.cs
+Processing (29/55): src/MyBlog.Infrastructure/MyBlog.Infrastructure.csproj
+Processing (30/55): src/MyBlog.Infrastructure/Repositories/ImageRepository.cs
+Processing (31/55): src/MyBlog.Infrastructure/Repositories/PostRepository.cs
+Processing (32/55): src/MyBlog.Infrastructure/Repositories/TelemetryLogRepository.cs
+Processing (33/55): src/MyBlog.Infrastructure/Repositories/UserRepository.cs
+Processing (34/55): src/MyBlog.Infrastructure/ServiceCollectionExtensions.cs
+Processing (35/55): src/MyBlog.Infrastructure/Services/AuthService.cs
+Processing (36/55): src/MyBlog.Infrastructure/Services/PasswordService.cs
+Processing (37/55): src/MyBlog.Infrastructure/Services/TelemetryCleanupService.cs
+Processing (38/55): src/MyBlog.Infrastructure/Telemetry/DatabaseLogExporter.cs
+Processing (39/55): src/MyBlog.Infrastructure/Telemetry/FileLogExporter.cs
+Processing (40/55): src/MyBlog.Infrastructure/Telemetry/TelemetryPathResolver.cs
+Processing (41/55): src/MyBlog.slnx
+Processing (42/55): src/MyBlog.Tests/Integration/AuthServiceTests.cs
+Processing (43/55): src/MyBlog.Tests/Integration/PostRepositoryTests.cs
+Processing (44/55): src/MyBlog.Tests/Integration/TelemetryCleanupTests.cs
+Processing (45/55): src/MyBlog.Tests/MyBlog.Tests.csproj
+Processing (46/55): src/MyBlog.Tests/Unit/MarkdownServiceTests.cs
+Processing (47/55): src/MyBlog.Tests/Unit/PasswordServiceTests.cs
+Processing (48/55): src/MyBlog.Tests/Unit/SlugServiceTests.cs
+Processing (49/55): src/MyBlog.Web/appsettings.Development.json
+Processing (50/55): src/MyBlog.Web/appsettings.json
+Processing (51/55): src/MyBlog.Web/MyBlog.Web.csproj
+Processing (52/55): src/MyBlog.Web/Program.cs
+Processing (53/55): src/MyBlog.Web/wwwroot/css/site.css
+Processing (54/55): src/run.sh
+Processing (55/55): src/test.sh
+
+==============================================
+  Export Complete!
+==============================================
+
+Output file:    docs/llm/dump.txt
+Files exported: 55
+Files skipped:  0
+Output size:    239.68 KB
+
+File types included:
+  • Source code: .cs, .fs, .vb
+  • UI/XAML: .axaml, .xaml, .paml
+  • Projects: .csproj, .slnx, .sln, .props, .targets
+  • Config: .json, .yaml, .yml, .xml, .config
+  • Docs: .md, .txt
+  • Scripts: .sh, .ps1, .cmd, .bat
+  • Other: .sql, .resx, .css, .scss, Dockerfile, etc.
+
+
+real	0m0.542s
+user	0m0.313s
+sys	0m0.349s
+==============================================
+  MyBlog Generator - .NET 10 Blazor CMS
+==============================================
+
+Target directory: /home/kushal/src/dotnet/MyBlog/src
+Starting generation at: Sun Dec 28 07:44:06 AM CST 2025
+
+[1/8] Creating directory structure...
+      WHY: Organizing code into separate projects follows clean architecture
+           principles and enables independent testing and deployment.
+      Created project directories.
+
+[2/8] Creating solution and build configuration files...
+      WHY: Central package management ensures consistent versions across all
+           projects and simplifies dependency updates.
+      Created solution and build files.
+
+[3/8] Creating MyBlog.Core project (domain models and interfaces)...
+      WHY: The Core project contains domain entities and interfaces with no
+           external dependencies, enabling clean separation of concerns.
+      Created MyBlog.Core project with models, interfaces, and services.
+
+[4/8] Creating MyBlog.Infrastructure project (data access and services)...
+      WHY: Infrastructure contains implementation details like database access,
+           keeping the Core project free of external dependencies.
+      Created MyBlog.Infrastructure project with repositories and services.
+
+[5/8] Creating MyBlog.Web project (Blazor Server application)...
+      WHY: The Web project is the entry point that hosts the Blazor Server
+           application and handles HTTP requests.
+      Created MyBlog.Web project with Blazor components and CSS.
+
+[6/8] Creating MyBlog.Tests project (xUnit v3 tests)...
+      WHY: Comprehensive tests ensure reliability and enable safe refactoring.
+           Using in-memory SQLite allows fast, isolated integration tests.
+      Created MyBlog.Tests project with unit and integration tests.
+
+[7/8] Creating GitHub Actions workflow...
+      WHY: CI/CD automation ensures every change is tested across platforms
+           and automatically deploys to production on protected branches.
+      Created GitHub Actions workflow for CI/CD.
+
+[8/8] Setting permissions and creating helper scripts...
+      Created helper scripts.
+
+==============================================
+  Generation Complete!
+==============================================
+
+Project structure created in: /home/kushal/src/dotnet/MyBlog/src
+
+Next steps:
+
+  1. Restore packages:
+     cd /home/kushal/src/dotnet/MyBlog/src && dotnet restore MyBlog.slnx
+
+  2. Build the solution:
+     dotnet build MyBlog.slnx
+
+  3. Run the application:
+     cd MyBlog.Web && dotnet run
+     OR use: ./run.sh
+
+  4. Run tests:
+     dotnet test MyBlog.slnx
+     OR use: ./test.sh
+
+  5. Access the application:
+     http://localhost:5000 (or the port shown in console)
+
+Default admin credentials:
+  Username: admin
+  Password: ChangeMe123! (or set MYBLOG_ADMIN_PASSWORD env var)
+
+Database location (created on first run):
+  Linux:   ~/.local/share/MyBlog/myblog.db
+  macOS:   ~/Library/Application Support/MyBlog/myblog.db
+  Windows: %LOCALAPPDATA%/MyBlog/myblog.db
+
+For GitHub Actions deployment, set these secrets:
+  - WEBSITE_NAME
+  - SERVER_COMPUTER_NAME
+  - SERVER_USERNAME
+  - SERVER_PASSWORD
+
+Generation completed at: Sun Dec 28 07:44:06 AM CST 2025
+==============================================
+
+real	0m0.069s
+user	0m0.028s
+sys	0m0.044s
+Restore complete (2.5s)
+
+Build succeeded in 2.6s
+
+real	0m2.758s
+user	0m2.261s
+sys	0m0.471s
+
+Build succeeded in 0.5s
+
+real	0m0.620s
+user	0m0.637s
+sys	0m0.130s
+Restore complete (0.4s)
+  MyBlog.Core net10.0 succeeded (2.7s) → MyBlog.Core/bin/Debug/net10.0/MyBlog.Core.dll
+  MyBlog.Infrastructure net10.0 failed with 1 error(s) (0.3s)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Infrastructure/Telemetry/DatabaseLogExporter.cs(35,53): error CS1061: 'DateTime' does not contain a definition for 'UtcDateTime' and no accessible extension method 'UtcDateTime' accepting a first argument of type 'DateTime' could be found (are you missing a using directive or an assembly reference?)
+
+Build failed with 1 error(s) in 3.7s
+
+real	0m3.824s
+user	0m1.324s
+sys	0m0.222s
+Restore complete (0.4s)
+  MyBlog.Core net10.0 succeeded (0.1s) → MyBlog.Core/bin/Debug/net10.0/MyBlog.Core.dll
+  MyBlog.Infrastructure net10.0 failed with 1 error(s) (0.1s)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Infrastructure/Telemetry/DatabaseLogExporter.cs(35,53): error CS1061: 'DateTime' does not contain a definition for 'UtcDateTime' and no accessible extension method 'UtcDateTime' accepting a first argument of type 'DateTime' could be found (are you missing a using directive or an assembly reference?)
+
+Build failed with 1 error(s) in 0.9s
+
+real	0m1.070s
+user	0m1.033s
+sys	0m0.195s
+kushal@syn-2600-6c56-9840-001d-0000-0000-0000-1157:~/src/dotnet/MyBlog/src$ cd ~/src/dotnet/MyBlog/; time bash export.sh; cd ~/src/dotnet/MyBlog/src/; time dotnet restore; time dotnet clean; time dotnet build; time dotnet test;
