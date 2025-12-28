@@ -1478,3 +1478,85 @@ And yes, if you haven't changed the configuration, the default password should b
 
 
 
+I added a new repository variable in github 
+MYBLOG_ADMIN_PASSWORD and set it to a string that looks something like this in length "9XSVaZ60dqYkgbIV3SKtjby4XrGe2YEai7bScKncw7oA9xB6CyQvSFx0HSilmsN" 
+this is not the exact string I used there for obvious reasons. 
+will the website use this variable instead of `ChangeMe123!` now? 
+Do I need to delete the database on the server to make this change happen? 
+Does the website automatically delete all old stuff when I deploy every time? 
+I just deployed and tried to log in and `ChangeMe123!` still works. 
+How am I supposed to change the password for this website using the website? 
+Is it even possible? 
+If so, please generate a full readme for this project detailing everything we can do on this website. 
+If it is not possible, please generate a shell script that makes all necessary changes and also generates the necessary test cases and also the readme file to explain everything. 
+the code in `dump.txt` is up to date. 
+I get this error sometimes when trying to deploy. It doesn't happen all the time but it is pretty annoying. 
+```
+##[debug]Evaluating: format('{0}\publish', github.workspace)
+##[debug]Evaluating format:
+##[debug]..Evaluating String:
+##[debug]..=> '{0}\publish'
+##[debug]..Evaluating Index:
+##[debug]....Evaluating github:
+##[debug]....=> Object
+##[debug]....Evaluating String:
+##[debug]....=> 'workspace'
+##[debug]..=> 'D:\a\dotnetcms\dotnetcms'
+##[debug]=> 'D:\a\dotnetcms\dotnetcms\publish'
+##[debug]Result: 'D:\a\dotnetcms\dotnetcms\publish'
+##[debug]Evaluating: secrets.WEBSITE_NAME
+##[debug]Evaluating Index:
+##[debug]..Evaluating secrets:
+##[debug]..=> Object
+##[debug]..Evaluating String:
+##[debug]..=> 'WEBSITE_NAME'
+##[debug]=> '***'
+##[debug]Result: '***'
+##[debug]Evaluating: secrets.SERVER_COMPUTER_NAME
+##[debug]Evaluating Index:
+##[debug]..Evaluating secrets:
+##[debug]..=> Object
+##[debug]..Evaluating String:
+##[debug]..=> 'SERVER_COMPUTER_NAME'
+##[debug]=> '***'
+##[debug]Result: '***'
+##[debug]Evaluating: secrets.SERVER_USERNAME
+##[debug]Evaluating Index:
+##[debug]..Evaluating secrets:
+##[debug]..=> Object
+##[debug]..Evaluating String:
+##[debug]..=> 'SERVER_USERNAME'
+##[debug]=> '***'
+##[debug]Result: '***'
+##[debug]Evaluating: secrets.SERVER_PASSWORD
+##[debug]Evaluating Index:
+##[debug]..Evaluating secrets:
+##[debug]..=> Object
+##[debug]..Evaluating String:
+##[debug]..=> 'SERVER_PASSWORD'
+##[debug]=> '***'
+##[debug]Result: '***'
+##[debug]Evaluating condition for step: 'Deploy via WebDeploy'
+##[debug]Evaluating: success()
+##[debug]Evaluating success:
+##[debug]=> true
+##[debug]Result: true
+##[debug]Starting: Deploy via WebDeploy
+##[debug]Loading inputs
+##[debug]Loading env
+Run $msdeployPath = "C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe"
+##[debug]C:\Program Files\PowerShell\7\pwsh.EXE -command ". 'D:\a\_temp\5b1de70f-7195-4b61-bd3a-872b4cbf8207.ps1'"
+Deploying to ***...
+Info: Using ID '6bf3d7b0-e03c-49a0-ac68-0edc9ad76007' for connections to the remote server.
+Info: Using ID '0b464a49-1bd8-42bb-b699-ef80b070df0a' for connections to the remote server.
+Info: Updating file (***\appsettings.Development.json).
+Info: Updating file (***\appsettings.json).
+Info: Updating file (***\MyBlog.Core.dll).
+Error Code: ERROR_FILE_IN_USE
+More Information: Web Deploy cannot modify the file 'MyBlog.Core.dll' on the destination because it is locked by an external process.  In order to allow the publish operation to succeed, you may need to either restart your application to release the lock, or use the AppOffline rule handler for .Net applications on your next publish attempt.
+  Learn more at: https://go.microsoft.com/fwlink/?LinkId=221672#ERROR_FILE_IN_USE.
+Error count: 1.
+Write-Error: Deployment failed with exit code -1
+Error: Process completed with exit code 1.
+##[debug]Finishing: Deploy via WebDeploy
+```
