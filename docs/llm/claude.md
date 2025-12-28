@@ -1388,3 +1388,8 @@ The key change is adding `?site=$env:DEPLOY_SITE` to the computerName URL. This 
 
 
 
+the deployment was successful. 
+However, I am not able to log in. 
+can you please check the code in `dump.txt` and the har at `login-har.json` to make sure our log in code and authentication code works correctly? 
+I don't see the username and password in the form data in the browser inspect window. 
+I haven't changed anything in the configuration so the password should be `ChangeMe123!` right? 
