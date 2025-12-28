@@ -5,6 +5,7 @@ using MyBlog.Core.Constants;
 using MyBlog.Core.Interfaces;
 using MyBlog.Infrastructure;
 using MyBlog.Infrastructure.Data;
+using MyBlog.Infrastructure.Services;
 using MyBlog.Infrastructure.Telemetry;
 using MyBlog.Web.Components;
 using MyBlog.Web.Middleware;
@@ -20,6 +21,9 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 builder.Services.AddInfrastructure(builder.Configuration);
+
+// Register TelemetryCleanupService as a hosted service
+builder.Services.AddHostedService<TelemetryCleanupService>();
 
 // Configure authentication
 var sessionTimeout = builder.Configuration.GetValue("Authentication:SessionTimeoutMinutes", 30);
@@ -53,35 +57,41 @@ builder.Services.AddOpenTelemetry()
         .AddAspNetCoreInstrumentation()
         .AddHttpClientInstrumentation()
         .AddSource(serviceName)
-        .AddProcessor(new FileActivityExporter(TelemetryPaths.GetTracePath())))
+        .AddConsoleExporter())
     .WithMetrics(metrics => metrics
         .AddAspNetCoreInstrumentation()
         .AddHttpClientInstrumentation()
-        .AddRuntimeInstrumentation()
-        .AddReader(new PeriodicExportingMetricReader(
-            new FileMetricExporter(TelemetryPaths.GetMetricsPath()),
-            exportIntervalMilliseconds: 60000)));
+        .AddConsoleExporter());
 
+// Configure logging with OpenTelemetry
+var telemetryDir = TelemetryPathResolver.GetTelemetryDirectory();
 builder.Logging.AddOpenTelemetry(logging =>
 {
     logging.IncludeFormattedMessage = true;
     logging.IncludeScopes = true;
-    logging.AddProcessor(new FileLogExporter(TelemetryPaths.GetLogsPath()));
+    logging.AddConsoleExporter();
+    
+    // Add file exporter if we have a writable directory
+    if (telemetryDir is not null)
+    {
+        var logsPath = Path.Combine(telemetryDir, "logs");
+        Directory.CreateDirectory(logsPath);
+        logging.AddProcessor(new FileLogExporter(logsPath));
+    }
 });
 
 var app = builder.Build();
 
-// Initialize database
+// Initialize database and seed admin user
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<BlogDbContext>();
     await db.Database.MigrateAsync();
-    await DbSeeder.SeedAsync(scope.ServiceProvider);
+    
+    // Seed admin user using the auth service
+    var authService = scope.ServiceProvider.GetRequiredService<IAuthService>();
+    await authService.EnsureAdminUserAsync();
 }
-
-// Start telemetry cleanup service
-var cleanupService = app.Services.GetRequiredService<TelemetryCleanupService>();
-_ = cleanupService.StartAsync(CancellationToken.None);
 
 // Configure middleware pipeline
 if (!app.Environment.IsDevelopment())
