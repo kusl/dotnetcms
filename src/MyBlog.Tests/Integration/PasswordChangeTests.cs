@@ -47,7 +47,7 @@ public class PasswordChangeTests : IAsyncDisposable
         var ct = TestContext.Current.CancellationToken;
         var originalPassword = "OriginalPass123!";
         var newPassword = "NewPassword456!";
-        
+
         var user = new User
         {
             Id = Guid.NewGuid(),
@@ -71,7 +71,7 @@ public class PasswordChangeTests : IAsyncDisposable
         var ct = TestContext.Current.CancellationToken;
         var originalPassword = "OriginalPass123!";
         var newPassword = "NewPassword456!";
-        
+
         var user = new User
         {
             Id = Guid.NewGuid(),
@@ -89,7 +89,7 @@ public class PasswordChangeTests : IAsyncDisposable
         // Should authenticate with new password
         var authenticated = await _sut.AuthenticateAsync("testuser", newPassword, ct);
         Assert.NotNull(authenticated);
-        
+
         // Should NOT authenticate with old password
         var oldAuth = await _sut.AuthenticateAsync("testuser", originalPassword, ct);
         Assert.Null(oldAuth);
@@ -101,7 +101,7 @@ public class PasswordChangeTests : IAsyncDisposable
         var ct = TestContext.Current.CancellationToken;
         var correctPassword = "CorrectPass123!";
         var wrongPassword = "WrongPassword!";
-        
+
         var user = new User
         {
             Id = Guid.NewGuid(),
@@ -124,7 +124,7 @@ public class PasswordChangeTests : IAsyncDisposable
     {
         var ct = TestContext.Current.CancellationToken;
         var correctPassword = "CorrectPass123!";
-        
+
         var user = new User
         {
             Id = Guid.NewGuid(),
@@ -158,7 +158,7 @@ public class PasswordChangeTests : IAsyncDisposable
         var ct = TestContext.Current.CancellationToken;
         var originalPassword = "OriginalPass123!";
         var newPassword = "ResetPassword789!";
-        
+
         var user = new User
         {
             Id = Guid.NewGuid(),
