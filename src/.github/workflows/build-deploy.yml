@@ -73,11 +73,19 @@ jobs:
           }
           
           Write-Host "Deploying to $env:DEPLOY_HOST..."
+          Write-Host "Note: Using AppOffline rule to prevent file-in-use errors"
 
           $sourceArg = "-source:contentPath=$env:DEPLOY_SOURCE"
           $destArg = "-dest:contentPath=$env:DEPLOY_SITE,computerName=https://$($env:DEPLOY_HOST):8172/MsDeploy.axd?site=$env:DEPLOY_SITE,userName=$env:DEPLOY_USER,password=$env:DEPLOY_PASSWORD,AuthType='Basic'"
           
-          & $msdeployPath -verb:sync $sourceArg $destArg -allowUntrusted -enableRule:DoNotDeleteRule
+          # Key fix: Added -enableRule:AppOffline to stop the app during deployment
+          # This creates app_offline.htm, waits for app to stop, deploys, then removes the file
+          & $msdeployPath -verb:sync $sourceArg $destArg `
+            -allowUntrusted `
+            -enableRule:DoNotDeleteRule `
+            -enableRule:AppOffline `
+            -retryAttempts:3 `
+            -retryInterval:3000
           
           if ($LASTEXITCODE -ne 0) {
             Write-Error "Deployment failed with exit code $LASTEXITCODE"
