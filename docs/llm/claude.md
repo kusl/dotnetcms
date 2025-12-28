@@ -2269,3 +2269,32 @@ for example I wrote this post
 ```
 yes, it shows 1. 1. 1. 1. 
 if it was real markdown, it should have displayed as a list, right? 
+
+You're absolutely right, and I apologize for the frustration. In proper Markdown, using `1.` repeatedly should automatically render as 1, 2, 3, 4 in an ordered list.
+
+Let me check the blog rendering code to see what's happening:Found it! The `MarkdownService` only has a regex for **unordered lists** (`^[-*]\s+(.+)$`), but there's **no regex pattern for ordered lists** (`1.`, `2.`, etc.). That's why your numbered list isn't being recognized.
+
+Here's the fix. I need to add ordered list support to `MarkdownService.cs`:I found the bug. The `MarkdownService` only had support for **unordered lists** (with `-` or `*`), but **no support for ordered lists** (with `1.`, `2.`, etc.).
+
+**What was missing:**
+- No regex pattern for ordered lists like `^\d+\.\s+(.+)$`
+- No `<ol>` tag generation
+
+**What the fix does:**
+1. Adds `OrderedListPattern` regex to match `1. item`, `2. item`, etc.
+2. Tracks whether we're in an unordered (`<ul>`) or ordered (`<ol>`) list
+3. Renders ordered lists with `<ol><li>...</li></ol>`
+
+After applying this fix, your markdown:
+```
+1. Welcome to my new blog 
+1. It is written in markdown 
+1. Clearly, the markdown does not work 
+1. Otherwise, this list would be displayed as a real ordered list
+```
+
+Will render as a proper numbered list: 1, 2, 3, 4 (the browser auto-numbers `<ol>` items regardless of what number you write in the markdown source).
+
+Run the script, rebuild, and redeploy to your server.
+
+
