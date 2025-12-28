@@ -1,6 +1,6 @@
 ===============================================================================
 PROJECT EXPORT
-Generated: Sun Dec 28 08:10:59 AM CST 2025
+Generated: Sun Dec 28 08:13:41 AM CST 2025
 Project Path: /home/kushal/src/dotnet/MyBlog
 ===============================================================================
 
@@ -915,8 +915,8 @@ MODIFIED: 2025-12-28 07:44:06
 
 ================================================================================
 FILE: src/Directory.Packages.props
-SIZE: 1.13 KB
-MODIFIED: 2025-12-28 08:03:28
+SIZE: 1.48 KB
+MODIFIED: 2025-12-28 08:12:53
 ================================================================================
 
 <Project>
@@ -935,6 +935,17 @@ MODIFIED: 2025-12-28 08:03:28
     <PackageVersion Include="OpenTelemetry" Version="1.14.0" />
     <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.14.0" />
     <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.14.0" />
+    <ItemGroup>
+  <!-- OpenTelemetry exporters -->
+  <PackageVersion Include="OpenTelemetry.Exporter.Console" Version="1.14.0" />
+
+  <!-- OpenTelemetry instrumentation -->
+  <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.14.0" />
+
+  <!-- Swagger -->
+  <PackageVersion Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+</ItemGroup>
+
     
     <!-- Testing (xUnit v3) -->
     <PackageVersion Include="xunit.v3" Version="3.2.1" />
@@ -7912,15 +7923,14 @@ MODIFIED: 2025-12-28 07:44:06
 
 ================================================================================
 FILE: src/MyBlog.Web/Program.cs
-SIZE: 2.39 KB
-MODIFIED: 2025-12-28 08:09:35
+SIZE: 2.29 KB
+MODIFIED: 2025-12-28 08:13:02
 ================================================================================
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using OpenTelemetry;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
@@ -7934,18 +7944,17 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 
-builder.Logging.AddOpenTelemetry(logging =>
+builder.Logging.AddOpenTelemetry(options =>
 {
-    logging.SetResourceBuilder(
+    options.SetResourceBuilder(
         ResourceBuilder.CreateDefault()
-            .AddService(serviceName: "MyBlog.Web"));
+            .AddService("MyBlog.Web"));
 
-    logging.IncludeFormattedMessage = true;
-    logging.IncludeScopes = true;
-    logging.ParseStateValues = true;
+    options.IncludeFormattedMessage = true;
+    options.IncludeScopes = true;
+    options.ParseStateValues = true;
 
-    // Exporters
-    logging.AddConsoleExporter();
+    options.AddConsoleExporter();
 });
 
 // ------------------------------------------------------------
@@ -7981,7 +7990,6 @@ builder.Services.AddSwaggerGen();
 
 // ------------------------------------------------------------
 // Application services
-// (keep your existing registrations here)
 // ------------------------------------------------------------
 // builder.Services.AddScoped<IMyService, MyService>();
 
@@ -8001,7 +8009,6 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
-
 
 
 ================================================================================
@@ -8562,7 +8569,7 @@ dotnet test MyBlog.slnx -v normal
 
 
 ===============================================================================
-EXPORT COMPLETED: Sun Dec 28 08:11:00 AM CST 2025
+EXPORT COMPLETED: Sun Dec 28 08:13:41 AM CST 2025
 Total Files Found: 55
 Files Exported: 55
 Files Skipped: 0 (binary or large files)
