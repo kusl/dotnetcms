@@ -28,7 +28,7 @@ public sealed class LoginRateLimitMiddleware
     /// <summary>
     /// Constructor with injectable delay function for testing.
     /// </summary>
-    internal LoginRateLimitMiddleware(
+    public LoginRateLimitMiddleware(
         RequestDelegate next,
         ILogger<LoginRateLimitMiddleware> logger,
         Func<TimeSpan, CancellationToken, Task>? delayFunc)
