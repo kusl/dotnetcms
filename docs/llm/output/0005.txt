@@ -191,4 +191,36 @@ The given project `MyBlog.Web` has no updates given the current sources.
 real	0m1.553s
 user	0m1.574s
 sys	0m0.303s
-kushal@syn-2600-6c56-9840-001d-0000-0000-0000-1157:~/src/dotnet/MyBlog/src$ 
+kushal@syn-2600-6c56-9840-001d-0000-0000-0000-1157:~/src/dotnet/MyBlog/src$ cd .. 
+kushal@syn-2600-6c56-9840-001d-0000-0000-0000-1157:~/src/dotnet/MyBlog$ time bash fix-all-forms.sh 
+==============================================
+  MyBlog: Fix All Forms Script
+==============================================
+
+[1/2] Fixing Login.razor form...
+      Done.
+[2/2] Fixing ChangePassword.razor form...
+      Done.
+
+==============================================
+  All forms fixed!
+==============================================
+
+Fixed files:
+  - src/MyBlog.Web/Components/Pages/Login.razor
+  - src/MyBlog.Web/Components/Pages/Admin/ChangePassword.razor
+
+Note: The PostEditor.razor and ImageManager.razor pages use
+@onclick handlers (interactive Blazor), not method='post' forms,
+so they do not need the 'name' attribute fix.
+
+The fix adds:
+  1. name='fieldname' attributes to all <input> elements
+  2. [SupplyParameterFromForm] properties to receive POST data
+  3. Logic to use form values when available (SSR) or bound values (interactive)
+
+
+real	0m0.006s
+user	0m0.001s
+sys	0m0.005s
+kushal@syn-2600-6c56-9840-001d-0000-0000-0000-1157:~/src/dotnet/MyBlog$ 
