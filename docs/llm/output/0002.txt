@@ -5051,4 +5051,74 @@ The given project `MyBlog.Web` has no updates given the current sources.
 real	0m2.362s
 user	0m2.253s
 sys	0m0.379s
-kushal@syn-2600-6c56-9840-001d-0000-0000-0000-1157:~/src/dotnet/MyBlog/src$ 
+kushal@syn-2600-6c56-9840-001d-0000-0000-0000-1157:~/src/dotnet/MyBlog/src$ time bash fix-changepassword-and-tests.sh
+==============================================
+  MyBlog: Fix ChangePassword Form & Add Tests
+==============================================
+
+[1/3] Fixing ChangePassword.razor form (adding name attributes)...
+fix-changepassword-and-tests.sh: line 20: src/MyBlog.Web/Components/Pages/Admin/ChangePassword.razor: No such file or directory
+
+real	0m0.014s
+user	0m0.002s
+sys	0m0.003s
+kushal@syn-2600-6c56-9840-001d-0000-0000-0000-1157:~/src/dotnet/MyBlog/src$ ls
+Directory.Build.props     fix-changepassword-and-tests.sh  global.json  MyBlog.Infrastructure  MyBlog.Tests  run.sh   upgrade-myblog.sh
+Directory.Packages.props  generate-myblog.sh               MyBlog.Core  MyBlog.slnx            MyBlog.Web    test.sh
+kushal@syn-2600-6c56-9840-001d-0000-0000-0000-1157:~/src/dotnet/MyBlog/src$ time bash fix-changepassword-and-tests.sh
+==============================================
+  MyBlog: Fix ChangePassword Form & Add Tests
+==============================================
+
+[1/3] Fixing ChangePassword.razor form (adding name attributes)...
+fix-changepassword-and-tests.sh: line 20: src/MyBlog.Web/Components/Pages/Admin/ChangePassword.razor: No such file or directory
+
+real	0m0.005s
+user	0m0.000s
+sys	0m0.004s
+kushal@syn-2600-6c56-9840-001d-0000-0000-0000-1157:~/src/dotnet/MyBlog/src$ cd ,, 
+bash: cd: ,,: No such file or directory
+kushal@syn-2600-6c56-9840-001d-0000-0000-0000-1157:~/src/dotnet/MyBlog/src$ cd ..
+kushal@syn-2600-6c56-9840-001d-0000-0000-0000-1157:~/src/dotnet/MyBlog$ time bash fix-changepassword-and-tests.sh
+==============================================
+  MyBlog: Fix ChangePassword Form & Add Tests
+==============================================
+
+[1/3] Fixing ChangePassword.razor form (adding name attributes)...
+      Done.
+[2/3] Adding tests for long passwords and no account lockout...
+      Done.
+[3/3] Verifying AuthService has no lockout mechanism...
+      VERIFIED: AuthService contains no lockout mechanism.
+
+==============================================
+  Completed!
+==============================================
+
+Changes made:
+  1. Fixed ChangePassword.razor:
+     - Added 'name' attributes to all form inputs
+     - Added [SupplyParameterFromForm] properties
+     - Updated HandleSubmit to use form values
+
+  2. Added AuthServiceLongPasswordTests.cs with tests for:
+     - 128-character passwords
+     - 256-character passwords
+     - 512-character passwords
+     - Complex long passwords
+     - No lockout after 100 failed attempts
+     - No lockout after 1000 failed attempts
+     - Password change works after many failed attempts
+     - Interleaved failures and successes never lock
+
+  3. Verified AuthService has no lockout mechanism
+
+Next steps:
+  1. Run: dotnet build
+  2. Run: dotnet test
+
+
+real	0m0.007s
+user	0m0.004s
+sys	0m0.003s
+kushal@syn-2600-6c56-9840-001d-0000-0000-0000-1157:~/src/dotnet/MyBlog$ cd ~/src/dotnet/MyBlog/; time bash export.sh; cd ~/src/dotnet/MyBlog/src/; time dotnet format; time dotnet restore; time dotnet clean; time dotnet build; time dotnet test; time dotnet list package; time dotnet list package --outdated;
