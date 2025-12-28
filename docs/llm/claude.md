@@ -1858,3 +1858,163 @@ If you want rate limiting (slowing down without blocking), that would need to be
 
 
 
+Yes, please write a script that does that and please make sure the script is in the src folder. 
+also I get tests failing on windows on github actions. macos and linux are passing. 
+please write a single shell script that fixes all these issues. 
+Run dotnet test src/MyBlog.slnx -c Release --no-build --logger trx --results-directory TestResults
+  dotnet test src/MyBlog.slnx -c Release --no-build --logger trx --results-directory TestResults
+  shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+  env:
+    DOTNET_ROOT: C:\Program Files\dotnet
+Test run for D:\a\dotnetcms\dotnetcms\src\MyBlog.Tests\bin\Release\net10.0\MyBlog.Tests.dll (.NETCoreApp,Version=v10.0)
+VSTest version 18.0.1 (x64)
+
+Starting test execution, please wait...
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:04.45]     MyBlog.Tests.Integration.AuthServiceLongPasswordTests.AuthenticateAsync_After1000FailedAttempts_StillAllowsLogin [FAIL]
+[xUnit.net 00:00:04.46]     MyBlog.Tests.Integration.AuthServiceLongPasswordTests.AuthenticateAsync_With256CharacterPassword_Succeeds [FAIL]
+[xUnit.net 00:00:04.48]     MyBlog.Tests.Integration.AuthServiceLongPasswordTests.AuthenticateAsync_WithComplexLongPassword_Succeeds [FAIL]
+[xUnit.net 00:00:04.49]     MyBlog.Tests.Integration.AuthServiceLongPasswordTests.AuthenticateAsync_With128CharacterPassword_Succeeds [FAIL]
+[xUnit.net 00:00:04.68]     MyBlog.Tests.Integration.AuthServiceLongPasswordTests.AuthenticateAsync_After100FailedAttempts_StillAllowsLogin [FAIL]
+[xUnit.net 00:00:04.78]     MyBlog.Tests.Integration.AuthServiceLongPasswordTests.ChangePasswordAsync_AfterManyFailedAttempts_StillWorks [FAIL]
+[xUnit.net 00:00:05.01]     MyBlog.Tests.Integration.AuthServiceLongPasswordTests.AuthenticateAsync_InterleavedFailuresAndSuccesses_NeverLocks [FAIL]
+[xUnit.net 00:00:05.04]     MyBlog.Tests.Integration.AuthServiceLongPasswordTests.ChangePasswordAsync_With128CharacterNewPassword_Succeeds [FAIL]
+[xUnit.net 00:00:05.05]     MyBlog.Tests.Integration.AuthServiceLongPasswordTests.AuthenticateAsync_With512CharacterPassword_Succeeds [FAIL]
+  Failed MyBlog.Tests.Integration.AuthServiceLongPasswordTests.AuthenticateAsync_After1000FailedAttempts_StillAllowsLogin [3 s]
+  Error Message:
+   System.IO.IOException : The process cannot access the file 'D:\a\dotnetcms\dotnetcms\src\MyBlog.Tests\bin\Release\net10.0\4a01b9bf-c47e-4dce-94fd-0d37797b4d49.db' because it is being used by another process.
+  Stack Trace:
+     at System.IO.FileSystem.DeleteFile(String fullPath)
+   at MyBlog.Tests.Integration.AuthServiceLongPasswordTests.DisposeAsync() in D:\a\dotnetcms\dotnetcms\src\MyBlog.Tests\Integration\AuthServiceLongPasswordTests.cs:line 47
+  Failed MyBlog.Tests.Integration.AuthServiceLongPasswordTests.AuthenticateAsync_With256CharacterPassword_Succeeds [17 ms]
+  Error Message:
+   System.IO.IOException : The process cannot access the file 'D:\a\dotnetcms\dotnetcms\src\MyBlog.Tests\bin\Release\net10.0\e3e00971-cae3-4fb9-b8f2-6901ffffde40.db' because it is being used by another process.
+  Stack Trace:
+     at System.IO.FileSystem.DeleteFile(String fullPath)
+   at MyBlog.Tests.Integration.AuthServiceLongPasswordTests.DisposeAsync() in D:\a\dotnetcms\dotnetcms\src\MyBlog.Tests\Integration\AuthServiceLongPasswordTests.cs:line 47
+  Failed MyBlog.Tests.Integration.AuthServiceLongPasswordTests.AuthenticateAsync_WithComplexLongPassword_Succeeds [16 ms]
+  Error Message:
+   System.IO.IOException : The process cannot access the file 'D:\a\dotnetcms\dotnetcms\src\MyBlog.Tests\bin\Release\net10.0\ec4c17ad-dac0-4712-8f21-77b2d33d6c98.db' because it is being used by another process.
+  Stack Trace:
+     at System.IO.FileSystem.DeleteFile(String fullPath)
+   at MyBlog.Tests.Integration.AuthServiceLongPasswordTests.DisposeAsync() in D:\a\dotnetcms\dotnetcms\src\MyBlog.Tests\Integration\AuthServiceLongPasswordTests.cs:line 47
+  Failed MyBlog.Tests.Integration.AuthServiceLongPasswordTests.AuthenticateAsync_With128CharacterPassword_Succeeds [14 ms]
+  Error Message:
+   System.IO.IOException : The process cannot access the file 'D:\a\dotnetcms\dotnetcms\src\MyBlog.Tests\bin\Release\net10.0\2e716f23-febc-472f-87ec-692bfc9fd6f8.db' because it is being used by another process.
+  Stack Trace:
+     at System.IO.FileSystem.DeleteFile(String fullPath)
+   at MyBlog.Tests.Integration.AuthServiceLongPasswordTests.DisposeAsync() in D:\a\dotnetcms\dotnetcms\src\MyBlog.Tests\Integration\AuthServiceLongPasswordTests.cs:line 47
+  Failed MyBlog.Tests.Integration.AuthServiceLongPasswordTests.AuthenticateAsync_After100FailedAttempts_StillAllowsLogin [182 ms]
+  Error Message:
+   System.IO.IOException : The process cannot access the file 'D:\a\dotnetcms\dotnetcms\src\MyBlog.Tests\bin\Release\net10.0\d66e45e3-c21c-482a-a198-d1e9ad1519da.db' because it is being used by another process.
+  Stack Trace:
+     at System.IO.FileSystem.DeleteFile(String fullPath)
+   at MyBlog.Tests.Integration.AuthServiceLongPasswordTests.DisposeAsync() in D:\a\dotnetcms\dotnetcms\src\MyBlog.Tests\Integration\AuthServiceLongPasswordTests.cs:line 47
+  Failed MyBlog.Tests.Integration.AuthServiceLongPasswordTests.ChangePasswordAsync_AfterManyFailedAttempts_StillWorks [104 ms]
+  Error Message:
+   System.IO.IOException : The process cannot access the file 'D:\a\dotnetcms\dotnetcms\src\MyBlog.Tests\bin\Release\net10.0\6a261aa9-ce11-4d85-801e-20eabf02ea06.db' because it is being used by another process.
+  Stack Trace:
+     at System.IO.FileSystem.DeleteFile(String fullPath)
+   at MyBlog.Tests.Integration.AuthServiceLongPasswordTests.DisposeAsync() in D:\a\dotnetcms\dotnetcms\src\MyBlog.Tests\Integration\AuthServiceLongPasswordTests.cs:line 47
+  Failed MyBlog.Tests.Integration.AuthServiceLongPasswordTests.AuthenticateAsync_InterleavedFailuresAndSuccesses_NeverLocks [225 ms]
+  Error Message:
+   System.IO.IOException : The process cannot access the file 'D:\a\dotnetcms\dotnetcms\src\MyBlog.Tests\bin\Release\net10.0\6e50a32b-7e60-49e2-8f6f-d66fa67bbfe6.db' because it is being used by another process.
+  Stack Trace:
+     at System.IO.FileSystem.DeleteFile(String fullPath)
+   at MyBlog.Tests.Integration.AuthServiceLongPasswordTests.DisposeAsync() in D:\a\dotnetcms\dotnetcms\src\MyBlog.Tests\Integration\AuthServiceLongPasswordTests.cs:line 47
+  Failed MyBlog.Tests.Integration.AuthServiceLongPasswordTests.ChangePasswordAsync_With128CharacterNewPassword_Succeeds [23 ms]
+  Error Message:
+   System.IO.IOException : The process cannot access the file 'D:\a\dotnetcms\dotnetcms\src\MyBlog.Tests\bin\Release\net10.0\9bb42371-8fe4-44ff-99e4-d0d74d48694f.db' because it is being used by another process.
+  Stack Trace:
+     at System.IO.FileSystem.DeleteFile(String fullPath)
+   at MyBlog.Tests.Integration.AuthServiceLongPasswordTests.DisposeAsync() in D:\a\dotnetcms\dotnetcms\src\MyBlog.Tests\Integration\AuthServiceLongPasswordTests.cs:line 47
+  Failed MyBlog.Tests.Integration.AuthServiceLongPasswordTests.AuthenticateAsync_With512CharacterPassword_Succeeds [18 ms]
+  Error Message:
+   System.IO.IOException : The process cannot access the file 'D:\a\dotnetcms\dotnetcms\src\MyBlog.Tests\bin\Release\net10.0\dca3a758-c14d-46c6-abc7-296cc09f8993.db' because it is being used by another process.
+  Stack Trace:
+     at System.IO.FileSystem.DeleteFile(String fullPath)
+   at MyBlog.Tests.Integration.AuthServiceLongPasswordTests.DisposeAsync() in D:\a\dotnetcms\dotnetcms\src\MyBlog.Tests\Integration\AuthServiceLongPasswordTests.cs:line 47
+Results File: D:\a\dotnetcms\dotnetcms\TestResults\runneradmin_runnervm2nm03_2025-12-28_17_04_12.trx
+
+Failed!  - Failed:     9, Passed:    52, Skipped:     0, Total:    61, Duration: 4 s - MyBlog.Tests.dll (net10.0)
+8s
+Run dotnet test src/MyBlog.slnx -c Release --no-build --logger trx --results-directory TestResults
+  dotnet test src/MyBlog.slnx -c Release --no-build --logger trx --results-directory TestResults
+  shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+  env:
+    DOTNET_ROOT: C:\Program Files\dotnet
+Test run for D:\a\dotnetcms\dotnetcms\src\MyBlog.Tests\bin\Release\net10.0\MyBlog.Tests.dll (.NETCoreApp,Version=v10.0)
+VSTest version 18.0.1 (x64)
+
+Starting test execution, please wait...
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:04.45]     MyBlog.Tests.Integration.AuthServiceLongPasswordTests.AuthenticateAsync_After1000FailedAttempts_StillAllowsLogin [FAIL]
+[xUnit.net 00:00:04.46]     MyBlog.Tests.Integration.AuthServiceLongPasswordTests.AuthenticateAsync_With256CharacterPassword_Succeeds [FAIL]
+[xUnit.net 00:00:04.48]     MyBlog.Tests.Integration.AuthServiceLongPasswordTests.AuthenticateAsync_WithComplexLongPassword_Succeeds [FAIL]
+[xUnit.net 00:00:04.49]     MyBlog.Tests.Integration.AuthServiceLongPasswordTests.AuthenticateAsync_With128CharacterPassword_Succeeds [FAIL]
+[xUnit.net 00:00:04.68]     MyBlog.Tests.Integration.AuthServiceLongPasswordTests.AuthenticateAsync_After100FailedAttempts_StillAllowsLogin [FAIL]
+[xUnit.net 00:00:04.78]     MyBlog.Tests.Integration.AuthServiceLongPasswordTests.ChangePasswordAsync_AfterManyFailedAttempts_StillWorks [FAIL]
+[xUnit.net 00:00:05.01]     MyBlog.Tests.Integration.AuthServiceLongPasswordTests.AuthenticateAsync_InterleavedFailuresAndSuccesses_NeverLocks [FAIL]
+[xUnit.net 00:00:05.04]     MyBlog.Tests.Integration.AuthServiceLongPasswordTests.ChangePasswordAsync_With128CharacterNewPassword_Succeeds [FAIL]
+[xUnit.net 00:00:05.05]     MyBlog.Tests.Integration.AuthServiceLongPasswordTests.AuthenticateAsync_With512CharacterPassword_Succeeds [FAIL]
+  Failed MyBlog.Tests.Integration.AuthServiceLongPasswordTests.AuthenticateAsync_After1000FailedAttempts_StillAllowsLogin [3 s]
+  Error Message:
+   System.IO.IOException : The process cannot access the file 'D:\a\dotnetcms\dotnetcms\src\MyBlog.Tests\bin\Release\net10.0\4a01b9bf-c47e-4dce-94fd-0d37797b4d49.db' because it is being used by another process.
+  Stack Trace:
+     at System.IO.FileSystem.DeleteFile(String fullPath)
+   at MyBlog.Tests.Integration.AuthServiceLongPasswordTests.DisposeAsync() in D:\a\dotnetcms\dotnetcms\src\MyBlog.Tests\Integration\AuthServiceLongPasswordTests.cs:line 47
+  Failed MyBlog.Tests.Integration.AuthServiceLongPasswordTests.AuthenticateAsync_With256CharacterPassword_Succeeds [17 ms]
+  Error Message:
+   System.IO.IOException : The process cannot access the file 'D:\a\dotnetcms\dotnetcms\src\MyBlog.Tests\bin\Release\net10.0\e3e00971-cae3-4fb9-b8f2-6901ffffde40.db' because it is being used by another process.
+  Stack Trace:
+     at System.IO.FileSystem.DeleteFile(String fullPath)
+   at MyBlog.Tests.Integration.AuthServiceLongPasswordTests.DisposeAsync() in D:\a\dotnetcms\dotnetcms\src\MyBlog.Tests\Integration\AuthServiceLongPasswordTests.cs:line 47
+  Failed MyBlog.Tests.Integration.AuthServiceLongPasswordTests.AuthenticateAsync_WithComplexLongPassword_Succeeds [16 ms]
+  Error Message:
+   System.IO.IOException : The process cannot access the file 'D:\a\dotnetcms\dotnetcms\src\MyBlog.Tests\bin\Release\net10.0\ec4c17ad-dac0-4712-8f21-77b2d33d6c98.db' because it is being used by another process.
+  Stack Trace:
+     at System.IO.FileSystem.DeleteFile(String fullPath)
+   at MyBlog.Tests.Integration.AuthServiceLongPasswordTests.DisposeAsync() in D:\a\dotnetcms\dotnetcms\src\MyBlog.Tests\Integration\AuthServiceLongPasswordTests.cs:line 47
+  Failed MyBlog.Tests.Integration.AuthServiceLongPasswordTests.AuthenticateAsync_With128CharacterPassword_Succeeds [14 ms]
+  Error Message:
+   System.IO.IOException : The process cannot access the file 'D:\a\dotnetcms\dotnetcms\src\MyBlog.Tests\bin\Release\net10.0\2e716f23-febc-472f-87ec-692bfc9fd6f8.db' because it is being used by another process.
+  Stack Trace:
+     at System.IO.FileSystem.DeleteFile(String fullPath)
+   at MyBlog.Tests.Integration.AuthServiceLongPasswordTests.DisposeAsync() in D:\a\dotnetcms\dotnetcms\src\MyBlog.Tests\Integration\AuthServiceLongPasswordTests.cs:line 47
+  Failed MyBlog.Tests.Integration.AuthServiceLongPasswordTests.AuthenticateAsync_After100FailedAttempts_StillAllowsLogin [182 ms]
+  Error Message:
+   System.IO.IOException : The process cannot access the file 'D:\a\dotnetcms\dotnetcms\src\MyBlog.Tests\bin\Release\net10.0\d66e45e3-c21c-482a-a198-d1e9ad1519da.db' because it is being used by another process.
+  Stack Trace:
+     at System.IO.FileSystem.DeleteFile(String fullPath)
+   at MyBlog.Tests.Integration.AuthServiceLongPasswordTests.DisposeAsync() in D:\a\dotnetcms\dotnetcms\src\MyBlog.Tests\Integration\AuthServiceLongPasswordTests.cs:line 47
+  Failed MyBlog.Tests.Integration.AuthServiceLongPasswordTests.ChangePasswordAsync_AfterManyFailedAttempts_StillWorks [104 ms]
+  Error Message:
+   System.IO.IOException : The process cannot access the file 'D:\a\dotnetcms\dotnetcms\src\MyBlog.Tests\bin\Release\net10.0\6a261aa9-ce11-4d85-801e-20eabf02ea06.db' because it is being used by another process.
+  Stack Trace:
+     at System.IO.FileSystem.DeleteFile(String fullPath)
+   at MyBlog.Tests.Integration.AuthServiceLongPasswordTests.DisposeAsync() in D:\a\dotnetcms\dotnetcms\src\MyBlog.Tests\Integration\AuthServiceLongPasswordTests.cs:line 47
+  Failed MyBlog.Tests.Integration.AuthServiceLongPasswordTests.AuthenticateAsync_InterleavedFailuresAndSuccesses_NeverLocks [225 ms]
+  Error Message:
+   System.IO.IOException : The process cannot access the file 'D:\a\dotnetcms\dotnetcms\src\MyBlog.Tests\bin\Release\net10.0\6e50a32b-7e60-49e2-8f6f-d66fa67bbfe6.db' because it is being used by another process.
+  Stack Trace:
+     at System.IO.FileSystem.DeleteFile(String fullPath)
+   at MyBlog.Tests.Integration.AuthServiceLongPasswordTests.DisposeAsync() in D:\a\dotnetcms\dotnetcms\src\MyBlog.Tests\Integration\AuthServiceLongPasswordTests.cs:line 47
+  Failed MyBlog.Tests.Integration.AuthServiceLongPasswordTests.ChangePasswordAsync_With128CharacterNewPassword_Succeeds [23 ms]
+  Error Message:
+   System.IO.IOException : The process cannot access the file 'D:\a\dotnetcms\dotnetcms\src\MyBlog.Tests\bin\Release\net10.0\9bb42371-8fe4-44ff-99e4-d0d74d48694f.db' because it is being used by another process.
+  Stack Trace:
+     at System.IO.FileSystem.DeleteFile(String fullPath)
+   at MyBlog.Tests.Integration.AuthServiceLongPasswordTests.DisposeAsync() in D:\a\dotnetcms\dotnetcms\src\MyBlog.Tests\Integration\AuthServiceLongPasswordTests.cs:line 47
+  Failed MyBlog.Tests.Integration.AuthServiceLongPasswordTests.AuthenticateAsync_With512CharacterPassword_Succeeds [18 ms]
+  Error Message:
+   System.IO.IOException : The process cannot access the file 'D:\a\dotnetcms\dotnetcms\src\MyBlog.Tests\bin\Release\net10.0\dca3a758-c14d-46c6-abc7-296cc09f8993.db' because it is being used by another process.
+  Stack Trace:
+     at System.IO.FileSystem.DeleteFile(String fullPath)
+   at MyBlog.Tests.Integration.AuthServiceLongPasswordTests.DisposeAsync() in D:\a\dotnetcms\dotnetcms\src\MyBlog.Tests\Integration\AuthServiceLongPasswordTests.cs:line 47
+Results File: D:\a\dotnetcms\dotnetcms\TestResults\runneradmin_runnervm2nm03_2025-12-28_17_04_12.trx
+
+Failed!  - Failed:     9, Passed:    52, Skipped:     0, Total:    61, Duration: 4 s - MyBlog.Tests.dll (net10.0)
+Error: Process completed with exit code 1.
+
+
+
