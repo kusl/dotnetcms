@@ -1,6 +1,6 @@
 ===============================================================================
 PROJECT EXPORT
-Generated: Sun Dec 28 08:27:47 AM CST 2025
+Generated: Sun Dec 28 08:39:30 AM CST 2025
 Project Path: /home/kushal/src/dotnet/MyBlog
 ===============================================================================
 
@@ -7139,8 +7139,8 @@ MODIFIED: 2025-12-28 07:44:06
 
 ================================================================================
 FILE: src/MyBlog.Tests/Integration/AuthServiceTests.cs
-SIZE: 3.93 KB
-MODIFIED: 2025-12-28 08:26:04
+SIZE: 3.85 KB
+MODIFIED: 2025-12-28 08:38:37
 ================================================================================
 
 using Microsoft.EntityFrameworkCore;
@@ -7157,7 +7157,7 @@ public class AuthServiceTests : IAsyncDisposable
 {
     private readonly BlogDbContext _context;
     private readonly AuthService _sut;
-    private readonly PasswordService _passwordService;
+    private readonly PasswordService _passwordService = new();
 
     public AuthServiceTests()
     {
@@ -7170,7 +7170,6 @@ public class AuthServiceTests : IAsyncDisposable
         _context.Database.EnsureCreated();
 
         var userRepository = new UserRepository(_context);
-        _passwordService = new PasswordService();
         var configuration = new ConfigurationBuilder()
             .AddInMemoryCollection(new Dictionary<string, string?>
             {
@@ -7187,7 +7186,7 @@ public class AuthServiceTests : IAsyncDisposable
     }
 
     [Fact]
-    public async Task ValidateCredentialsAsync_WithValidCredentials_ReturnsUser()
+    public async Task AuthenticateAsync_WithValidCredentials_ReturnsUser()
     {
         var ct = TestContext.Current.CancellationToken;
         var password = "TestPassword123";
@@ -7203,14 +7202,14 @@ public class AuthServiceTests : IAsyncDisposable
         _context.Users.Add(user);
         await _context.SaveChangesAsync(ct);
 
-        var result = await _sut.ValidateCredentialsAsync("testuser", password, ct);
+        var result = await _sut.AuthenticateAsync("testuser", password, ct);
 
         Assert.NotNull(result);
         Assert.Equal("testuser", result.Username);
     }
 
     [Fact]
-    public async Task ValidateCredentialsAsync_WithInvalidPassword_ReturnsNull()
+    public async Task AuthenticateAsync_WithInvalidPassword_ReturnsNull()
     {
         var ct = TestContext.Current.CancellationToken;
         var user = new User
@@ -7225,16 +7224,16 @@ public class AuthServiceTests : IAsyncDisposable
         _context.Users.Add(user);
         await _context.SaveChangesAsync(ct);
 
-        var result = await _sut.ValidateCredentialsAsync("testuser", "WrongPassword", ct);
+        var result = await _sut.AuthenticateAsync("testuser", "WrongPassword", ct);
 
         Assert.Null(result);
     }
 
     [Fact]
-    public async Task ValidateCredentialsAsync_WithNonExistentUser_ReturnsNull()
+    public async Task AuthenticateAsync_WithNonExistentUser_ReturnsNull()
     {
         var ct = TestContext.Current.CancellationToken;
-        var result = await _sut.ValidateCredentialsAsync("nonexistent", "password", ct);
+        var result = await _sut.AuthenticateAsync("nonexistent", "password", ct);
         Assert.Null(result);
     }
 
@@ -7271,11 +7270,10 @@ public class AuthServiceTests : IAsyncDisposable
     }
 }
 
-
 ================================================================================
 FILE: src/MyBlog.Tests/Integration/PostRepositoryTests.cs
-SIZE: 4.80 KB
-MODIFIED: 2025-12-28 08:26:20
+SIZE: 4.88 KB
+MODIFIED: 2025-12-28 08:39:06
 ================================================================================
 
 using Microsoft.EntityFrameworkCore;
@@ -7371,16 +7369,17 @@ public class PostRepositoryTests : IAsyncDisposable
     }
 
     [Fact]
-    public async Task GetPublishedAsync_ReturnsOnlyPublishedPosts()
+    public async Task GetPublishedPostsAsync_ReturnsOnlyPublishedPosts()
     {
         var ct = TestContext.Current.CancellationToken;
         await _sut.CreateAsync(CreateTestPost("Published", isPublished: true), ct);
         await _sut.CreateAsync(CreateTestPost("Draft", isPublished: false), ct);
 
-        var result = await _sut.GetPublishedAsync(1, 10, ct);
+        var (posts, totalCount) = await _sut.GetPublishedPostsAsync(1, 10, ct);
 
-        Assert.Single(result);
-        Assert.Equal("Published", result.First().Title);
+        Assert.Single(posts);
+        Assert.Equal("Published", posts.First().Title);
+        Assert.Equal(1, totalCount);
     }
 
     [Fact]
@@ -7411,16 +7410,16 @@ public class PostRepositoryTests : IAsyncDisposable
     }
 
     [Fact]
-    public async Task GetPublishedCountAsync_ReturnsCorrectCount()
+    public async Task GetPublishedPostsAsync_ReturnsCorrectCount()
     {
         var ct = TestContext.Current.CancellationToken;
         await _sut.CreateAsync(CreateTestPost("Post 1", isPublished: true), ct);
         await _sut.CreateAsync(CreateTestPost("Post 2", isPublished: true), ct);
         await _sut.CreateAsync(CreateTestPost("Draft", isPublished: false), ct);
 
-        var count = await _sut.GetPublishedCountAsync(ct);
+        var (_, totalCount) = await _sut.GetPublishedPostsAsync(1, 10, ct);
 
-        Assert.Equal(2, count);
+        Assert.Equal(2, totalCount);
     }
 
     private Post CreateTestPost(string title, string? slug = null, bool isPublished = true)
@@ -7441,11 +7440,10 @@ public class PostRepositoryTests : IAsyncDisposable
     }
 }
 
-
 ================================================================================
 FILE: src/MyBlog.Tests/Integration/TelemetryCleanupTests.cs
-SIZE: 2.70 KB
-MODIFIED: 2025-12-28 08:25:54
+SIZE: 2.68 KB
+MODIFIED: 2025-12-28 08:27:55
 ================================================================================
 
 using Microsoft.EntityFrameworkCore;
@@ -7483,7 +7481,7 @@ public class TelemetryCleanupTests : IAsyncDisposable
     public async Task DeleteOlderThanAsync_RemovesOldLogs()
     {
         var ct = TestContext.Current.CancellationToken;
-        
+
         // Add old logs
         var oldLog = new TelemetryLog
         {
@@ -7517,7 +7515,7 @@ public class TelemetryCleanupTests : IAsyncDisposable
     public async Task DeleteOlderThanAsync_WithNoOldLogs_ReturnsZero()
     {
         var ct = TestContext.Current.CancellationToken;
-        
+
         var recentLog = new TelemetryLog
         {
             TimestampUtc = DateTime.UtcNow.AddDays(-5),
@@ -7917,8 +7915,8 @@ MODIFIED: 2025-12-28 08:26:41
 
 ================================================================================
 FILE: src/MyBlog.Web/Program.cs
-SIZE: 3.64 KB
-MODIFIED: 2025-12-28 08:26:30
+SIZE: 3.09 KB
+MODIFIED: 2025-12-28 08:38:55
 ================================================================================
 
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -7929,7 +7927,6 @@ using MyBlog.Infrastructure;
 using MyBlog.Infrastructure.Data;
 using MyBlog.Infrastructure.Telemetry;
 using MyBlog.Web.Components;
-using OpenTelemetry;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
@@ -7959,51 +7956,38 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
             : CookieSecurePolicy.SameAsRequest;
     });
 
-builder.Services.AddAuthorization();
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddCascadingAuthenticationState();
+builder.Services.AddAuthorization();
 
 // Configure OpenTelemetry
-var telemetryDir = TelemetryPathResolver.GetTelemetryDirectory();
-var enableFileLogging = builder.Configuration.GetValue("Telemetry:EnableFileLogging", true);
-var enableDbLogging = builder.Configuration.GetValue("Telemetry:EnableDatabaseLogging", true);
+var serviceName = "MyBlog.Web";
+var serviceVersion = "1.0.0";
 
 builder.Services.AddOpenTelemetry()
-    .ConfigureResource(r => r.AddService("MyBlog"))
-    .WithTracing(tracing =>
-    {
-        tracing
-            .AddAspNetCoreInstrumentation()
-            .AddHttpClientInstrumentation();
-    })
-    .WithMetrics(metrics =>
-    {
-        metrics
-            .AddAspNetCoreInstrumentation()
-            .AddHttpClientInstrumentation();
-    });
+    .ConfigureResource(resource => resource.AddService(serviceName, serviceVersion))
+    .WithTracing(tracing => tracing
+        .AddAspNetCoreInstrumentation()
+        .AddHttpClientInstrumentation()
+        .AddConsoleExporter())
+    .WithMetrics(metrics => metrics
+        .AddAspNetCoreInstrumentation()
+        .AddHttpClientInstrumentation()
+        .AddConsoleExporter());
 
-builder.Logging.AddOpenTelemetry(options =>
+// Configure OpenTelemetry logging
+builder.Logging.AddOpenTelemetry(logging =>
 {
-    options.IncludeScopes = true;
-    options.IncludeFormattedMessage = true;
-
-    if (enableDbLogging)
-    {
-        options.AddProcessor(new BatchLogRecordExportProcessor(
-            new DatabaseLogExporter(builder.Services.BuildServiceProvider()
-                .GetRequiredService<IServiceScopeFactory>())));
-    }
-
-    if (enableFileLogging && telemetryDir is not null)
-    {
-        options.AddProcessor(new BatchLogRecordExportProcessor(
-            new FileLogExporter(telemetryDir)));
-    }
+    logging.SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(serviceName, serviceVersion));
+    logging.IncludeFormattedMessage = true;
+    logging.IncludeScopes = true;
+    logging.AddConsoleExporter();
 });
 
 var app = builder.Build();
 
-// Initialize database
+// Initialize database and ensure admin user exists
+// Use a scope to resolve scoped services during startup
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<BlogDbContext>();
@@ -8013,10 +7997,10 @@ using (var scope = app.Services.CreateScope())
     await authService.EnsureAdminUserAsync();
 }
 
-// Configure pipeline
+// Configure HTTP pipeline
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Error");
+    app.UseExceptionHandler("/Error", createScopeForErrors: true);
     if (builder.Configuration.GetValue("Application:RequireHttps", false))
     {
         app.UseHsts();
@@ -8031,15 +8015,6 @@ app.UseAntiforgery();
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
-
-// Image endpoint
-app.MapGet("/api/images/{id:guid}", async (Guid id, IImageRepository repo, CancellationToken ct) =>
-{
-    var image = await repo.GetByIdAsync(id, ct);
-    return image is null
-        ? Results.NotFound()
-        : Results.File(image.Data, image.ContentType, image.FileName);
-});
 
 app.Run();
 
@@ -8601,7 +8576,7 @@ dotnet test MyBlog.slnx -v normal
 
 
 ===============================================================================
-EXPORT COMPLETED: Sun Dec 28 08:27:47 AM CST 2025
+EXPORT COMPLETED: Sun Dec 28 08:39:30 AM CST 2025
 Total Files Found: 55
 Files Exported: 55
 Files Skipped: 0 (binary or large files)
