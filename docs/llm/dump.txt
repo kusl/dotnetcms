@@ -1,6 +1,6 @@
 ===============================================================================
 PROJECT EXPORT
-Generated: Sun Dec 28 07:52:04 AM CST 2025
+Generated: Sun Dec 28 07:55:45 AM CST 2025
 Project Path: /home/kushal/src/dotnet/MyBlog
 ===============================================================================
 
@@ -15,6 +15,7 @@ DIRECTORY STRUCTURE:
 │       │   └── 0002.txt
 │       ├── claude.md
 │       ├── dump.txt
+│       ├── gemini.md
 │       ├── kush.runasp.net-WebDeploy.publishSettings
 │       └── open-telemetry-hello-world.txt
 ├── src
@@ -6822,7 +6823,7 @@ public sealed class TelemetryCleanupService : BackgroundService
 ================================================================================
 FILE: src/MyBlog.Infrastructure/Telemetry/DatabaseLogExporter.cs
 SIZE: 2.11 KB
-MODIFIED: 2025-12-28 07:44:06
+MODIFIED: 2025-12-28 07:55:11
 ================================================================================
 
 using System.Text.Json;
@@ -6859,7 +6860,7 @@ public sealed class DatabaseLogExporter : BaseExporter<LogRecord>
             {
                 var log = new TelemetryLog
                 {
-                    TimestampUtc = record.Timestamp.UtcDateTime,
+                    TimestampUtc = record.Timestamp.ToUniversalTime(),
                     Level = record.LogLevel.ToString(),
                     Category = record.CategoryName ?? "Unknown",
                     Message = record.FormattedMessage ?? record.Body ?? "",
@@ -8588,7 +8589,7 @@ dotnet test MyBlog.slnx -v normal
 
 
 ===============================================================================
-EXPORT COMPLETED: Sun Dec 28 07:52:05 AM CST 2025
+EXPORT COMPLETED: Sun Dec 28 07:55:45 AM CST 2025
 Total Files Found: 55
 Files Exported: 55
 Files Skipped: 0 (binary or large files)
