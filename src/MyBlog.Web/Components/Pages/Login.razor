@@ -19,15 +19,15 @@
     <form method="post" @onsubmit="HandleLogin" @formname="login">
         <AntiforgeryToken />
         
-<div class="form-group">
-    <label for="username">Username</label>
-    <input type="text" id="username" name="username" @bind="_username" required />
-</div>
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" @bind="_username" required />
+        </div>
 
-<div class="form-group">
-    <label for="password">Password</label>
-    <input type="password" id="password" name="password" @bind="_password" required />
-</div>
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" @bind="_password" required />
+        </div>
 
         <button type="submit" class="btn btn-primary">Login</button>
     </form>
@@ -52,8 +52,15 @@
         // Use form values if available (SSR form post), otherwise use bound values
         var username = FormUsername ?? _username;
         var password = FormPassword ?? _password;
-        
+
+        if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+        {
+            _error = "Username and password are required";
+            return;
+        }
+
         var user = await AuthService.AuthenticateAsync(username, password);
+        
         if (user is null)
         {
             _error = "Invalid username or password";
@@ -64,21 +71,15 @@
         {
             new(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new(ClaimTypes.Name, user.Username),
-            new(ClaimTypes.Role, AppConstants.AdminRole)
+            new("DisplayName", user.DisplayName)
         };
 
         var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
         var principal = new ClaimsPrincipal(identity);
 
-        var context = HttpContextAccessor.HttpContext;
-        if (context is not null)
-        {
-            await context.SignInAsync(
-                CookieAuthenticationDefaults.AuthenticationScheme,
-                principal);
-        }
+        var context = HttpContextAccessor.HttpContext!;
+        await context.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
 
-        var returnUrl = ReturnUrl ?? "/admin";
-        Navigation.NavigateTo(returnUrl, forceLoad: true);
+        Navigation.NavigateTo(ReturnUrl ?? "/admin", forceLoad: true);
     }
 }

@@ -601,4 +601,61 @@ The given project `MyBlog.Web` has no updates given the current sources.
 real	0m1.954s
 user	0m1.929s
 sys	0m0.375s
-kushal@syn-2600-6c56-9840-001d-0000-0000-0000-1157:~/src/dotnet/MyBlog/src$ cd ~/src/dotnet/MyBlog/; time bash export.sh; cd ~/src/dotnet/MyBlog/src/; time dotnet format; time dotnet restore; time dotnet clean; time dotnet build; time dotnet test; time dotnet list package; time dotnet list package --outdated;
+kushal@syn-2600-6c56-9840-001d-0000-0000-0000-1157:~/src/dotnet/MyBlog/src$ cd ..
+kushal@syn-2600-6c56-9840-001d-0000-0000-0000-1157:~/src/dotnet/MyBlog$ time bash fix-login-logout.sh
+==============================================
+  MyBlog: Fix Login/Logout Flow
+==============================================
+
+[1/4] Updating Program.cs with logout endpoint...
+      Done.
+[2/4] Updating App.razor with interactive render mode...
+      Done.
+[3/4] Updating _Imports.razor...
+      Done.
+[4/4] Updating Login.razor...
+      Done.
+
+==============================================
+  Login/Logout Flow Fixed!
+==============================================
+
+Changes made:
+
+  1. Program.cs:
+     - Added MapPost('/logout') endpoint BEFORE MapRazorComponents
+     - This handles the POST from MainLayout's logout form
+     - The endpoint signs out and redirects to home
+
+  2. App.razor:
+     - Added @rendermode='InteractiveServer' to Routes and HeadOutlet
+     - This enables Blazor interactive features globally
+     - This also ensures blazor.web.js is served correctly
+
+  3. _Imports.razor:
+     - Added 'using static Microsoft.AspNetCore.Components.Web.RenderMode'
+     - Makes InteractiveServer available without full namespace
+
+  4. Login.razor:
+     - Added name='username' and name='password' attributes
+     - Added [SupplyParameterFromForm] for SSR form POST handling
+     - Uses form values when available, falls back to @bind values
+
+Why the logout was broken:
+  - MainLayout has: <form method='post' action='/logout'>
+  - This is an HTTP POST to /logout
+  - Blazor pages like Logout.razor handle GET requests
+  - Without MapPost('/logout'), the server returned 400 Bad Request
+
+Next steps:
+  1. Run: chmod +x fix-login-logout.sh && ./fix-login-logout.sh
+  2. Build: dotnet build src/MyBlog.slnx
+  3. Run: dotnet run --project src/MyBlog.Web
+  4. Test: Login with admin credentials, then click Logout
+
+fix-login-logout.sh: line 337: EOF: command not found
+
+real	0m0.017s
+user	0m0.002s
+sys	0m0.006s
+kushal@syn-2600-6c56-9840-001d-0000-0000-0000-1157:~/src/dotnet/MyBlog$ 

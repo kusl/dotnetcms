@@ -37,79 +37,76 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
             : CookieSecurePolicy.SameAsRequest;
     });
 
-builder.Services.AddHttpContextAccessor();
-builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddAuthorization();
+builder.Services.AddCascadingAuthenticationState();
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddAntiforgery();
 
-// Configure OpenTelemetry
+// OpenTelemetry configuration
 var serviceName = "MyBlog.Web";
-var serviceVersion = "1.0.0";
+var serviceVersion = typeof(Program).Assembly.GetName().Version?.ToString() ?? "1.0.0";
 
 builder.Services.AddOpenTelemetry()
-    .ConfigureResource(resource => resource.AddService(serviceName, serviceVersion))
+    .ConfigureResource(resource => resource
+        .AddService(serviceName: serviceName, serviceVersion: serviceVersion))
     .WithTracing(tracing => tracing
         .AddAspNetCoreInstrumentation()
         .AddHttpClientInstrumentation()
-        .AddConsoleExporter())
+        .AddSource(serviceName)
+        .AddProcessor(new FileActivityExporter(TelemetryPaths.GetTracePath())))
     .WithMetrics(metrics => metrics
         .AddAspNetCoreInstrumentation()
         .AddHttpClientInstrumentation()
-        .AddConsoleExporter());
+        .AddRuntimeInstrumentation()
+        .AddReader(new PeriodicExportingMetricReader(
+            new FileMetricExporter(TelemetryPaths.GetMetricsPath()),
+            exportIntervalMilliseconds: 60000)));
 
-// Configure OpenTelemetry logging
 builder.Logging.AddOpenTelemetry(logging =>
 {
-    logging.SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(serviceName, serviceVersion));
     logging.IncludeFormattedMessage = true;
     logging.IncludeScopes = true;
-    logging.AddConsoleExporter();
+    logging.AddProcessor(new FileLogExporter(TelemetryPaths.GetLogsPath()));
 });
 
 var app = builder.Build();
 
-// Initialize database and ensure admin user exists
+// Initialize database
 using (var scope = app.Services.CreateScope())
 {
-    var context = scope.ServiceProvider.GetRequiredService<BlogDbContext>();
-    await context.Database.EnsureCreatedAsync();
-
-    var authService = scope.ServiceProvider.GetRequiredService<IAuthService>();
-    await authService.EnsureAdminUserAsync();
+    var db = scope.ServiceProvider.GetRequiredService<BlogDbContext>();
+    await db.Database.MigrateAsync();
+    await DbSeeder.SeedAsync(scope.ServiceProvider);
 }
 
-// Configure HTTP pipeline
+// Start telemetry cleanup service
+var cleanupService = app.Services.GetRequiredService<TelemetryCleanupService>();
+_ = cleanupService.StartAsync(CancellationToken.None);
+
+// Configure middleware pipeline
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Error", createScopeForErrors: true);
-    if (builder.Configuration.GetValue("Application:RequireHttps", false))
-    {
-        app.UseHsts();
-        app.UseHttpsRedirection();
-    }
+    app.UseExceptionHandler("/Error");
 }
 
 app.UseStaticFiles();
-app.UseLoginRateLimit();
-app.UseAuthentication();
-app.UseAuthorization();
 app.UseAntiforgery();
 
-// Map logout endpoint - handles POST from the logout form in MainLayout
+app.UseAuthentication();
+app.UseAuthorization();
+
+// Rate limiting for login
+app.UseLoginRateLimit();
+
+// CRITICAL: Add logout endpoint BEFORE MapRazorComponents
+// This handles the POST from MainLayout's logout form
 app.MapPost("/logout", async (HttpContext context) =>
 {
     await context.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
     return Results.Redirect("/");
 }).RequireAuthorization();
 
-// Image endpoint
-app.MapGet("/api/images/{id:guid}", async (Guid id, IImageRepository repo, CancellationToken ct) =>
-{
-    var image = await repo.GetByIdAsync(id, ct);
-    return image is null
-        ? Results.NotFound()
-        : Results.File(image.Data, image.ContentType, image.FileName);
-});
-
+// Map Blazor components with interactive server rendering
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
