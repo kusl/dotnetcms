@@ -12,7 +12,7 @@ public class AuthServiceTests : IAsyncDisposable
 {
     private readonly BlogDbContext _context;
     private readonly AuthService _sut;
-    private readonly PasswordService _passwordService;
+    private readonly PasswordService _passwordService = new();
 
     public AuthServiceTests()
     {
@@ -25,7 +25,6 @@ public class AuthServiceTests : IAsyncDisposable
         _context.Database.EnsureCreated();
 
         var userRepository = new UserRepository(_context);
-        _passwordService = new PasswordService();
         var configuration = new ConfigurationBuilder()
             .AddInMemoryCollection(new Dictionary<string, string?>
             {
@@ -42,7 +41,7 @@ public class AuthServiceTests : IAsyncDisposable
     }
 
     [Fact]
-    public async Task ValidateCredentialsAsync_WithValidCredentials_ReturnsUser()
+    public async Task AuthenticateAsync_WithValidCredentials_ReturnsUser()
     {
         var ct = TestContext.Current.CancellationToken;
         var password = "TestPassword123";
@@ -58,14 +57,14 @@ public class AuthServiceTests : IAsyncDisposable
         _context.Users.Add(user);
         await _context.SaveChangesAsync(ct);
 
-        var result = await _sut.ValidateCredentialsAsync("testuser", password, ct);
+        var result = await _sut.AuthenticateAsync("testuser", password, ct);
 
         Assert.NotNull(result);
         Assert.Equal("testuser", result.Username);
     }
 
     [Fact]
-    public async Task ValidateCredentialsAsync_WithInvalidPassword_ReturnsNull()
+    public async Task AuthenticateAsync_WithInvalidPassword_ReturnsNull()
     {
         var ct = TestContext.Current.CancellationToken;
         var user = new User
@@ -80,16 +79,16 @@ public class AuthServiceTests : IAsyncDisposable
         _context.Users.Add(user);
         await _context.SaveChangesAsync(ct);
 
-        var result = await _sut.ValidateCredentialsAsync("testuser", "WrongPassword", ct);
+        var result = await _sut.AuthenticateAsync("testuser", "WrongPassword", ct);
 
         Assert.Null(result);
     }
 
     [Fact]
-    public async Task ValidateCredentialsAsync_WithNonExistentUser_ReturnsNull()
+    public async Task AuthenticateAsync_WithNonExistentUser_ReturnsNull()
     {
         var ct = TestContext.Current.CancellationToken;
-        var result = await _sut.ValidateCredentialsAsync("nonexistent", "password", ct);
+        var result = await _sut.AuthenticateAsync("nonexistent", "password", ct);
         Assert.Null(result);
     }
 

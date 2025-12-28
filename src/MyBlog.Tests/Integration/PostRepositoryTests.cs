@@ -91,16 +91,17 @@ public class PostRepositoryTests : IAsyncDisposable
     }
 
     [Fact]
-    public async Task GetPublishedAsync_ReturnsOnlyPublishedPosts()
+    public async Task GetPublishedPostsAsync_ReturnsOnlyPublishedPosts()
     {
         var ct = TestContext.Current.CancellationToken;
         await _sut.CreateAsync(CreateTestPost("Published", isPublished: true), ct);
         await _sut.CreateAsync(CreateTestPost("Draft", isPublished: false), ct);
 
-        var result = await _sut.GetPublishedAsync(1, 10, ct);
+        var (posts, totalCount) = await _sut.GetPublishedPostsAsync(1, 10, ct);
 
-        Assert.Single(result);
-        Assert.Equal("Published", result.First().Title);
+        Assert.Single(posts);
+        Assert.Equal("Published", posts.First().Title);
+        Assert.Equal(1, totalCount);
     }
 
     [Fact]
@@ -131,16 +132,16 @@ public class PostRepositoryTests : IAsyncDisposable
     }
 
     [Fact]
-    public async Task GetPublishedCountAsync_ReturnsCorrectCount()
+    public async Task GetPublishedPostsAsync_ReturnsCorrectCount()
     {
         var ct = TestContext.Current.CancellationToken;
         await _sut.CreateAsync(CreateTestPost("Post 1", isPublished: true), ct);
         await _sut.CreateAsync(CreateTestPost("Post 2", isPublished: true), ct);
         await _sut.CreateAsync(CreateTestPost("Draft", isPublished: false), ct);
 
-        var count = await _sut.GetPublishedCountAsync(ct);
+        var (_, totalCount) = await _sut.GetPublishedPostsAsync(1, 10, ct);
 
-        Assert.Equal(2, count);
+        Assert.Equal(2, totalCount);
     }
 
     private Post CreateTestPost(string title, string? slug = null, bool isPublished = true)

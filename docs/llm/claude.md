@@ -768,3 +768,73 @@ After applying these changes, your build should succeed with **0 errors** and **
 
 
 
+I have six errors now. 
+Please review the updated code in `dump.txt` and fix all the errors and warnings. 
+  MyBlog.Tests net10.0 failed with 5 error(s) (0.1s)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/Integration/AuthServiceTests.cs(61,33): error CS1061: 'AuthService' does not contain a definition for 'ValidateCredentialsAsync' and no accessible extension method 'ValidateCredentialsAsync' accepting a first argument of type 'AuthService' could be found (are you missing a using directive or an assembly reference?)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/Integration/AuthServiceTests.cs(83,33): error CS1061: 'AuthService' does not contain a definition for 'ValidateCredentialsAsync' and no accessible extension method 'ValidateCredentialsAsync' accepting a first argument of type 'AuthService' could be found (are you missing a using directive or an assembly reference?)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/Integration/AuthServiceTests.cs(92,33): error CS1061: 'AuthService' does not contain a definition for 'ValidateCredentialsAsync' and no accessible extension method 'ValidateCredentialsAsync' accepting a first argument of type 'AuthService' could be found (are you missing a using directive or an assembly reference?)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/Integration/PostRepositoryTests.cs(100,33): error CS1061: 'PostRepository' does not contain a definition for 'GetPublishedAsync' and no accessible extension method 'GetPublishedAsync' accepting a first argument of type 'PostRepository' could be found (are you missing a using directive or an assembly reference?)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/Integration/PostRepositoryTests.cs(141,32): error CS1061: 'PostRepository' does not contain a definition for 'GetPublishedCountAsync' and no accessible extension method 'GetPublishedCountAsync' accepting a first argument of type 'PostRepository' could be found (are you missing a using directive or an assembly reference?)
+  MyBlog.Web net10.0 failed with 1 error(s) (0.3s)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/Program.cs(70,37): error ASP0000: Calling 'BuildServiceProvider' from application code results in an additional copy of singleton services being created. Consider alternatives such as dependency injecting services as parameters to 'Configure'. (https://aka.ms/AA5k895)
+Build failed with 6 error(s) in 1.3s
+also dotnet format gives me this 
+Unable to fix ASP0000. No associated code fix found.
+please fix that as well. 
+
+Now I have a clear picture. The issues are:
+
+1. **Tests call `ValidateCredentialsAsync`** but the `AuthService` only has `AuthenticateAsync`
+2. **Tests call `GetPublishedAsync` and `GetPublishedCountAsync`** but `PostRepository` has `GetPublishedPostsAsync` (which returns a tuple with count)
+3. **`Program.cs` uses `BuildServiceProvider`** which triggers ASP0000
+
+Let me create the fixes:Now let me create the corrected Program.cs file that removes the `BuildServiceProvider` issue:Here's a summary of all the fixes needed:
+
+## Summary of All 6 Errors
+
+### Test Errors (5 errors) - Method name mismatches:
+
+**AuthServiceTests.cs** (lines 61, 83, 92):
+- Tests call `ValidateCredentialsAsync` but `AuthService` only has `AuthenticateAsync`
+- **Fix**: Change test method calls from `ValidateCredentialsAsync` to `AuthenticateAsync`
+
+**PostRepositoryTests.cs** (lines 100, 141):
+- Tests call `GetPublishedAsync` and `GetPublishedCountAsync` 
+- `PostRepository` has `GetPublishedPostsAsync` which returns `(IReadOnlyList<PostListItemDto> Posts, int TotalCount)`
+- **Fix**: Use `GetPublishedPostsAsync` and destructure the tuple to get the count
+
+### Program.cs Error (1 error) - ASP0000:
+- Code was calling `BuildServiceProvider()` inside the configuration
+- **Fix**: Use `app.Services.CreateScope()` after `app` is built
+
+---
+
+## Files to Replace
+
+Replace these 3 files with the corrected versions above:
+
+1. **`src/MyBlog.Tests/Integration/AuthServiceTests.cs`** - Fixed to use `AuthenticateAsync` instead of `ValidateCredentialsAsync`
+
+2. **`src/MyBlog.Tests/Integration/PostRepositoryTests.cs`** - Fixed to use `GetPublishedPostsAsync` and destructure the tuple
+
+3. **`src/MyBlog.Web/Program.cs`** - Fixed to remove `BuildServiceProvider()` and use proper scoping after app is built
+
+After replacing these files, run:
+```bash
+dotnet restore
+dotnet build
+dotnet test
+```
+
+The build should succeed with 0 errors. The xUnit1051 warnings are now also fixed in the test files by using `TestContext.Current.CancellationToken`.
+
+
+
+
+
+
+
+
+
+

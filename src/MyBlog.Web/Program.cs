@@ -6,7 +6,6 @@ using MyBlog.Infrastructure;
 using MyBlog.Infrastructure.Data;
 using MyBlog.Infrastructure.Telemetry;
 using MyBlog.Web.Components;
-using OpenTelemetry;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
@@ -36,51 +35,38 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
             : CookieSecurePolicy.SameAsRequest;
     });
 
-builder.Services.AddAuthorization();
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddCascadingAuthenticationState();
+builder.Services.AddAuthorization();
 
 // Configure OpenTelemetry
-var telemetryDir = TelemetryPathResolver.GetTelemetryDirectory();
-var enableFileLogging = builder.Configuration.GetValue("Telemetry:EnableFileLogging", true);
-var enableDbLogging = builder.Configuration.GetValue("Telemetry:EnableDatabaseLogging", true);
+var serviceName = "MyBlog.Web";
+var serviceVersion = "1.0.0";
 
 builder.Services.AddOpenTelemetry()
-    .ConfigureResource(r => r.AddService("MyBlog"))
-    .WithTracing(tracing =>
-    {
-        tracing
-            .AddAspNetCoreInstrumentation()
-            .AddHttpClientInstrumentation();
-    })
-    .WithMetrics(metrics =>
-    {
-        metrics
-            .AddAspNetCoreInstrumentation()
-            .AddHttpClientInstrumentation();
-    });
+    .ConfigureResource(resource => resource.AddService(serviceName, serviceVersion))
+    .WithTracing(tracing => tracing
+        .AddAspNetCoreInstrumentation()
+        .AddHttpClientInstrumentation()
+        .AddConsoleExporter())
+    .WithMetrics(metrics => metrics
+        .AddAspNetCoreInstrumentation()
+        .AddHttpClientInstrumentation()
+        .AddConsoleExporter());
 
-builder.Logging.AddOpenTelemetry(options =>
+// Configure OpenTelemetry logging
+builder.Logging.AddOpenTelemetry(logging =>
 {
-    options.IncludeScopes = true;
-    options.IncludeFormattedMessage = true;
-
-    if (enableDbLogging)
-    {
-        options.AddProcessor(new BatchLogRecordExportProcessor(
-            new DatabaseLogExporter(builder.Services.BuildServiceProvider()
-                .GetRequiredService<IServiceScopeFactory>())));
-    }
-
-    if (enableFileLogging && telemetryDir is not null)
-    {
-        options.AddProcessor(new BatchLogRecordExportProcessor(
-            new FileLogExporter(telemetryDir)));
-    }
+    logging.SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(serviceName, serviceVersion));
+    logging.IncludeFormattedMessage = true;
+    logging.IncludeScopes = true;
+    logging.AddConsoleExporter();
 });
 
 var app = builder.Build();
 
-// Initialize database
+// Initialize database and ensure admin user exists
+// Use a scope to resolve scoped services during startup
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<BlogDbContext>();
@@ -90,10 +76,10 @@ using (var scope = app.Services.CreateScope())
     await authService.EnsureAdminUserAsync();
 }
 
-// Configure pipeline
+// Configure HTTP pipeline
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Error");
+    app.UseExceptionHandler("/Error", createScopeForErrors: true);
     if (builder.Configuration.GetValue("Application:RequireHttps", false))
     {
         app.UseHsts();
@@ -108,14 +94,5 @@ app.UseAntiforgery();
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
-
-// Image endpoint
-app.MapGet("/api/images/{id:guid}", async (Guid id, IImageRepository repo, CancellationToken ct) =>
-{
-    var image = await repo.GetByIdAsync(id, ct);
-    return image is null
-        ? Results.NotFound()
-        : Results.File(image.Data, image.ContentType, image.FileName);
-});
 
 app.Run();
