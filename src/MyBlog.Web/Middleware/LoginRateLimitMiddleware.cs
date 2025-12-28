@@ -99,7 +99,7 @@ public sealed class LoginRateLimitMiddleware
     /// <summary>
     /// Calculates the delay for a given IP. Exposed for testing.
     /// </summary>
-    internal static TimeSpan CalculateDelay(string ip)
+    public static TimeSpan CalculateDelay(string ip)
     {
         if (!_attempts.TryGetValue(ip, out var record))
         {
@@ -155,7 +155,7 @@ public sealed class LoginRateLimitMiddleware
     /// <summary>
     /// Clears all tracked attempts. For testing only.
     /// </summary>
-    internal static void ClearAttempts()
+    public static void ClearAttempts()
     {
         _attempts.Clear();
     }

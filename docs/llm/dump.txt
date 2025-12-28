@@ -1,6 +1,6 @@
 ===============================================================================
 PROJECT EXPORT
-Generated: Sun Dec 28 12:44:30 PM CST 2025
+Generated: Sun Dec 28 12:48:28 PM CST 2025
 Project Path: /home/kushal/src/dotnet/MyBlog
 ===============================================================================
 
@@ -10349,7 +10349,7 @@ MODIFIED: 2025-12-28 10:14:51
 ================================================================================
 FILE: src/MyBlog.Web/Middleware/LoginRateLimitMiddleware.cs
 SIZE: 5.57 KB
-MODIFIED: 2025-12-28 12:40:25
+MODIFIED: 2025-12-28 12:47:56
 ================================================================================
 
 using System.Collections.Concurrent;
@@ -10382,7 +10382,7 @@ public sealed class LoginRateLimitMiddleware
     /// <summary>
     /// Constructor with injectable delay function for testing.
     /// </summary>
-    internal LoginRateLimitMiddleware(
+    public LoginRateLimitMiddleware(
         RequestDelegate next,
         ILogger<LoginRateLimitMiddleware> logger,
         Func<TimeSpan, CancellationToken, Task>? delayFunc)
@@ -12202,7 +12202,7 @@ echo "=============================================="
 
 
 ===============================================================================
-EXPORT COMPLETED: Sun Dec 28 12:44:31 PM CST 2025
+EXPORT COMPLETED: Sun Dec 28 12:48:29 PM CST 2025
 Total Files Found: 63
 Files Exported: 63
 Files Skipped: 0 (binary or large files)
