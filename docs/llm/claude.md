@@ -1148,3 +1148,47 @@ jobs:
 
 
 
+I put the details exactly like this (with real information)
+WEBSITE_NAME: siteXXXX
+SERVER_COMPUTER_NAME: https://siteXXXX.siteasp.net:8172
+SERVER_USERNAME: siteXXXX
+SERVER_PASSWORD: *********
+as explained in https://help.monsterasp.net/books/github/page/how-to-deploy-website-via-github-actions
+but I got this error  
+Run $msdeployPath = "C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe"
+  $msdeployPath = "C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe"
+  
+  if (-not (Test-Path $msdeployPath)) {
+    Write-Host "Installing Web Deploy..."
+    choco install webdeploy -y --no-progress
+  }
+  
+  Write-Host "Deploying to $env:DEPLOY_HOST..."
+  
+  $sourceArg = "-source:contentPath=$env:DEPLOY_SOURCE"
+  $destArg = "-dest:contentPath=$env:DEPLOY_SITE,computerName=https://$($env:DEPLOY_HOST):8172/msdeploy.axd,userName=$env:DEPLOY_USER,***"
+  
+  & $msdeployPath -verb:sync $sourceArg $destArg -allowUntrusted -enableRule:DoNotDeleteRule
+  
+  if ($LASTEXITCODE -ne 0) {
+    Write-Error "Deployment failed with exit code $LASTEXITCODE"
+    exit 1
+  }
+  
+  Write-Host "Deployment completed successfully!"
+  shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+  env:
+    DOTNET_ROOT: C:\Program Files\dotnet
+    DEPLOY_SOURCE: D:\a\dotnetcms\dotnetcms\publish
+    DEPLOY_SITE: ***
+    DEPLOY_HOST: ***
+    DEPLOY_USER: ***
+    DEPLOY_PASSWORD: ***
+Deploying to ***...
+Info: Using ID '66d1de15-2d1e-4abf-8bfb-3397f93465fa' for connections to the remote server.
+Error Code: ERROR_DESTINATION_INVALID
+More Information:  Could not connect to the remote computer ("https"). Make sure that the remote computer name is correct and that you are able to connect to that computer.  Learn more at: https://go.microsoft.com/fwlink/?LinkId=221672#ERROR_DESTINATION_INVALID.
+Error: The remote name could not be resolved: 'https'
+Error count: 1.
+Write-Error: Deployment failed with exit code -1
+Error: Process completed with exit code 1.
