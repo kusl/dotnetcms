@@ -185,4 +185,3 @@ echo "  1. Run: chmod +x fix-program-cs.sh && ./fix-program-cs.sh"
 echo "  2. Build: dotnet build src/MyBlog.slnx"
 echo "  3. Test: dotnet run --project src/MyBlog.Web"
 echo ""
-EOF

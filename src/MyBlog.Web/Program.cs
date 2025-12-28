@@ -70,7 +70,7 @@ builder.Logging.AddOpenTelemetry(logging =>
     logging.IncludeFormattedMessage = true;
     logging.IncludeScopes = true;
     logging.AddConsoleExporter();
-
+    
     // Add file exporter if we have a writable directory
     if (telemetryDir is not null)
     {
@@ -87,7 +87,7 @@ using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<BlogDbContext>();
     await db.Database.MigrateAsync();
-
+    
     // Seed admin user using the auth service
     var authService = scope.ServiceProvider.GetRequiredService<IAuthService>();
     await authService.EnsureAdminUserAsync();
