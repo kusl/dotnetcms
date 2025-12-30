@@ -397,4 +397,33 @@ The given project `MyBlog.Web` has no updates given the current sources.
 real	0m1.509s
 user	0m1.501s
 sys	0m0.301s
-kushal@syn-2600-6c56-9840-001d-0000-0000-0000-1157:~/src/dotnet/MyBlog/src$ cd ~/src/dotnet/MyBlog/; time bash export.sh; cd ~/src/dotnet/MyBlog/src/; time dotnet format; time dotnet restore; time dotnet clean; time dotnet build; time dotnet test; time dotnet list package; time dotnet list package --outdated;
+kushal@syn-2600-6c56-9840-001d-0000-0000-0000-1157:~/src/dotnet/MyBlog/src$ time bash fix-auth-architecture.sh
+bash: fix-auth-architecture.sh: No such file or directory
+
+real	0m0.004s
+user	0m0.001s
+sys	0m0.003s
+kushal@syn-2600-6c56-9840-001d-0000-0000-0000-1157:~/src/dotnet/MyBlog/src$ cd .. 
+kushal@syn-2600-6c56-9840-001d-0000-0000-0000-1157:~/src/dotnet/MyBlog$ time bash fix-auth-architecture.sh
+========================================================
+  Fixing Blazor Authentication Architecture
+  Switching from Global Interactivity to Per-Page Mode
+========================================================
+Updating App.razor...
+Updating PostEditor.razor...
+Updating ImageManager.razor...
+Updating PostList.razor...
+Updating _Imports.razor...
+========================================================
+  Fix Complete.
+========================================================
+  1. Rebuild your project.
+  2. Deploy.
+  3. IMPORTANT: Clear your browser cookies for kush.runasp.net
+     before trying to log in again.
+========================================================
+
+real	0m0.007s
+user	0m0.001s
+sys	0m0.006s
+kushal@syn-2600-6c56-9840-001d-0000-0000-0000-1157:~/src/dotnet/MyBlog$ 
