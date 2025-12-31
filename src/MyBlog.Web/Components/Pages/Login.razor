@@ -49,7 +49,6 @@
 
     private async Task HandleLogin()
     {
-        // Use form values if available (SSR form post), otherwise use bound values
         var username = FormUsername ?? _username;
         var password = FormPassword ?? _password;
 
@@ -60,18 +59,19 @@
         }
 
         var user = await AuthService.AuthenticateAsync(username, password);
-        
         if (user is null)
         {
             _error = "Invalid username or password";
             return;
         }
 
+        // FIX: Added the Role claim here so [Authorize(Roles="Admin")] works
         var claims = new List<Claim>
         {
             new(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new(ClaimTypes.Name, user.Username),
-            new("DisplayName", user.DisplayName)
+            new("DisplayName", user.DisplayName),
+            new(ClaimTypes.Role, AppConstants.AdminRole) 
         };
 
         var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -79,7 +79,7 @@
 
         var context = HttpContextAccessor.HttpContext!;
         await context.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
-
+        
         Navigation.NavigateTo(ReturnUrl ?? "/admin", forceLoad: true);
     }
 }

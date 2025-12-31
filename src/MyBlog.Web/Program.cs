@@ -9,7 +9,7 @@ using MyBlog.Infrastructure.Services;
 using MyBlog.Infrastructure.Telemetry;
 using MyBlog.Web.Components;
 using MyBlog.Web.Middleware;
-using OpenTelemetry; // Required for BatchLogRecordExportProcessor
+using OpenTelemetry; 
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
@@ -34,6 +34,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.Cookie.Name = AppConstants.AuthCookieName;
         options.LoginPath = "/login";
         options.LogoutPath = "/logout";
+        options.AccessDeniedPath = "/access-denied"; // FIX: Added explicit Access Denied path
         options.ExpireTimeSpan = TimeSpan.FromMinutes(sessionTimeout);
         options.SlidingExpiration = true;
         options.Cookie.HttpOnly = true;
@@ -50,7 +51,6 @@ builder.Services.AddAntiforgery();
 // OpenTelemetry configuration
 var serviceName = "MyBlog.Web";
 var serviceVersion = typeof(Program).Assembly.GetName().Version?.ToString() ?? "1.0.0";
-
 builder.Services.AddOpenTelemetry()
     .ConfigureResource(resource => resource
         .AddService(serviceName: serviceName, serviceVersion: serviceVersion))
@@ -72,30 +72,26 @@ builder.Logging.AddOpenTelemetry(logging =>
     logging.IncludeScopes = true;
     logging.AddConsoleExporter();
 
-    // Add file exporter if we have a writable directory
     if (telemetryDir is not null)
     {
         var logsPath = Path.Combine(telemetryDir, "logs");
         Directory.CreateDirectory(logsPath);
-        // FIX: Exporters must be wrapped in a Processor (Batch or Simple)
         logging.AddProcessor(new BatchLogRecordExportProcessor(new FileLogExporter(logsPath)));
     }
 });
 
 var app = builder.Build();
 
-// Initialize database and seed admin user
+// Initialize database
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<BlogDbContext>();
     await db.Database.MigrateAsync();
 
-    // Seed admin user using the auth service
     var authService = scope.ServiceProvider.GetRequiredService<IAuthService>();
     await authService.EnsureAdminUserAsync();
 }
 
-// Configure middleware pipeline
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
@@ -107,18 +103,14 @@ app.UseAntiforgery();
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Rate limiting for login
 app.UseLoginRateLimit();
 
-// CRITICAL: Add logout endpoint BEFORE MapRazorComponents
-// This handles the POST from MainLayout's logout form
 app.MapPost("/logout", async (HttpContext context) =>
 {
     await context.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
     return Results.Redirect("/");
 }).RequireAuthorization();
 
-// Map Blazor components with interactive server rendering
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
