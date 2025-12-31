@@ -1252,3 +1252,137 @@ real	0m1.498s
 user	0m1.509s
 sys	0m0.287s
 kushal@syn-2600-6c56-9840-001d-0000-0000-0000-1157:~/src/dotnet/MyBlog/src$ 
+
+
+
+
+
+
+I can access this page now but I cannot submit the form to create a new user. why? https://kush.runasp.net/admin/users/new
+
+It appears you are running into a common issue with Blazor's **Antiforgery tokens** and the way the form is handled in `UserCreate.razor`.
+
+Based on the `dump.txt` (Source 65), there are two specific reasons why your form submission is likely failing:
+
+### 1. The Missing `[SupplyParameterFromForm]`
+
+In your `UserCreate.razor` code, you have a private property `_model`. However, in Blazor Server/Static SSR, for the form data to actually be "bound" to that object when the post happens, you must explicitly tell the framework to supply it from the form.
+
+### 2. Antiforgery Token mismatch
+
+If you are using `<form method="post">`, Blazor requires a valid Antiforgery token. While you have the tag in your HTML, the page might not be processing the post-back correctly if the model binding isn't established.
+
+---
+
+### The Fix
+
+To resolve this, update your `UserCreate.razor` (Source 65) with the following changes:
+
+```razor
+@page "/admin/users/new"
+@using MyBlog.Core.Models
+@using MyBlog.Core.Interfaces
+@inject IAuthService AuthService
+@inject NavigationManager Navigation
+@attribute [Authorize(Roles = AppConstants.AdminRole)]
+
+<PageTitle>New User - Admin</PageTitle>
+
+<div class="admin-container">
+    <header class="admin-header">
+        <h1>Create New User</h1>
+        <a href="/admin/users" class="btn btn-secondary">Back to List</a>
+    </header>
+
+    @if (!string.IsNullOrEmpty(_error))
+    {
+        <div class="alert alert-danger">@_error</div>
+    }
+
+    @* Ensure formname matches the model name *@
+    <form method="post" @onsubmit="HandleSubmit" @formname="create-user-form">
+        <AntiforgeryToken />
+        
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" class="form-control" @bind="_model.Username" required />
+        </div>
+
+        <div class="form-group">
+            <label for="displayName">Display Name</label>
+            <input type="text" id="displayName" class="form-control" @bind="_model.DisplayName" required />
+        </div>
+
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" class="form-control" @bind="_model.Password" required />
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary" disabled="@_isSubmitting">
+                @(_isSubmitting ? "Creating..." : "Create User")
+            </button>
+        </div>
+    </form>
+</div>
+
+@code {
+    // FIX: Added SupplyParameterFromForm and ensured it's initialized
+    [SupplyParameterFromForm(Name = "create-user-form")]
+    private UserCreateModel _model { get; set; } = new();
+
+    private string? _error;
+    private bool _isSubmitting;
+
+    private async Task HandleSubmit()
+    {
+        if (_isSubmitting) return;
+        
+        try 
+        {
+            _isSubmitting = true;
+            _error = null;
+
+            // Simple validation
+            if (string.IsNullOrWhiteSpace(_model.Username) || string.IsNullOrWhiteSpace(_model.Password))
+            {
+                _error = "Username and Password are required.";
+                return;
+            }
+
+            var success = await AuthService.CreateUserAsync(_model);
+            if (success)
+            {
+                Navigation.NavigateTo("/admin/users");
+            }
+            else
+            {
+                _error = "Failed to create user. The username might already exist.";
+            }
+        }
+        catch (Exception ex)
+        {
+            _error = $"An error occurred: {ex.Message}";
+        }
+        finally
+        {
+            _isSubmitting = false;
+        }
+    }
+
+    public class UserCreateModel : MyBlog.Core.Models.User // Or your specific DTO
+    {
+        public string Password { get; set; } = "";
+    }
+}
+
+```
+
+### Key Changes Made:
+
+1. **`[SupplyParameterFromForm]`**: This is the most critical addition. Without this attribute, `_model` remains empty or null when the server receives the POST request.
+2. **`@formname`**: Matching the name in the attribute to the name in the HTML tag ensures the framework maps the incoming data to the correct object.
+3. **Error Handling**: I wrapped the logic in a `try-catch` block. If the database fails or a unique constraint is hit, you will now see the actual error message on the screen instead of the form just "doing nothing."
+
+Would you like me to check if your `IAuthService.CreateUserAsync` implementation is also missing any specific logic to handle these new users?
+
