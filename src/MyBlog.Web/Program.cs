@@ -9,7 +9,7 @@ using MyBlog.Infrastructure.Services;
 using MyBlog.Infrastructure.Telemetry;
 using MyBlog.Web.Components;
 using MyBlog.Web.Middleware;
-using OpenTelemetry; 
+using OpenTelemetry;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
