@@ -11,7 +11,8 @@
                 <a href="/about">About</a>
                 <AuthorizeView>
                     <Authorized>
-                        <a href="/admin">Admin</a>
+                        <a href="/admin">Dashboard</a>
+                        <a href="/admin/users">Users</a>
                         <form method="post" action="/logout" class="logout-form">
                             <AntiforgeryToken />
                             <button type="submit">Logout</button>
@@ -34,7 +35,6 @@
     <footer class="footer">
         <div class="container">
             <p>&copy; @DateTime.Now.Year @(Configuration["Application:Title"] ?? "MyBlog")</p>
-            <p>Find the application source code on <a href="https://github.com/kusl/dotnetcms">github</a>.</p>
         </div>
     </footer>
 </div>

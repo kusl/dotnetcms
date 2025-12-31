@@ -12,7 +12,6 @@ public sealed class UserRepository : IUserRepository
 {
     private readonly BlogDbContext _context;
 
-    /// <summary>Initializes a new instance of UserRepository.</summary>
     public UserRepository(BlogDbContext context) => _context = context;
 
     /// <inheritdoc />
@@ -23,6 +22,10 @@ public sealed class UserRepository : IUserRepository
     public async Task<User?> GetByUsernameAsync(string username, CancellationToken cancellationToken = default)
         => await _context.Users.FirstOrDefaultAsync(
             u => u.Username.ToLower() == username.ToLower(), cancellationToken);
+
+    /// <inheritdoc />
+    public async Task<IReadOnlyList<User>> GetAllAsync(CancellationToken cancellationToken = default)
+        => await _context.Users.OrderBy(u => u.Username).ToListAsync(cancellationToken);
 
     /// <inheritdoc />
     public async Task<bool> AnyUsersExistAsync(CancellationToken cancellationToken = default)
@@ -40,5 +43,16 @@ public sealed class UserRepository : IUserRepository
     {
         _context.Users.Update(user);
         await _context.SaveChangesAsync(cancellationToken);
+    }
+
+    /// <inheritdoc />
+    public async Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        var user = await _context.Users.FindAsync([id], cancellationToken);
+        if (user is not null)
+        {
+            _context.Users.Remove(user);
+            await _context.SaveChangesAsync(cancellationToken);
+        }
     }
 }

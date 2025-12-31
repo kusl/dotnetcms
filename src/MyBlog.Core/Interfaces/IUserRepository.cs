@@ -13,6 +13,9 @@ public interface IUserRepository
     /// <summary>Gets a user by username.</summary>
     Task<User?> GetByUsernameAsync(string username, CancellationToken cancellationToken = default);
 
+    /// <summary>Gets all users.</summary>
+    Task<IReadOnlyList<User>> GetAllAsync(CancellationToken cancellationToken = default);
+
     /// <summary>Checks if any users exist.</summary>
     Task<bool> AnyUsersExistAsync(CancellationToken cancellationToken = default);
 
@@ -21,4 +24,7 @@ public interface IUserRepository
 
     /// <summary>Updates an existing user.</summary>
     Task UpdateAsync(User user, CancellationToken cancellationToken = default);
+
+    /// <summary>Deletes a user by ID.</summary>
+    Task DeleteAsync(Guid id, CancellationToken cancellationToken = default);
 }

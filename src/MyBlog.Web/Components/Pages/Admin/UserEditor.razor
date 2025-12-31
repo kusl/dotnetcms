@@ -1,0 +1,157 @@
+@page "/admin/users/new"
+@page "/admin/users/edit/{Id:guid}"
+@attribute [Authorize(Roles = AppConstants.AdminRole)]
+@inject IUserRepository UserRepository
+@inject IPasswordService PasswordService
+@inject NavigationManager Navigation
+
+<PageTitle>@(_isEdit ? "Edit User" : "New User")</PageTitle>
+
+<h1>@(_isEdit ? "Edit User" : "New User")</h1>
+
+<div class="user-editor" style="max-width: 600px;">
+    @if (!string.IsNullOrEmpty(_error))
+    {
+        <div class="error-message">@_error</div>
+    }
+
+    <div class="form-group">
+        <label for="username">Username</label>
+        <input type="text" id="username" @bind="_username" required />
+    </div>
+
+    <div class="form-group">
+        <label for="displayName">Display Name</label>
+        <input type="text" id="displayName" @bind="_displayName" required />
+    </div>
+
+    <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" @bind="_email" required />
+    </div>
+
+    <div class="form-group">
+        <label for="password">Password @(_isEdit ? "(Leave blank to keep current)" : "")</label>
+        <input type="password" id="password" @bind="_password" required="@(!_isEdit)" />
+        @if (!_isEdit) 
+        {
+            <small>Required for new users.</small>
+        }
+    </div>
+
+    <div class="form-actions">
+        <button @onclick="Save" class="btn btn-primary" disabled="@_saving">
+            @(_saving ? "Saving..." : "Save User")
+        </button>
+        <a href="/admin/users" class="btn">Cancel</a>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public Guid? Id { get; set; }
+
+    private bool _isEdit => Id.HasValue;
+    private bool _saving;
+    private string? _error;
+
+    // Form fields
+    private string _username = "";
+    private string _displayName = "";
+    private string _email = "";
+    private string _password = "";
+
+    private User? _existingUser;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (_isEdit)
+        {
+            _existingUser = await UserRepository.GetByIdAsync(Id!.Value);
+            if (_existingUser is null)
+            {
+                Navigation.NavigateTo("/admin/users");
+                return;
+            }
+
+            _username = _existingUser.Username;
+            _displayName = _existingUser.DisplayName;
+            _email = _existingUser.Email;
+        }
+    }
+
+    private async Task Save()
+    {
+        _error = null;
+        _saving = true;
+
+        try
+        {
+            if (string.IsNullOrWhiteSpace(_username) || string.IsNullOrWhiteSpace(_displayName) || string.IsNullOrWhiteSpace(_email))
+            {
+                _error = "All fields are required.";
+                return;
+            }
+
+            // Check if username is taken (by another user)
+            var duplicate = await UserRepository.GetByUsernameAsync(_username);
+            if (duplicate is not null && duplicate.Id != Id)
+            {
+                _error = "Username is already taken.";
+                return;
+            }
+
+            if (_isEdit && _existingUser is not null)
+            {
+                // Update existing
+                _existingUser.Username = _username;
+                _existingUser.DisplayName = _displayName;
+                _existingUser.Email = _email;
+
+                // Only update password if provided
+                if (!string.IsNullOrWhiteSpace(_password))
+                {
+                     if (_password.Length < 8)
+                     {
+                         _error = "Password must be at least 8 characters.";
+                         return;
+                     }
+                    _existingUser.PasswordHash = PasswordService.HashPassword(_password);
+                }
+
+                await UserRepository.UpdateAsync(_existingUser);
+            }
+            else
+            {
+                // Create new
+                if (string.IsNullOrWhiteSpace(_password) || _password.Length < 8)
+                {
+                    _error = "Password is required (min 8 chars) for new users.";
+                    return;
+                }
+
+                var newUser = new User
+                {
+                    Id = Guid.NewGuid(),
+                    Username = _username,
+                    DisplayName = _displayName,
+                    Email = _email,
+                    PasswordHash = PasswordService.HashPassword(_password),
+                    CreatedAtUtc = DateTime.UtcNow
+                };
+
+                await UserRepository.CreateAsync(newUser);
+            }
+
+            Navigation.NavigateTo("/admin/users");
+        }
+        catch (Exception ex)
+        {
+            _error = $"Error saving user: {ex.Message}";
+        }
+        finally
+        {
+            _saving = false;
+        }
+    }
+}
