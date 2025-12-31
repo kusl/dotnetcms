@@ -1,8 +1,11 @@
 @page "/admin/users"
 @attribute [Authorize(Roles = AppConstants.AdminRole)]
+@rendermode InteractiveServer
 @inject IUserRepository UserRepository
 @inject AuthenticationStateProvider AuthStateProvider
+@inject IJSRuntime JSRuntime
 @using System.Security.Claims
+@using MyBlog.Core.Models
 
 <PageTitle>Manage Users</PageTitle>
 
@@ -69,18 +72,22 @@ else
 
     private async Task LoadUsers()
     {
+        // Note: Ensure your IUserRepository has this method
         _users = await UserRepository.GetAllAsync();
     }
 
     private async Task DeleteUser(Guid id)
     {
-        if (id == _currentUserId) return; // Prevent suicide
+        if (id == _currentUserId) return;
 
-        var confirm = await Application.Current?.MainPage?.DisplayAlert("Confirm", "Are you sure you want to delete this user?", "Yes", "No") ?? true;
+        // JS Interop confirm dialog
+        var confirm = await JSRuntime.InvokeAsync<bool>("confirm", "Are you sure you want to delete this user?");
         
-        // Note: Simple JS confirm isn't available in SSR easily without interop, 
-        // so we'll just delete for now. In a real app, use a modal or JSInterop confirm.
-        await UserRepository.DeleteAsync(id);
-        await LoadUsers();
+        if (confirm)
+        {
+            // Note: Ensure your IUserRepository has this method
+            await UserRepository.DeleteAsync(id);
+            await LoadUsers();
+        }
     }
 }

@@ -1,6 +1,6 @@
 ===============================================================================
 PROJECT EXPORT
-Generated: Tue Dec 30 08:26:21 PM CST 2025
+Generated: Tue Dec 30 08:32:46 PM CST 2025
 Project Path: /home/kushal/src/dotnet/MyBlog
 ===============================================================================
 
@@ -101,7 +101,9 @@ DIRECTORY STRUCTURE:
 │   │   │   │   │   ├── Dashboard.razor
 │   │   │   │   │   ├── ImageManager.razor
 │   │   │   │   │   ├── PostEditor.razor
-│   │   │   │   │   └── PostList.razor
+│   │   │   │   │   ├── PostList.razor
+│   │   │   │   │   ├── UserEditor.razor
+│   │   │   │   │   └── UserList.razor
 │   │   │   │   ├── About.razor
 │   │   │   │   ├── Home.razor
 │   │   │   │   ├── Login.razor
@@ -9720,8 +9722,8 @@ public interface ITelemetryLogRepository
 
 ================================================================================
 FILE: src/MyBlog.Core/Interfaces/IUserRepository.cs
-SIZE: .83 KB
-MODIFIED: 2025-12-28 10:33:37
+SIZE: 1.09 KB
+MODIFIED: 2025-12-30 20:28:12
 ================================================================================
 
 using MyBlog.Core.Models;
@@ -9739,6 +9741,9 @@ public interface IUserRepository
     /// <summary>Gets a user by username.</summary>
     Task<User?> GetByUsernameAsync(string username, CancellationToken cancellationToken = default);
 
+    /// <summary>Gets all users.</summary>
+    Task<IReadOnlyList<User>> GetAllAsync(CancellationToken cancellationToken = default);
+
     /// <summary>Checks if any users exist.</summary>
     Task<bool> AnyUsersExistAsync(CancellationToken cancellationToken = default);
 
@@ -9747,6 +9752,9 @@ public interface IUserRepository
 
     /// <summary>Updates an existing user.</summary>
     Task UpdateAsync(User user, CancellationToken cancellationToken = default);
+
+    /// <summary>Deletes a user by ID.</summary>
+    Task DeleteAsync(Guid id, CancellationToken cancellationToken = default);
 }
 
 
@@ -10724,8 +10732,8 @@ public sealed class TelemetryLogRepository : ITelemetryLogRepository
 
 ================================================================================
 FILE: src/MyBlog.Infrastructure/Repositories/UserRepository.cs
-SIZE: 1.57 KB
-MODIFIED: 2025-12-28 10:33:37
+SIZE: 2.05 KB
+MODIFIED: 2025-12-30 20:28:12
 ================================================================================
 
 using Microsoft.EntityFrameworkCore;
@@ -10742,7 +10750,6 @@ public sealed class UserRepository : IUserRepository
 {
     private readonly BlogDbContext _context;
 
-    /// <summary>Initializes a new instance of UserRepository.</summary>
     public UserRepository(BlogDbContext context) => _context = context;
 
     /// <inheritdoc />
@@ -10753,6 +10760,10 @@ public sealed class UserRepository : IUserRepository
     public async Task<User?> GetByUsernameAsync(string username, CancellationToken cancellationToken = default)
         => await _context.Users.FirstOrDefaultAsync(
             u => u.Username.ToLower() == username.ToLower(), cancellationToken);
+
+    /// <inheritdoc />
+    public async Task<IReadOnlyList<User>> GetAllAsync(CancellationToken cancellationToken = default)
+        => await _context.Users.OrderBy(u => u.Username).ToListAsync(cancellationToken);
 
     /// <inheritdoc />
     public async Task<bool> AnyUsersExistAsync(CancellationToken cancellationToken = default)
@@ -10770,6 +10781,17 @@ public sealed class UserRepository : IUserRepository
     {
         _context.Users.Update(user);
         await _context.SaveChangesAsync(cancellationToken);
+    }
+
+    /// <inheritdoc />
+    public async Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        var user = await _context.Users.FindAsync([id], cancellationToken);
+        if (user is not null)
+        {
+            _context.Users.Remove(user);
+            await _context.SaveChangesAsync(cancellationToken);
+        }
     }
 }
 
@@ -14751,7 +14773,7 @@ echo "=============================================="
 
 
 ===============================================================================
-EXPORT COMPLETED: Tue Dec 30 08:26:21 PM CST 2025
+EXPORT COMPLETED: Tue Dec 30 08:32:47 PM CST 2025
 Total Files Found: 71
 Files Exported: 71
 Files Skipped: 0 (binary or large files)
