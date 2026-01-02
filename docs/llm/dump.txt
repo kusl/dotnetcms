@@ -1,6 +1,6 @@
 ===============================================================================
 PROJECT EXPORT
-Generated: Thu Jan  1 03:55:18 PM CST 2026
+Generated: Thu Jan  1 08:19:17 PM CST 2026
 Project Path: /home/kushal/src/dotnet/MyBlog
 ===============================================================================
 
@@ -22,7 +22,8 @@ DIRECTORY STRUCTURE:
 │       │   ├── 0009.txt
 │       │   ├── 0010.txt
 │       │   ├── 0011.txt
-│       │   └── 0012.txt
+│       │   ├── 0012.txt
+│       │   └── 0013.txt
 │       ├── chatgpt.md
 │       ├── claude.md
 │       ├── command.md
@@ -104,6 +105,7 @@ DIRECTORY STRUCTURE:
 │   │   │   │   │   ├── PostEditor.razor
 │   │   │   │   │   ├── PostList.razor
 │   │   │   │   │   ├── UserEditor.razor
+│   │   │   │   │   ├── UserEditor.razor.css
 │   │   │   │   │   └── UserList.razor
 │   │   │   │   ├── About.razor
 │   │   │   │   ├── AccessDenied.razor
@@ -13149,6 +13151,75 @@ MODIFIED: 2025-12-28 10:14:51
 
 
 ================================================================================
+FILE: src/MyBlog.Web/Components/Pages/Admin/UserEditor.razor.css
+SIZE: 1.32 KB
+MODIFIED: 2026-01-01 20:17:11
+================================================================================
+
+/* Container styling */
+.user-editor {
+    width: 100%;
+    /* margin: 0 auto; if you want it centered */
+    padding: 1rem;
+    box-sizing: border-box; /* Ensures padding doesn't add to width */
+}
+
+/* Form group layout */
+.form-group {
+    display: flex;
+    flex-direction: column; /* Stack label above input by default (mobile first) */
+    margin-bottom: 1.25rem;
+}
+
+.form-group label {
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+.form-group input {
+    width: 100%; /* Forces input to stay within container bounds */
+    padding: 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box; 
+}
+
+/* Error Message */
+.error-message {
+    background-color: #fee2e2;
+    color: #dc2626;
+    padding: 1rem;
+    border-radius: 4px;
+    margin-bottom: 1.5rem;
+    border: 1px solid #fca5a5;
+}
+
+/* Actions area */
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+/* Desktop optimization: Switch to side-by-side if screen is wide enough */
+@media (min-width: 768px) {
+    .form-group {
+        flex-direction: row; /* Label and Input side-by-side */
+        align-items: center;
+    }
+
+    .form-group label {
+        flex: 0 0 150px; /* Label takes fixed width on desktop */
+        margin-bottom: 0;
+    }
+
+    .form-group input {
+        flex: 1; /* Input fills remaining space */
+    }
+}
+
+
+================================================================================
 FILE: src/MyBlog.Web/Middleware/LoginRateLimitMiddleware.cs
 SIZE: 5.65 KB
 MODIFIED: 2025-12-28 12:56:41
@@ -15023,9 +15094,9 @@ echo "=============================================="
 
 
 ===============================================================================
-EXPORT COMPLETED: Thu Jan  1 03:55:19 PM CST 2026
-Total Files Found: 72
-Files Exported: 72
+EXPORT COMPLETED: Thu Jan  1 08:19:18 PM CST 2026
+Total Files Found: 73
+Files Exported: 73
 Files Skipped: 0 (binary or large files)
 Output File: /home/kushal/src/dotnet/MyBlog/docs/llm/dump.txt
 ===============================================================================
