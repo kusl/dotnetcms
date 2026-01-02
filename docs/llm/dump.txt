@@ -1,6 +1,6 @@
 ===============================================================================
 PROJECT EXPORT
-Generated: Thu Jan  1 09:22:06 PM CST 2026
+Generated: Thu Jan  1 09:34:41 PM CST 2026
 Project Path: /home/kushal/src/dotnet/MyBlog
 ===============================================================================
 
@@ -108,7 +108,8 @@ DIRECTORY STRUCTURE:
 │   │   │   │   │   ├── PostList.razor
 │   │   │   │   │   ├── UserEditor.razor
 │   │   │   │   │   ├── UserEditor.razor.css
-│   │   │   │   │   └── UserList.razor
+│   │   │   │   │   ├── UserList.razor
+│   │   │   │   │   └── UserList.razor.css
 │   │   │   │   ├── About.razor
 │   │   │   │   ├── AccessDenied.razor
 │   │   │   │   ├── Home.razor
@@ -13219,6 +13220,73 @@ MODIFIED: 2026-01-01 20:17:11
 
 
 ================================================================================
+FILE: src/MyBlog.Web/Components/Pages/Admin/UserList.razor.css
+SIZE: 1.41 KB
+MODIFIED: 2026-01-01 21:33:51
+================================================================================
+
+/* Responsive Table Alternative */
+.responsive-user-list {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    overflow: hidden;
+}
+
+.list-header {
+    display: flex;
+    background-color: var(--color-bg-alt);
+    font-weight: bold;
+    padding: 1rem;
+    border-bottom: 2px solid var(--color-border);
+}
+
+.list-row {
+    display: flex;
+    padding: 1rem;
+    border-bottom: 1px solid var(--color-border);
+    background-color: var(--color-bg);
+}
+
+.list-row:last-child { border-bottom: none; }
+.col, .list-item { flex: 1; min-width: 0; }
+.actions { text-align: right; flex: 0 0 180px; }
+
+.mobile-label { display: none; font-weight: bold; margin-right: 0.5rem; }
+.current-user-badge { color: var(--color-text-muted); font-size: 0.85rem; }
+
+/* Mobile view: Stack columns into rows */
+@media (max-width: 768px) {
+    .d-none-mobile { display: none; }
+    
+    .list-row {
+        flex-direction: column;
+        gap: 0.5rem;
+        padding: 1.5rem 1rem;
+    }
+
+    .list-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        text-align: left;
+    }
+
+    .mobile-label { display: inline-block; }
+    .actions { 
+        flex: 1; 
+        margin-top: 1rem; 
+        padding-top: 1rem; 
+        border-top: 1px dashed var(--color-border);
+        text-align: left;
+        justify-content: flex-start;
+        gap: 10px;
+    }
+}
+
+
+================================================================================
 FILE: src/MyBlog.Web/Middleware/LoginRateLimitMiddleware.cs
 SIZE: 5.65 KB
 MODIFIED: 2025-12-28 12:56:41
@@ -15093,9 +15161,9 @@ echo "=============================================="
 
 
 ===============================================================================
-EXPORT COMPLETED: Thu Jan  1 09:22:07 PM CST 2026
-Total Files Found: 73
-Files Exported: 73
+EXPORT COMPLETED: Thu Jan  1 09:34:42 PM CST 2026
+Total Files Found: 74
+Files Exported: 74
 Files Skipped: 0 (binary or large files)
 Output File: /home/kushal/src/dotnet/MyBlog/docs/llm/dump.txt
 ===============================================================================
