@@ -1,6 +1,6 @@
 ===============================================================================
 PROJECT EXPORT
-Generated: Thu Jan  1 09:02:31 PM CST 2026
+Generated: Thu Jan  1 09:11:33 PM CST 2026
 Project Path: /home/kushal/src/dotnet/MyBlog
 ===============================================================================
 
@@ -24,7 +24,8 @@ DIRECTORY STRUCTURE:
 │       │   ├── 0011.txt
 │       │   ├── 0012.txt
 │       │   ├── 0013.txt
-│       │   └── 0014.txt
+│       │   ├── 0014.txt
+│       │   └── 0015.txt
 │       ├── chatgpt.md
 │       ├── claude.md
 │       ├── command.md
@@ -4005,8 +4006,8 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ================================================================================
 FILE: src/Directory.Build.props
-SIZE: .65 KB
-MODIFIED: 2026-01-01 20:53:04
+SIZE: .58 KB
+MODIFIED: 2026-01-01 21:06:23
 ================================================================================
 
 <Project>
@@ -4024,15 +4025,14 @@ MODIFIED: 2026-01-01 20:53:04
     <IsPackable>false</IsPackable>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <OutputType>Exe</OutputType>
-    <TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>
   </PropertyGroup>
 </Project>
 
 
 ================================================================================
 FILE: src/Directory.Packages.props
-SIZE: 1.46 KB
-MODIFIED: 2026-01-01 20:41:47
+SIZE: 1.37 KB
+MODIFIED: 2026-01-01 21:10:57
 ================================================================================
 
 <Project>
@@ -4057,7 +4057,6 @@ MODIFIED: 2026-01-01 20:41:47
     <!-- Testing (xUnit v3) -->
     <PackageVersion Include="xunit.v3" Version="3.2.1" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
-    <PackageVersion Include="Microsoft.Testing.Platform.MSBuild" Version="2.0.2" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
     <PackageVersion Include="Microsoft.Testing.Extensions.TrxReport" Version="2.0.2" />
   </ItemGroup>
@@ -15096,7 +15095,7 @@ echo "=============================================="
 
 
 ===============================================================================
-EXPORT COMPLETED: Thu Jan  1 09:02:32 PM CST 2026
+EXPORT COMPLETED: Thu Jan  1 09:11:34 PM CST 2026
 Total Files Found: 73
 Files Exported: 73
 Files Skipped: 0 (binary or large files)
