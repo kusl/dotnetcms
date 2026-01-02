@@ -10,6 +10,7 @@
     <PackageReference Include="Microsoft.Testing.Platform.MSBuild" />
     <PackageReference Include="xunit.runner.visualstudio" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
+    <PackageReference Include="Microsoft.Testing.Extensions.TrxReport" />
   </ItemGroup>
   
   <ItemGroup>
