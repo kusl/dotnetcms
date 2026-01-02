@@ -1033,4 +1033,225 @@ The given project `MyBlog.Web` has no updates given the current sources.
 real	0m2.777s
 user	0m2.119s
 sys	0m0.397s
+kushal@syn-2600-6c56-9840-001d-0000-0000-0000-1157:~/src/dotnet/MyBlog/src$ DOTNET_TEST_USE_MODERN_OUTPUT=1 dotnet test MyBlog.slnx --testing-platform --report-trx
+MSBUILD : error MSB1001: Unknown switch.
+    Full command line: '/usr/lib64/dotnet/sdk/10.0.101/MSBuild.dll -maxcpucount --verbosity:m -tlp:default=auto --property:VsTestUseMSBuildOutput=true --property:NuGetInteractive=true --property:VSTestArtifactsProcessingMode=collect --property:VSTestSessionCorrelationId=452552_db4bd5b8-19be-4bf3-9564-36e286bdd9df --restoreProperty:VsTestUseMSBuildOutput=true --restoreProperty:NuGetInteractive=true --restoreProperty:VSTestArtifactsProcessingMode=collect --restoreProperty:VSTestSessionCorrelationId=452552_db4bd5b8-19be-4bf3-9564-36e286bdd9df --restoreProperty:EnableDefaultCompileItems=false --restoreProperty:EnableDefaultEmbeddedResourceItems=false --restoreProperty:EnableDefaultNoneItems=false --target:VSTest -nologo MyBlog.slnx --testing-platform --report-trx -restore'
+  Switches appended by response files:
+Switch: --testing-platform
+
+For switch syntax, type "MSBuild -help"
+kushal@syn-2600-6c56-9840-001d-0000-0000-0000-1157:~/src/dotnet/MyBlog/src$ DOTNET_TEST_USE_MODERN_OUTPUT=1 dotnet test MyBlog.slnx -- --testing-platform --report-trx
+Restore complete (0.5s)
+  MyBlog.Tests net10.0 failed with 1 error(s) (0.0s)
+    /home/kushal/.nuget/packages/microsoft.testing.platform.msbuild/2.0.2/buildMultiTargeting/Microsoft.Testing.Platform.MSBuild.targets(263,5): error Testing with VSTest target is no longer supported by Microsoft.Testing.Platform on .NET 10 SDK and later. If you use dotnet test, you should opt-in to the new dotnet test experience. For more information, see https://aka.ms/dotnet-test-mtp-error
+
+Build failed with 1 error(s) in 0.7s
+kushal@syn-2600-6c56-9840-001d-0000-0000-0000-1157:~/src/dotnet/MyBlog/src$ dotnet run --project MyBlog.Tests/MyBlog.Tests.csproj -- --report-trx
+error: unknown option: --report-trx
+kushal@syn-2600-6c56-9840-001d-0000-0000-0000-1157:~/src/dotnet/MyBlog/src$ time dotnet test MyBlog.slnx --report-trx
+MSBUILD : error MSB1001: Unknown switch.
+    Full command line: '/usr/lib64/dotnet/sdk/10.0.101/MSBuild.dll -maxcpucount --verbosity:m -tlp:default=auto --property:VsTestUseMSBuildOutput=true --property:NuGetInteractive=true --property:VSTestArtifactsProcessingMode=collect --property:VSTestSessionCorrelationId=455020_2ae72e71-d06e-4a4c-846f-696dc3971753 --restoreProperty:VsTestUseMSBuildOutput=true --restoreProperty:NuGetInteractive=true --restoreProperty:VSTestArtifactsProcessingMode=collect --restoreProperty:VSTestSessionCorrelationId=455020_2ae72e71-d06e-4a4c-846f-696dc3971753 --restoreProperty:EnableDefaultCompileItems=false --restoreProperty:EnableDefaultEmbeddedResourceItems=false --restoreProperty:EnableDefaultNoneItems=false --target:VSTest -nologo MyBlog.slnx --report-trx -restore'
+  Switches appended by response files:
+Switch: --report-trx
+
+For switch syntax, type "MSBuild -help"
+
+real	0m0.148s
+user	0m0.126s
+sys	0m0.033s
+kushal@syn-2600-6c56-9840-001d-0000-0000-0000-1157:~/src/dotnet/MyBlog/src$ cd ~/src/dotnet/MyBlog/; time bash export.sh; cd ~/src/dotnet/MyBlog/src/; time dotnet format; time dotnet restore; time dotnet clean; time dotnet build; time dotnet test; dotnet run --project src/MyBlog.Tests/MyBlog.Tests.csproj; time dotnet list package; time dotnet list package --outdated;
+==============================================
+  Project Export for LLM Analysis
+==============================================
+
+Project Path: /home/kushal/src/dotnet/MyBlog
+Output File:  docs/llm/dump.txt
+
+Generating directory structure...
+Collecting files...
+Found 73 files to export
+
+Processing (1/73): export.sh
+Processing (2/73): fix-all-forms.sh
+Processing (3/73): fix-auth-architecture.sh
+Processing (4/73): fix-blazor-interactivity.sh
+Processing (5/73): fix-login-logout.sh
+Processing (6/73): fix-ordered-lists.sh
+Processing (7/73): fix-program-cs.sh
+Processing (8/73): fix-update-claims.sh
+Processing (9/73): gemini.sh
+Processing (10/73): .github/workflows/build-deploy.yml
+Processing (11/73): .gitignore
+Processing (12/73): implement-user-management.sh
+Processing (13/73): README.md
+Processing (14/73): src/Directory.Build.props
+Processing (15/73): src/Directory.Packages.props
+Processing (16/73): src/.editorconfig
+Processing (17/73): src/fix-changepassword-and-tests.sh
+Processing (18/73): src/fix-rate-limit.sh
+Processing (19/73): src/generate-myblog.sh
+Processing (20/73): src/.github/workflows/build-deploy.yml
+Processing (21/73): src/global.json
+Processing (22/73): src/MyBlog.Core/Constants/AppConstants.cs
+Processing (23/73): src/MyBlog.Core/Interfaces/IAuthService.cs
+Processing (24/73): src/MyBlog.Core/Interfaces/IImageRepository.cs
+Processing (25/73): src/MyBlog.Core/Interfaces/IMarkdownService.cs
+Processing (26/73): src/MyBlog.Core/Interfaces/IPasswordService.cs
+Processing (27/73): src/MyBlog.Core/Interfaces/IPostRepository.cs
+Processing (28/73): src/MyBlog.Core/Interfaces/ISlugService.cs
+Processing (29/73): src/MyBlog.Core/Interfaces/ITelemetryLogRepository.cs
+Processing (30/73): src/MyBlog.Core/Interfaces/IUserRepository.cs
+Processing (31/73): src/MyBlog.Core/Models/Image.cs
+Processing (32/73): src/MyBlog.Core/Models/Post.cs
+Processing (33/73): src/MyBlog.Core/Models/PostDto.cs
+Processing (34/73): src/MyBlog.Core/Models/TelemetryLog.cs
+Processing (35/73): src/MyBlog.Core/Models/User.cs
+Processing (36/73): src/MyBlog.Core/MyBlog.Core.csproj
+Processing (37/73): src/MyBlog.Core/Services/MarkdownService.cs
+Processing (38/73): src/MyBlog.Core/Services/SlugService.cs
+Processing (39/73): src/MyBlog.Infrastructure/Data/BlogDbContext.cs
+Processing (40/73): src/MyBlog.Infrastructure/Data/DatabasePathResolver.cs
+Processing (41/73): src/MyBlog.Infrastructure/MyBlog.Infrastructure.csproj
+Processing (42/73): src/MyBlog.Infrastructure/Repositories/ImageRepository.cs
+Processing (43/73): src/MyBlog.Infrastructure/Repositories/PostRepository.cs
+Processing (44/73): src/MyBlog.Infrastructure/Repositories/TelemetryLogRepository.cs
+Processing (45/73): src/MyBlog.Infrastructure/Repositories/UserRepository.cs
+Processing (46/73): src/MyBlog.Infrastructure/ServiceCollectionExtensions.cs
+Processing (47/73): src/MyBlog.Infrastructure/Services/AuthService.cs
+Processing (48/73): src/MyBlog.Infrastructure/Services/PasswordService.cs
+Processing (49/73): src/MyBlog.Infrastructure/Services/TelemetryCleanupService.cs
+Processing (50/73): src/MyBlog.Infrastructure/Telemetry/DatabaseLogExporter.cs
+Processing (51/73): src/MyBlog.Infrastructure/Telemetry/FileLogExporter.cs
+Processing (52/73): src/MyBlog.Infrastructure/Telemetry/TelemetryPathResolver.cs
+Processing (53/73): src/MyBlog.slnx
+Processing (54/73): src/MyBlog.Tests/Integration/AuthServiceLongPasswordTests.cs
+Processing (55/73): src/MyBlog.Tests/Integration/AuthServiceTests.cs
+Processing (56/73): src/MyBlog.Tests/Integration/PasswordChangeTests.cs
+Processing (57/73): src/MyBlog.Tests/Integration/PostRepositoryTests.cs
+Processing (58/73): src/MyBlog.Tests/Integration/TelemetryCleanupTests.cs
+Processing (59/73): src/MyBlog.Tests/MyBlog.Tests.csproj
+Processing (60/73): src/MyBlog.Tests/Unit/LoginRateLimitMiddlewareTests.cs
+Processing (61/73): src/MyBlog.Tests/Unit/MarkdownServiceTests.cs
+Processing (62/73): src/MyBlog.Tests/Unit/PasswordServiceTests.cs
+Processing (63/73): src/MyBlog.Tests/Unit/SlugServiceTests.cs
+Processing (64/73): src/MyBlog.Web/appsettings.Development.json
+Processing (65/73): src/MyBlog.Web/appsettings.json
+Processing (66/73): src/MyBlog.Web/Components/Pages/Admin/UserEditor.razor.css
+Processing (67/73): src/MyBlog.Web/Middleware/LoginRateLimitMiddleware.cs
+Processing (68/73): src/MyBlog.Web/MyBlog.Web.csproj
+Processing (69/73): src/MyBlog.Web/Program.cs
+Processing (70/73): src/MyBlog.Web/wwwroot/css/site.css
+Processing (71/73): src/run.sh
+Processing (72/73): src/test.sh
+Processing (73/73): src/upgrade-myblog.sh
+
+==============================================
+  Export Complete!
+==============================================
+
+Output file:    docs/llm/dump.txt
+Files exported: 73
+Files skipped:  0
+Output size:    451.47 KB
+
+File types included:
+  • Source code: .cs, .fs, .vb
+  • UI/XAML: .axaml, .xaml, .paml
+  • Projects: .csproj, .slnx, .sln, .props, .targets
+  • Config: .json, .yaml, .yml, .xml, .config
+  • Docs: .md, .txt
+  • Scripts: .sh, .ps1, .cmd, .bat
+  • Other: .sql, .resx, .css, .scss, Dockerfile, etc.
+
+
+real	0m0.758s
+user	0m0.411s
+sys	0m0.505s
+
+real	0m8.516s
+user	0m13.838s
+sys	0m1.015s
+Restore complete (0.5s)
+
+Build succeeded in 0.6s
+
+real	0m0.811s
+user	0m0.878s
+sys	0m0.138s
+
+Build succeeded in 0.6s
+
+real	0m0.732s
+user	0m0.744s
+sys	0m0.153s
+Restore complete (0.5s)
+  MyBlog.Core net10.0 succeeded (0.3s) → MyBlog.Core/bin/Debug/net10.0/MyBlog.Core.dll
+  MyBlog.Infrastructure net10.0 succeeded (0.1s) → MyBlog.Infrastructure/bin/Debug/net10.0/MyBlog.Infrastructure.dll
+  MyBlog.Web net10.0 succeeded (0.4s) → MyBlog.Web/bin/Debug/net10.0/MyBlog.Web.dll
+  MyBlog.Tests net10.0 succeeded (0.2s) → MyBlog.Tests/bin/Debug/net10.0/MyBlog.Tests.dll
+
+Build succeeded in 1.8s
+
+real	0m1.959s
+user	0m1.381s
+sys	0m0.328s
+Restore complete (0.5s)
+  MyBlog.Tests net10.0 failed with 1 error(s) (0.0s)
+    /home/kushal/.nuget/packages/microsoft.testing.platform.msbuild/2.0.2/buildMultiTargeting/Microsoft.Testing.Platform.MSBuild.targets(263,5): error Testing with VSTest target is no longer supported by Microsoft.Testing.Platform on .NET 10 SDK and later. If you use dotnet test, you should opt-in to the new dotnet test experience. For more information, see https://aka.ms/dotnet-test-mtp-error
+
+Build failed with 1 error(s) in 0.7s
+
+real	0m0.902s
+user	0m1.001s
+sys	0m0.170s
+The provided file path does not exist: src/MyBlog.Tests/MyBlog.Tests.csproj.
+Restore complete (0.5s)
+
+Build succeeded in 0.6s
+Project 'MyBlog.Core' has the following package references
+   [net10.0]: No packages were found for this framework.
+Project 'MyBlog.Infrastructure' has the following package references
+   [net10.0]: 
+   Top-level Package                           Requested   Resolved
+   > Microsoft.AspNetCore.Identity             2.3.1       2.3.1   
+   > Microsoft.EntityFrameworkCore.Sqlite      10.0.1      10.0.1  
+   > OpenTelemetry                             1.14.0      1.14.0  
+
+Project 'MyBlog.Tests' has the following package references
+   [net10.0]: 
+   Top-level Package                             Requested   Resolved
+   > Microsoft.EntityFrameworkCore.Sqlite        10.0.1      10.0.1  
+   > Microsoft.Testing.Extensions.TrxReport      2.0.2       2.0.2   
+   > xunit.runner.visualstudio                   3.1.5       3.1.5   
+   > xunit.v3                                    3.2.1       3.2.1   
+
+Project 'MyBlog.Web' has the following package references
+   [net10.0]: 
+   Top-level Package                                  Requested    Resolved
+   > Microsoft.AspNetCore.App.Internal.Assets   (A)   [10.0.1, )   10.0.1  
+   > OpenTelemetry.Exporter.Console                   1.14.0       1.14.0  
+   > OpenTelemetry.Extensions.Hosting                 1.14.0       1.14.0  
+   > OpenTelemetry.Instrumentation.AspNetCore         1.14.0       1.14.0  
+   > OpenTelemetry.Instrumentation.Http               1.14.0       1.14.0  
+
+(A) : Auto-referenced package.
+
+real	0m1.746s
+user	0m1.741s
+sys	0m0.359s
+Restore complete (0.5s)
+
+Build succeeded in 0.6s
+
+The following sources were used:
+   https://api.nuget.org/v3/index.json
+
+The given project `MyBlog.Core` has no updates given the current sources.
+The given project `MyBlog.Infrastructure` has no updates given the current sources.
+The given project `MyBlog.Tests` has no updates given the current sources.
+The given project `MyBlog.Web` has no updates given the current sources.
+
+real	0m1.908s
+user	0m1.880s
+sys	0m0.395s
 kushal@syn-2600-6c56-9840-001d-0000-0000-0000-1157:~/src/dotnet/MyBlog/src$ 
