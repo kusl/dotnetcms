@@ -1,6 +1,6 @@
 ===============================================================================
 PROJECT EXPORT
-Generated: Thu Jan  1 08:58:41 PM CST 2026
+Generated: Thu Jan  1 09:02:31 PM CST 2026
 Project Path: /home/kushal/src/dotnet/MyBlog
 ===============================================================================
 
@@ -2729,8 +2729,8 @@ echo "Done. You can now build the project."
 
 ================================================================================
 FILE: .github/workflows/build-deploy.yml
-SIZE: 3.36 KB
-MODIFIED: 2026-01-01 20:53:11
+SIZE: 2.87 KB
+MODIFIED: 2026-01-01 20:59:50
 ================================================================================
 
 name: Build, Test, and Deploy
@@ -2764,21 +2764,8 @@ jobs:
         run: dotnet build src/MyBlog.slnx -c Release --no-restore
 
       - name: Run tests
-        # 1. Enable the new testing platform support
-        # 2. Use --report-trx to generate TRX files in the new platform
-        env:
-          DOTNET_TEST_USE_MODERN_OUTPUT: 1 
-        run: >
-          dotnet test src/MyBlog.slnx -c Release --no-build 
-          --report-trx --results-directory TestResults
-
-      - name: Upload test results
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: test-results-${{ matrix.os }}
-          path: "**/TestResults/*.trx" # Pathing is slightly deeper in the new platform
-          retention-days: 7
+        run: 
+          dotnet run --project src/MyBlog.Tests/MyBlog.Tests.csproj
 
   deploy:
     needs: build-test
@@ -15109,7 +15096,7 @@ echo "=============================================="
 
 
 ===============================================================================
-EXPORT COMPLETED: Thu Jan  1 08:58:41 PM CST 2026
+EXPORT COMPLETED: Thu Jan  1 09:02:32 PM CST 2026
 Total Files Found: 73
 Files Exported: 73
 Files Skipped: 0 (binary or large files)
