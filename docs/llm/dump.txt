@@ -1,6 +1,6 @@
 ===============================================================================
 PROJECT EXPORT
-Generated: Thu Jan  1 08:27:34 PM CST 2026
+Generated: Thu Jan  1 08:37:05 PM CST 2026
 Project Path: /home/kushal/src/dotnet/MyBlog
 ===============================================================================
 
@@ -2729,8 +2729,8 @@ echo "Done. You can now build the project."
 
 ================================================================================
 FILE: .github/workflows/build-deploy.yml
-SIZE: 3.10 KB
-MODIFIED: 2025-12-28 10:34:13
+SIZE: 3.36 KB
+MODIFIED: 2026-01-01 20:32:56
 ================================================================================
 
 name: Build, Test, and Deploy
@@ -2764,14 +2764,20 @@ jobs:
         run: dotnet build src/MyBlog.slnx -c Release --no-restore
 
       - name: Run tests
-        run: dotnet test src/MyBlog.slnx -c Release --no-build --logger trx --results-directory TestResults
+        # 1. Enable the new testing platform support
+        # 2. Use --report-trx to generate TRX files in the new platform
+        env:
+          DOTNET_TEST_USE_MODERN_OUTPUT: 1 
+        run: >
+          dotnet test src/MyBlog.slnx -c Release --no-build 
+          --report-trx --results-directory TestResults
 
       - name: Upload test results
         uses: actions/upload-artifact@v4
         if: always()
         with:
           name: test-results-${{ matrix.os }}
-          path: TestResults
+          path: "**/TestResults/*.trx" # Pathing is slightly deeper in the new platform
           retention-days: 7
 
   deploy:
@@ -4039,8 +4045,8 @@ MODIFIED: 2026-01-01 20:27:23
 
 ================================================================================
 FILE: src/Directory.Packages.props
-SIZE: 1.37 KB
-MODIFIED: 2026-01-01 20:24:02
+SIZE: 1.46 KB
+MODIFIED: 2026-01-01 20:35:55
 ================================================================================
 
 <Project>
@@ -4067,6 +4073,7 @@ MODIFIED: 2026-01-01 20:24:02
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
     <PackageVersion Include="Microsoft.Testing.Platform.MSBuild" Version="2.0.2" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
+    <PackageVersion Include="Microsoft.Testing.Extensions.TrxReport" Version="1.8.1" />
   </ItemGroup>
 </Project>
 
@@ -12592,8 +12599,8 @@ public class TelemetryCleanupTests : IAsyncDisposable
 
 ================================================================================
 FILE: src/MyBlog.Tests/MyBlog.Tests.csproj
-SIZE: .74 KB
-MODIFIED: 2026-01-01 20:23:14
+SIZE: .81 KB
+MODIFIED: 2026-01-01 20:35:20
 ================================================================================
 
 <Project Sdk="Microsoft.NET.Sdk">
@@ -12608,6 +12615,7 @@ MODIFIED: 2026-01-01 20:23:14
     <PackageReference Include="Microsoft.Testing.Platform.MSBuild" />
     <PackageReference Include="xunit.runner.visualstudio" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
+    <PackageReference Include="Microsoft.Testing.Extensions.TrxReport" />
   </ItemGroup>
   
   <ItemGroup>
@@ -15100,7 +15108,7 @@ echo "=============================================="
 
 
 ===============================================================================
-EXPORT COMPLETED: Thu Jan  1 08:27:35 PM CST 2026
+EXPORT COMPLETED: Thu Jan  1 08:37:06 PM CST 2026
 Total Files Found: 73
 Files Exported: 73
 Files Skipped: 0 (binary or large files)
