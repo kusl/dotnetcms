@@ -12,8 +12,7 @@
   <PropertyGroup Condition="$(MSBuildProjectName.Contains('.Tests'))">
     <IsPackable>false</IsPackable>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <OutputType>Exe</OutputType>
+    <TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>
   </PropertyGroup>
-  <PropertyGroup>
-  <TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>
-</PropertyGroup>
 </Project>

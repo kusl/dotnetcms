@@ -1,6 +1,6 @@
 ===============================================================================
 PROJECT EXPORT
-Generated: Thu Jan  1 08:37:05 PM CST 2026
+Generated: Thu Jan  1 08:42:05 PM CST 2026
 Project Path: /home/kushal/src/dotnet/MyBlog
 ===============================================================================
 
@@ -4019,7 +4019,7 @@ MIT License - see [LICENSE](LICENSE) for details.
 ================================================================================
 FILE: src/Directory.Build.props
 SIZE: .65 KB
-MODIFIED: 2026-01-01 20:27:23
+MODIFIED: 2026-01-01 20:41:50
 ================================================================================
 
 <Project>
@@ -4036,17 +4036,15 @@ MODIFIED: 2026-01-01 20:27:23
   <PropertyGroup Condition="$(MSBuildProjectName.Contains('.Tests'))">
     <IsPackable>false</IsPackable>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <OutputType>Exe</OutputType>
+    <TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>
   </PropertyGroup>
-  <PropertyGroup>
-  <TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>
-</PropertyGroup>
 </Project>
-
 
 ================================================================================
 FILE: src/Directory.Packages.props
 SIZE: 1.46 KB
-MODIFIED: 2026-01-01 20:35:55
+MODIFIED: 2026-01-01 20:41:47
 ================================================================================
 
 <Project>
@@ -4073,7 +4071,7 @@ MODIFIED: 2026-01-01 20:35:55
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
     <PackageVersion Include="Microsoft.Testing.Platform.MSBuild" Version="2.0.2" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
-    <PackageVersion Include="Microsoft.Testing.Extensions.TrxReport" Version="1.8.1" />
+    <PackageVersion Include="Microsoft.Testing.Extensions.TrxReport" Version="2.0.2" />
   </ItemGroup>
 </Project>
 
@@ -12599,8 +12597,8 @@ public class TelemetryCleanupTests : IAsyncDisposable
 
 ================================================================================
 FILE: src/MyBlog.Tests/MyBlog.Tests.csproj
-SIZE: .81 KB
-MODIFIED: 2026-01-01 20:35:20
+SIZE: .69 KB
+MODIFIED: 2026-01-01 20:41:22
 ================================================================================
 
 <Project Sdk="Microsoft.NET.Sdk">
@@ -12611,11 +12609,10 @@ MODIFIED: 2026-01-01 20:35:20
   
   <ItemGroup>
     <PackageReference Include="xunit.v3" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" />
-    <PackageReference Include="Microsoft.Testing.Platform.MSBuild" />
     <PackageReference Include="xunit.runner.visualstudio" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
+    
     <PackageReference Include="Microsoft.Testing.Extensions.TrxReport" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
   </ItemGroup>
   
   <ItemGroup>
@@ -15108,7 +15105,7 @@ echo "=============================================="
 
 
 ===============================================================================
-EXPORT COMPLETED: Thu Jan  1 08:37:06 PM CST 2026
+EXPORT COMPLETED: Thu Jan  1 08:42:06 PM CST 2026
 Total Files Found: 73
 Files Exported: 73
 Files Skipped: 0 (binary or large files)
