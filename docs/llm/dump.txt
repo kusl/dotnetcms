@@ -1,6 +1,6 @@
 ===============================================================================
 PROJECT EXPORT
-Generated: Thu Jan  1 08:19:17 PM CST 2026
+Generated: Thu Jan  1 08:27:34 PM CST 2026
 Project Path: /home/kushal/src/dotnet/MyBlog
 ===============================================================================
 
@@ -23,7 +23,8 @@ DIRECTORY STRUCTURE:
 │       │   ├── 0010.txt
 │       │   ├── 0011.txt
 │       │   ├── 0012.txt
-│       │   └── 0013.txt
+│       │   ├── 0013.txt
+│       │   └── 0014.txt
 │       ├── chatgpt.md
 │       ├── claude.md
 │       ├── command.md
@@ -4011,8 +4012,8 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ================================================================================
 FILE: src/Directory.Build.props
-SIZE: .54 KB
-MODIFIED: 2025-12-28 07:44:06
+SIZE: .65 KB
+MODIFIED: 2026-01-01 20:27:23
 ================================================================================
 
 <Project>
@@ -4030,13 +4031,16 @@ MODIFIED: 2025-12-28 07:44:06
     <IsPackable>false</IsPackable>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
   </PropertyGroup>
+  <PropertyGroup>
+  <TestingPlatformDotnetTestSupport>true</TestingPlatformDotnetTestSupport>
+</PropertyGroup>
 </Project>
 
 
 ================================================================================
 FILE: src/Directory.Packages.props
-SIZE: 1.29 KB
-MODIFIED: 2025-12-28 08:40:28
+SIZE: 1.37 KB
+MODIFIED: 2026-01-01 20:24:02
 ================================================================================
 
 <Project>
@@ -4061,6 +4065,7 @@ MODIFIED: 2025-12-28 08:40:28
     <!-- Testing (xUnit v3) -->
     <PackageVersion Include="xunit.v3" Version="3.2.1" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
+    <PackageVersion Include="Microsoft.Testing.Platform.MSBuild" Version="2.0.2" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
   </ItemGroup>
 </Project>
@@ -12587,8 +12592,8 @@ public class TelemetryCleanupTests : IAsyncDisposable
 
 ================================================================================
 FILE: src/MyBlog.Tests/MyBlog.Tests.csproj
-SIZE: .67 KB
-MODIFIED: 2025-12-28 11:17:07
+SIZE: .74 KB
+MODIFIED: 2026-01-01 20:23:14
 ================================================================================
 
 <Project Sdk="Microsoft.NET.Sdk">
@@ -12600,7 +12605,8 @@ MODIFIED: 2025-12-28 11:17:07
   <ItemGroup>
     <PackageReference Include="xunit.v3" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
-  <PackageReference Include="xunit.runner.visualstudio" />
+    <PackageReference Include="Microsoft.Testing.Platform.MSBuild" />
+    <PackageReference Include="xunit.runner.visualstudio" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
   </ItemGroup>
   
@@ -15094,7 +15100,7 @@ echo "=============================================="
 
 
 ===============================================================================
-EXPORT COMPLETED: Thu Jan  1 08:19:18 PM CST 2026
+EXPORT COMPLETED: Thu Jan  1 08:27:35 PM CST 2026
 Total Files Found: 73
 Files Exported: 73
 Files Skipped: 0 (binary or large files)
