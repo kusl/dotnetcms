@@ -59,7 +59,7 @@ public sealed class AuthServiceLongPasswordTests : IAsyncDisposable
         var user = new User
         {
             Id = Guid.NewGuid(),
-            Username = "longpassuser",
+            Username = "long-pass-user",
             PasswordHash = _passwordService.HashPassword(longPassword),
             Email = "longpass@example.com",
             DisplayName = "Long Password User",
@@ -68,10 +68,10 @@ public sealed class AuthServiceLongPasswordTests : IAsyncDisposable
         _context.Users.Add(user);
         await _context.SaveChangesAsync(ct);
 
-        var result = await _sut.AuthenticateAsync("longpassuser", longPassword, ct);
+        var result = await _sut.AuthenticateAsync("long-pass-user", longPassword, ct);
 
         Assert.NotNull(result);
-        Assert.Equal("longpassuser", result.Username);
+        Assert.Equal("long-pass-user", result.Username);
     }
 
     [Fact]
@@ -83,19 +83,19 @@ public sealed class AuthServiceLongPasswordTests : IAsyncDisposable
         var user = new User
         {
             Id = Guid.NewGuid(),
-            Username = "verylongpassuser",
+            Username = "very-long-pass-user",
             PasswordHash = _passwordService.HashPassword(longPassword),
-            Email = "verylong@example.com",
+            Email = "very-long@example.com",
             DisplayName = "Very Long Password User",
             CreatedAtUtc = DateTime.UtcNow
         };
         _context.Users.Add(user);
         await _context.SaveChangesAsync(ct);
 
-        var result = await _sut.AuthenticateAsync("verylongpassuser", longPassword, ct);
+        var result = await _sut.AuthenticateAsync("very-long-pass-user", longPassword, ct);
 
         Assert.NotNull(result);
-        Assert.Equal("verylongpassuser", result.Username);
+        Assert.Equal("very-long-pass-user", result.Username);
     }
 
     [Fact]
@@ -107,7 +107,7 @@ public sealed class AuthServiceLongPasswordTests : IAsyncDisposable
         var user = new User
         {
             Id = Guid.NewGuid(),
-            Username = "extralongpassuser",
+            Username = "extralong-pass-user",
             PasswordHash = _passwordService.HashPassword(longPassword),
             Email = "extralong@example.com",
             DisplayName = "Extra Long Password User",
@@ -116,10 +116,10 @@ public sealed class AuthServiceLongPasswordTests : IAsyncDisposable
         _context.Users.Add(user);
         await _context.SaveChangesAsync(ct);
 
-        var result = await _sut.AuthenticateAsync("extralongpassuser", longPassword, ct);
+        var result = await _sut.AuthenticateAsync("extralong-pass-user", longPassword, ct);
 
         Assert.NotNull(result);
-        Assert.Equal("extralongpassuser", result.Username);
+        Assert.Equal("extralong-pass-user", result.Username);
     }
 
     [Fact]
@@ -132,7 +132,7 @@ public sealed class AuthServiceLongPasswordTests : IAsyncDisposable
         var user = new User
         {
             Id = Guid.NewGuid(),
-            Username = "changepasslonguser",
+            Username = "change-pass-long-user",
             PasswordHash = _passwordService.HashPassword(originalPassword),
             Email = "changelong@example.com",
             DisplayName = "Change Long Password User",
@@ -146,7 +146,7 @@ public sealed class AuthServiceLongPasswordTests : IAsyncDisposable
         Assert.True(result);
 
         // Verify new password works
-        var authenticated = await _sut.AuthenticateAsync("changepasslonguser", newLongPassword, ct);
+        var authenticated = await _sut.AuthenticateAsync("change-pass-long-user", newLongPassword, ct);
         Assert.NotNull(authenticated);
     }
 
@@ -165,7 +165,7 @@ public sealed class AuthServiceLongPasswordTests : IAsyncDisposable
         var user = new User
         {
             Id = Guid.NewGuid(),
-            Username = "complexpassuser",
+            Username = "complex-pass-user",
             PasswordHash = _passwordService.HashPassword(complexPassword),
             Email = "complex@example.com",
             DisplayName = "Complex Password User",
@@ -174,7 +174,7 @@ public sealed class AuthServiceLongPasswordTests : IAsyncDisposable
         _context.Users.Add(user);
         await _context.SaveChangesAsync(ct);
 
-        var result = await _sut.AuthenticateAsync("complexpassuser", complexPassword, ct);
+        var result = await _sut.AuthenticateAsync("complex-pass-user", complexPassword, ct);
 
         Assert.NotNull(result);
     }
@@ -192,9 +192,9 @@ public sealed class AuthServiceLongPasswordTests : IAsyncDisposable
         var user = new User
         {
             Id = Guid.NewGuid(),
-            Username = "nolockoutuser",
+            Username = "no-lockout-user",
             PasswordHash = _passwordService.HashPassword(correctPassword),
-            Email = "nolockout@example.com",
+            Email = "no-lockout@example.com",
             DisplayName = "No Lockout User",
             CreatedAtUtc = DateTime.UtcNow
         };
@@ -204,14 +204,14 @@ public sealed class AuthServiceLongPasswordTests : IAsyncDisposable
         // Attempt 100 failed logins
         for (var i = 0; i < 100; i++)
         {
-            var failedResult = await _sut.AuthenticateAsync("nolockoutuser", "WrongPassword", ct);
+            var failedResult = await _sut.AuthenticateAsync("no-lockout-user", "WrongPassword", ct);
             Assert.Null(failedResult);
         }
 
         // User should still be able to log in with correct password
-        var successResult = await _sut.AuthenticateAsync("nolockoutuser", correctPassword, ct);
+        var successResult = await _sut.AuthenticateAsync("no-lockout-user", correctPassword, ct);
         Assert.NotNull(successResult);
-        Assert.Equal("nolockoutuser", successResult.Username);
+        Assert.Equal("no-lockout-user", successResult.Username);
     }
 
     [Fact]
@@ -223,9 +223,9 @@ public sealed class AuthServiceLongPasswordTests : IAsyncDisposable
         var user = new User
         {
             Id = Guid.NewGuid(),
-            Username = "nolockout1000user",
+            Username = "no-lockout1000user",
             PasswordHash = _passwordService.HashPassword(correctPassword),
-            Email = "nolockout1000@example.com",
+            Email = "no-lockout1000@example.com",
             DisplayName = "No Lockout 1000 User",
             CreatedAtUtc = DateTime.UtcNow
         };
@@ -235,14 +235,14 @@ public sealed class AuthServiceLongPasswordTests : IAsyncDisposable
         // Attempt 1000 failed logins
         for (var i = 0; i < 1000; i++)
         {
-            var failedResult = await _sut.AuthenticateAsync("nolockout1000user", $"WrongPassword{i}", ct);
+            var failedResult = await _sut.AuthenticateAsync("no-lockout1000user", $"WrongPassword{i}", ct);
             Assert.Null(failedResult);
         }
 
         // User should still be able to log in with correct password
-        var successResult = await _sut.AuthenticateAsync("nolockout1000user", correctPassword, ct);
+        var successResult = await _sut.AuthenticateAsync("no-lockout1000user", correctPassword, ct);
         Assert.NotNull(successResult);
-        Assert.Equal("nolockout1000user", successResult.Username);
+        Assert.Equal("no-lockout1000user", successResult.Username);
     }
 
     [Fact]
@@ -255,9 +255,9 @@ public sealed class AuthServiceLongPasswordTests : IAsyncDisposable
         var user = new User
         {
             Id = Guid.NewGuid(),
-            Username = "changepassnolockout",
+            Username = "change-pass-no-lockout",
             PasswordHash = _passwordService.HashPassword(originalPassword),
-            Email = "changepassnolockout@example.com",
+            Email = "change-pass-no-lockout@example.com",
             DisplayName = "Change Password No Lockout",
             CreatedAtUtc = DateTime.UtcNow
         };
@@ -276,7 +276,7 @@ public sealed class AuthServiceLongPasswordTests : IAsyncDisposable
         Assert.True(successResult);
 
         // Verify new password works
-        var authenticated = await _sut.AuthenticateAsync("changepassnolockout", newPassword, ct);
+        var authenticated = await _sut.AuthenticateAsync("change-pass-no-lockout", newPassword, ct);
         Assert.NotNull(authenticated);
     }
 
@@ -289,7 +289,7 @@ public sealed class AuthServiceLongPasswordTests : IAsyncDisposable
         var user = new User
         {
             Id = Guid.NewGuid(),
-            Username = "interleaveduser",
+            Username = "interleaved-user",
             PasswordHash = _passwordService.HashPassword(correctPassword),
             Email = "interleaved@example.com",
             DisplayName = "Interleaved User",
@@ -304,18 +304,18 @@ public sealed class AuthServiceLongPasswordTests : IAsyncDisposable
             // 5 failed attempts
             for (var j = 0; j < 5; j++)
             {
-                var failedResult = await _sut.AuthenticateAsync("interleaveduser", "WrongPassword", ct);
+                var failedResult = await _sut.AuthenticateAsync("interleaved-user", "WrongPassword", ct);
                 Assert.Null(failedResult);
             }
 
             // 1 successful attempt
-            var successResult = await _sut.AuthenticateAsync("interleaveduser", correctPassword, ct);
+            var successResult = await _sut.AuthenticateAsync("interleaved-user", correctPassword, ct);
             Assert.NotNull(successResult);
         }
 
         // Final successful login after 100 failed attempts total
-        var finalResult = await _sut.AuthenticateAsync("interleaveduser", correctPassword, ct);
+        var finalResult = await _sut.AuthenticateAsync("interleaved-user", correctPassword, ct);
         Assert.NotNull(finalResult);
-        Assert.Equal("interleaveduser", finalResult.Username);
+        Assert.Equal("interleaved-user", finalResult.Username);
     }
 }

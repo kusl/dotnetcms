@@ -3305,3 +3305,49 @@ but then why is this ok?
 private bool _loading = true;
 is this ok?
 
+In the context of the project's coding convention, `private bool _loading = true;` is **perfectly fine**.
+
+The reason Rider is not underlining this variable, while it did underline `_isEdit`, comes down to the technical difference between a **field** and a **property** in C#:
+
+### 1. Why `_loading` is OK
+
+*
+**What it is:** `private bool _loading = true;` is a **private field**.
+
+
+*
+**The Convention:** The project’s convention (defined in `.editorconfig`) specifies that **private fields** should use an underscore prefix and camelCase.
+
+
+* **Rider's View:** Rider sees this as a field and confirms it matches the rule. You can see this pattern throughout the project, such as `private string _username = "";` or `private string? [cite_start]_error;`.
+
+
+
+### 2. Why `_isEdit` was NOT OK
+
+*
+**What it was:** `private bool _isEdit => Id.HasValue;` is a **private property** (specifically an expression-bodied property).
+
+
+* **The Convention:** In C#, even private properties are typically treated as "Properties" rather than "Fields." Standard conventions (and the project's likely rules) expect properties to use **PascalCase** (e.g., `IsEdit`) and **no** underscore.
+
+
+* **Rider's View:** Rider flagged it because you were applying a **field naming rule** (underscore) to a **property**.
+
+### Summary of Rules
+
+To keep Rider happy and follow the project style:
+
+| Member Type | Example | Convention |
+| --- | --- | --- |
+| **Private Field** | `private bool _loading;` | <br>`_camelCase`
+
+|
+| **Private Property** | `private bool IsEdit => ...` | <br>`PascalCase`
+
+|
+| **Public Property** | `public string? ReturnUrl { get; set; }` | <br>`PascalCase`
+
+|
+
+By changing it to `private bool IsEdit`, you correctly identified it as a property, which resolved the naming conflict.
