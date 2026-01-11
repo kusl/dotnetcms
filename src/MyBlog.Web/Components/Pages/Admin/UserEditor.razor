@@ -6,9 +6,9 @@
 @inject IPasswordService PasswordService
 @inject NavigationManager Navigation
 
-<PageTitle>@(_isEdit ? "Edit User" : "New User")</PageTitle>
+<PageTitle>@(IsEdit ? "Edit User" : "New User")</PageTitle>
 
-<h1>@(_isEdit ? "Edit User" : "New User")</h1>
+<h1>@(IsEdit ? "Edit User" : "New User")</h1>
 
 <div class="user-editor" style="max-width: 600px;">
     @if (!string.IsNullOrEmpty(_error))
@@ -32,9 +32,9 @@
     </div>
 
     <div class="form-group">
-        <label for="password">Password @(_isEdit ? "(Leave blank to keep current)" : "")</label>
-        <input type="password" id="password" @bind="_password" required="@(!_isEdit)" />
-        @if (!_isEdit) 
+        <label for="password">Password @(IsEdit ? "(Leave blank to keep current)" : "")</label>
+        <input type="password" id="password" @bind="_password" required="@(!IsEdit)" />
+        @if (!IsEdit) 
         {
             <small>Required for new users.</small>
         }
@@ -52,7 +52,7 @@
     [Parameter]
     public Guid? Id { get; set; }
 
-    private bool _isEdit => Id.HasValue;
+    private bool IsEdit => Id.HasValue;
     private bool _saving;
     private string? _error;
 
@@ -66,7 +66,7 @@
 
     protected override async Task OnParametersSetAsync()
     {
-        if (_isEdit)
+        if (IsEdit)
         {
             _existingUser = await UserRepository.GetByIdAsync(Id!.Value);
             if (_existingUser is null)
@@ -102,7 +102,7 @@
                 return;
             }
 
-            if (_isEdit && _existingUser is not null)
+            if (IsEdit && _existingUser is not null)
             {
                 // Update existing
                 _existingUser.Username = _username;

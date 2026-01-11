@@ -8,15 +8,15 @@
 @inject AuthenticationStateProvider AuthStateProvider
 @using System.Security.Claims
 
-<PageTitle>@(_isEdit ? "Edit Post" : "New Post")</PageTitle>
+<PageTitle>@(IsEdit ? "Edit Post" : "New Post")</PageTitle>
 
-<h1>@(_isEdit ? "Edit Post" : "New Post")</h1>
+<h1>@(IsEdit ? "Edit Post" : "New Post")</h1>
 
 @if (_loading)
 {
     <p>Loading...</p>
 }
-else if (_isEdit && _existingPost is null)
+else if (IsEdit && _existingPost is null)
 {
     <p>Post not found.</p>
     <a href="/admin/posts">Back to Posts</a>
@@ -73,7 +73,7 @@ else
     [Parameter]
     public Guid? Id { get; set; }
 
-    private bool _isEdit => Id.HasValue;
+    private bool IsEdit => Id.HasValue;
     private bool _loading = true;
     private bool _saving;
     private string _title = "";
@@ -85,7 +85,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        if (_isEdit)
+        if (IsEdit)
         {
             _existingPost = await PostRepository.GetByIdAsync(Id!.Value);
             if (_existingPost is not null)
@@ -114,7 +114,7 @@ else
         {
             var authState = await AuthStateProvider.GetAuthenticationStateAsync();
             var userIdClaim = authState.User.FindFirst(ClaimTypes.NameIdentifier);
-            
+
             if (userIdClaim is null || !Guid.TryParse(userIdClaim.Value, out var userId))
             {
                 _error = "Unable to identify current user. Please log in again.";
@@ -126,15 +126,15 @@ else
             var baseSlug = SlugService.GenerateSlug(_title);
             var finalSlug = baseSlug;
             var counter = 1;
-            
+
             // Loop until we find a slug that isn't taken (excluding current post if editing)
-            while (await PostRepository.IsSlugTakenAsync(finalSlug, _isEdit ? Id : null))
+            while (await PostRepository.IsSlugTakenAsync(finalSlug, IsEdit ? Id : null))
             {
                 finalSlug = $"{baseSlug}-{counter}";
                 counter++;
             }
 
-            if (_isEdit && _existingPost is not null)
+            if (IsEdit && _existingPost is not null)
             {
                 _existingPost.Title = _title;
                 _existingPost.Slug = finalSlug; // Update slug with unique version

@@ -13,7 +13,7 @@ public sealed class LoginRateLimitMiddleware
     private readonly Func<TimeSpan, CancellationToken, Task>? _delayFunc;
 
     // Track attempts per IP: IP -> (attempt count, window start)
-    private static readonly ConcurrentDictionary<string, (int Count, DateTime WindowStart)> _attempts = new();
+    private static readonly ConcurrentDictionary<string, (int Count, DateTime WindowStart)> Attempts = new();
 
     // Configuration
     private const int WindowMinutes = 15;
@@ -103,7 +103,7 @@ public sealed class LoginRateLimitMiddleware
     /// </summary>
     public static TimeSpan CalculateDelay(string ip)
     {
-        if (!_attempts.TryGetValue(ip, out var record))
+        if (!Attempts.TryGetValue(ip, out var record))
         {
             return TimeSpan.Zero;
         }
@@ -111,7 +111,7 @@ public sealed class LoginRateLimitMiddleware
         // Reset if window expired
         if (DateTime.UtcNow - record.WindowStart > TimeSpan.FromMinutes(WindowMinutes))
         {
-            _attempts.TryRemove(ip, out _);
+            Attempts.TryRemove(ip, out _);
             return TimeSpan.Zero;
         }
 
@@ -134,7 +134,7 @@ public sealed class LoginRateLimitMiddleware
     {
         var now = DateTime.UtcNow;
 
-        _attempts.AddOrUpdate(
+        Attempts.AddOrUpdate(
             ip,
             _ => (1, now),
             (_, existing) =>
@@ -159,17 +159,17 @@ public sealed class LoginRateLimitMiddleware
     /// </summary>
     public static void ClearAttempts()
     {
-        _attempts.Clear();
+        Attempts.Clear();
     }
 
     private static void CleanupOldEntries()
     {
         var cutoff = DateTime.UtcNow.AddMinutes(-WindowMinutes * 2);
-        foreach (var kvp in _attempts)
+        foreach (var kvp in Attempts)
         {
             if (kvp.Value.WindowStart < cutoff)
             {
-                _attempts.TryRemove(kvp.Key, out _);
+                Attempts.TryRemove(kvp.Key, out _);
             }
         }
     }
