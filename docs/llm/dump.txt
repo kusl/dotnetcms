@@ -1,6 +1,6 @@
 ===============================================================================
 PROJECT EXPORT
-Generated: Sun Jan 11 11:35:19 AM CST 2026
+Generated: Sun Jan 11 11:58:20 AM CST 2026
 Project Path: /home/kushal/src/dotnet/MyBlog
 ===============================================================================
 
@@ -142,10 +142,12 @@ DIRECTORY STRUCTURE:
 │   ├── generate-myblog.sh
 │   ├── .gitkeep
 │   ├── global.json
+│   ├── MyBlog.sln.DotSettings.user
 │   ├── MyBlog.slnx
 │   ├── run.sh
 │   ├── test.sh
 │   └── upgrade-myblog.sh
+├── .editorconfig
 ├── export.sh
 ├── fix-all-forms.sh
 ├── fix-auth-architecture.sh
@@ -163,6 +165,40 @@ DIRECTORY STRUCTURE:
 
 FILE CONTENTS:
 ==============
+
+================================================================================
+FILE: .editorconfig
+SIZE: .89 KB
+MODIFIED: 2026-01-11 11:42:44
+================================================================================
+
+root = true
+
+[*]
+indent_style = space
+indent_size = 4
+insert_final_newline = true
+trim_trailing_whitespace = true
+charset = utf-8
+
+[*.{cs,razor}]
+# Naming conventions
+dotnet_naming_rule.private_fields_should_be_underscored.severity = suggestion
+dotnet_naming_rule.private_fields_should_be_underscored.symbols = private_fields
+dotnet_naming_rule.private_fields_should_be_underscored.style = prefix_underscore
+
+dotnet_naming_symbols.private_fields.applicable_kinds = field
+dotnet_naming_symbols.private_fields.applicable_accessibilities = private
+
+dotnet_naming_style.prefix_underscore.capitalization = camel_case
+dotnet_naming_style.prefix_underscore.required_prefix = _
+
+# Code style rules
+csharp_style_expression_bodied_properties = true:suggestion
+csharp_style_expression_bodied_methods = true:suggestion
+csharp_style_namespace_declarations = file_scoped:error
+csharp_style_var_for_built_in_types = true:suggestion
+
 
 ================================================================================
 FILE: export.sh
@@ -11209,8 +11245,8 @@ public sealed class ImageRepository : IImageRepository
 
 ================================================================================
 FILE: src/MyBlog.Infrastructure/Repositories/PostRepository.cs
-SIZE: 5.02 KB
-MODIFIED: 2026-01-11 11:34:04
+SIZE: 5.01 KB
+MODIFIED: 2026-01-11 11:35:27
 ================================================================================
 
 using Microsoft.EntityFrameworkCore;
@@ -11370,7 +11406,7 @@ public sealed class PostRepository : IPostRepository
             return await _context.Posts
                 .AnyAsync(p => p.Slug == slug && p.Id != excludePostId.Value, cancellationToken);
         }
-        
+
         return await _context.Posts
             .AnyAsync(p => p.Slug == slug, cancellationToken);
     }
@@ -12097,8 +12133,8 @@ MODIFIED: 2025-12-28 07:44:06
 
 ================================================================================
 FILE: src/MyBlog.Tests/Integration/AuthServiceLongPasswordTests.cs
-SIZE: 11.12 KB
-MODIFIED: 2025-12-28 11:13:41
+SIZE: 11.18 KB
+MODIFIED: 2026-01-11 11:56:49
 ================================================================================
 
 using Microsoft.EntityFrameworkCore;
@@ -12162,7 +12198,7 @@ public sealed class AuthServiceLongPasswordTests : IAsyncDisposable
         var user = new User
         {
             Id = Guid.NewGuid(),
-            Username = "longpassuser",
+            Username = "long-pass-user",
             PasswordHash = _passwordService.HashPassword(longPassword),
             Email = "longpass@example.com",
             DisplayName = "Long Password User",
@@ -12171,10 +12207,10 @@ public sealed class AuthServiceLongPasswordTests : IAsyncDisposable
         _context.Users.Add(user);
         await _context.SaveChangesAsync(ct);
 
-        var result = await _sut.AuthenticateAsync("longpassuser", longPassword, ct);
+        var result = await _sut.AuthenticateAsync("long-pass-user", longPassword, ct);
 
         Assert.NotNull(result);
-        Assert.Equal("longpassuser", result.Username);
+        Assert.Equal("long-pass-user", result.Username);
     }
 
     [Fact]
@@ -12186,19 +12222,19 @@ public sealed class AuthServiceLongPasswordTests : IAsyncDisposable
         var user = new User
         {
             Id = Guid.NewGuid(),
-            Username = "verylongpassuser",
+            Username = "very-long-pass-user",
             PasswordHash = _passwordService.HashPassword(longPassword),
-            Email = "verylong@example.com",
+            Email = "very-long@example.com",
             DisplayName = "Very Long Password User",
             CreatedAtUtc = DateTime.UtcNow
         };
         _context.Users.Add(user);
         await _context.SaveChangesAsync(ct);
 
-        var result = await _sut.AuthenticateAsync("verylongpassuser", longPassword, ct);
+        var result = await _sut.AuthenticateAsync("very-long-pass-user", longPassword, ct);
 
         Assert.NotNull(result);
-        Assert.Equal("verylongpassuser", result.Username);
+        Assert.Equal("very-long-pass-user", result.Username);
     }
 
     [Fact]
@@ -12210,7 +12246,7 @@ public sealed class AuthServiceLongPasswordTests : IAsyncDisposable
         var user = new User
         {
             Id = Guid.NewGuid(),
-            Username = "extralongpassuser",
+            Username = "extralong-pass-user",
             PasswordHash = _passwordService.HashPassword(longPassword),
             Email = "extralong@example.com",
             DisplayName = "Extra Long Password User",
@@ -12219,10 +12255,10 @@ public sealed class AuthServiceLongPasswordTests : IAsyncDisposable
         _context.Users.Add(user);
         await _context.SaveChangesAsync(ct);
 
-        var result = await _sut.AuthenticateAsync("extralongpassuser", longPassword, ct);
+        var result = await _sut.AuthenticateAsync("extralong-pass-user", longPassword, ct);
 
         Assert.NotNull(result);
-        Assert.Equal("extralongpassuser", result.Username);
+        Assert.Equal("extralong-pass-user", result.Username);
     }
 
     [Fact]
@@ -12235,7 +12271,7 @@ public sealed class AuthServiceLongPasswordTests : IAsyncDisposable
         var user = new User
         {
             Id = Guid.NewGuid(),
-            Username = "changepasslonguser",
+            Username = "change-pass-long-user",
             PasswordHash = _passwordService.HashPassword(originalPassword),
             Email = "changelong@example.com",
             DisplayName = "Change Long Password User",
@@ -12249,7 +12285,7 @@ public sealed class AuthServiceLongPasswordTests : IAsyncDisposable
         Assert.True(result);
 
         // Verify new password works
-        var authenticated = await _sut.AuthenticateAsync("changepasslonguser", newLongPassword, ct);
+        var authenticated = await _sut.AuthenticateAsync("change-pass-long-user", newLongPassword, ct);
         Assert.NotNull(authenticated);
     }
 
@@ -12268,7 +12304,7 @@ public sealed class AuthServiceLongPasswordTests : IAsyncDisposable
         var user = new User
         {
             Id = Guid.NewGuid(),
-            Username = "complexpassuser",
+            Username = "complex-pass-user",
             PasswordHash = _passwordService.HashPassword(complexPassword),
             Email = "complex@example.com",
             DisplayName = "Complex Password User",
@@ -12277,7 +12313,7 @@ public sealed class AuthServiceLongPasswordTests : IAsyncDisposable
         _context.Users.Add(user);
         await _context.SaveChangesAsync(ct);
 
-        var result = await _sut.AuthenticateAsync("complexpassuser", complexPassword, ct);
+        var result = await _sut.AuthenticateAsync("complex-pass-user", complexPassword, ct);
 
         Assert.NotNull(result);
     }
@@ -12295,9 +12331,9 @@ public sealed class AuthServiceLongPasswordTests : IAsyncDisposable
         var user = new User
         {
             Id = Guid.NewGuid(),
-            Username = "nolockoutuser",
+            Username = "no-lockout-user",
             PasswordHash = _passwordService.HashPassword(correctPassword),
-            Email = "nolockout@example.com",
+            Email = "no-lockout@example.com",
             DisplayName = "No Lockout User",
             CreatedAtUtc = DateTime.UtcNow
         };
@@ -12307,14 +12343,14 @@ public sealed class AuthServiceLongPasswordTests : IAsyncDisposable
         // Attempt 100 failed logins
         for (var i = 0; i < 100; i++)
         {
-            var failedResult = await _sut.AuthenticateAsync("nolockoutuser", "WrongPassword", ct);
+            var failedResult = await _sut.AuthenticateAsync("no-lockout-user", "WrongPassword", ct);
             Assert.Null(failedResult);
         }
 
         // User should still be able to log in with correct password
-        var successResult = await _sut.AuthenticateAsync("nolockoutuser", correctPassword, ct);
+        var successResult = await _sut.AuthenticateAsync("no-lockout-user", correctPassword, ct);
         Assert.NotNull(successResult);
-        Assert.Equal("nolockoutuser", successResult.Username);
+        Assert.Equal("no-lockout-user", successResult.Username);
     }
 
     [Fact]
@@ -12326,9 +12362,9 @@ public sealed class AuthServiceLongPasswordTests : IAsyncDisposable
         var user = new User
         {
             Id = Guid.NewGuid(),
-            Username = "nolockout1000user",
+            Username = "no-lockout1000user",
             PasswordHash = _passwordService.HashPassword(correctPassword),
-            Email = "nolockout1000@example.com",
+            Email = "no-lockout1000@example.com",
             DisplayName = "No Lockout 1000 User",
             CreatedAtUtc = DateTime.UtcNow
         };
@@ -12338,14 +12374,14 @@ public sealed class AuthServiceLongPasswordTests : IAsyncDisposable
         // Attempt 1000 failed logins
         for (var i = 0; i < 1000; i++)
         {
-            var failedResult = await _sut.AuthenticateAsync("nolockout1000user", $"WrongPassword{i}", ct);
+            var failedResult = await _sut.AuthenticateAsync("no-lockout1000user", $"WrongPassword{i}", ct);
             Assert.Null(failedResult);
         }
 
         // User should still be able to log in with correct password
-        var successResult = await _sut.AuthenticateAsync("nolockout1000user", correctPassword, ct);
+        var successResult = await _sut.AuthenticateAsync("no-lockout1000user", correctPassword, ct);
         Assert.NotNull(successResult);
-        Assert.Equal("nolockout1000user", successResult.Username);
+        Assert.Equal("no-lockout1000user", successResult.Username);
     }
 
     [Fact]
@@ -12358,9 +12394,9 @@ public sealed class AuthServiceLongPasswordTests : IAsyncDisposable
         var user = new User
         {
             Id = Guid.NewGuid(),
-            Username = "changepassnolockout",
+            Username = "change-pass-no-lockout",
             PasswordHash = _passwordService.HashPassword(originalPassword),
-            Email = "changepassnolockout@example.com",
+            Email = "change-pass-no-lockout@example.com",
             DisplayName = "Change Password No Lockout",
             CreatedAtUtc = DateTime.UtcNow
         };
@@ -12379,7 +12415,7 @@ public sealed class AuthServiceLongPasswordTests : IAsyncDisposable
         Assert.True(successResult);
 
         // Verify new password works
-        var authenticated = await _sut.AuthenticateAsync("changepassnolockout", newPassword, ct);
+        var authenticated = await _sut.AuthenticateAsync("change-pass-no-lockout", newPassword, ct);
         Assert.NotNull(authenticated);
     }
 
@@ -12392,7 +12428,7 @@ public sealed class AuthServiceLongPasswordTests : IAsyncDisposable
         var user = new User
         {
             Id = Guid.NewGuid(),
-            Username = "interleaveduser",
+            Username = "interleaved-user",
             PasswordHash = _passwordService.HashPassword(correctPassword),
             Email = "interleaved@example.com",
             DisplayName = "Interleaved User",
@@ -12407,19 +12443,19 @@ public sealed class AuthServiceLongPasswordTests : IAsyncDisposable
             // 5 failed attempts
             for (var j = 0; j < 5; j++)
             {
-                var failedResult = await _sut.AuthenticateAsync("interleaveduser", "WrongPassword", ct);
+                var failedResult = await _sut.AuthenticateAsync("interleaved-user", "WrongPassword", ct);
                 Assert.Null(failedResult);
             }
 
             // 1 successful attempt
-            var successResult = await _sut.AuthenticateAsync("interleaveduser", correctPassword, ct);
+            var successResult = await _sut.AuthenticateAsync("interleaved-user", correctPassword, ct);
             Assert.NotNull(successResult);
         }
 
         // Final successful login after 100 failed attempts total
-        var finalResult = await _sut.AuthenticateAsync("interleaveduser", correctPassword, ct);
+        var finalResult = await _sut.AuthenticateAsync("interleaved-user", correctPassword, ct);
         Assert.NotNull(finalResult);
-        Assert.Equal("interleaveduser", finalResult.Username);
+        Assert.Equal("interleaved-user", finalResult.Username);
     }
 }
 
@@ -13029,8 +13065,8 @@ public class TelemetryCleanupTests : IAsyncDisposable
 
 ================================================================================
 FILE: src/MyBlog.Tests/MyBlog.Tests.csproj
-SIZE: .63 KB
-MODIFIED: 2026-01-01 21:20:42
+SIZE: .69 KB
+MODIFIED: 2026-01-11 11:52:12
 ================================================================================
 
 <Project Sdk="Microsoft.NET.Sdk">
@@ -13040,6 +13076,7 @@ MODIFIED: 2026-01-01 21:20:42
   </PropertyGroup>
   
   <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <PackageReference Include="xunit.v3" />
     <PackageReference Include="Microsoft.Testing.Extensions.TrxReport" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
@@ -13729,8 +13766,8 @@ MODIFIED: 2026-01-01 21:33:51
 
 ================================================================================
 FILE: src/MyBlog.Web/Middleware/LoginRateLimitMiddleware.cs
-SIZE: 5.65 KB
-MODIFIED: 2025-12-28 12:56:41
+SIZE: 5.64 KB
+MODIFIED: 2026-01-11 11:43:24
 ================================================================================
 
 using System.Collections.Concurrent;
@@ -13748,7 +13785,7 @@ public sealed class LoginRateLimitMiddleware
     private readonly Func<TimeSpan, CancellationToken, Task>? _delayFunc;
 
     // Track attempts per IP: IP -> (attempt count, window start)
-    private static readonly ConcurrentDictionary<string, (int Count, DateTime WindowStart)> _attempts = new();
+    private static readonly ConcurrentDictionary<string, (int Count, DateTime WindowStart)> Attempts = new();
 
     // Configuration
     private const int WindowMinutes = 15;
@@ -13838,7 +13875,7 @@ public sealed class LoginRateLimitMiddleware
     /// </summary>
     public static TimeSpan CalculateDelay(string ip)
     {
-        if (!_attempts.TryGetValue(ip, out var record))
+        if (!Attempts.TryGetValue(ip, out var record))
         {
             return TimeSpan.Zero;
         }
@@ -13846,7 +13883,7 @@ public sealed class LoginRateLimitMiddleware
         // Reset if window expired
         if (DateTime.UtcNow - record.WindowStart > TimeSpan.FromMinutes(WindowMinutes))
         {
-            _attempts.TryRemove(ip, out _);
+            Attempts.TryRemove(ip, out _);
             return TimeSpan.Zero;
         }
 
@@ -13869,7 +13906,7 @@ public sealed class LoginRateLimitMiddleware
     {
         var now = DateTime.UtcNow;
 
-        _attempts.AddOrUpdate(
+        Attempts.AddOrUpdate(
             ip,
             _ => (1, now),
             (_, existing) =>
@@ -13894,17 +13931,17 @@ public sealed class LoginRateLimitMiddleware
     /// </summary>
     public static void ClearAttempts()
     {
-        _attempts.Clear();
+        Attempts.Clear();
     }
 
     private static void CleanupOldEntries()
     {
         var cutoff = DateTime.UtcNow.AddMinutes(-WindowMinutes * 2);
-        foreach (var kvp in _attempts)
+        foreach (var kvp in Attempts)
         {
             if (kvp.Value.WindowStart < cutoff)
             {
-                _attempts.TryRemove(kvp.Key, out _);
+                Attempts.TryRemove(kvp.Key, out _);
             }
         }
     }
@@ -15602,9 +15639,9 @@ echo "=============================================="
 
 
 ===============================================================================
-EXPORT COMPLETED: Sun Jan 11 11:35:19 AM CST 2026
-Total Files Found: 75
-Files Exported: 75
+EXPORT COMPLETED: Sun Jan 11 11:58:20 AM CST 2026
+Total Files Found: 76
+Files Exported: 76
 Files Skipped: 0 (binary or large files)
 Output File: /home/kushal/src/dotnet/MyBlog/docs/llm/dump.txt
 ===============================================================================
