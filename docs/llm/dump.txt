@@ -1,6 +1,6 @@
 ===============================================================================
 PROJECT EXPORT
-Generated: Sun Jan 11 11:29:41 AM CST 2026
+Generated: Sun Jan 11 11:35:19 AM CST 2026
 Project Path: /home/kushal/src/dotnet/MyBlog
 ===============================================================================
 
@@ -26,7 +26,8 @@ DIRECTORY STRUCTURE:
 │       │   ├── 0013.txt
 │       │   ├── 0014.txt
 │       │   ├── 0015.txt
-│       │   └── 0016.txt
+│       │   ├── 0016.txt
+│       │   └── 0017.txt
 │       ├── chatgpt.md
 │       ├── claude.md
 │       ├── command.md
@@ -10315,8 +10316,8 @@ public interface IPasswordService
 
 ================================================================================
 FILE: src/MyBlog.Core/Interfaces/IPostRepository.cs
-SIZE: 1.56 KB
-MODIFIED: 2025-12-28 07:44:06
+SIZE: 1.75 KB
+MODIFIED: 2026-01-11 11:34:04
 ================================================================================
 
 using MyBlog.Core.Models;
@@ -10357,6 +10358,9 @@ public interface IPostRepository
     /// <summary>Gets recent posts for dashboard.</summary>
     Task<IReadOnlyList<PostListItemDto>> GetRecentPostsAsync(
         int count, CancellationToken cancellationToken = default);
+
+    /// <summary>Checks if a slug is already in use by another post.</summary>
+    Task<bool> IsSlugTakenAsync(string slug, Guid? excludePostId = null, CancellationToken cancellationToken = default);
 }
 
 
@@ -11205,8 +11209,8 @@ public sealed class ImageRepository : IImageRepository
 
 ================================================================================
 FILE: src/MyBlog.Infrastructure/Repositories/PostRepository.cs
-SIZE: 4.56 KB
-MODIFIED: 2025-12-28 07:44:06
+SIZE: 5.02 KB
+MODIFIED: 2026-01-11 11:34:04
 ================================================================================
 
 using Microsoft.EntityFrameworkCore;
@@ -11356,6 +11360,19 @@ public sealed class PostRepository : IPostRepository
                 p.PublishedAtUtc,
                 p.IsPublished))
             .ToListAsync(cancellationToken);
+    }
+
+    /// <inheritdoc />
+    public async Task<bool> IsSlugTakenAsync(string slug, Guid? excludePostId = null, CancellationToken cancellationToken = default)
+    {
+        if (excludePostId.HasValue)
+        {
+            return await _context.Posts
+                .AnyAsync(p => p.Slug == slug && p.Id != excludePostId.Value, cancellationToken);
+        }
+        
+        return await _context.Posts
+            .AnyAsync(p => p.Slug == slug, cancellationToken);
     }
 }
 
@@ -15585,7 +15602,7 @@ echo "=============================================="
 
 
 ===============================================================================
-EXPORT COMPLETED: Sun Jan 11 11:29:42 AM CST 2026
+EXPORT COMPLETED: Sun Jan 11 11:35:19 AM CST 2026
 Total Files Found: 75
 Files Exported: 75
 Files Skipped: 0 (binary or large files)

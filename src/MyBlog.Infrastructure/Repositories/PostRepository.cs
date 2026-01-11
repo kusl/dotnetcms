@@ -155,7 +155,7 @@ public sealed class PostRepository : IPostRepository
             return await _context.Posts
                 .AnyAsync(p => p.Slug == slug && p.Id != excludePostId.Value, cancellationToken);
         }
-        
+
         return await _context.Posts
             .AnyAsync(p => p.Slug == slug, cancellationToken);
     }
