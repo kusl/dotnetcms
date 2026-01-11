@@ -1,0 +1,825 @@
+kushal@fedora:~/Downloads$ cd ~/src/dotnet/MyBlog/; time bash export.sh; cd ~/src/dotnet/MyBlog/src/; export DOTNET_CLI_TELEMETRY_OPTOUT=1; time dotnet format; time dotnet restore; time dotnet clean; time dotnet build; time dotnet run --project MyBlog.Tests/MyBlog.Tests.csproj; time dotnet list package; time dotnet list package --outdated;
+==============================================
+  Project Export for LLM Analysis
+==============================================
+
+Project Path: /home/kushal/src/dotnet/MyBlog
+Output File:  docs/llm/dump.txt
+
+Generating directory structure...
+Collecting files...
+Found 74 files to export
+
+Processing (1/74): export.sh
+Processing (2/74): fix-all-forms.sh
+Processing (3/74): fix-auth-architecture.sh
+Processing (4/74): fix-blazor-interactivity.sh
+Processing (5/74): fix-login-logout.sh
+Processing (6/74): fix-ordered-lists.sh
+Processing (7/74): fix-program-cs.sh
+Processing (8/74): fix-update-claims.sh
+Processing (9/74): gemini.sh
+Processing (10/74): .github/workflows/build-deploy.yml
+Processing (11/74): .gitignore
+Processing (12/74): implement-user-management.sh
+Processing (13/74): README.md
+Processing (14/74): src/Directory.Build.props
+Processing (15/74): src/Directory.Packages.props
+Processing (16/74): src/.editorconfig
+Processing (17/74): src/fix-changepassword-and-tests.sh
+Processing (18/74): src/fix-rate-limit.sh
+Processing (19/74): src/generate-myblog.sh
+Processing (20/74): src/.github/workflows/build-deploy.yml
+Processing (21/74): src/global.json
+Processing (22/74): src/MyBlog.Core/Constants/AppConstants.cs
+Processing (23/74): src/MyBlog.Core/Interfaces/IAuthService.cs
+Processing (24/74): src/MyBlog.Core/Interfaces/IImageRepository.cs
+Processing (25/74): src/MyBlog.Core/Interfaces/IMarkdownService.cs
+Processing (26/74): src/MyBlog.Core/Interfaces/IPasswordService.cs
+Processing (27/74): src/MyBlog.Core/Interfaces/IPostRepository.cs
+Processing (28/74): src/MyBlog.Core/Interfaces/ISlugService.cs
+Processing (29/74): src/MyBlog.Core/Interfaces/ITelemetryLogRepository.cs
+Processing (30/74): src/MyBlog.Core/Interfaces/IUserRepository.cs
+Processing (31/74): src/MyBlog.Core/Models/Image.cs
+Processing (32/74): src/MyBlog.Core/Models/Post.cs
+Processing (33/74): src/MyBlog.Core/Models/PostDto.cs
+Processing (34/74): src/MyBlog.Core/Models/TelemetryLog.cs
+Processing (35/74): src/MyBlog.Core/Models/User.cs
+Processing (36/74): src/MyBlog.Core/MyBlog.Core.csproj
+Processing (37/74): src/MyBlog.Core/Services/MarkdownService.cs
+Processing (38/74): src/MyBlog.Core/Services/SlugService.cs
+Processing (39/74): src/MyBlog.Infrastructure/Data/BlogDbContext.cs
+Processing (40/74): src/MyBlog.Infrastructure/Data/DatabasePathResolver.cs
+Processing (41/74): src/MyBlog.Infrastructure/MyBlog.Infrastructure.csproj
+Processing (42/74): src/MyBlog.Infrastructure/Repositories/ImageRepository.cs
+Processing (43/74): src/MyBlog.Infrastructure/Repositories/PostRepository.cs
+Processing (44/74): src/MyBlog.Infrastructure/Repositories/TelemetryLogRepository.cs
+Processing (45/74): src/MyBlog.Infrastructure/Repositories/UserRepository.cs
+Processing (46/74): src/MyBlog.Infrastructure/ServiceCollectionExtensions.cs
+Processing (47/74): src/MyBlog.Infrastructure/Services/AuthService.cs
+Processing (48/74): src/MyBlog.Infrastructure/Services/PasswordService.cs
+Processing (49/74): src/MyBlog.Infrastructure/Services/TelemetryCleanupService.cs
+Processing (50/74): src/MyBlog.Infrastructure/Telemetry/DatabaseLogExporter.cs
+Processing (51/74): src/MyBlog.Infrastructure/Telemetry/FileLogExporter.cs
+Processing (52/74): src/MyBlog.Infrastructure/Telemetry/TelemetryPathResolver.cs
+Processing (53/74): src/MyBlog.slnx
+Processing (54/74): src/MyBlog.Tests/Integration/AuthServiceLongPasswordTests.cs
+Processing (55/74): src/MyBlog.Tests/Integration/AuthServiceTests.cs
+Processing (56/74): src/MyBlog.Tests/Integration/PasswordChangeTests.cs
+Processing (57/74): src/MyBlog.Tests/Integration/PostRepositoryTests.cs
+Processing (58/74): src/MyBlog.Tests/Integration/TelemetryCleanupTests.cs
+Processing (59/74): src/MyBlog.Tests/MyBlog.Tests.csproj
+Processing (60/74): src/MyBlog.Tests/Unit/LoginRateLimitMiddlewareTests.cs
+Processing (61/74): src/MyBlog.Tests/Unit/MarkdownServiceTests.cs
+Processing (62/74): src/MyBlog.Tests/Unit/PasswordServiceTests.cs
+Processing (63/74): src/MyBlog.Tests/Unit/SlugServiceTests.cs
+Processing (64/74): src/MyBlog.Web/appsettings.Development.json
+Processing (65/74): src/MyBlog.Web/appsettings.json
+Processing (66/74): src/MyBlog.Web/Components/Pages/Admin/UserEditor.razor.css
+Processing (67/74): src/MyBlog.Web/Components/Pages/Admin/UserList.razor.css
+Processing (68/74): src/MyBlog.Web/Middleware/LoginRateLimitMiddleware.cs
+Processing (69/74): src/MyBlog.Web/MyBlog.Web.csproj
+Processing (70/74): src/MyBlog.Web/Program.cs
+Processing (71/74): src/MyBlog.Web/wwwroot/css/site.css
+Processing (72/74): src/run.sh
+Processing (73/74): src/test.sh
+Processing (74/74): src/upgrade-myblog.sh
+
+==============================================
+  Export Complete!
+==============================================
+
+Output file:    docs/llm/dump.txt
+Files exported: 74
+Files skipped:  0
+Output size:    452.62 KB
+
+File types included:
+  • Source code: .cs, .fs, .vb
+  • UI/XAML: .axaml, .xaml, .paml
+  • Projects: .csproj, .slnx, .sln, .props, .targets
+  • Config: .json, .yaml, .yml, .xml, .config
+  • Docs: .md, .txt
+  • Scripts: .sh, .ps1, .cmd, .bat
+  • Other: .sql, .resx, .css, .scss, Dockerfile, etc.
+
+
+real	0m0.758s
+user	0m0.439s
+sys	0m0.463s
+
+real	0m7.580s
+user	0m11.852s
+sys	0m0.846s
+Restore complete (0.5s)
+
+Build succeeded in 0.6s
+
+real	0m0.807s
+user	0m0.856s
+sys	0m0.143s
+
+Build succeeded in 0.5s
+
+real	0m0.655s
+user	0m0.667s
+sys	0m0.114s
+Restore complete (0.5s)
+  MyBlog.Core net10.0 succeeded (2.7s) → MyBlog.Core/bin/Debug/net10.0/MyBlog.Core.dll
+  MyBlog.Infrastructure net10.0 succeeded (0.4s) → MyBlog.Infrastructure/bin/Debug/net10.0/MyBlog.Infrastructure.dll
+  MyBlog.Web net10.0 succeeded (2.5s) → MyBlog.Web/bin/Debug/net10.0/MyBlog.Web.dll
+  MyBlog.Tests net10.0 succeeded (0.4s) → MyBlog.Tests/bin/Debug/net10.0/MyBlog.Tests.dll
+
+Build succeeded in 6.7s
+
+real	0m6.829s
+user	0m2.939s
+sys	0m0.454s
+xUnit.net v3 In-Process Runner v3.2.1+a9cfb80929 (64-bit .NET 10.0.1)
+  Discovering: MyBlog.Tests
+  Discovered:  MyBlog.Tests
+  Starting:    MyBlog.Tests
+  Finished:    MyBlog.Tests (ID = '24cedafe73dab5684218bb3cf04cfd49ae8ce3b87ae799399cb2e301cbc1e755')
+=== TEST EXECUTION SUMMARY ===
+   MyBlog.Tests  Total: 70, Errors: 0, Failed: 0, Skipped: 0, Not Run: 0, Time: 40.994s
+
+real	0m42.707s
+user	0m45.409s
+sys	0m0.576s
+Restore complete (0.4s)
+
+Build succeeded in 0.5s
+Project 'MyBlog.Core' has the following package references
+   [net10.0]: No packages were found for this framework.
+Project 'MyBlog.Infrastructure' has the following package references
+   [net10.0]: 
+   Top-level Package                           Requested   Resolved
+   > Microsoft.AspNetCore.Identity             2.3.1       2.3.1   
+   > Microsoft.EntityFrameworkCore.Sqlite      10.0.1      10.0.1  
+   > OpenTelemetry                             1.14.0      1.14.0  
+
+Project 'MyBlog.Tests' has the following package references
+   [net10.0]: 
+   Top-level Package                             Requested   Resolved
+   > Microsoft.EntityFrameworkCore.Sqlite        10.0.1      10.0.1  
+   > Microsoft.Testing.Extensions.TrxReport      2.0.2       2.0.2   
+   > xunit.v3                                    3.2.1       3.2.1   
+
+Project 'MyBlog.Web' has the following package references
+   [net10.0]: 
+   Top-level Package                                  Requested    Resolved
+   > Microsoft.AspNetCore.App.Internal.Assets   (A)   [10.0.1, )   10.0.1  
+   > OpenTelemetry.Exporter.Console                   1.14.0       1.14.0  
+   > OpenTelemetry.Extensions.Hosting                 1.14.0       1.14.0  
+   > OpenTelemetry.Instrumentation.AspNetCore         1.14.0       1.14.0  
+   > OpenTelemetry.Instrumentation.Http               1.14.0       1.14.0  
+
+(A) : Auto-referenced package.
+
+real	0m1.453s
+user	0m1.445s
+sys	0m0.296s
+Restore complete (0.4s)
+
+Build succeeded in 0.5s
+
+The following sources were used:
+   https://api.nuget.org/v3/index.json
+
+The given project `MyBlog.Core` has no updates given the current sources.
+Project `MyBlog.Infrastructure` has the following updates to its packages
+   [net10.0]: 
+   Top-level Package                    Requested   Resolved   Latest
+   > Microsoft.AspNetCore.Identity      2.3.1       2.3.1      2.3.9 
+
+The given project `MyBlog.Tests` has no updates given the current sources.
+The given project `MyBlog.Web` has no updates given the current sources.
+
+real	0m1.507s
+user	0m1.494s
+sys	0m0.311s
+kushal@fedora:~/src/dotnet/MyBlog/src$ ^C
+kushal@fedora:~/src/dotnet/MyBlog/src$ cd ~/src/dotnet/MyBlog/; time bash export.sh; cd ~/src/dotnet/MyBlog/src/; export DOTNET_CLI_TELEMETRY_OPTOUT=1; time dotnet format; time dotnet restore; time dotnet clean; time dotnet build; time dotnet run --project MyBlog.Tests/MyBlog.Tests.csproj; time dotnet list package; time dotnet list package --outdated;
+==============================================
+  Project Export for LLM Analysis
+==============================================
+
+Project Path: /home/kushal/src/dotnet/MyBlog
+Output File:  docs/llm/dump.txt
+
+Generating directory structure...
+Collecting files...
+Found 75 files to export
+
+Processing (1/75): export.sh
+Processing (2/75): fix-all-forms.sh
+Processing (3/75): fix-auth-architecture.sh
+Processing (4/75): fix-blazor-interactivity.sh
+Processing (5/75): fix-login-logout.sh
+Processing (6/75): fix-ordered-lists.sh
+Processing (7/75): fix-program-cs.sh
+Processing (8/75): fix-slug-collision.sh
+Processing (9/75): fix-update-claims.sh
+Processing (10/75): gemini.sh
+Processing (11/75): .github/workflows/build-deploy.yml
+Processing (12/75): .gitignore
+Processing (13/75): implement-user-management.sh
+Processing (14/75): README.md
+Processing (15/75): src/Directory.Build.props
+Processing (16/75): src/Directory.Packages.props
+Processing (17/75): src/.editorconfig
+Processing (18/75): src/fix-changepassword-and-tests.sh
+Processing (19/75): src/fix-rate-limit.sh
+Processing (20/75): src/generate-myblog.sh
+Processing (21/75): src/.github/workflows/build-deploy.yml
+Processing (22/75): src/global.json
+Processing (23/75): src/MyBlog.Core/Constants/AppConstants.cs
+Processing (24/75): src/MyBlog.Core/Interfaces/IAuthService.cs
+Processing (25/75): src/MyBlog.Core/Interfaces/IImageRepository.cs
+Processing (26/75): src/MyBlog.Core/Interfaces/IMarkdownService.cs
+Processing (27/75): src/MyBlog.Core/Interfaces/IPasswordService.cs
+Processing (28/75): src/MyBlog.Core/Interfaces/IPostRepository.cs
+Processing (29/75): src/MyBlog.Core/Interfaces/ISlugService.cs
+Processing (30/75): src/MyBlog.Core/Interfaces/ITelemetryLogRepository.cs
+Processing (31/75): src/MyBlog.Core/Interfaces/IUserRepository.cs
+Processing (32/75): src/MyBlog.Core/Models/Image.cs
+Processing (33/75): src/MyBlog.Core/Models/Post.cs
+Processing (34/75): src/MyBlog.Core/Models/PostDto.cs
+Processing (35/75): src/MyBlog.Core/Models/TelemetryLog.cs
+Processing (36/75): src/MyBlog.Core/Models/User.cs
+Processing (37/75): src/MyBlog.Core/MyBlog.Core.csproj
+Processing (38/75): src/MyBlog.Core/Services/MarkdownService.cs
+Processing (39/75): src/MyBlog.Core/Services/SlugService.cs
+Processing (40/75): src/MyBlog.Infrastructure/Data/BlogDbContext.cs
+Processing (41/75): src/MyBlog.Infrastructure/Data/DatabasePathResolver.cs
+Processing (42/75): src/MyBlog.Infrastructure/MyBlog.Infrastructure.csproj
+Processing (43/75): src/MyBlog.Infrastructure/Repositories/ImageRepository.cs
+Processing (44/75): src/MyBlog.Infrastructure/Repositories/PostRepository.cs
+Processing (45/75): src/MyBlog.Infrastructure/Repositories/TelemetryLogRepository.cs
+Processing (46/75): src/MyBlog.Infrastructure/Repositories/UserRepository.cs
+Processing (47/75): src/MyBlog.Infrastructure/ServiceCollectionExtensions.cs
+Processing (48/75): src/MyBlog.Infrastructure/Services/AuthService.cs
+Processing (49/75): src/MyBlog.Infrastructure/Services/PasswordService.cs
+Processing (50/75): src/MyBlog.Infrastructure/Services/TelemetryCleanupService.cs
+Processing (51/75): src/MyBlog.Infrastructure/Telemetry/DatabaseLogExporter.cs
+Processing (52/75): src/MyBlog.Infrastructure/Telemetry/FileLogExporter.cs
+Processing (53/75): src/MyBlog.Infrastructure/Telemetry/TelemetryPathResolver.cs
+Processing (54/75): src/MyBlog.slnx
+Processing (55/75): src/MyBlog.Tests/Integration/AuthServiceLongPasswordTests.cs
+Processing (56/75): src/MyBlog.Tests/Integration/AuthServiceTests.cs
+Processing (57/75): src/MyBlog.Tests/Integration/PasswordChangeTests.cs
+Processing (58/75): src/MyBlog.Tests/Integration/PostRepositoryTests.cs
+Processing (59/75): src/MyBlog.Tests/Integration/TelemetryCleanupTests.cs
+Processing (60/75): src/MyBlog.Tests/MyBlog.Tests.csproj
+Processing (61/75): src/MyBlog.Tests/Unit/LoginRateLimitMiddlewareTests.cs
+Processing (62/75): src/MyBlog.Tests/Unit/MarkdownServiceTests.cs
+Processing (63/75): src/MyBlog.Tests/Unit/PasswordServiceTests.cs
+Processing (64/75): src/MyBlog.Tests/Unit/SlugServiceTests.cs
+Processing (65/75): src/MyBlog.Web/appsettings.Development.json
+Processing (66/75): src/MyBlog.Web/appsettings.json
+Processing (67/75): src/MyBlog.Web/Components/Pages/Admin/UserEditor.razor.css
+Processing (68/75): src/MyBlog.Web/Components/Pages/Admin/UserList.razor.css
+Processing (69/75): src/MyBlog.Web/Middleware/LoginRateLimitMiddleware.cs
+Processing (70/75): src/MyBlog.Web/MyBlog.Web.csproj
+Processing (71/75): src/MyBlog.Web/Program.cs
+Processing (72/75): src/MyBlog.Web/wwwroot/css/site.css
+Processing (73/75): src/run.sh
+Processing (74/75): src/test.sh
+Processing (75/75): src/upgrade-myblog.sh
+
+==============================================
+  Export Complete!
+==============================================
+
+Output file:    docs/llm/dump.txt
+Files exported: 75
+Files skipped:  0
+Output size:    466.38 KB
+
+File types included:
+  • Source code: .cs, .fs, .vb
+  • UI/XAML: .axaml, .xaml, .paml
+  • Projects: .csproj, .slnx, .sln, .props, .targets
+  • Config: .json, .yaml, .yml, .xml, .config
+  • Docs: .md, .txt
+  • Scripts: .sh, .ps1, .cmd, .bat
+  • Other: .sql, .resx, .css, .scss, Dockerfile, etc.
+
+
+real	0m0.779s
+user	0m0.440s
+sys	0m0.470s
+
+real	0m8.164s
+user	0m13.974s
+sys	0m0.910s
+Restore complete (0.4s)
+
+Build succeeded in 0.5s
+
+real	0m0.695s
+user	0m0.750s
+sys	0m0.132s
+
+Build succeeded in 0.5s
+
+real	0m0.670s
+user	0m0.689s
+sys	0m0.131s
+Restore complete (0.5s)
+  MyBlog.Core net10.0 succeeded (2.8s) → MyBlog.Core/bin/Debug/net10.0/MyBlog.Core.dll
+  MyBlog.Infrastructure net10.0 succeeded (0.2s) → MyBlog.Infrastructure/bin/Debug/net10.0/MyBlog.Infrastructure.dll
+  MyBlog.Web net10.0 succeeded (2.2s) → MyBlog.Web/bin/Debug/net10.0/MyBlog.Web.dll
+  MyBlog.Tests net10.0 succeeded (0.3s) → MyBlog.Tests/bin/Debug/net10.0/MyBlog.Tests.dll
+
+Build succeeded in 6.2s
+
+real	0m6.338s
+user	0m2.316s
+sys	0m0.295s
+xUnit.net v3 In-Process Runner v3.2.1+a9cfb80929 (64-bit .NET 10.0.1)
+  Discovering: MyBlog.Tests
+  Discovered:  MyBlog.Tests
+  Starting:    MyBlog.Tests
+  Finished:    MyBlog.Tests (ID = '24cedafe73dab5684218bb3cf04cfd49ae8ce3b87ae799399cb2e301cbc1e755')
+=== TEST EXECUTION SUMMARY ===
+   MyBlog.Tests  Total: 70, Errors: 0, Failed: 0, Skipped: 0, Not Run: 0, Time: 41.630s
+
+real	0m43.432s
+user	0m46.164s
+sys	0m0.579s
+Restore complete (0.4s)
+
+Build succeeded in 0.6s
+Project 'MyBlog.Core' has the following package references
+   [net10.0]: No packages were found for this framework.
+Project 'MyBlog.Infrastructure' has the following package references
+   [net10.0]: 
+   Top-level Package                           Requested   Resolved
+   > Microsoft.AspNetCore.Identity             2.3.9       2.3.9   
+   > Microsoft.EntityFrameworkCore.Sqlite      10.0.1      10.0.1  
+   > OpenTelemetry                             1.14.0      1.14.0  
+
+Project 'MyBlog.Tests' has the following package references
+   [net10.0]: 
+   Top-level Package                             Requested   Resolved
+   > Microsoft.EntityFrameworkCore.Sqlite        10.0.1      10.0.1  
+   > Microsoft.Testing.Extensions.TrxReport      2.0.2       2.0.2   
+   > xunit.v3                                    3.2.1       3.2.1   
+
+Project 'MyBlog.Web' has the following package references
+   [net10.0]: 
+   Top-level Package                                  Requested    Resolved
+   > Microsoft.AspNetCore.App.Internal.Assets   (A)   [10.0.1, )   10.0.1  
+   > OpenTelemetry.Exporter.Console                   1.14.0       1.14.0  
+   > OpenTelemetry.Extensions.Hosting                 1.14.0       1.14.0  
+   > OpenTelemetry.Instrumentation.AspNetCore         1.14.0       1.14.0  
+   > OpenTelemetry.Instrumentation.Http               1.14.0       1.14.0  
+
+(A) : Auto-referenced package.
+
+real	0m1.527s
+user	0m1.541s
+sys	0m0.300s
+Restore complete (0.4s)
+
+Build succeeded in 0.5s
+
+The following sources were used:
+   https://api.nuget.org/v3/index.json
+
+The given project `MyBlog.Core` has no updates given the current sources.
+The given project `MyBlog.Infrastructure` has no updates given the current sources.
+The given project `MyBlog.Tests` has no updates given the current sources.
+The given project `MyBlog.Web` has no updates given the current sources.
+
+real	0m1.653s
+user	0m1.624s
+sys	0m0.332s
+kushal@fedora:~/src/dotnet/MyBlog/src$ cd ~/src/dotnet/MyBlog/; cat fix-slug-collision.sh; time bash fix-slug-collision.sh
+#!/bin/bash
+set -euo pipefail
+
+# =============================================================================
+# Fix Slug Collision Issue
+# =============================================================================
+# 1. Adds IsSlugTakenAsync to IPostRepository/PostRepository
+# 2. Updates PostEditor.razor to handle duplicate slugs by appending numbers
+# =============================================================================
+
+echo "Applying Slug Uniqueness Fix..."
+
+# 1. Update IPostRepository
+# -----------------------------------------------------------------------------
+echo "Updating IPostRepository.cs..."
+cat << 'EOF' > src/MyBlog.Core/Interfaces/IPostRepository.cs
+using MyBlog.Core.Models;
+
+namespace MyBlog.Core.Interfaces;
+
+/// <summary>
+/// Repository interface for post operations.
+/// </summary>
+public interface IPostRepository
+{
+    /// <summary>Gets a paginated list of published posts.</summary>
+    Task<(IReadOnlyList<PostListItemDto> Posts, int TotalCount)> GetPublishedPostsAsync(
+        int page, int pageSize, CancellationToken cancellationToken = default);
+
+    /// <summary>Gets all posts for admin view.</summary>
+    Task<IReadOnlyList<PostListItemDto>> GetAllPostsAsync(
+        CancellationToken cancellationToken = default);
+
+    /// <summary>Gets a post by its slug.</summary>
+    Task<PostDetailDto?> GetBySlugAsync(string slug, CancellationToken cancellationToken = default);
+
+    /// <summary>Gets a post by its ID.</summary>
+    Task<Post?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
+
+    /// <summary>Creates a new post.</summary>
+    Task<Post> CreateAsync(Post post, CancellationToken cancellationToken = default);
+
+    /// <summary>Updates an existing post.</summary>
+    Task UpdateAsync(Post post, CancellationToken cancellationToken = default);
+
+    /// <summary>Deletes a post by ID.</summary>
+    Task DeleteAsync(Guid id, CancellationToken cancellationToken = default);
+
+    /// <summary>Gets the total count of posts.</summary>
+    Task<int> GetCountAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>Gets recent posts for dashboard.</summary>
+    Task<IReadOnlyList<PostListItemDto>> GetRecentPostsAsync(
+        int count, CancellationToken cancellationToken = default);
+
+    /// <summary>Checks if a slug is already in use by another post.</summary>
+    Task<bool> IsSlugTakenAsync(string slug, Guid? excludePostId = null, CancellationToken cancellationToken = default);
+}
+EOF
+
+# 2. Update PostRepository Implementation
+# -----------------------------------------------------------------------------
+echo "Updating PostRepository.cs..."
+cat << 'EOF' > src/MyBlog.Infrastructure/Repositories/PostRepository.cs
+using Microsoft.EntityFrameworkCore;
+using MyBlog.Core.Interfaces;
+using MyBlog.Core.Models;
+using MyBlog.Infrastructure.Data;
+
+namespace MyBlog.Infrastructure.Repositories;
+
+/// <summary>
+/// EF Core implementation of the post repository.
+/// </summary>
+public sealed class PostRepository : IPostRepository
+{
+    private readonly BlogDbContext _context;
+
+    /// <summary>Initializes a new instance of PostRepository.</summary>
+    public PostRepository(BlogDbContext context)
+    {
+        _context = context;
+    }
+
+    /// <inheritdoc />
+    public async Task<(IReadOnlyList<PostListItemDto> Posts, int TotalCount)> GetPublishedPostsAsync(
+        int page, int pageSize, CancellationToken cancellationToken = default)
+    {
+        var query = _context.Posts
+            .AsNoTracking()
+            .Where(p => p.IsPublished)
+            .OrderByDescending(p => p.PublishedAtUtc);
+
+        var totalCount = await query.CountAsync(cancellationToken);
+
+        var posts = await query
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .Include(p => p.Author)
+            .Select(p => new PostListItemDto(
+                p.Id,
+                p.Title,
+                p.Slug,
+                p.Summary,
+                p.Author!.DisplayName,
+                p.PublishedAtUtc,
+                p.IsPublished))
+            .ToListAsync(cancellationToken);
+
+        return (posts, totalCount);
+    }
+
+    /// <inheritdoc />
+    public async Task<IReadOnlyList<PostListItemDto>> GetAllPostsAsync(
+        CancellationToken cancellationToken = default)
+    {
+        return await _context.Posts
+            .AsNoTracking()
+            .OrderByDescending(p => p.UpdatedAtUtc)
+            .Include(p => p.Author)
+            .Select(p => new PostListItemDto(
+                p.Id,
+                p.Title,
+                p.Slug,
+                p.Summary,
+                p.Author!.DisplayName,
+                p.PublishedAtUtc,
+                p.IsPublished))
+            .ToListAsync(cancellationToken);
+    }
+
+    /// <inheritdoc />
+    public async Task<PostDetailDto?> GetBySlugAsync(
+        string slug, CancellationToken cancellationToken = default)
+    {
+        return await _context.Posts
+            .AsNoTracking()
+            .Where(p => p.Slug == slug)
+            .Include(p => p.Author)
+            .Select(p => new PostDetailDto(
+                p.Id,
+                p.Title,
+                p.Slug,
+                p.Content,
+                p.Summary,
+                p.Author!.DisplayName,
+                p.CreatedAtUtc,
+                p.UpdatedAtUtc,
+                p.PublishedAtUtc,
+                p.IsPublished))
+            .FirstOrDefaultAsync(cancellationToken);
+    }
+
+    /// <inheritdoc />
+    public async Task<Post?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        return await _context.Posts
+            .Include(p => p.Author)
+            .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
+    }
+
+    /// <inheritdoc />
+    public async Task<Post> CreateAsync(Post post, CancellationToken cancellationToken = default)
+    {
+        _context.Posts.Add(post);
+        await _context.SaveChangesAsync(cancellationToken);
+        return post;
+    }
+
+    /// <inheritdoc />
+    public async Task UpdateAsync(Post post, CancellationToken cancellationToken = default)
+    {
+        _context.Posts.Update(post);
+        await _context.SaveChangesAsync(cancellationToken);
+    }
+
+    /// <inheritdoc />
+    public async Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        var post = await _context.Posts.FindAsync([id], cancellationToken);
+        if (post is not null)
+        {
+            _context.Posts.Remove(post);
+            await _context.SaveChangesAsync(cancellationToken);
+        }
+    }
+
+    /// <inheritdoc />
+    public async Task<int> GetCountAsync(CancellationToken cancellationToken = default)
+    {
+        return await _context.Posts.CountAsync(cancellationToken);
+    }
+
+    /// <inheritdoc />
+    public async Task<IReadOnlyList<PostListItemDto>> GetRecentPostsAsync(
+        int count, CancellationToken cancellationToken = default)
+    {
+        return await _context.Posts
+            .AsNoTracking()
+            .OrderByDescending(p => p.UpdatedAtUtc)
+            .Take(count)
+            .Include(p => p.Author)
+            .Select(p => new PostListItemDto(
+                p.Id,
+                p.Title,
+                p.Slug,
+                p.Summary,
+                p.Author!.DisplayName,
+                p.PublishedAtUtc,
+                p.IsPublished))
+            .ToListAsync(cancellationToken);
+    }
+
+    /// <inheritdoc />
+    public async Task<bool> IsSlugTakenAsync(string slug, Guid? excludePostId = null, CancellationToken cancellationToken = default)
+    {
+        if (excludePostId.HasValue)
+        {
+            return await _context.Posts
+                .AnyAsync(p => p.Slug == slug && p.Id != excludePostId.Value, cancellationToken);
+        }
+        
+        return await _context.Posts
+            .AnyAsync(p => p.Slug == slug, cancellationToken);
+    }
+}
+EOF
+
+# 3. Update PostEditor to use uniqueness logic
+# -----------------------------------------------------------------------------
+echo "Updating PostEditor.razor..."
+cat << 'EOF' > src/MyBlog.Web/Components/Pages/Admin/PostEditor.razor
+@page "/admin/posts/new"
+@page "/admin/posts/edit/{Id:guid}"
+@rendermode InteractiveServer
+@attribute [Authorize]
+@inject IPostRepository PostRepository
+@inject ISlugService SlugService
+@inject NavigationManager Navigation
+@inject AuthenticationStateProvider AuthStateProvider
+@using System.Security.Claims
+
+<PageTitle>@(_isEdit ? "Edit Post" : "New Post")</PageTitle>
+
+<h1>@(_isEdit ? "Edit Post" : "New Post")</h1>
+
+@if (_loading)
+{
+    <p>Loading...</p>
+}
+else if (_isEdit && _existingPost is null)
+{
+    <p>Post not found.</p>
+    <a href="/admin/posts">Back to Posts</a>
+}
+else
+{
+    <div class="post-editor">
+        <div class="editor-form">
+            <div class="form-group">
+                <label for="title">Title</label>
+                <input type="text" id="title" @bind="_title" @bind:event="oninput" />
+            </div>
+
+            <div class="form-group">
+                <label for="summary">Summary</label>
+                <textarea id="summary" @bind="_summary" rows="2"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="content">Content (Markdown)</label>
+                <textarea id="content" @bind="_content" @bind:event="oninput" rows="20"></textarea>
+            </div>
+
+            <div class="form-group checkbox">
+                <label>
+                    <input type="checkbox" @bind="_isPublished" />
+                    Published
+                </label>
+            </div>
+
+            @if (!string.IsNullOrEmpty(_error))
+            {
+                <div class="error-message">@_error</div>
+            }
+
+            <div class="form-actions">
+                <button @onclick="Save" class="btn btn-primary" disabled="@_saving">
+                    @(_saving ? "Saving..." : "Save")
+                </button>
+                <a href="/admin/posts" class="btn">Cancel</a>
+            </div>
+        </div>
+
+        <div class="editor-preview">
+            <h3>Preview</h3>
+            <div class="preview-content">
+                <MarkdownRenderer Content="@_content" />
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public Guid? Id { get; set; }
+
+    private bool _isEdit => Id.HasValue;
+    private bool _loading = true;
+    private bool _saving;
+    private string _title = "";
+    private string _summary = "";
+    private string _content = "";
+    private bool _isPublished;
+    private string? _error;
+    private Post? _existingPost;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (_isEdit)
+        {
+            _existingPost = await PostRepository.GetByIdAsync(Id!.Value);
+            if (_existingPost is not null)
+            {
+                _title = _existingPost.Title;
+                _summary = _existingPost.Summary;
+                _content = _existingPost.Content;
+                _isPublished = _existingPost.IsPublished;
+            }
+        }
+        _loading = false;
+    }
+
+    private async Task Save()
+    {
+        if (string.IsNullOrWhiteSpace(_title))
+        {
+            _error = "Title is required.";
+            return;
+        }
+
+        _saving = true;
+        _error = null;
+
+        try
+        {
+            var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+            var userIdClaim = authState.User.FindFirst(ClaimTypes.NameIdentifier);
+            
+            if (userIdClaim is null || !Guid.TryParse(userIdClaim.Value, out var userId))
+            {
+                _error = "Unable to identify current user. Please log in again.";
+                _saving = false;
+                return;
+            }
+
+            // Generate unique slug
+            var baseSlug = SlugService.GenerateSlug(_title);
+            var finalSlug = baseSlug;
+            var counter = 1;
+            
+            // Loop until we find a slug that isn't taken (excluding current post if editing)
+            while (await PostRepository.IsSlugTakenAsync(finalSlug, _isEdit ? Id : null))
+            {
+                finalSlug = $"{baseSlug}-{counter}";
+                counter++;
+            }
+
+            if (_isEdit && _existingPost is not null)
+            {
+                _existingPost.Title = _title;
+                _existingPost.Slug = finalSlug; // Update slug with unique version
+                _existingPost.Summary = _summary;
+                _existingPost.Content = _content;
+                _existingPost.IsPublished = _isPublished;
+                _existingPost.UpdatedAtUtc = DateTime.UtcNow;
+                if (_isPublished && !_existingPost.PublishedAtUtc.HasValue)
+                {
+                    _existingPost.PublishedAtUtc = DateTime.UtcNow;
+                }
+
+                await PostRepository.UpdateAsync(_existingPost);
+            }
+            else
+            {
+                var post = new Post
+                {
+                    Id = Guid.NewGuid(),
+                    Title = _title,
+                    Slug = finalSlug, // Use unique slug
+                    Summary = _summary,
+                    Content = _content,
+                    AuthorId = userId,
+                    CreatedAtUtc = DateTime.UtcNow,
+                    UpdatedAtUtc = DateTime.UtcNow,
+                    IsPublished = _isPublished,
+                    PublishedAtUtc = _isPublished ? DateTime.UtcNow : null
+                };
+                await PostRepository.CreateAsync(post);
+            }
+
+            Navigation.NavigateTo("/admin/posts");
+        }
+        catch (Exception ex)
+        {
+            _error = $"Failed to save: {ex.Message}";
+        }
+        finally
+        {
+            _saving = false;
+        }
+    }
+}
+EOF
+
+echo "Done. Slug collisions are now handled automatically."
+Applying Slug Uniqueness Fix...
+Updating IPostRepository.cs...
+Updating PostRepository.cs...
+Updating PostEditor.razor...
+Done. Slug collisions are now handled automatically.
+
+real	0m0.004s
+user	0m0.003s
+sys	0m0.001s
+kushal@fedora:~/src/dotnet/MyBlog$ 
