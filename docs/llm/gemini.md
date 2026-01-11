@@ -3198,3 +3198,103 @@ Now, if you create "My Post", the slug is `my-post`. If you create "My Post" aga
 
 
 
+can you write an editor config that matches our coding convention? is there a coding convention?
+one thing I noticed is rider on fedora linux has an underline for this variable
+private bool _isEdit => Id.HasValue;
+in
+/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/Components/Pages/Admin/PostEditor.razor
+
+Yes, there is an established coding convention for the project, and the underline you are seeing in Rider is likely a naming convention violation according to the project's build settings.
+
+### The Coding Convention
+
+The project enforces strict code style through `Directory.Build.props` with the following settings:
+
+*
+**TreatWarningsAsErrors**: `true`.
+
+
+*
+**EnforceCodeStyleInBuild**: `true`.
+
+
+*
+**AnalysisLevel**: `latest`.
+
+
+
+Based on the existing source code, the project follows these naming patterns:
+
+*
+**Private Fields**: Use an underscore prefix and camelCase (e.g., `private readonly BlogDbContext _context;`).
+
+
+* **Private Properties/Logic**: The variable you noticed, `private bool _isEdit => Id.HasValue;`, uses an underscore. In standard C# (and the `.editorconfig` provided below), **properties** (even private ones) typically use **PascalCase** without an underscore (e.g., `IsEdit`).
+*
+**Rider's Underline**: Rider is flagging `_isEdit` because it starts with an underscore but is technically a **property** (due to the `=>` expression body), whereas the convention expects underscores only for **fields**.
+
+
+
+### Recommended `.editorconfig`
+
+To match the existing project style and resolve the Rider warnings, you can use the following configuration. This includes the specific rules for private fields and properties that match the codebase.
+
+```ini
+root = true
+
+[*]
+indent_style = space
+indent_size = 4
+insert_final_newline = true
+trim_trailing_whitespace = true
+charset = utf-8
+
+[*.{cs,razor}]
+# Naming conventions
+dotnet_naming_rule.private_fields_should_be_underscored.severity = suggestion
+dotnet_naming_rule.private_fields_should_be_underscored.symbols = private_fields
+dotnet_naming_rule.private_fields_should_be_underscored.style = prefix_underscore
+
+dotnet_naming_symbols.private_fields.applicable_kinds = field
+dotnet_naming_symbols.private_fields.applicable_accessibilities = private
+
+dotnet_naming_style.prefix_underscore.capitalization = camel_case
+dotnet_naming_style.prefix_underscore.required_prefix = _
+
+# Code style rules
+csharp_style_expression_bodied_properties = true:suggestion
+csharp_style_expression_bodied_methods = true:suggestion
+csharp_style_namespace_declarations = file_scoped:error
+csharp_style_var_for_built_in_types = true:suggestion
+
+```
+
+### How to Fix `PostEditor.razor`
+
+To align with the project's likely intent for properties (and stop the Rider underline), you should rename the property to PascalCase:
+
+```csharp
+// Current (causes warning/underline in Rider)
+private bool _isEdit => Id.HasValue; 
+
+// Recommended (matches property convention)
+private bool IsEdit => Id.HasValue;
+
+```
+
+This change follows the pattern seen in other parts of the project where properties like `Title` or `FormUsername` are PascalCase.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
