@@ -1,6 +1,6 @@
 @page "/admin/posts/new"
-@rendermode InteractiveServer
 @page "/admin/posts/edit/{Id:guid}"
+@rendermode InteractiveServer
 @attribute [Authorize]
 @inject IPostRepository PostRepository
 @inject ISlugService SlugService
@@ -47,17 +47,17 @@ else
                 </label>
             </div>
 
+            @if (!string.IsNullOrEmpty(_error))
+            {
+                <div class="error-message">@_error</div>
+            }
+
             <div class="form-actions">
                 <button @onclick="Save" class="btn btn-primary" disabled="@_saving">
                     @(_saving ? "Saving..." : "Save")
                 </button>
                 <a href="/admin/posts" class="btn">Cancel</a>
             </div>
-
-            @if (!string.IsNullOrEmpty(_error))
-            {
-                <div class="error-message">@_error</div>
-            }
         </div>
 
         <div class="editor-preview">
@@ -122,10 +122,22 @@ else
                 return;
             }
 
+            // Generate unique slug
+            var baseSlug = SlugService.GenerateSlug(_title);
+            var finalSlug = baseSlug;
+            var counter = 1;
+            
+            // Loop until we find a slug that isn't taken (excluding current post if editing)
+            while (await PostRepository.IsSlugTakenAsync(finalSlug, _isEdit ? Id : null))
+            {
+                finalSlug = $"{baseSlug}-{counter}";
+                counter++;
+            }
+
             if (_isEdit && _existingPost is not null)
             {
                 _existingPost.Title = _title;
-                _existingPost.Slug = SlugService.GenerateSlug(_title);
+                _existingPost.Slug = finalSlug; // Update slug with unique version
                 _existingPost.Summary = _summary;
                 _existingPost.Content = _content;
                 _existingPost.IsPublished = _isPublished;
@@ -143,7 +155,7 @@ else
                 {
                     Id = Guid.NewGuid(),
                     Title = _title,
-                    Slug = SlugService.GenerateSlug(_title),
+                    Slug = finalSlug, // Use unique slug
                     Summary = _summary,
                     Content = _content,
                     AuthorId = userId,
@@ -152,7 +164,6 @@ else
                     IsPublished = _isPublished,
                     PublishedAtUtc = _isPublished ? DateTime.UtcNow : null
                 };
-
                 await PostRepository.CreateAsync(post);
             }
 

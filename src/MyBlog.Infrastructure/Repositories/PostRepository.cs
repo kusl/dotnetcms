@@ -146,4 +146,17 @@ public sealed class PostRepository : IPostRepository
                 p.IsPublished))
             .ToListAsync(cancellationToken);
     }
+
+    /// <inheritdoc />
+    public async Task<bool> IsSlugTakenAsync(string slug, Guid? excludePostId = null, CancellationToken cancellationToken = default)
+    {
+        if (excludePostId.HasValue)
+        {
+            return await _context.Posts
+                .AnyAsync(p => p.Slug == slug && p.Id != excludePostId.Value, cancellationToken);
+        }
+        
+        return await _context.Posts
+            .AnyAsync(p => p.Slug == slug, cancellationToken);
+    }
 }

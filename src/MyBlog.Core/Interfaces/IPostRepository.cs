@@ -36,4 +36,7 @@ public interface IPostRepository
     /// <summary>Gets recent posts for dashboard.</summary>
     Task<IReadOnlyList<PostListItemDto>> GetRecentPostsAsync(
         int count, CancellationToken cancellationToken = default);
+
+    /// <summary>Checks if a slug is already in use by another post.</summary>
+    Task<bool> IsSlugTakenAsync(string slug, Guid? excludePostId = null, CancellationToken cancellationToken = default);
 }
