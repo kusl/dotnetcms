@@ -1,7 +1,6 @@
 window.sharePost = async (title) => {
     const url = window.location.href;
 
-    // Try native share (mobile/supported browsers)
     if (navigator.share) {
         try {
             await navigator.share({
@@ -9,19 +8,17 @@ window.sharePost = async (title) => {
                 url: url
             });
         } catch (err) {
-            // User cancelled share, ignore
+            // User cancelled share
         }
     } else {
-        // Fallback to clipboard
         try {
             await navigator.clipboard.writeText(url);
 
-            // Visual feedback
             const btn = document.querySelector('.share-btn');
             if (btn) {
                 const originalHtml = btn.innerHTML;
                 btn.innerText = 'Copied!';
-                btn.classList.add('success'); // Uses your existing success color var
+                btn.classList.add('success');
 
                 setTimeout(() => {
                     btn.innerHTML = originalHtml;
@@ -31,7 +28,6 @@ window.sharePost = async (title) => {
                 alert('Link copied to clipboard!');
             }
         } catch (err) {
-            // Final fallback
             prompt('Copy this link:', url);
         }
     }

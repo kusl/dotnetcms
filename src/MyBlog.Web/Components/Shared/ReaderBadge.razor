@@ -20,17 +20,16 @@
     {
         if (string.IsNullOrEmpty(Slug)) return;
 
-        // Get current count and increment for this user
+        // Join the group and get initial count
         TrackingService.JoinPost(Slug);
         _count = TrackingService.GetReaderCount(Slug);
 
-        // Listen for updates from other users
+        // Listen for updates
         TrackingService.OnCountChanged += HandleCountChanged;
     }
 
     private void HandleCountChanged(string slug, int count)
     {
-        // Only update if the event is for this post
         if (slug == Slug)
         {
             _count = count;
@@ -42,7 +41,6 @@
     {
         if (!string.IsNullOrEmpty(Slug))
         {
-            // Decrement count and unsubscribe
             TrackingService.LeavePost(Slug);
             TrackingService.OnCountChanged -= HandleCountChanged;
         }
