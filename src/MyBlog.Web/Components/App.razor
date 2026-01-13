@@ -21,3 +21,6 @@
     private string? Title => HttpContext?.RequestServices
         .GetService<IConfiguration>()?["Application:Title"];
 }
+<div id="blazor-error-ui" style="display: none !important;">
+    @* This is now invisible to readers *@
+</div>

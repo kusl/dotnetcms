@@ -1,4 +1,5 @@
 @page "/post/{Slug}"
+@* Note: No @rendermode here. This keeps the page stable and fixes the Login issue. *@
 @inject IPostRepository PostRepository
 @inject NavigationManager Navigation
 
@@ -7,13 +8,17 @@
     @if (_notFound)
     {
         <PageTitle>Not Found</PageTitle>
-        <h1>Post Not Found</h1>
-        <p>The post you're looking for doesn't exist.</p>
-        <a href="/">← Back to Home</a>
+        <div class="container">
+            <h1>Post Not Found</h1>
+            <p>The post you're looking for doesn't exist.</p>
+            <a href="/">← Back to Home</a>
+        </div>
     }
     else
     {
-        <p>Loading...</p>
+        <div class="container">
+            <p>Loading...</p>
+        </div>
     }
 }
 else
@@ -25,15 +30,18 @@ else
             <h1>@_post.Title</h1>
             <div class="post-meta">
                 <span class="author">By @_post.AuthorDisplayName</span>
+
                 @if (_post.PublishedAtUtc.HasValue)
                 {
                     <span class="date">Published @_post.PublishedAtUtc.Value.ToString("MMMM d, yyyy")</span>
                 }
 
-                @* 1. The Real-time Count (Silent & Interactive) *@
+                @* 1. This island is the only thing that connects to SignalR.
+                   If it fails, it fails silently without the 'Reload' popup. *@
                 <ReaderBadge Slug="@Slug" />
 
-                @* 2. The Share Button (Static & Reliable) *@
+                @* 2. The Share Button is now standard HTML.
+                   It works via the JavaScript listener we added to 'enhancedload'. *@
                 <button type="button"
                         class="btn-link share-btn js-share-btn"
                         data-title="@_post.Title"
@@ -60,7 +68,9 @@ else
 }
 
 @code {
-    [Parameter] public string Slug { get; set; } = "";
+    [Parameter]
+    public string Slug { get; set; } = "";
+
     private PostDetailDto? _post;
     private bool _notFound;
 
@@ -69,6 +79,7 @@ else
         _post = await PostRepository.GetBySlugAsync(Slug);
         _notFound = _post is null;
 
+        // Don't show unpublished posts to public
         if (_post is not null && !_post.IsPublished)
         {
             _post = null;
