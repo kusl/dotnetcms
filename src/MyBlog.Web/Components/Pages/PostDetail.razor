@@ -1,6 +1,7 @@
 @page "/post/{Slug}"
 @inject IPostRepository PostRepository
 @inject NavigationManager Navigation
+@inject IJSRuntime JSRuntime
 
 @if (_post is null)
 {
@@ -19,7 +20,7 @@
 else
 {
     <PageTitle>@_post.Title</PageTitle>
-    
+
     <article class="post-detail">
         <header class="post-header">
             <h1>@_post.Title</h1>
@@ -29,6 +30,17 @@ else
                 {
                     <span class="date">Published @_post.PublishedAtUtc.Value.ToString("MMMM d, yyyy")</span>
                 }
+
+                <button class="btn-link share-btn" @onclick="HandleShare">
+                    Share
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="18" cy="5" r="3"></circle>
+                        <circle cx="6" cy="12" r="3"></circle>
+                        <circle cx="18" cy="19" r="3"></circle>
+                        <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                        <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                    </svg>
+                </button>
             </div>
         </header>
 
@@ -51,12 +63,25 @@ else
     {
         _post = await PostRepository.GetBySlugAsync(Slug);
         _notFound = _post is null;
-        
+
         // Don't show unpublished posts to public
         if (_post is not null && !_post.IsPublished)
         {
             _post = null;
             _notFound = true;
+        }
+    }
+
+    private async Task HandleShare()
+    {
+        if (_post is not null)
+        {
+            // Call the JS function we created in site.js
+            // Arguments: Title, Summary (text), URL
+            await JSRuntime.InvokeVoidAsync("sharePost",
+                _post.Title,
+                _post.Summary,
+                Navigation.Uri);
         }
     }
 }

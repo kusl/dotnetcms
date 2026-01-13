@@ -495,31 +495,43 @@ a:hover {
 @media (max-width: 768px) {
     h1 { font-size: 2rem; }
     h2 { font-size: 1.5rem; }
-    
+
     .header .container {
         flex-direction: column;
         text-align: center;
     }
-    
+
     .nav {
         flex-wrap: wrap;
         justify-content: center;
     }
-    
+
     .post-editor {
         grid-template-columns: 1fr;
     }
-    
+
     .editor-preview {
         order: -1;
         max-height: 300px;
     }
-    
+
     .dashboard-stats {
         flex-direction: column;
     }
-    
+
     .admin-nav {
         flex-wrap: wrap;
     }
+}
+/* Share button styling */
+.share-btn {
+    margin-left: 1rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.875rem;
+}
+
+.share-btn svg {
+    margin-top: -2px;
 }
