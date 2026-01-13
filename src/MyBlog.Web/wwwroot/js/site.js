@@ -1,26 +1,38 @@
-function initShareButton() {
-    const btn = document.querySelector('.js-share-btn');
-    if (btn && !btn.getAttribute('data-bound')) {
-        btn.setAttribute('data-bound', 'true'); // Prevent double-binding
-        btn.addEventListener('click', async () => {
-            const shareData = {
-                title: btn.dataset.title,
-                text: btn.dataset.text,
-                url: btn.dataset.url
-            };
+window.sharePost = async (title) => {
+    const url = window.location.href;
 
-            if (navigator.share) {
-                try { await navigator.share(shareData); } catch (err) {}
+    // Try native share (mobile/supported browsers)
+    if (navigator.share) {
+        try {
+            await navigator.share({
+                title: title,
+                url: url
+            });
+        } catch (err) {
+            // User cancelled share, ignore
+        }
+    } else {
+        // Fallback to clipboard
+        try {
+            await navigator.clipboard.writeText(url);
+
+            // Visual feedback
+            const btn = document.querySelector('.share-btn');
+            if (btn) {
+                const originalHtml = btn.innerHTML;
+                btn.innerText = 'Copied!';
+                btn.classList.add('success'); // Uses your existing success color var
+
+                setTimeout(() => {
+                    btn.innerHTML = originalHtml;
+                    btn.classList.remove('success');
+                }, 2000);
             } else {
-                await navigator.clipboard.writeText(shareData.url);
-                alert("Link copied to clipboard!");
+                alert('Link copied to clipboard!');
             }
-        });
+        } catch (err) {
+            // Final fallback
+            prompt('Copy this link:', url);
+        }
     }
-}
-
-// Initial load
-initShareButton();
-
-// Listen for Blazor's "Enhanced Navigation" updates
-Blazor.addEventListener('enhancedload', initShareButton);
+};

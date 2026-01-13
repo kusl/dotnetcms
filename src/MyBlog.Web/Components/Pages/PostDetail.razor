@@ -1,5 +1,4 @@
 @page "/post/{Slug}"
-@* Note: No @rendermode here. This keeps the page stable and fixes the Login issue. *@
 @inject IPostRepository PostRepository
 @inject NavigationManager Navigation
 
@@ -8,17 +7,13 @@
     @if (_notFound)
     {
         <PageTitle>Not Found</PageTitle>
-        <div class="container">
-            <h1>Post Not Found</h1>
-            <p>The post you're looking for doesn't exist.</p>
-            <a href="/">← Back to Home</a>
-        </div>
+        <h1>Post Not Found</h1>
+        <p>The post you're looking for doesn't exist.</p>
+        <a href="/">← Back to Home</a>
     }
     else
     {
-        <div class="container">
-            <p>Loading...</p>
-        </div>
+        <p>Loading...</p>
     }
 }
 else
@@ -30,24 +25,11 @@ else
             <h1>@_post.Title</h1>
             <div class="post-meta">
                 <span class="author">By @_post.AuthorDisplayName</span>
-
                 @if (_post.PublishedAtUtc.HasValue)
                 {
                     <span class="date">Published @_post.PublishedAtUtc.Value.ToString("MMMM d, yyyy")</span>
                 }
-
-                @* 1. This island is the only thing that connects to SignalR.
-                   If it fails, it fails silently without the 'Reload' popup. *@
-                <ReaderBadge Slug="@Slug" />
-
-                @* 2. The Share Button is now standard HTML.
-                   It works via the JavaScript listener we added to 'enhancedload'. *@
-                <button type="button"
-                        class="btn-link share-btn js-share-btn"
-                        data-title="@_post.Title"
-                        data-text="@_post.Summary"
-                        data-url="@Navigation.Uri">
-                    Share
+                <button type="button" class="btn-link share-btn" data-title="@_post.Title" onclick="sharePost(this.dataset.title)">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="18" cy="5" r="3"></circle>
                         <circle cx="6" cy="12" r="3"></circle>
@@ -55,6 +37,7 @@ else
                         <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
                         <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
                     </svg>
+                    Share
                 </button>
             </div>
         </header>
@@ -70,7 +53,6 @@ else
 @code {
     [Parameter]
     public string Slug { get; set; } = "";
-
     private PostDetailDto? _post;
     private bool _notFound;
 
