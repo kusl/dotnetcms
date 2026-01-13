@@ -1,6 +1,7 @@
 @page "/post/{Slug}"
 @inject IPostRepository PostRepository
 @inject NavigationManager Navigation
+@using MyBlog.Web.Components.Shared
 
 @if (_post is null)
 {
@@ -25,10 +26,16 @@ else
             <h1>@_post.Title</h1>
             <div class="post-meta">
                 <span class="author">By @_post.AuthorDisplayName</span>
+
                 @if (_post.PublishedAtUtc.HasValue)
                 {
                     <span class="date">Published @_post.PublishedAtUtc.Value.ToString("MMMM d, yyyy")</span>
                 }
+
+                @* Interactive Reader Badge *@
+                <ReaderBadge Slug="@_post.Slug" @rendermode="InteractiveServer" />
+
+                @* Interactive Share Button *@
                 <button type="button" class="btn-link share-btn" data-title="@_post.Title" onclick="sharePost(this.dataset.title)">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="18" cy="5" r="3"></circle>

@@ -1,47 +1,50 @@
-@rendermode InteractiveServer
+@using MyBlog.Core.Interfaces
+@inject IReaderTrackingService TrackingService
 @implements IDisposable
-@inject IReaderTrackingService ReaderTracking
 
 @if (_count > 0)
 {
-    <div class="reader-count" style="display: inline-block; font-size: 0.9em; color: #666;">
-        @( _count > 1 ? $"● {_count} people reading this" : "You are the only one here" )
-    </div>
+    <span class="reader-badge" title="Live reader count">
+        <span class="reader-dot">●</span>
+        @_count people reading
+    </span>
 }
 
 @code {
-    [Parameter] public string Slug { get; set; } = "";
-    private int _count = 0;
+    [Parameter]
+    public string Slug { get; set; } = "";
+
+    private int _count;
 
     protected override void OnInitialized()
     {
-        try
-        {
-            ReaderTracking.OnCountChanged += HandleCountChanged;
-            ReaderTracking.JoinPost(Slug);
-            _count = ReaderTracking.GetReaderCount(Slug);
-        }
-        catch {
-            /* Fail silently: Reader just sees nothing or 'only one here' */
-        }
+        if (string.IsNullOrEmpty(Slug)) return;
+
+        // Get current count and increment for this user
+        TrackingService.JoinPost(Slug);
+        _count = TrackingService.GetReaderCount(Slug);
+
+        // Listen for updates from other users
+        TrackingService.OnCountChanged += HandleCountChanged;
     }
 
-    private void HandleCountChanged(string slug, int newCount)
+    private void HandleCountChanged(string slug, int count)
     {
+        // Only update if the event is for this post
         if (slug == Slug)
         {
-            _count = newCount;
+            _count = count;
             InvokeAsync(StateHasChanged);
         }
     }
 
     public void Dispose()
     {
-        try
+        if (!string.IsNullOrEmpty(Slug))
         {
-            ReaderTracking.LeavePost(Slug);
-            ReaderTracking.OnCountChanged -= HandleCountChanged;
+            // Decrement count and unsubscribe
+            TrackingService.LeavePost(Slug);
+            TrackingService.OnCountChanged -= HandleCountChanged;
         }
-        catch { /* Fail silently */ }
     }
 }
