@@ -1,0 +1,45 @@
+@rendermode InteractiveServer
+@implements IDisposable
+@inject IReaderTrackingService ReaderTracking
+
+<div class="reader-badge">
+    @if (_count > 1)
+    {
+        <span style="color: green; font-weight: bold;">
+            ● @_count people reading this
+        </span>
+    }
+    else
+    {
+        <span style="color: #666;">
+            You are the only one reading this
+        </span>
+    }
+</div>
+
+@code {
+    [Parameter] public string Slug { get; set; } = "";
+    private int _count;
+
+    protected override void OnInitialized()
+    {
+        ReaderTracking.OnCountChanged += HandleCountChanged;
+        ReaderTracking.JoinPost(Slug);
+        _count = ReaderTracking.GetReaderCount(Slug);
+    }
+
+    private void HandleCountChanged(string slug, int newCount)
+    {
+        if (slug == Slug)
+        {
+            _count = newCount;
+            InvokeAsync(StateHasChanged);
+        }
+    }
+
+    public void Dispose()
+    {
+        ReaderTracking.LeavePost(Slug);
+        ReaderTracking.OnCountChanged -= HandleCountChanged;
+    }
+}

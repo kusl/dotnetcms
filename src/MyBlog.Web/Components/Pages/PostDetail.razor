@@ -1,131 +1,30 @@
 @page "/post/{Slug}"
-@* CRITICAL: Use InteractiveServer so SignalR is active for this page *@
-@rendermode InteractiveServer
-@implements IDisposable
+@* NO RENDER MODE HERE - Keep the page static and stable *@
 @inject IPostRepository PostRepository
-@inject IReaderTrackingService ReaderTracking
-@inject NavigationManager Navigation
 
-@if (_post is null)
+@if (_post is not null)
 {
-    @if (_notFound)
-    {
-        <PageTitle>Not Found</PageTitle>
-        <h1>Post Not Found</h1>
-        <p>The post you're looking for doesn't exist.</p>
-        <a href="/">← Back to Home</a>
-    }
-    else
-    {
-        <p>Loading...</p>
-    }
-}
-else
-{
-    <PageTitle>@_post.Title</PageTitle>
+    <article>
+        <h1>@_post.Title</h1>
+        <div class="post-meta">
+            <span>By @_post.AuthorDisplayName</span>
 
-    <article class="post-detail">
-        <header class="post-header">
-            <h1>@_post.Title</h1>
-            <div class="post-meta">
-                <span class="author">By @_post.AuthorDisplayName</span>
-                @if (_post.PublishedAtUtc.HasValue)
-                {
-                    <span class="date">Published @_post.PublishedAtUtc.Value.ToString("MMMM d, yyyy")</span>
-                }
+            @* The ONLY interactive part of the page *@
+            <ReaderBadge Slug="@Slug" />
 
-                @* NEW: Active Readers Badge *@
-                @if (_activeReaders > 1)
-                {
-                    <span class="reader-count" style="margin-left: 15px; color: green; font-weight: bold;">
-                        ● @_activeReaders people reading this
-                    </span>
-                }
-                else
-                {
-                    <span class="reader-count" style="margin-left: 15px; color: #666;">
-                        You are the only one reading this
-                    </span>
-                }
-
-                <button type="button"
-                        class="btn-link share-btn js-share-btn"
-                        data-title="@_post.Title"
-                        data-text="@_post.Summary"
-                        data-url="@Navigation.Uri">
-                    Share
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="18" cy="5" r="3"></circle>
-                        <circle cx="6" cy="12" r="3"></circle>
-                        <circle cx="18" cy="19" r="3"></circle>
-                        <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
-                        <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
-                    </svg>
-                </button>
-            </div>
-        </header>
-
-        <div class="post-content">
+        </div>
+        <div class="content">
             <MarkdownRenderer Content="@_post.Content" />
         </div>
     </article>
-
-    <a href="/" class="back-link">← Back to Home</a>
 }
 
 @code {
-    [Parameter]
-    public string Slug { get; set; } = "";
-
+    [Parameter] public string Slug { get; set; } = "";
     private PostDetailDto? _post;
-    private bool _notFound;
-    private int _activeReaders;
 
     protected override async Task OnParametersSetAsync()
     {
-        // 1. Load the data
         _post = await PostRepository.GetBySlugAsync(Slug);
-        _notFound = _post is null;
-
-        if (_post is not null && !_post.IsPublished)
-        {
-            _post = null;
-            _notFound = true;
-        }
-
-        // 2. If valid post, join the tracking group
-        if (!_notFound)
-        {
-            // Subscribe to global updates first
-            ReaderTracking.OnCountChanged += HandleReaderCountChanged;
-
-            // Tell the service we are here
-            ReaderTracking.JoinPost(Slug);
-
-            // Get initial count
-            _activeReaders = ReaderTracking.GetReaderCount(Slug);
-        }
-    }
-
-    // This runs whenever ANY count changes on ANY post
-    private void HandleReaderCountChanged(string updatedSlug, int newCount)
-    {
-        // Only update if it matches our current post
-        if (updatedSlug == Slug)
-        {
-            _activeReaders = newCount;
-            // Tell Blazor to re-render the UI because a background event changed the state
-            InvokeAsync(StateHasChanged);
-        }
-    }
-
-    // Cleanup when user leaves/disconnects
-    public void Dispose()
-    {
-        if (!string.IsNullOrEmpty(Slug) && !_notFound)
-        {
-            ReaderTracking.LeavePost(Slug);
-            ReaderTracking.OnCountChanged -= HandleReaderCountChanged;
-        }
     }
 }
