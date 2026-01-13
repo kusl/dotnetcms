@@ -1,7 +1,7 @@
 ===============================================================================
 PROJECT EXPORT
-Generated: Tue Jan 13 06:50:28 AM CST 2026
-Project Path: /home/kushal/src/dotnet/MyBlog
+Generated: Tue Jan 13 08:01:51 AM EST 2026
+Project Path: /home/kushal/src/dotnet/dotnetcms
 ===============================================================================
 
 DIRECTORY STRUCTURE:
@@ -33,7 +33,6 @@ DIRECTORY STRUCTURE:
 │       ├── command.md
 │       ├── dump.txt
 │       ├── gemini.md
-│       ├── kush.runasp.net-WebDeploy.publishSettings
 │       ├── login-har.json
 │       └── open-telemetry-hello-world.txt
 ├── .github
@@ -144,7 +143,6 @@ DIRECTORY STRUCTURE:
 │   ├── generate-myblog.sh
 │   ├── .gitkeep
 │   ├── global.json
-│   ├── MyBlog.sln.DotSettings.user
 │   ├── MyBlog.slnx
 │   ├── run.sh
 │   ├── test.sh
@@ -171,7 +169,7 @@ FILE CONTENTS:
 ================================================================================
 FILE: .editorconfig
 SIZE: .89 KB
-MODIFIED: 2026-01-11 11:42:44
+MODIFIED: 2026-01-13 07:52:50
 ================================================================================
 
 root = true
@@ -205,7 +203,7 @@ csharp_style_var_for_built_in_types = true:suggestion
 ================================================================================
 FILE: export.sh
 SIZE: 8.50 KB
-MODIFIED: 2025-12-28 06:47:30
+MODIFIED: 2026-01-13 07:39:04
 ================================================================================
 
 #!/bin/bash
@@ -472,7 +470,7 @@ echo ""
 ================================================================================
 FILE: fix-all-forms.sh
 SIZE: 8.80 KB
-MODIFIED: 2025-12-28 13:15:39
+MODIFIED: 2026-01-12 21:21:00
 ================================================================================
 
 #!/bin/bash
@@ -741,7 +739,7 @@ echo ""
 ================================================================================
 FILE: fix-auth-architecture.sh
 SIZE: 2.93 KB
-MODIFIED: 2025-12-30 16:30:13
+MODIFIED: 2026-01-12 21:21:00
 ================================================================================
 
 #!/bin/bash
@@ -831,7 +829,7 @@ echo "========================================================"
 ================================================================================
 FILE: fix-blazor-interactivity.sh
 SIZE: 22.99 KB
-MODIFIED: 2025-12-28 13:30:35
+MODIFIED: 2026-01-12 21:21:00
 ================================================================================
 
 #!/bin/bash
@@ -1597,7 +1595,7 @@ echo ""
 ================================================================================
 FILE: fix-login-logout.sh
 SIZE: 11.41 KB
-MODIFIED: 2025-12-28 14:30:24
+MODIFIED: 2026-01-12 21:21:00
 ================================================================================
 
 #!/bin/bash
@@ -1942,7 +1940,7 @@ EOF
 ================================================================================
 FILE: fix-ordered-lists.sh
 SIZE: 7.52 KB
-MODIFIED: 2025-12-28 14:06:33
+MODIFIED: 2026-01-12 21:21:00
 ================================================================================
 
 #!/bin/bash
@@ -2180,7 +2178,7 @@ echo "  dotnet publish src/MyBlog.Web -c Release ..."
 ================================================================================
 FILE: fix-program-cs.sh
 SIZE: 6.64 KB
-MODIFIED: 2025-12-28 14:42:56
+MODIFIED: 2026-01-12 21:21:00
 ================================================================================
 
 #!/bin/bash
@@ -2375,7 +2373,7 @@ echo ""
 ================================================================================
 FILE: fix-slug-collision.sh
 SIZE: 13.50 KB
-MODIFIED: 2026-01-11 11:28:37
+MODIFIED: 2026-01-12 21:21:00
 ================================================================================
 
 #!/bin/bash
@@ -2799,7 +2797,7 @@ echo "Done. Slug collisions are now handled automatically."
 ================================================================================
 FILE: fix-update-claims.sh
 SIZE: 8.01 KB
-MODIFIED: 2025-12-30 20:48:27
+MODIFIED: 2026-01-12 21:21:00
 ================================================================================
 
 #!/bin/bash
@@ -3055,7 +3053,7 @@ echo "  3. IMPORTANT: You must LOG OUT and LOG IN again for the new Role claim t
 ================================================================================
 FILE: gemini.sh
 SIZE: 4.28 KB
-MODIFIED: 2025-12-28 14:49:20
+MODIFIED: 2026-01-12 21:21:00
 ================================================================================
 
 #!/bin/bash
@@ -3197,7 +3195,7 @@ echo "Done. You can now build the project."
 ================================================================================
 FILE: .github/workflows/build-deploy.yml
 SIZE: 2.87 KB
-MODIFIED: 2026-01-01 20:59:50
+MODIFIED: 2026-01-12 21:21:00
 ================================================================================
 
 name: Build, Test, and Deploy
@@ -3293,7 +3291,7 @@ jobs:
 ================================================================================
 FILE: .gitignore
 SIZE: 7.84 KB
-MODIFIED: 2025-12-28 07:05:03
+MODIFIED: 2026-01-12 21:21:00
 ================================================================================
 
 ## Ignore Visual Studio temporary files, build results, and
@@ -3786,7 +3784,7 @@ $RECYCLE.BIN/
 ================================================================================
 FILE: implement-user-management.sh
 SIZE: 14.38 KB
-MODIFIED: 2025-12-30 20:26:07
+MODIFIED: 2026-01-12 21:21:00
 ================================================================================
 
 #!/bin/bash
@@ -4235,7 +4233,7 @@ echo ""
 ================================================================================
 FILE: README.md
 SIZE: 6.51 KB
-MODIFIED: 2025-12-28 10:45:04
+MODIFIED: 2026-01-12 21:21:00
 ================================================================================
 
 # MyBlog
@@ -4473,7 +4471,7 @@ MIT License - see [LICENSE](LICENSE) for details.
 ================================================================================
 FILE: src/Directory.Build.props
 SIZE: .56 KB
-MODIFIED: 2026-01-01 21:21:17
+MODIFIED: 2026-01-12 21:21:00
 ================================================================================
 
 <Project>
@@ -4498,7 +4496,7 @@ MODIFIED: 2026-01-01 21:21:17
 ================================================================================
 FILE: src/Directory.Packages.props
 SIZE: 1.36 KB
-MODIFIED: 2026-01-11 11:20:06
+MODIFIED: 2026-01-12 21:21:00
 ================================================================================
 
 <Project>
@@ -4529,7 +4527,7 @@ MODIFIED: 2026-01-11 11:20:06
 ================================================================================
 FILE: src/.editorconfig
 SIZE: .52 KB
-MODIFIED: 2025-12-28 07:44:06
+MODIFIED: 2026-01-12 21:21:00
 ================================================================================
 
 root = true
@@ -4560,7 +4558,7 @@ trim_trailing_whitespace = false
 ================================================================================
 FILE: src/fix-changepassword-and-tests.sh
 SIZE: 27.35 KB
-MODIFIED: 2025-12-28 11:09:48
+MODIFIED: 2026-01-12 21:21:00
 ================================================================================
 
 #!/bin/bash
@@ -5391,7 +5389,7 @@ echo ""
 ================================================================================
 FILE: src/fix-rate-limit.sh
 SIZE: 14.78 KB
-MODIFIED: 2025-12-28 12:39:52
+MODIFIED: 2026-01-12 21:21:00
 ================================================================================
 
 #!/bin/bash
@@ -5860,7 +5858,7 @@ echo ""
 ================================================================================
 FILE: src/generate-myblog.sh
 SIZE: 118.95 KB
-MODIFIED: 2025-12-28 07:41:44
+MODIFIED: 2026-01-12 21:21:00
 ================================================================================
 
 #!/bin/bash
@@ -10098,7 +10096,7 @@ echo "=============================================="
 ================================================================================
 FILE: src/.github/workflows/build-deploy.yml
 SIZE: 3.10 KB
-MODIFIED: 2025-12-28 10:33:37
+MODIFIED: 2026-01-12 21:21:00
 ================================================================================
 
 name: Build, Test, and Deploy
@@ -10201,7 +10199,7 @@ jobs:
 ================================================================================
 FILE: src/global.json
 SIZE: .13 KB
-MODIFIED: 2026-01-01 20:47:36
+MODIFIED: 2026-01-12 21:21:00
 ================================================================================
 
 {
@@ -10218,7 +10216,7 @@ MODIFIED: 2026-01-01 20:47:36
 ================================================================================
 FILE: src/MyBlog.Core/Constants/AppConstants.cs
 SIZE: .73 KB
-MODIFIED: 2025-12-28 07:44:06
+MODIFIED: 2026-01-12 21:21:00
 ================================================================================
 
 namespace MyBlog.Core.Constants;
@@ -10249,7 +10247,7 @@ public static class AppConstants
 ================================================================================
 FILE: src/MyBlog.Core/Interfaces/IAuthService.cs
 SIZE: 1.05 KB
-MODIFIED: 2025-12-28 10:33:37
+MODIFIED: 2026-01-12 21:21:00
 ================================================================================
 
 using MyBlog.Core.Models;
@@ -10287,7 +10285,7 @@ public interface IAuthService
 ================================================================================
 FILE: src/MyBlog.Core/Interfaces/IImageRepository.cs
 SIZE: .69 KB
-MODIFIED: 2025-12-28 07:44:06
+MODIFIED: 2026-01-12 21:21:00
 ================================================================================
 
 using MyBlog.Core.Models;
@@ -10316,7 +10314,7 @@ public interface IImageRepository
 ================================================================================
 FILE: src/MyBlog.Core/Interfaces/IMarkdownService.cs
 SIZE: .24 KB
-MODIFIED: 2025-12-28 07:44:06
+MODIFIED: 2026-01-12 21:21:00
 ================================================================================
 
 namespace MyBlog.Core.Interfaces;
@@ -10334,7 +10332,7 @@ public interface IMarkdownService
 ================================================================================
 FILE: src/MyBlog.Core/Interfaces/IPasswordService.cs
 SIZE: .38 KB
-MODIFIED: 2025-12-28 07:44:06
+MODIFIED: 2026-01-12 21:21:00
 ================================================================================
 
 namespace MyBlog.Core.Interfaces;
@@ -10355,7 +10353,7 @@ public interface IPasswordService
 ================================================================================
 FILE: src/MyBlog.Core/Interfaces/IPostRepository.cs
 SIZE: 1.75 KB
-MODIFIED: 2026-01-11 11:34:04
+MODIFIED: 2026-01-12 21:21:00
 ================================================================================
 
 using MyBlog.Core.Models;
@@ -10405,7 +10403,7 @@ public interface IPostRepository
 ================================================================================
 FILE: src/MyBlog.Core/Interfaces/ISlugService.cs
 SIZE: .24 KB
-MODIFIED: 2025-12-28 07:44:06
+MODIFIED: 2026-01-12 21:21:00
 ================================================================================
 
 namespace MyBlog.Core.Interfaces;
@@ -10423,7 +10421,7 @@ public interface ISlugService
 ================================================================================
 FILE: src/MyBlog.Core/Interfaces/ITelemetryLogRepository.cs
 SIZE: .67 KB
-MODIFIED: 2025-12-28 07:44:06
+MODIFIED: 2026-01-12 21:21:00
 ================================================================================
 
 using MyBlog.Core.Models;
@@ -10450,7 +10448,7 @@ public interface ITelemetryLogRepository
 ================================================================================
 FILE: src/MyBlog.Core/Interfaces/IUserRepository.cs
 SIZE: 1.09 KB
-MODIFIED: 2025-12-30 20:28:12
+MODIFIED: 2026-01-12 21:21:00
 ================================================================================
 
 using MyBlog.Core.Models;
@@ -10488,7 +10486,7 @@ public interface IUserRepository
 ================================================================================
 FILE: src/MyBlog.Core/Models/Image.cs
 SIZE: 1.15 KB
-MODIFIED: 2025-12-28 07:44:06
+MODIFIED: 2026-01-12 21:21:00
 ================================================================================
 
 namespace MyBlog.Core.Models;
@@ -10530,7 +10528,7 @@ public sealed class Image
 ================================================================================
 FILE: src/MyBlog.Core/Models/Post.cs
 SIZE: 1.49 KB
-MODIFIED: 2025-12-28 07:44:06
+MODIFIED: 2026-01-12 21:21:00
 ================================================================================
 
 namespace MyBlog.Core.Models;
@@ -10581,7 +10579,7 @@ public sealed class Post
 ================================================================================
 FILE: src/MyBlog.Core/Models/PostDto.cs
 SIZE: .95 KB
-MODIFIED: 2025-12-28 07:44:06
+MODIFIED: 2026-01-12 21:21:00
 ================================================================================
 
 namespace MyBlog.Core.Models;
@@ -10627,7 +10625,7 @@ public sealed record PostDetailDto(
 ================================================================================
 FILE: src/MyBlog.Core/Models/TelemetryLog.cs
 SIZE: 1.17 KB
-MODIFIED: 2025-12-28 07:44:06
+MODIFIED: 2026-01-12 21:21:00
 ================================================================================
 
 namespace MyBlog.Core.Models;
@@ -10669,7 +10667,7 @@ public sealed class TelemetryLog
 ================================================================================
 FILE: src/MyBlog.Core/Models/User.cs
 SIZE: 1.12 KB
-MODIFIED: 2025-12-28 07:44:06
+MODIFIED: 2026-01-12 21:21:00
 ================================================================================
 
 namespace MyBlog.Core.Models;
@@ -10708,7 +10706,7 @@ public sealed class User
 ================================================================================
 FILE: src/MyBlog.Core/MyBlog.Core.csproj
 SIZE: .12 KB
-MODIFIED: 2025-12-28 07:44:06
+MODIFIED: 2026-01-12 21:21:00
 ================================================================================
 
 <Project Sdk="Microsoft.NET.Sdk">
@@ -10721,7 +10719,7 @@ MODIFIED: 2025-12-28 07:44:06
 ================================================================================
 FILE: src/MyBlog.Core/Services/MarkdownService.cs
 SIZE: 6.82 KB
-MODIFIED: 2025-12-28 14:07:06
+MODIFIED: 2026-01-12 21:21:00
 ================================================================================
 
 using System.Text;
@@ -10940,7 +10938,7 @@ public sealed partial class MarkdownService : IMarkdownService
 ================================================================================
 FILE: src/MyBlog.Core/Services/SlugService.cs
 SIZE: 1.59 KB
-MODIFIED: 2025-12-28 07:44:06
+MODIFIED: 2026-01-12 21:21:00
 ================================================================================
 
 using System.Globalization;
@@ -11004,7 +11002,7 @@ public sealed partial class SlugService : ISlugService
 ================================================================================
 FILE: src/MyBlog.Infrastructure/Data/BlogDbContext.cs
 SIZE: 3.11 KB
-MODIFIED: 2025-12-28 07:44:06
+MODIFIED: 2026-01-12 21:21:00
 ================================================================================
 
 using Microsoft.EntityFrameworkCore;
@@ -11096,7 +11094,7 @@ public sealed class BlogDbContext : DbContext
 ================================================================================
 FILE: src/MyBlog.Infrastructure/Data/DatabasePathResolver.cs
 SIZE: 1.90 KB
-MODIFIED: 2025-12-28 07:44:06
+MODIFIED: 2026-01-12 21:21:00
 ================================================================================
 
 namespace MyBlog.Infrastructure.Data;
@@ -11163,7 +11161,7 @@ public static class DatabasePathResolver
 ================================================================================
 FILE: src/MyBlog.Infrastructure/MyBlog.Infrastructure.csproj
 SIZE: .44 KB
-MODIFIED: 2025-12-28 07:44:06
+MODIFIED: 2026-01-12 21:21:00
 ================================================================================
 
 <Project Sdk="Microsoft.NET.Sdk">
@@ -11186,7 +11184,7 @@ MODIFIED: 2025-12-28 07:44:06
 ================================================================================
 FILE: src/MyBlog.Infrastructure/Repositories/ImageRepository.cs
 SIZE: 1.61 KB
-MODIFIED: 2025-12-28 07:44:06
+MODIFIED: 2026-01-12 21:21:00
 ================================================================================
 
 using Microsoft.EntityFrameworkCore;
@@ -11248,7 +11246,7 @@ public sealed class ImageRepository : IImageRepository
 ================================================================================
 FILE: src/MyBlog.Infrastructure/Repositories/PostRepository.cs
 SIZE: 5.01 KB
-MODIFIED: 2026-01-11 11:35:27
+MODIFIED: 2026-01-12 21:21:00
 ================================================================================
 
 using Microsoft.EntityFrameworkCore;
@@ -11418,7 +11416,7 @@ public sealed class PostRepository : IPostRepository
 ================================================================================
 FILE: src/MyBlog.Infrastructure/Repositories/TelemetryLogRepository.cs
 SIZE: 1.43 KB
-MODIFIED: 2025-12-28 07:44:06
+MODIFIED: 2026-01-12 21:21:00
 ================================================================================
 
 using Microsoft.EntityFrameworkCore;
@@ -11473,7 +11471,7 @@ public sealed class TelemetryLogRepository : ITelemetryLogRepository
 ================================================================================
 FILE: src/MyBlog.Infrastructure/Repositories/UserRepository.cs
 SIZE: 2.05 KB
-MODIFIED: 2025-12-30 20:28:12
+MODIFIED: 2026-01-12 21:21:00
 ================================================================================
 
 using Microsoft.EntityFrameworkCore;
@@ -11539,7 +11537,7 @@ public sealed class UserRepository : IUserRepository
 ================================================================================
 FILE: src/MyBlog.Infrastructure/ServiceCollectionExtensions.cs
 SIZE: 1.85 KB
-MODIFIED: 2025-12-28 07:44:06
+MODIFIED: 2026-01-12 21:21:00
 ================================================================================
 
 using Microsoft.EntityFrameworkCore;
@@ -11600,7 +11598,7 @@ public static class ServiceCollectionExtensions
 ================================================================================
 FILE: src/MyBlog.Infrastructure/Services/AuthService.cs
 SIZE: 3.21 KB
-MODIFIED: 2025-12-28 10:33:37
+MODIFIED: 2026-01-12 21:21:00
 ================================================================================
 
 using Microsoft.Extensions.Configuration;
@@ -11714,7 +11712,7 @@ public sealed class AuthService : IAuthService
 ================================================================================
 FILE: src/MyBlog.Infrastructure/Services/PasswordService.cs
 SIZE: .82 KB
-MODIFIED: 2025-12-28 07:44:06
+MODIFIED: 2026-01-12 21:21:00
 ================================================================================
 
 using Microsoft.AspNetCore.Identity;
@@ -11749,7 +11747,7 @@ public sealed class PasswordService : IPasswordService
 ================================================================================
 FILE: src/MyBlog.Infrastructure/Services/TelemetryCleanupService.cs
 SIZE: 2.11 KB
-MODIFIED: 2025-12-28 07:44:06
+MODIFIED: 2026-01-12 21:21:00
 ================================================================================
 
 using Microsoft.Extensions.Configuration;
@@ -11822,7 +11820,7 @@ public sealed class TelemetryCleanupService : BackgroundService
 ================================================================================
 FILE: src/MyBlog.Infrastructure/Telemetry/DatabaseLogExporter.cs
 SIZE: 2.11 KB
-MODIFIED: 2025-12-28 07:55:11
+MODIFIED: 2026-01-12 21:21:00
 ================================================================================
 
 using System.Text.Json;
@@ -11902,7 +11900,7 @@ public sealed class DatabaseLogExporter : BaseExporter<LogRecord>
 ================================================================================
 FILE: src/MyBlog.Infrastructure/Telemetry/FileLogExporter.cs
 SIZE: 3.61 KB
-MODIFIED: 2025-12-28 07:44:06
+MODIFIED: 2026-01-12 21:21:00
 ================================================================================
 
 using System.Text;
@@ -12044,7 +12042,7 @@ public sealed class FileLogExporter : BaseExporter<LogRecord>
 ================================================================================
 FILE: src/MyBlog.Infrastructure/Telemetry/TelemetryPathResolver.cs
 SIZE: 2.00 KB
-MODIFIED: 2025-12-28 07:44:06
+MODIFIED: 2026-01-12 21:21:00
 ================================================================================
 
 namespace MyBlog.Infrastructure.Telemetry;
@@ -12122,7 +12120,7 @@ public static class TelemetryPathResolver
 ================================================================================
 FILE: src/MyBlog.slnx
 SIZE: .24 KB
-MODIFIED: 2025-12-28 07:44:06
+MODIFIED: 2026-01-12 21:21:00
 ================================================================================
 
 <Solution>
@@ -12136,7 +12134,7 @@ MODIFIED: 2025-12-28 07:44:06
 ================================================================================
 FILE: src/MyBlog.Tests/Integration/AuthServiceLongPasswordTests.cs
 SIZE: 11.18 KB
-MODIFIED: 2026-01-11 11:56:49
+MODIFIED: 2026-01-13 07:52:50
 ================================================================================
 
 using Microsoft.EntityFrameworkCore;
@@ -12465,7 +12463,7 @@ public sealed class AuthServiceLongPasswordTests : IAsyncDisposable
 ================================================================================
 FILE: src/MyBlog.Tests/Integration/AuthServiceTests.cs
 SIZE: 3.85 KB
-MODIFIED: 2025-12-28 08:39:37
+MODIFIED: 2026-01-12 21:21:00
 ================================================================================
 
 using Microsoft.EntityFrameworkCore;
@@ -12599,7 +12597,7 @@ public class AuthServiceTests : IAsyncDisposable
 ================================================================================
 FILE: src/MyBlog.Tests/Integration/PasswordChangeTests.cs
 SIZE: 6.10 KB
-MODIFIED: 2025-12-28 10:34:32
+MODIFIED: 2026-01-12 21:21:00
 ================================================================================
 
 using Microsoft.EntityFrameworkCore;
@@ -12794,7 +12792,7 @@ public class PasswordChangeTests : IAsyncDisposable
 ================================================================================
 FILE: src/MyBlog.Tests/Integration/PostRepositoryTests.cs
 SIZE: 4.88 KB
-MODIFIED: 2025-12-28 08:39:37
+MODIFIED: 2026-01-12 21:21:00
 ================================================================================
 
 using Microsoft.EntityFrameworkCore;
@@ -12965,7 +12963,7 @@ public class PostRepositoryTests : IAsyncDisposable
 ================================================================================
 FILE: src/MyBlog.Tests/Integration/TelemetryCleanupTests.cs
 SIZE: 2.68 KB
-MODIFIED: 2025-12-28 08:27:55
+MODIFIED: 2026-01-12 21:21:00
 ================================================================================
 
 using Microsoft.EntityFrameworkCore;
@@ -13068,7 +13066,7 @@ public class TelemetryCleanupTests : IAsyncDisposable
 ================================================================================
 FILE: src/MyBlog.Tests/MyBlog.Tests.csproj
 SIZE: .69 KB
-MODIFIED: 2026-01-11 11:52:12
+MODIFIED: 2026-01-13 07:52:50
 ================================================================================
 
 <Project Sdk="Microsoft.NET.Sdk">
@@ -13095,7 +13093,7 @@ MODIFIED: 2026-01-11 11:52:12
 ================================================================================
 FILE: src/MyBlog.Tests/Unit/LoginRateLimitMiddlewareTests.cs
 SIZE: 6.75 KB
-MODIFIED: 2026-01-11 12:04:49
+MODIFIED: 2026-01-12 21:21:00
 ================================================================================
 
 using Microsoft.AspNetCore.Http;
@@ -13312,7 +13310,7 @@ public sealed class LoginRateLimitMiddlewareTests : IDisposable
 ================================================================================
 FILE: src/MyBlog.Tests/Unit/MarkdownServiceTests.cs
 SIZE: 3.30 KB
-MODIFIED: 2025-12-28 07:44:06
+MODIFIED: 2026-01-12 21:21:00
 ================================================================================
 
 using MyBlog.Core.Services;
@@ -13442,7 +13440,7 @@ public class MarkdownServiceTests
 ================================================================================
 FILE: src/MyBlog.Tests/Unit/PasswordServiceTests.cs
 SIZE: 1.30 KB
-MODIFIED: 2025-12-28 08:05:13
+MODIFIED: 2026-01-12 21:21:00
 ================================================================================
 
 using MyBlog.Infrastructure.Services;
@@ -13505,7 +13503,7 @@ public class PasswordServiceTests
 ================================================================================
 FILE: src/MyBlog.Tests/Unit/SlugServiceTests.cs
 SIZE: 1.85 KB
-MODIFIED: 2025-12-28 07:44:06
+MODIFIED: 2026-01-12 21:21:00
 ================================================================================
 
 using MyBlog.Core.Services;
@@ -13583,7 +13581,7 @@ public class SlugServiceTests
 ================================================================================
 FILE: src/MyBlog.Web/appsettings.Development.json
 SIZE: .11 KB
-MODIFIED: 2025-12-28 07:44:06
+MODIFIED: 2026-01-12 21:21:00
 ================================================================================
 
 {
@@ -13599,7 +13597,7 @@ MODIFIED: 2025-12-28 07:44:06
 ================================================================================
 FILE: src/MyBlog.Web/appsettings.json
 SIZE: .54 KB
-MODIFIED: 2025-12-28 10:14:51
+MODIFIED: 2026-01-12 21:21:00
 ================================================================================
 
 {
@@ -13633,7 +13631,7 @@ MODIFIED: 2025-12-28 10:14:51
 ================================================================================
 FILE: src/MyBlog.Web/Components/Pages/Admin/UserEditor.razor.css
 SIZE: 1.32 KB
-MODIFIED: 2026-01-01 20:17:11
+MODIFIED: 2026-01-12 21:21:00
 ================================================================================
 
 /* Container styling */
@@ -13702,7 +13700,7 @@ MODIFIED: 2026-01-01 20:17:11
 ================================================================================
 FILE: src/MyBlog.Web/Components/Pages/Admin/UserList.razor.css
 SIZE: 1.41 KB
-MODIFIED: 2026-01-01 21:33:51
+MODIFIED: 2026-01-12 21:21:00
 ================================================================================
 
 /* Responsive Table Alternative */
@@ -13769,7 +13767,7 @@ MODIFIED: 2026-01-01 21:33:51
 ================================================================================
 FILE: src/MyBlog.Web/Middleware/LoginRateLimitMiddleware.cs
 SIZE: 5.64 KB
-MODIFIED: 2026-01-11 11:43:24
+MODIFIED: 2026-01-13 07:52:50
 ================================================================================
 
 using System.Collections.Concurrent;
@@ -13968,7 +13966,7 @@ public static class LoginRateLimitMiddlewareExtensions
 ================================================================================
 FILE: src/MyBlog.Web/MyBlog.Web.csproj
 SIZE: .55 KB
-MODIFIED: 2025-12-28 08:26:41
+MODIFIED: 2026-01-12 21:21:00
 ================================================================================
 
 <Project Sdk="Microsoft.NET.Sdk.Web">
@@ -13991,7 +13989,7 @@ MODIFIED: 2025-12-28 08:26:41
 ================================================================================
 FILE: src/MyBlog.Web/Program.cs
 SIZE: 3.73 KB
-MODIFIED: 2026-01-01 15:54:04
+MODIFIED: 2026-01-12 21:21:00
 ================================================================================
 
 using Microsoft.AspNetCore.Authentication;
@@ -14116,7 +14114,7 @@ app.Run();
 ================================================================================
 FILE: src/MyBlog.Web/wwwroot/css/site.css
 SIZE: 9.37 KB
-MODIFIED: 2026-01-13 06:45:01
+MODIFIED: 2026-01-13 07:52:50
 ================================================================================
 
 /* =============================================================================
@@ -14661,7 +14659,7 @@ a:hover {
 ================================================================================
 FILE: src/run.sh
 SIZE: .10 KB
-MODIFIED: 2025-12-28 07:44:06
+MODIFIED: 2026-01-12 21:21:00
 ================================================================================
 
 #!/bin/bash
@@ -14673,7 +14671,7 @@ dotnet run
 ================================================================================
 FILE: src/test.sh
 SIZE: .08 KB
-MODIFIED: 2025-12-28 07:44:06
+MODIFIED: 2026-01-12 21:21:00
 ================================================================================
 
 #!/bin/bash
@@ -14685,7 +14683,7 @@ dotnet test MyBlog.slnx -v normal
 ================================================================================
 FILE: src/upgrade-myblog.sh
 SIZE: 30.16 KB
-MODIFIED: 2025-12-28 10:31:00
+MODIFIED: 2026-01-12 21:21:00
 ================================================================================
 
 #!/bin/bash
@@ -15653,9 +15651,9 @@ echo "=============================================="
 
 
 ===============================================================================
-EXPORT COMPLETED: Tue Jan 13 06:50:29 AM CST 2026
+EXPORT COMPLETED: Tue Jan 13 08:01:52 AM EST 2026
 Total Files Found: 76
 Files Exported: 76
 Files Skipped: 0 (binary or large files)
-Output File: /home/kushal/src/dotnet/MyBlog/docs/llm/dump.txt
+Output File: /home/kushal/src/dotnet/dotnetcms/docs/llm/dump.txt
 ===============================================================================
