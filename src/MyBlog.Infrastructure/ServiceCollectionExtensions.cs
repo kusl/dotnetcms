@@ -45,6 +45,8 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IMarkdownService, MarkdownService>();
         services.AddScoped<IAuthService, AuthService>();
 
+        services.AddSingleton<IReaderTrackingService, ReaderTrackingService>();
+
         // Background services
         services.AddHostedService<TelemetryCleanupService>();
 
