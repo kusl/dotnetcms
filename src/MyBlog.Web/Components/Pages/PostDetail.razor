@@ -1,7 +1,6 @@
 @page "/post/{Slug}"
 @inject IPostRepository PostRepository
 @inject NavigationManager Navigation
-@inject IJSRuntime JSRuntime
 
 @if (_post is null)
 {
@@ -31,7 +30,11 @@ else
                     <span class="date">Published @_post.PublishedAtUtc.Value.ToString("MMMM d, yyyy")</span>
                 }
 
-                <button class="btn-link share-btn" @onclick="HandleShare">
+                <button type="button"
+                        class="btn-link share-btn js-share-btn"
+                        data-title="@_post.Title"
+                        data-text="@_post.Summary"
+                        data-url="@Navigation.Uri">
                     Share
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="18" cy="5" r="3"></circle>
@@ -69,19 +72,6 @@ else
         {
             _post = null;
             _notFound = true;
-        }
-    }
-
-    private async Task HandleShare()
-    {
-        if (_post is not null)
-        {
-            // Call the JS function we created in site.js
-            // Arguments: Title, Summary (text), URL
-            await JSRuntime.InvokeVoidAsync("sharePost",
-                _post.Title,
-                _post.Summary,
-                Navigation.Uri);
         }
     }
 }

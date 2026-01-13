@@ -6,10 +6,10 @@
     <title>@(Title ?? "MyBlog")</title>
     <base href="/" />
     <link rel="stylesheet" href="css/site.css" />
-    <HeadOutlet />
+    <HeadOutlet @rendermode="InteractiveServer" />
 </head>
 <body>
-<Routes />
+<Routes @rendermode="InteractiveServer" />
 <script src="_framework/blazor.web.js"></script>
 <script src="js/site.js"></script>
 </body>
