@@ -2,30 +2,28 @@
 @implements IDisposable
 @inject IReaderTrackingService ReaderTracking
 
-<div class="reader-badge">
-    @if (_count > 1)
-    {
-        <span style="color: green; font-weight: bold;">
-            ● @_count people reading this
-        </span>
-    }
-    else
-    {
-        <span style="color: #666;">
-            You are the only one reading this
-        </span>
-    }
-</div>
+@if (_count > 0)
+{
+    <div class="reader-count" style="display: inline-block; font-size: 0.9em; color: #666;">
+        @( _count > 1 ? $"● {_count} people reading this" : "You are the only one here" )
+    </div>
+}
 
 @code {
     [Parameter] public string Slug { get; set; } = "";
-    private int _count;
+    private int _count = 0;
 
     protected override void OnInitialized()
     {
-        ReaderTracking.OnCountChanged += HandleCountChanged;
-        ReaderTracking.JoinPost(Slug);
-        _count = ReaderTracking.GetReaderCount(Slug);
+        try
+        {
+            ReaderTracking.OnCountChanged += HandleCountChanged;
+            ReaderTracking.JoinPost(Slug);
+            _count = ReaderTracking.GetReaderCount(Slug);
+        }
+        catch {
+            /* Fail silently: Reader just sees nothing or 'only one here' */
+        }
     }
 
     private void HandleCountChanged(string slug, int newCount)
@@ -39,7 +37,11 @@
 
     public void Dispose()
     {
-        ReaderTracking.LeavePost(Slug);
-        ReaderTracking.OnCountChanged -= HandleCountChanged;
+        try
+        {
+            ReaderTracking.LeavePost(Slug);
+            ReaderTracking.OnCountChanged -= HandleCountChanged;
+        }
+        catch { /* Fail silently */ }
     }
 }
