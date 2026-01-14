@@ -1,0 +1,25 @@
+@inject IConfiguration Configuration
+
+<footer class="footer">
+    <div class="container">
+        <p>&copy; @DateTime.Now.Year @(Configuration["Application:Title"] ?? "MyBlog")</p>
+
+        @if (IsValidGitUrl(out var url))
+        {
+            <a href="@url" target="_blank" rel="noopener noreferrer" class="footer-link">
+                <svg ...>...</svg>
+                <span>Source Code</span>
+            </a>
+        }
+    </div>
+</footer>
+
+@code {
+    private bool IsValidGitUrl(out string url)
+    {
+        url = Configuration["Application:GitForgeUrl"] ?? "";
+        return !string.IsNullOrWhiteSpace(url) &&
+               Uri.TryCreate(url, UriKind.Absolute, out var uri) &&
+               (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps);
+    }
+}
