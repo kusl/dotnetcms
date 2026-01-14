@@ -1,6 +1,6 @@
 ===============================================================================
 PROJECT EXPORT
-Generated: Tue Jan 13 09:19:27 PM EST 2026
+Generated: Tue Jan 13 09:33:52 PM EST 2026
 Project Path: /home/kushal/src/dotnet/dotnetcms
 ===============================================================================
 
@@ -28,7 +28,8 @@ DIRECTORY STRUCTURE:
 │       │   ├── 0015.txt
 │       │   ├── 0016.txt
 │       │   ├── 0017.txt
-│       │   └── 0018.txt
+│       │   ├── 0018.txt
+│       │   └── 0019.txt
 │       ├── chatgpt.md
 │       ├── claude.md
 │       ├── command.md
@@ -3901,7 +3902,7 @@ MODIFIED: 2026-01-12 21:21:00
 ================================================================================
 FILE: src/Directory.Packages.props
 SIZE: 1.36 KB
-MODIFIED: 2026-01-12 21:21:00
+MODIFIED: 2026-01-13 21:32:47
 ================================================================================
 
 <Project>
@@ -3911,7 +3912,7 @@ MODIFIED: 2026-01-12 21:21:00
   </PropertyGroup>
   <ItemGroup>
     <!-- Core Framework (.NET 10) -->
-    <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.1" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.2" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.1" />
     <PackageVersion Include="Microsoft.AspNetCore.Identity" Version="2.3.9" />
     <PackageVersion Include="Microsoft.Extensions.Hosting" Version="10.0.1" />
@@ -15223,7 +15224,7 @@ echo "=============================================="
 
 
 ===============================================================================
-EXPORT COMPLETED: Tue Jan 13 09:19:28 PM EST 2026
+EXPORT COMPLETED: Tue Jan 13 09:33:53 PM EST 2026
 Total Files Found: 81
 Files Exported: 81
 Files Skipped: 0 (binary or large files)
