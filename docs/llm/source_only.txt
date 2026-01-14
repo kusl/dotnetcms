@@ -1,5 +1,73 @@
+PROJECT STRUCTURE MAP:
+src/MyBlog.Core/Constants/AppConstants.cs
+src/MyBlog.Core/Interfaces/IAuthService.cs
+src/MyBlog.Core/Interfaces/IImageRepository.cs
+src/MyBlog.Core/Interfaces/IMarkdownService.cs
+src/MyBlog.Core/Interfaces/IPasswordService.cs
+src/MyBlog.Core/Interfaces/IPostRepository.cs
+src/MyBlog.Core/Interfaces/ISlugService.cs
+src/MyBlog.Core/Interfaces/ITelemetryLogRepository.cs
+src/MyBlog.Core/Interfaces/IUserRepository.cs
+src/MyBlog.Core/Interfaces/IReaderTrackingService.cs
+src/MyBlog.Core/Models/Image.cs
+src/MyBlog.Core/Models/Post.cs
+src/MyBlog.Core/Models/PostDto.cs
+src/MyBlog.Core/Models/TelemetryLog.cs
+src/MyBlog.Core/Models/User.cs
+src/MyBlog.Core/Services/MarkdownService.cs
+src/MyBlog.Core/Services/SlugService.cs
+src/MyBlog.Infrastructure/Data/BlogDbContext.cs
+src/MyBlog.Infrastructure/Data/DatabasePathResolver.cs
+src/MyBlog.Infrastructure/Repositories/ImageRepository.cs
+src/MyBlog.Infrastructure/Repositories/PostRepository.cs
+src/MyBlog.Infrastructure/Repositories/TelemetryLogRepository.cs
+src/MyBlog.Infrastructure/Repositories/UserRepository.cs
+src/MyBlog.Infrastructure/Services/AuthService.cs
+src/MyBlog.Infrastructure/Services/PasswordService.cs
+src/MyBlog.Infrastructure/Services/TelemetryCleanupService.cs
+src/MyBlog.Infrastructure/Services/ReaderTrackingService.cs
+src/MyBlog.Infrastructure/Telemetry/DatabaseLogExporter.cs
+src/MyBlog.Infrastructure/Telemetry/FileLogExporter.cs
+src/MyBlog.Infrastructure/Telemetry/TelemetryPathResolver.cs
+src/MyBlog.Infrastructure/ServiceCollectionExtensions.cs
+src/MyBlog.Tests/Integration/AuthServiceTests.cs
+src/MyBlog.Tests/Integration/PasswordChangeTests.cs
+src/MyBlog.Tests/Integration/PostRepositoryTests.cs
+src/MyBlog.Tests/Integration/TelemetryCleanupTests.cs
+src/MyBlog.Tests/Integration/AuthServiceLongPasswordTests.cs
+src/MyBlog.Tests/Unit/LoginRateLimitMiddlewareTests.cs
+src/MyBlog.Tests/Unit/MarkdownServiceTests.cs
+src/MyBlog.Tests/Unit/PasswordServiceTests.cs
+src/MyBlog.Tests/Unit/SlugServiceTests.cs
+src/MyBlog.Web/Components/Layout/MainLayout.razor
+src/MyBlog.Web/Components/Pages/About.razor
+src/MyBlog.Web/Components/Pages/AccessDenied.razor
+src/MyBlog.Web/Components/Pages/Admin/ImageManager.razor
+src/MyBlog.Web/Components/Pages/Admin/PostList.razor
+src/MyBlog.Web/Components/Pages/Admin/PostEditor.razor
+src/MyBlog.Web/Components/Pages/Admin/UserEditor.razor
+src/MyBlog.Web/Components/Pages/Admin/UserList.razor
+src/MyBlog.Web/Components/Pages/Admin/ChangePassword.razor
+src/MyBlog.Web/Components/Pages/Admin/Dashboard.razor
+src/MyBlog.Web/Components/Pages/Home.razor
+src/MyBlog.Web/Components/Pages/Login.razor
+src/MyBlog.Web/Components/Pages/PostDetail.razor
+src/MyBlog.Web/Components/Routes.razor
+src/MyBlog.Web/Components/Shared/MarkdownRenderer.razor
+src/MyBlog.Web/Components/Shared/Pagination.razor
+src/MyBlog.Web/Components/Shared/PostCard.razor
+src/MyBlog.Web/Components/Shared/RedirectToLogin.razor
+src/MyBlog.Web/Components/Shared/Footer.razor
+src/MyBlog.Web/Components/Shared/ReaderBadge.razor
+src/MyBlog.Web/Components/_Imports.razor
+src/MyBlog.Web/Components/App.razor
+src/MyBlog.Web/Middleware/LoginRateLimitMiddleware.cs
+src/MyBlog.Web/Program.cs
+
+
+
 ================================================================================
-FILE: src/MyBlog.Core/Constants/AppConstants.cs
+FILE PATH: src/MyBlog.Core/Constants/AppConstants.cs
 ================================================================================
 namespace MyBlog.Core.Constants;
 
@@ -29,7 +97,7 @@ public static class AppConstants
 --- END OF FILE ---
 
 ================================================================================
-FILE: src/MyBlog.Core/Interfaces/IAuthService.cs
+FILE PATH: src/MyBlog.Core/Interfaces/IAuthService.cs
 ================================================================================
 using MyBlog.Core.Models;
 
@@ -66,7 +134,7 @@ public interface IAuthService
 --- END OF FILE ---
 
 ================================================================================
-FILE: src/MyBlog.Core/Interfaces/IImageRepository.cs
+FILE PATH: src/MyBlog.Core/Interfaces/IImageRepository.cs
 ================================================================================
 using MyBlog.Core.Models;
 
@@ -94,7 +162,7 @@ public interface IImageRepository
 --- END OF FILE ---
 
 ================================================================================
-FILE: src/MyBlog.Core/Interfaces/IMarkdownService.cs
+FILE PATH: src/MyBlog.Core/Interfaces/IMarkdownService.cs
 ================================================================================
 namespace MyBlog.Core.Interfaces;
 
@@ -111,7 +179,7 @@ public interface IMarkdownService
 --- END OF FILE ---
 
 ================================================================================
-FILE: src/MyBlog.Core/Interfaces/IPasswordService.cs
+FILE PATH: src/MyBlog.Core/Interfaces/IPasswordService.cs
 ================================================================================
 namespace MyBlog.Core.Interfaces;
 
@@ -131,7 +199,7 @@ public interface IPasswordService
 --- END OF FILE ---
 
 ================================================================================
-FILE: src/MyBlog.Core/Interfaces/IPostRepository.cs
+FILE PATH: src/MyBlog.Core/Interfaces/IPostRepository.cs
 ================================================================================
 using MyBlog.Core.Models;
 
@@ -180,7 +248,7 @@ public interface IPostRepository
 --- END OF FILE ---
 
 ================================================================================
-FILE: src/MyBlog.Core/Interfaces/ISlugService.cs
+FILE PATH: src/MyBlog.Core/Interfaces/ISlugService.cs
 ================================================================================
 namespace MyBlog.Core.Interfaces;
 
@@ -197,7 +265,7 @@ public interface ISlugService
 --- END OF FILE ---
 
 ================================================================================
-FILE: src/MyBlog.Core/Interfaces/ITelemetryLogRepository.cs
+FILE PATH: src/MyBlog.Core/Interfaces/ITelemetryLogRepository.cs
 ================================================================================
 using MyBlog.Core.Models;
 
@@ -223,7 +291,7 @@ public interface ITelemetryLogRepository
 --- END OF FILE ---
 
 ================================================================================
-FILE: src/MyBlog.Core/Interfaces/IUserRepository.cs
+FILE PATH: src/MyBlog.Core/Interfaces/IUserRepository.cs
 ================================================================================
 using MyBlog.Core.Models;
 
@@ -260,7 +328,7 @@ public interface IUserRepository
 --- END OF FILE ---
 
 ================================================================================
-FILE: src/MyBlog.Core/Interfaces/IReaderTrackingService.cs
+FILE PATH: src/MyBlog.Core/Interfaces/IReaderTrackingService.cs
 ================================================================================
 namespace MyBlog.Core.Interfaces;
 
@@ -283,7 +351,7 @@ public interface IReaderTrackingService
 --- END OF FILE ---
 
 ================================================================================
-FILE: src/MyBlog.Core/Models/Image.cs
+FILE PATH: src/MyBlog.Core/Models/Image.cs
 ================================================================================
 namespace MyBlog.Core.Models;
 
@@ -324,7 +392,7 @@ public sealed class Image
 --- END OF FILE ---
 
 ================================================================================
-FILE: src/MyBlog.Core/Models/Post.cs
+FILE PATH: src/MyBlog.Core/Models/Post.cs
 ================================================================================
 namespace MyBlog.Core.Models;
 
@@ -374,7 +442,7 @@ public sealed class Post
 --- END OF FILE ---
 
 ================================================================================
-FILE: src/MyBlog.Core/Models/PostDto.cs
+FILE PATH: src/MyBlog.Core/Models/PostDto.cs
 ================================================================================
 namespace MyBlog.Core.Models;
 
@@ -419,7 +487,7 @@ public sealed record PostDetailDto(
 --- END OF FILE ---
 
 ================================================================================
-FILE: src/MyBlog.Core/Models/TelemetryLog.cs
+FILE PATH: src/MyBlog.Core/Models/TelemetryLog.cs
 ================================================================================
 namespace MyBlog.Core.Models;
 
@@ -460,7 +528,7 @@ public sealed class TelemetryLog
 --- END OF FILE ---
 
 ================================================================================
-FILE: src/MyBlog.Core/Models/User.cs
+FILE PATH: src/MyBlog.Core/Models/User.cs
 ================================================================================
 namespace MyBlog.Core.Models;
 
@@ -498,7 +566,7 @@ public sealed class User
 --- END OF FILE ---
 
 ================================================================================
-FILE: src/MyBlog.Core/Services/MarkdownService.cs
+FILE PATH: src/MyBlog.Core/Services/MarkdownService.cs
 ================================================================================
 using System.Text;
 using System.Text.RegularExpressions;
@@ -716,7 +784,7 @@ public sealed partial class MarkdownService : IMarkdownService
 --- END OF FILE ---
 
 ================================================================================
-FILE: src/MyBlog.Core/Services/SlugService.cs
+FILE PATH: src/MyBlog.Core/Services/SlugService.cs
 ================================================================================
 using System.Globalization;
 using System.Text;
@@ -779,7 +847,7 @@ public sealed partial class SlugService : ISlugService
 --- END OF FILE ---
 
 ================================================================================
-FILE: src/MyBlog.Infrastructure/Data/BlogDbContext.cs
+FILE PATH: src/MyBlog.Infrastructure/Data/BlogDbContext.cs
 ================================================================================
 using Microsoft.EntityFrameworkCore;
 using MyBlog.Core.Models;
@@ -870,7 +938,7 @@ public sealed class BlogDbContext : DbContext
 --- END OF FILE ---
 
 ================================================================================
-FILE: src/MyBlog.Infrastructure/Data/DatabasePathResolver.cs
+FILE PATH: src/MyBlog.Infrastructure/Data/DatabasePathResolver.cs
 ================================================================================
 namespace MyBlog.Infrastructure.Data;
 
@@ -936,7 +1004,7 @@ public static class DatabasePathResolver
 --- END OF FILE ---
 
 ================================================================================
-FILE: src/MyBlog.Infrastructure/Repositories/ImageRepository.cs
+FILE PATH: src/MyBlog.Infrastructure/Repositories/ImageRepository.cs
 ================================================================================
 using Microsoft.EntityFrameworkCore;
 using MyBlog.Core.Interfaces;
@@ -997,7 +1065,7 @@ public sealed class ImageRepository : IImageRepository
 --- END OF FILE ---
 
 ================================================================================
-FILE: src/MyBlog.Infrastructure/Repositories/PostRepository.cs
+FILE PATH: src/MyBlog.Infrastructure/Repositories/PostRepository.cs
 ================================================================================
 using Microsoft.EntityFrameworkCore;
 using MyBlog.Core.Interfaces;
@@ -1166,7 +1234,7 @@ public sealed class PostRepository : IPostRepository
 --- END OF FILE ---
 
 ================================================================================
-FILE: src/MyBlog.Infrastructure/Repositories/TelemetryLogRepository.cs
+FILE PATH: src/MyBlog.Infrastructure/Repositories/TelemetryLogRepository.cs
 ================================================================================
 using Microsoft.EntityFrameworkCore;
 using MyBlog.Core.Interfaces;
@@ -1220,7 +1288,7 @@ public sealed class TelemetryLogRepository : ITelemetryLogRepository
 --- END OF FILE ---
 
 ================================================================================
-FILE: src/MyBlog.Infrastructure/Repositories/UserRepository.cs
+FILE PATH: src/MyBlog.Infrastructure/Repositories/UserRepository.cs
 ================================================================================
 using Microsoft.EntityFrameworkCore;
 using MyBlog.Core.Interfaces;
@@ -1285,7 +1353,7 @@ public sealed class UserRepository : IUserRepository
 --- END OF FILE ---
 
 ================================================================================
-FILE: src/MyBlog.Infrastructure/Services/AuthService.cs
+FILE PATH: src/MyBlog.Infrastructure/Services/AuthService.cs
 ================================================================================
 using Microsoft.Extensions.Configuration;
 using MyBlog.Core.Interfaces;
@@ -1398,7 +1466,7 @@ public sealed class AuthService : IAuthService
 --- END OF FILE ---
 
 ================================================================================
-FILE: src/MyBlog.Infrastructure/Services/PasswordService.cs
+FILE PATH: src/MyBlog.Infrastructure/Services/PasswordService.cs
 ================================================================================
 using Microsoft.AspNetCore.Identity;
 using MyBlog.Core.Interfaces;
@@ -1432,7 +1500,7 @@ public sealed class PasswordService : IPasswordService
 --- END OF FILE ---
 
 ================================================================================
-FILE: src/MyBlog.Infrastructure/Services/TelemetryCleanupService.cs
+FILE PATH: src/MyBlog.Infrastructure/Services/TelemetryCleanupService.cs
 ================================================================================
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -1504,7 +1572,7 @@ public sealed class TelemetryCleanupService : BackgroundService
 --- END OF FILE ---
 
 ================================================================================
-FILE: src/MyBlog.Infrastructure/Services/ReaderTrackingService.cs
+FILE PATH: src/MyBlog.Infrastructure/Services/ReaderTrackingService.cs
 ================================================================================
 using System.Collections.Concurrent;
 using MyBlog.Core.Interfaces;
@@ -1552,7 +1620,7 @@ public class ReaderTrackingService : IReaderTrackingService
 --- END OF FILE ---
 
 ================================================================================
-FILE: src/MyBlog.Infrastructure/Telemetry/DatabaseLogExporter.cs
+FILE PATH: src/MyBlog.Infrastructure/Telemetry/DatabaseLogExporter.cs
 ================================================================================
 using System.Text.Json;
 using Microsoft.Extensions.DependencyInjection;
@@ -1631,7 +1699,7 @@ public sealed class DatabaseLogExporter : BaseExporter<LogRecord>
 --- END OF FILE ---
 
 ================================================================================
-FILE: src/MyBlog.Infrastructure/Telemetry/FileLogExporter.cs
+FILE PATH: src/MyBlog.Infrastructure/Telemetry/FileLogExporter.cs
 ================================================================================
 using System.Text;
 using System.Text.Json;
@@ -1772,7 +1840,7 @@ public sealed class FileLogExporter : BaseExporter<LogRecord>
 --- END OF FILE ---
 
 ================================================================================
-FILE: src/MyBlog.Infrastructure/Telemetry/TelemetryPathResolver.cs
+FILE PATH: src/MyBlog.Infrastructure/Telemetry/TelemetryPathResolver.cs
 ================================================================================
 namespace MyBlog.Infrastructure.Telemetry;
 
@@ -1849,7 +1917,7 @@ public static class TelemetryPathResolver
 --- END OF FILE ---
 
 ================================================================================
-FILE: src/MyBlog.Infrastructure/ServiceCollectionExtensions.cs
+FILE PATH: src/MyBlog.Infrastructure/ServiceCollectionExtensions.cs
 ================================================================================
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -1911,7 +1979,7 @@ public static class ServiceCollectionExtensions
 --- END OF FILE ---
 
 ================================================================================
-FILE: src/MyBlog.Tests/Integration/AuthServiceTests.cs
+FILE PATH: src/MyBlog.Tests/Integration/AuthServiceTests.cs
 ================================================================================
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -2044,7 +2112,7 @@ public class AuthServiceTests : IAsyncDisposable
 --- END OF FILE ---
 
 ================================================================================
-FILE: src/MyBlog.Tests/Integration/PasswordChangeTests.cs
+FILE PATH: src/MyBlog.Tests/Integration/PasswordChangeTests.cs
 ================================================================================
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -2238,7 +2306,7 @@ public class PasswordChangeTests : IAsyncDisposable
 --- END OF FILE ---
 
 ================================================================================
-FILE: src/MyBlog.Tests/Integration/PostRepositoryTests.cs
+FILE PATH: src/MyBlog.Tests/Integration/PostRepositoryTests.cs
 ================================================================================
 using Microsoft.EntityFrameworkCore;
 using MyBlog.Core.Models;
@@ -2408,7 +2476,7 @@ public class PostRepositoryTests : IAsyncDisposable
 --- END OF FILE ---
 
 ================================================================================
-FILE: src/MyBlog.Tests/Integration/TelemetryCleanupTests.cs
+FILE PATH: src/MyBlog.Tests/Integration/TelemetryCleanupTests.cs
 ================================================================================
 using Microsoft.EntityFrameworkCore;
 using MyBlog.Core.Models;
@@ -2510,7 +2578,7 @@ public class TelemetryCleanupTests : IAsyncDisposable
 --- END OF FILE ---
 
 ================================================================================
-FILE: src/MyBlog.Tests/Integration/AuthServiceLongPasswordTests.cs
+FILE PATH: src/MyBlog.Tests/Integration/AuthServiceLongPasswordTests.cs
 ================================================================================
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -2838,7 +2906,7 @@ public sealed class AuthServiceLongPasswordTests : IAsyncDisposable
 --- END OF FILE ---
 
 ================================================================================
-FILE: src/MyBlog.Tests/Unit/LoginRateLimitMiddlewareTests.cs
+FILE PATH: src/MyBlog.Tests/Unit/LoginRateLimitMiddlewareTests.cs
 ================================================================================
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -3054,7 +3122,7 @@ public sealed class LoginRateLimitMiddlewareTests : IDisposable
 --- END OF FILE ---
 
 ================================================================================
-FILE: src/MyBlog.Tests/Unit/MarkdownServiceTests.cs
+FILE PATH: src/MyBlog.Tests/Unit/MarkdownServiceTests.cs
 ================================================================================
 using MyBlog.Core.Services;
 using Xunit;
@@ -3183,7 +3251,7 @@ public class MarkdownServiceTests
 --- END OF FILE ---
 
 ================================================================================
-FILE: src/MyBlog.Tests/Unit/PasswordServiceTests.cs
+FILE PATH: src/MyBlog.Tests/Unit/PasswordServiceTests.cs
 ================================================================================
 using MyBlog.Infrastructure.Services;
 using Xunit;
@@ -3245,7 +3313,7 @@ public class PasswordServiceTests
 --- END OF FILE ---
 
 ================================================================================
-FILE: src/MyBlog.Tests/Unit/SlugServiceTests.cs
+FILE PATH: src/MyBlog.Tests/Unit/SlugServiceTests.cs
 ================================================================================
 using MyBlog.Core.Services;
 using Xunit;
@@ -3322,7 +3390,7 @@ public class SlugServiceTests
 --- END OF FILE ---
 
 ================================================================================
-FILE: src/MyBlog.Web/Components/Layout/MainLayout.razor
+FILE PATH: src/MyBlog.Web/Components/Layout/MainLayout.razor
 ================================================================================
 @inherits LayoutComponentBase
 @inject IConfiguration Configuration
@@ -3365,7 +3433,7 @@ FILE: src/MyBlog.Web/Components/Layout/MainLayout.razor
 --- END OF FILE ---
 
 ================================================================================
-FILE: src/MyBlog.Web/Components/Pages/About.razor
+FILE PATH: src/MyBlog.Web/Components/Pages/About.razor
 ================================================================================
 @page "/about"
 @inject IConfiguration Configuration
@@ -3391,7 +3459,7 @@ FILE: src/MyBlog.Web/Components/Pages/About.razor
 --- END OF FILE ---
 
 ================================================================================
-FILE: src/MyBlog.Web/Components/Pages/AccessDenied.razor
+FILE PATH: src/MyBlog.Web/Components/Pages/AccessDenied.razor
 ================================================================================
 @page "/access-denied"
 
@@ -3412,7 +3480,7 @@ FILE: src/MyBlog.Web/Components/Pages/AccessDenied.razor
 --- END OF FILE ---
 
 ================================================================================
-FILE: src/MyBlog.Web/Components/Pages/Admin/ImageManager.razor
+FILE PATH: src/MyBlog.Web/Components/Pages/Admin/ImageManager.razor
 ================================================================================
 @page "/admin/images"
 @rendermode InteractiveServer
@@ -3562,7 +3630,7 @@ else
 --- END OF FILE ---
 
 ================================================================================
-FILE: src/MyBlog.Web/Components/Pages/Admin/PostList.razor
+FILE PATH: src/MyBlog.Web/Components/Pages/Admin/PostList.razor
 ================================================================================
 @page "/admin/posts"
 @rendermode InteractiveServer
@@ -3645,7 +3713,7 @@ else
 --- END OF FILE ---
 
 ================================================================================
-FILE: src/MyBlog.Web/Components/Pages/Admin/PostEditor.razor
+FILE PATH: src/MyBlog.Web/Components/Pages/Admin/PostEditor.razor
 ================================================================================
 @page "/admin/posts/new"
 @page "/admin/posts/edit/{Id:guid}"
@@ -3833,7 +3901,7 @@ else
 --- END OF FILE ---
 
 ================================================================================
-FILE: src/MyBlog.Web/Components/Pages/Admin/UserEditor.razor
+FILE PATH: src/MyBlog.Web/Components/Pages/Admin/UserEditor.razor
 ================================================================================
 @page "/admin/users/new"
 @page "/admin/users/edit/{Id:guid}"
@@ -3998,7 +4066,7 @@ FILE: src/MyBlog.Web/Components/Pages/Admin/UserEditor.razor
 --- END OF FILE ---
 
 ================================================================================
-FILE: src/MyBlog.Web/Components/Pages/Admin/UserList.razor
+FILE PATH: src/MyBlog.Web/Components/Pages/Admin/UserList.razor
 ================================================================================
 @page "/admin/users"
 @attribute [Authorize(Roles = AppConstants.AdminRole)]
@@ -4103,7 +4171,7 @@ FILE: src/MyBlog.Web/Components/Pages/Admin/UserList.razor
 --- END OF FILE ---
 
 ================================================================================
-FILE: src/MyBlog.Web/Components/Pages/Admin/ChangePassword.razor
+FILE PATH: src/MyBlog.Web/Components/Pages/Admin/ChangePassword.razor
 ================================================================================
 @page "/admin/change-password"
 @attribute [Authorize]
@@ -4234,7 +4302,7 @@ FILE: src/MyBlog.Web/Components/Pages/Admin/ChangePassword.razor
 --- END OF FILE ---
 
 ================================================================================
-FILE: src/MyBlog.Web/Components/Pages/Admin/Dashboard.razor
+FILE PATH: src/MyBlog.Web/Components/Pages/Admin/Dashboard.razor
 ================================================================================
 @page "/admin"
 @attribute [Authorize]
@@ -4305,7 +4373,7 @@ else
 --- END OF FILE ---
 
 ================================================================================
-FILE: src/MyBlog.Web/Components/Pages/Home.razor
+FILE PATH: src/MyBlog.Web/Components/Pages/Home.razor
 ================================================================================
 @page "/"
 @inject IPostRepository PostRepository
@@ -4360,7 +4428,7 @@ else
 --- END OF FILE ---
 
 ================================================================================
-FILE: src/MyBlog.Web/Components/Pages/Login.razor
+FILE PATH: src/MyBlog.Web/Components/Pages/Login.razor
 ================================================================================
 @page "/login"
 @inject IAuthService AuthService
@@ -4452,7 +4520,7 @@ FILE: src/MyBlog.Web/Components/Pages/Login.razor
 --- END OF FILE ---
 
 ================================================================================
-FILE: src/MyBlog.Web/Components/Pages/PostDetail.razor
+FILE PATH: src/MyBlog.Web/Components/Pages/PostDetail.razor
 ================================================================================
 @page "/post/{Slug}"
 @inject IPostRepository PostRepository
@@ -4535,7 +4603,7 @@ else
 --- END OF FILE ---
 
 ================================================================================
-FILE: src/MyBlog.Web/Components/Routes.razor
+FILE PATH: src/MyBlog.Web/Components/Routes.razor
 ================================================================================
 <Router AppAssembly="typeof(Program).Assembly">
     <Found Context="routeData">
@@ -4552,7 +4620,7 @@ FILE: src/MyBlog.Web/Components/Routes.razor
 --- END OF FILE ---
 
 ================================================================================
-FILE: src/MyBlog.Web/Components/Shared/MarkdownRenderer.razor
+FILE PATH: src/MyBlog.Web/Components/Shared/MarkdownRenderer.razor
 ================================================================================
 @inject IMarkdownService MarkdownService
 
@@ -4569,7 +4637,7 @@ FILE: src/MyBlog.Web/Components/Shared/MarkdownRenderer.razor
 --- END OF FILE ---
 
 ================================================================================
-FILE: src/MyBlog.Web/Components/Shared/Pagination.razor
+FILE PATH: src/MyBlog.Web/Components/Shared/Pagination.razor
 ================================================================================
 @if (TotalPages > 1)
 {
@@ -4606,7 +4674,7 @@ FILE: src/MyBlog.Web/Components/Shared/Pagination.razor
 --- END OF FILE ---
 
 ================================================================================
-FILE: src/MyBlog.Web/Components/Shared/PostCard.razor
+FILE PATH: src/MyBlog.Web/Components/Shared/PostCard.razor
 ================================================================================
 <article class="post-card">
     <h2 class="post-card-title">
@@ -4636,7 +4704,7 @@ FILE: src/MyBlog.Web/Components/Shared/PostCard.razor
 --- END OF FILE ---
 
 ================================================================================
-FILE: src/MyBlog.Web/Components/Shared/RedirectToLogin.razor
+FILE PATH: src/MyBlog.Web/Components/Shared/RedirectToLogin.razor
 ================================================================================
 @inject NavigationManager Navigation
 
@@ -4651,7 +4719,7 @@ FILE: src/MyBlog.Web/Components/Shared/RedirectToLogin.razor
 --- END OF FILE ---
 
 ================================================================================
-FILE: src/MyBlog.Web/Components/Shared/Footer.razor
+FILE PATH: src/MyBlog.Web/Components/Shared/Footer.razor
 ================================================================================
 @inject IConfiguration Configuration
 
@@ -4680,7 +4748,7 @@ FILE: src/MyBlog.Web/Components/Shared/Footer.razor
 --- END OF FILE ---
 
 ================================================================================
-FILE: src/MyBlog.Web/Components/Shared/ReaderBadge.razor
+FILE PATH: src/MyBlog.Web/Components/Shared/ReaderBadge.razor
 ================================================================================
 @using MyBlog.Core.Interfaces
 @inject IReaderTrackingService TrackingService
@@ -4735,7 +4803,7 @@ FILE: src/MyBlog.Web/Components/Shared/ReaderBadge.razor
 --- END OF FILE ---
 
 ================================================================================
-FILE: src/MyBlog.Web/Components/_Imports.razor
+FILE PATH: src/MyBlog.Web/Components/_Imports.razor
 ================================================================================
 @using System.Net.Http
 @using System.Net.Http.Json
@@ -4758,7 +4826,7 @@ FILE: src/MyBlog.Web/Components/_Imports.razor
 --- END OF FILE ---
 
 ================================================================================
-FILE: src/MyBlog.Web/Components/App.razor
+FILE PATH: src/MyBlog.Web/Components/App.razor
 ================================================================================
 <!DOCTYPE html>
 <html lang="en">
@@ -4790,7 +4858,7 @@ FILE: src/MyBlog.Web/Components/App.razor
 --- END OF FILE ---
 
 ================================================================================
-FILE: src/MyBlog.Web/Middleware/LoginRateLimitMiddleware.cs
+FILE PATH: src/MyBlog.Web/Middleware/LoginRateLimitMiddleware.cs
 ================================================================================
 using System.Collections.Concurrent;
 
@@ -4988,7 +5056,7 @@ public static class LoginRateLimitMiddlewareExtensions
 --- END OF FILE ---
 
 ================================================================================
-FILE: src/MyBlog.Web/Program.cs
+FILE PATH: src/MyBlog.Web/Program.cs
 ================================================================================
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
