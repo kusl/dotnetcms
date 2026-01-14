@@ -35,6 +35,20 @@
     <footer class="footer">
         <div class="container">
             <p>&copy; @DateTime.Now.Year @(Configuration["Application:Title"] ?? "MyBlog")</p>
+
+            @{
+                var gitUrl = Configuration["Application:GitForgeUrl"];
+                // Checks if it's not empty AND is a valid absolute URL (http/https)
+                if (!string.IsNullOrWhiteSpace(gitUrl) &&
+                    Uri.TryCreate(gitUrl, UriKind.Absolute, out var validatedUri) &&
+                    (validatedUri.Scheme == Uri.UriSchemeHttp || validatedUri.Scheme == Uri.UriSchemeHttps))
+                {
+                    <p>
+                        Read the source code at
+                        <a href="@gitUrl" target="_blank" rel="noopener noreferrer">@gitUrl</a>
+                    </p>
+                }
+            }
         </div>
     </footer>
 </div>
