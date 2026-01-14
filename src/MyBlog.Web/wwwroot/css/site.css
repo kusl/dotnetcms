@@ -134,14 +134,7 @@ a:hover {
     padding: calc(var(--spacing) * 2) 0;
 }
 
-/* Footer */
-.footer {
-    background-color: var(--color-bg-alt);
-    border-top: 1px solid var(--color-border);
-    padding: var(--spacing) 0;
-    text-align: center;
-    color: var(--color-text-muted);
-}
+
 
 /* Buttons */
 .btn {
