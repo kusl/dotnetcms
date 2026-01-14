@@ -1,6 +1,6 @@
 ===============================================================================
 PROJECT EXPORT
-Generated: Tue Jan 13 04:19:07 PM EST 2026
+Generated: Tue Jan 13 09:19:27 PM EST 2026
 Project Path: /home/kushal/src/dotnet/dotnetcms
 ===============================================================================
 
@@ -118,12 +118,16 @@ DIRECTORY STRUCTURE:
 │   │   │   │   ├── AccessDenied.razor
 │   │   │   │   ├── Home.razor
 │   │   │   │   ├── Login.razor
-│   │   │   │   └── PostDetail.razor
+│   │   │   │   ├── PostDetail.razor
+│   │   │   │   └── PostDetail.razor.css
 │   │   │   ├── Shared
+│   │   │   │   ├── Footer.razor
+│   │   │   │   ├── Footer.razor.css
 │   │   │   │   ├── MarkdownRenderer.razor
 │   │   │   │   ├── Pagination.razor
 │   │   │   │   ├── PostCard.razor
 │   │   │   │   ├── ReaderBadge.razor
+│   │   │   │   ├── ReaderBadge.razor.css
 │   │   │   │   └── RedirectToLogin.razor
 │   │   │   ├── App.razor
 │   │   │   ├── _Imports.razor
@@ -13072,8 +13076,8 @@ MODIFIED: 2026-01-12 21:21:00
 
 ================================================================================
 FILE: src/MyBlog.Web/appsettings.json
-SIZE: .54 KB
-MODIFIED: 2026-01-12 21:21:00
+SIZE: .60 KB
+MODIFIED: 2026-01-13 21:18:21
 ================================================================================
 
 {
@@ -13092,7 +13096,8 @@ MODIFIED: 2026-01-12 21:21:00
   "Application": {
     "Title": "MyBlog",
     "PostsPerPage": 10,
-    "RequireHttps": false
+    "RequireHttps": false,
+    "GitForgeUrl": "https://github.com/kusl/dotnetcms"
   },
   "Logging": {
     "LogLevel": {
@@ -13237,6 +13242,111 @@ MODIFIED: 2026-01-12 21:21:00
         justify-content: flex-start;
         gap: 10px;
     }
+}
+
+
+================================================================================
+FILE: src/MyBlog.Web/Components/Pages/PostDetail.razor.css
+SIZE: .51 KB
+MODIFIED: 2026-01-13 21:18:21
+================================================================================
+
+/* PostDetail.razor.css */
+
+.share-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+    /* Reset button styles if not already handled by btn-link */
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+}
+
+.share-btn:hover {
+    color: var(--color-primary);
+    text-decoration: underline;
+}
+
+.share-btn svg {
+    margin-top: -2px; /* Fine-tune icon alignment */
+}
+
+.share-btn.success {
+    color: var(--color-success);
+}
+
+
+================================================================================
+FILE: src/MyBlog.Web/Components/Shared/Footer.razor.css
+SIZE: .61 KB
+MODIFIED: 2026-01-13 21:18:21
+================================================================================
+
+/* Note: You can still use the variables defined in site.css :root here! */
+
+.footer {
+    background-color: var(--color-bg-alt);
+    border-top: 1px solid var(--color-border);
+    padding: var(--spacing) 0;
+    text-align: center;
+    color: var(--color-text-muted);
+}
+
+.footer-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 0.5rem;
+    color: var(--color-text-muted);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.footer-link:hover {
+    color: var(--color-primary);
+    text-decoration: underline;
+}
+
+.footer-link svg {
+    flex-shrink: 0;
+}
+
+
+================================================================================
+FILE: src/MyBlog.Web/Components/Shared/ReaderBadge.razor.css
+SIZE: .52 KB
+MODIFIED: 2026-01-13 21:18:21
+================================================================================
+
+/* Reader Badge */
+.reader-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+    background-color: var(--color-bg-alt);
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--radius);
+    border: 1px solid var(--color-border);
+}
+
+.reader-dot {
+    color: var(--color-success);
+    font-size: 1.2em;
+    line-height: 0.5;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.4; }
+    100% { opacity: 1; }
 }
 
 
@@ -13589,8 +13699,8 @@ app.Run();
 
 ================================================================================
 FILE: src/MyBlog.Web/wwwroot/css/site.css
-SIZE: 9.37 KB
-MODIFIED: 2026-01-13 07:52:50
+SIZE: 9.13 KB
+MODIFIED: 2026-01-13 21:18:21
 ================================================================================
 
 /* =============================================================================
@@ -13729,14 +13839,7 @@ a:hover {
     padding: calc(var(--spacing) * 2) 0;
 }
 
-/* Footer */
-.footer {
-    background-color: var(--color-bg-alt);
-    border-top: 1px solid var(--color-border);
-    padding: var(--spacing) 0;
-    text-align: center;
-    color: var(--color-text-muted);
-}
+
 
 /* Buttons */
 .btn {
@@ -13893,10 +13996,15 @@ a:hover {
 
 .post-meta {
     color: var(--color-text-muted);
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
 }
 
-.post-meta span {
-    margin-right: 1rem;
+.post-meta .date,
+.post-meta .author {
+    margin-right: 0;
 }
 
 .back-link {
@@ -13926,7 +14034,7 @@ a:hover {
 }
 
 .markdown-content code {
-    font-family: var(--font-mono);
+    font-family: var(--font-mono), source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
     font-size: 0.875em;
 }
 
@@ -14117,18 +14225,6 @@ a:hover {
     .admin-nav {
         flex-wrap: wrap;
     }
-}
-/* Share button styling */
-.share-btn {
-    margin-left: 1rem;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.25rem;
-    font-size: 0.875rem;
-}
-
-.share-btn svg {
-    margin-top: -2px;
 }
 
 
@@ -15127,9 +15223,9 @@ echo "=============================================="
 
 
 ===============================================================================
-EXPORT COMPLETED: Tue Jan 13 04:19:08 PM EST 2026
-Total Files Found: 78
-Files Exported: 78
+EXPORT COMPLETED: Tue Jan 13 09:19:28 PM EST 2026
+Total Files Found: 81
+Files Exported: 81
 Files Skipped: 0 (binary or large files)
 Output File: /home/kushal/src/dotnet/dotnetcms/docs/llm/dump.txt
 ===============================================================================
