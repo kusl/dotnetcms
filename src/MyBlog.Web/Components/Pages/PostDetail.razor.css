@@ -1,0 +1,20 @@
+/* Share button styling */
+.share-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+}
+
+.share-btn:hover {
+    color: var(--color-primary);
+}
+
+.share-btn svg {
+    margin-top: -2px;
+}
+
+.share-btn.success {
+    color: var(--color-success);
+}
