@@ -1,19 +1,710 @@
 @page "/about"
+@rendermode InteractiveServer
+@implements IDisposable
 @inject IConfiguration Configuration
+@inject IReaderTrackingService ReaderTrackingService
+@inject IPostRepository PostRepository
 
 <PageTitle>About - @(Configuration["Application:Title"] ?? "MyBlog")</PageTitle>
 
-<h1>About</h1>
+<article class="about-page">
+    <header class="about-header">
+        <h1>About @(Configuration["Application:Title"] ?? "MyBlog")</h1>
+        <p class="about-tagline">A lightweight, self-hosted blogging platform built with modern .NET technologies</p>
+        <div class="reader-info">
+            <ReaderBadge Slug="@_trackingSlug" />
+        </div>
+    </header>
 
-<p>
-    Welcome to @(Configuration["Application:Title"] ?? "MyBlog"), a simple blog built with 
-    .NET 10 and Blazor Server.
-</p>
+    <section class="about-section">
+        <h2>Overview</h2>
+        <p>
+            Welcome to <strong>@(Configuration["Application:Title"] ?? "MyBlog")</strong>, a powerful yet lightweight
+            content management system and blogging platform built entirely with <strong>.NET 10</strong> and
+            <strong>Blazor Server</strong>. This application represents a modern approach to self-hosted blogging,
+            combining the performance and type-safety of C# with the interactive capabilities of Blazor's
+            component-based architecture.
+        </p>
+        <p>
+            MyBlog follows <strong>Clean Architecture</strong> principles, ensuring a clear separation of concerns
+            between the domain logic, infrastructure, and presentation layers. This architectural approach makes
+            the codebase maintainable, testable, and extensible for future enhancements.
+        </p>
+    </section>
 
-<h2>Features</h2>
-<ul>
-    <li>Markdown-based content</li>
-    <li>Image support with database storage</li>
-    <li>OpenTelemetry for observability</li>
-    <li>Cross-platform deployment</li>
-</ul>
+    <section class="about-section">
+        <h2>Architecture</h2>
+        <p>
+            The application is organized into a multi-project solution structure that follows industry best practices
+            for enterprise-grade .NET applications:
+        </p>
+
+        <div class="architecture-grid">
+            <div class="arch-card">
+                <h3>MyBlog.Core</h3>
+                <p class="arch-subtitle">Domain Layer</p>
+                <p>
+                    Contains the heart of the application: domain models, interfaces, and business logic services.
+                    This layer has zero dependencies on external frameworks or infrastructure concerns, ensuring
+                    that the core business rules remain portable and testable in isolation.
+                </p>
+                <div class="arch-contents">
+                    <strong>Contains:</strong>
+                    <ul>
+                        <li><code>Models/</code> — Post, User, Image, TelemetryLog, DTOs</li>
+                        <li><code>Interfaces/</code> — Repository and service contracts</li>
+                        <li><code>Services/</code> — MarkdownService, SlugService</li>
+                        <li><code>Constants/</code> — AppConstants (auth cookie name, roles, limits)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="arch-card">
+                <h3>MyBlog.Infrastructure</h3>
+                <p class="arch-subtitle">Data Access Layer</p>
+                <p>
+                    Implements the repository interfaces defined in Core using Entity Framework Core with SQLite.
+                    This layer handles all database operations, authentication services, and external integrations.
+                </p>
+                <div class="arch-contents">
+                    <strong>Contains:</strong>
+                    <ul>
+                        <li><code>Data/</code> — BlogDbContext, DatabasePathResolver</li>
+                        <li><code>Repositories/</code> — EF Core implementations</li>
+                        <li><code>Services/</code> — AuthService, PasswordService, ReaderTrackingService</li>
+                        <li><code>Telemetry/</code> — OpenTelemetry exporters</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="arch-card">
+                <h3>MyBlog.Web</h3>
+                <p class="arch-subtitle">Presentation Layer</p>
+                <p>
+                    The Blazor Server application containing all UI components, pages, layouts, and middleware.
+                    Uses a hybrid rendering approach with both Server-Side Rendering (SSR) for public pages
+                    and Interactive Server mode for admin functionality.
+                </p>
+                <div class="arch-contents">
+                    <strong>Contains:</strong>
+                    <ul>
+                        <li><code>Components/Pages/</code> — Razor pages (Home, PostDetail, About, Login)</li>
+                        <li><code>Components/Pages/Admin/</code> — Dashboard, PostEditor, UserEditor, ImageManager</li>
+                        <li><code>Components/Shared/</code> — Reusable components (PostCard, Pagination, ReaderBadge)</li>
+                        <li><code>Middleware/</code> — LoginRateLimitMiddleware</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="arch-card">
+                <h3>MyBlog.Tests</h3>
+                <p class="arch-subtitle">Testing Layer</p>
+                <p>
+                    Comprehensive test suite using <strong>xUnit v3</strong> with both unit and integration tests.
+                    The tests cover core services, repositories, and middleware functionality with high code coverage.
+                </p>
+                <div class="arch-contents">
+                    <strong>Contains:</strong>
+                    <ul>
+                        <li><code>Unit/</code> — MarkdownServiceTests, SlugServiceTests, PasswordServiceTests</li>
+                        <li><code>Integration/</code> — AuthServiceTests, PostRepositoryTests, TelemetryCleanupTests</li>
+                        <li>LoginRateLimitMiddlewareTests with injectable delay functions</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="about-section">
+        <h2>Technology Stack</h2>
+        <div class="tech-grid">
+            <div class="tech-category">
+                <h3>Backend Framework</h3>
+                <ul>
+                    <li><strong>.NET 10</strong> — Latest LTS runtime with performance improvements</li>
+                    <li><strong>Blazor Server</strong> — Component-based UI with real-time SignalR connectivity</li>
+                    <li><strong>ASP.NET Core</strong> — Web framework with middleware pipeline</li>
+                    <li><strong>Entity Framework Core</strong> — ORM with code-first migrations</li>
+                </ul>
+            </div>
+
+            <div class="tech-category">
+                <h3>Database</h3>
+                <ul>
+                    <li><strong>SQLite</strong> — Lightweight, serverless database engine</li>
+                    <li><strong>XDG-Compliant Paths</strong> — Platform-specific data directories</li>
+                    <li><strong>Image Storage</strong> — Binary data stored directly in database</li>
+                    <li><strong>Telemetry Logs</strong> — Structured logging with retention policies</li>
+                </ul>
+            </div>
+
+            <div class="tech-category">
+                <h3>Authentication & Security</h3>
+                <ul>
+                    <li><strong>Cookie Authentication</strong> — Secure session management</li>
+                    <li><strong>ASP.NET Identity PasswordHasher</strong> — Industry-standard hashing</li>
+                    <li><strong>Rate Limiting Middleware</strong> — Progressive delays, never blocks</li>
+                    <li><strong>Slug Collision Prevention</strong> — Automatic unique slug generation</li>
+                </ul>
+            </div>
+
+            <div class="tech-category">
+                <h3>Observability</h3>
+                <ul>
+                    <li><strong>OpenTelemetry</strong> — Distributed tracing and metrics</li>
+                    <li><strong>File Log Exporter</strong> — JSON-formatted log files with rotation</li>
+                    <li><strong>Database Log Exporter</strong> — Queryable telemetry storage</li>
+                    <li><strong>Console Exporter</strong> — Development-time debugging</li>
+                </ul>
+            </div>
+
+            <div class="tech-category">
+                <h3>Testing</h3>
+                <ul>
+                    <li><strong>xUnit v3</strong> — Modern testing framework</li>
+                    <li><strong>In-Memory Database</strong> — Fast integration tests</li>
+                    <li><strong>Dependency Injection</strong> — Testable delay functions</li>
+                    <li><strong>Cross-Platform CI</strong> — Windows, Linux, macOS matrix</li>
+                </ul>
+            </div>
+
+            <div class="tech-category">
+                <h3>DevOps & Deployment</h3>
+                <ul>
+                    <li><strong>GitHub Actions</strong> — Automated CI/CD pipeline</li>
+                    <li><strong>WebDeploy</strong> — IIS deployment with AppOffline rule</li>
+                    <li><strong>PowerShell Scripts</strong> — No third-party deployment actions</li>
+                    <li><strong>Cross-Platform Publishing</strong> — win-x86, win-x64, linux-x64</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section class="about-section">
+        <h2>Core Features</h2>
+
+        <div class="feature-grid">
+            <div class="feature-card">
+                <div class="feature-icon">📝</div>
+                <h3>Markdown-Based Content</h3>
+                <p>
+                    Write posts in Markdown with a custom-built renderer that supports headings (h1-h6),
+                    <strong>bold</strong> and <em>italic</em> text, links, images, fenced code blocks with
+                    syntax preservation, blockquotes, horizontal rules, and both unordered and ordered lists.
+                </p>
+                <div class="feature-details">
+                    <strong>Supported Syntax:</strong>
+                    <code># Headings</code>, <code>**bold**</code>, <code>*italic*</code>,
+                    <code>[links](url)</code>, <code>![images](url)</code>, <code>`inline code`</code>,
+                    <code>```code blocks```</code>, <code>> blockquotes</code>, <code>- unordered lists</code>,
+                    <code>1. ordered lists</code>, <code>---</code> horizontal rules
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">🖼️</div>
+                <h3>Image Management</h3>
+                <p>
+                    Upload and manage images directly through the admin interface. Images are stored as binary
+                    data in the SQLite database, eliminating file system dependencies and simplifying backups.
+                </p>
+                <div class="feature-details">
+                    <strong>Specifications:</strong>
+                    Max size: 5MB per image. Supported formats: JPEG, PNG, GIF, WebP.
+                    Reference in Markdown: <code>/api/images/{'{'}id{'}'}</code>
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">👥</div>
+                <h3>Multi-User Support</h3>
+                <p>
+                    Create, edit, and manage multiple user accounts with display names and email addresses.
+                    Each post tracks its author, and administrators can reset passwords for other users.
+                </p>
+                <div class="feature-details">
+                    <strong>User Management:</strong>
+                    User list at <code>/admin/users</code>, create new users, edit profiles, reset passwords,
+                    change your own password at <code>/admin/change-password</code>
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <h3>Real-Time Reader Tracking</h3>
+                <p>
+                    See how many people are currently reading each post with live-updating reader counts.
+                    Uses a thread-safe <code>ConcurrentDictionary</code> and event-driven updates via
+                    SignalR for instant UI refresh.
+                </p>
+                <div class="feature-details">
+                    <strong>Implementation:</strong>
+                    <code>IReaderTrackingService</code> with JoinPost/LeavePost lifecycle,
+                    <code>OnCountChanged</code> event for reactive updates
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">🔒</div>
+                <h3>Security Features</h3>
+                <p>
+                    Enterprise-grade security with rate limiting that progressively delays login attempts
+                    (1s, 2s, 4s... up to 30s) but never completely blocks users. Passwords are hashed using
+                    ASP.NET Identity's PasswordHasher with automatic rehashing support.
+                </p>
+                <div class="feature-details">
+                    <strong>Rate Limiting:</strong>
+                    15-minute window, delays after 5 attempts, exponential backoff formula:
+                    <code>2^(attempts-5)</code> seconds, capped at 30s
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">🔗</div>
+                <h3>Smart Slug Generation</h3>
+                <p>
+                    Automatically generates URL-friendly slugs from post titles with Unicode normalization,
+                    special character removal, and automatic collision prevention by appending numbers
+                    (<code>my-post</code>, <code>my-post-1</code>, <code>my-post-2</code>).
+                </p>
+                <div class="feature-details">
+                    <strong>Algorithm:</strong>
+                    Normalize Unicode → lowercase → replace spaces/underscores with hyphens →
+                    remove non-alphanumeric → collapse multiple hyphens → trim edges
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="about-section">
+        <h2>Admin Dashboard</h2>
+        <p>
+            The administrative interface provides comprehensive content management capabilities:
+        </p>
+
+        <div class="admin-features">
+            <div class="admin-feature">
+                <h3>📋 Dashboard (<code>/admin</code>)</h3>
+                <p>
+                    Overview of your blog with total post count and the 5 most recently updated posts.
+                    Quick links to all management areas with status indicators.
+                </p>
+            </div>
+
+            <div class="admin-feature">
+                <h3>📝 Post Management (<code>/admin/posts</code>)</h3>
+                <p>
+                    View all posts with title, author, and publish status. Create new posts with
+                    a live Markdown preview, edit existing content, toggle publish/draft status,
+                    and delete posts with confirmation.
+                </p>
+            </div>
+
+            <div class="admin-feature">
+                <h3>👤 User Management (<code>/admin/users</code>)</h3>
+                <p>
+                    List all registered users, create new accounts with usernames, emails, and display names.
+                    Edit user profiles and reset passwords for other administrators.
+                </p>
+            </div>
+
+            <div class="admin-feature">
+                <h3>🖼️ Image Library (<code>/admin/images</code>)</h3>
+                <p>
+                    Upload new images with drag-and-drop support, browse existing images with
+                    preview thumbnails, copy image URLs for use in Markdown, and delete unused images.
+                </p>
+            </div>
+
+            <div class="admin-feature">
+                <h3>🔐 Password Change (<code>/admin/change-password</code>)</h3>
+                <p>
+                    Securely update your password with current password verification.
+                    Minimum 8 characters required, with confirmation field to prevent typos.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section class="about-section">
+        <h2>Configuration</h2>
+        <p>
+            MyBlog is highly configurable through <code>appsettings.json</code> and environment variables:
+        </p>
+
+        <div class="config-section">
+            <h3>Application Settings</h3>
+            <div class="config-table">
+                <div class="config-row">
+                    <code>Application:Title</code>
+                    <span>Blog title displayed in header and page titles</span>
+                    <em>Default: "MyBlog"</em>
+                </div>
+                <div class="config-row">
+                    <code>Application:PostsPerPage</code>
+                    <span>Number of posts per page on the homepage</span>
+                    <em>Default: 10</em>
+                </div>
+                <div class="config-row">
+                    <code>Application:RequireHttps</code>
+                    <span>Force HTTPS for authentication cookies</span>
+                    <em>Default: false</em>
+                </div>
+                <div class="config-row">
+                    <code>Application:GitForgeUrl</code>
+                    <span>Link to source code repository in footer</span>
+                    <em>Default: GitHub URL</em>
+                </div>
+            </div>
+        </div>
+
+        <div class="config-section">
+            <h3>Authentication Settings</h3>
+            <div class="config-table">
+                <div class="config-row">
+                    <code>Authentication:SessionTimeoutMinutes</code>
+                    <span>How long before the session expires</span>
+                    <em>Default: 30</em>
+                </div>
+                <div class="config-row">
+                    <code>Authentication:DefaultAdminPassword</code>
+                    <span>Initial password for first admin user</span>
+                    <em>Default: "ChangeMe123!"</em>
+                </div>
+                <div class="config-row">
+                    <code>MYBLOG_ADMIN_PASSWORD</code>
+                    <span>Environment variable override (only on first run)</span>
+                    <em>Takes precedence over config file</em>
+                </div>
+            </div>
+        </div>
+
+        <div class="config-section">
+            <h3>Telemetry Settings</h3>
+            <div class="config-table">
+                <div class="config-row">
+                    <code>Telemetry:RetentionDays</code>
+                    <span>Days to keep telemetry logs before cleanup</span>
+                    <em>Default: 30</em>
+                </div>
+                <div class="config-row">
+                    <code>Telemetry:EnableFileLogging</code>
+                    <span>Write logs to JSON files</span>
+                    <em>Default: true</em>
+                </div>
+                <div class="config-row">
+                    <code>Telemetry:EnableDatabaseLogging</code>
+                    <span>Store logs in SQLite database</span>
+                    <em>Default: true</em>
+                </div>
+            </div>
+        </div>
+
+        <div class="config-section">
+            <h3>Database Locations (XDG-Compliant)</h3>
+            <div class="config-table">
+                <div class="config-row">
+                    <code>Linux</code>
+                    <span><code>~/.local/share/MyBlog/myblog.db</code></span>
+                    <em>Follows XDG_DATA_HOME</em>
+                </div>
+                <div class="config-row">
+                    <code>macOS</code>
+                    <span><code>~/Library/Application Support/MyBlog/myblog.db</code></span>
+                    <em>Standard macOS location</em>
+                </div>
+                <div class="config-row">
+                    <code>Windows</code>
+                    <span><code>%LOCALAPPDATA%\MyBlog\myblog.db</code></span>
+                    <em>Per-user application data</em>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="about-section">
+        <h2>Deployment</h2>
+        <p>
+            MyBlog includes a complete CI/CD pipeline with GitHub Actions for automated testing and deployment:
+        </p>
+
+        <div class="deployment-section">
+            <h3>GitHub Actions Workflow</h3>
+            <ol>
+                <li><strong>Build & Test</strong> — Runs on Windows, Linux, and macOS simultaneously</li>
+                <li><strong>Restore</strong> — <code>dotnet restore src/MyBlog.slnx</code></li>
+                <li><strong>Build</strong> — <code>dotnet build -c Release</code></li>
+                <li><strong>Test</strong> — <code>dotnet test</code> with TRX output</li>
+                <li><strong>Publish</strong> — Self-contained deployment for win-x86</li>
+                <li><strong>Deploy</strong> — WebDeploy to IIS with AppOffline rule</li>
+            </ol>
+        </div>
+
+        <div class="deployment-section">
+            <h3>Required GitHub Secrets</h3>
+            <div class="config-table">
+                <div class="config-row">
+                    <code>WEBSITE_NAME</code>
+                    <span>IIS site name for WebDeploy</span>
+                    <em>e.g., "MyBlog"</em>
+                </div>
+                <div class="config-row">
+                    <code>SERVER_COMPUTER_NAME</code>
+                    <span>Server hostname</span>
+                    <em>e.g., "myserver.example.com"</em>
+                </div>
+                <div class="config-row">
+                    <code>SERVER_USERNAME</code>
+                    <span>WebDeploy authentication user</span>
+                    <em>Deploy account username</em>
+                </div>
+                <div class="config-row">
+                    <code>SERVER_PASSWORD</code>
+                    <span>WebDeploy authentication password</span>
+                    <em>Stored as secret</em>
+                </div>
+            </div>
+        </div>
+
+        <div class="deployment-section">
+            <h3>WebDeploy Configuration</h3>
+            <p>
+                The deployment uses key features to ensure zero-downtime deployments:
+            </p>
+            <ul>
+                <li><strong>AppOffline Rule</strong> — Creates <code>app_offline.htm</code> to gracefully stop the application</li>
+                <li><strong>DoNotDeleteRule</strong> — Preserves existing files not in the deployment package</li>
+                <li><strong>Retry Logic</strong> — 3 retry attempts with 3-second intervals for transient failures</li>
+                <li><strong>File Locking Prevention</strong> — Solves ERROR_FILE_IN_USE during active deployments</li>
+            </ul>
+        </div>
+    </section>
+
+    <section class="about-section">
+        <h2>Design Principles</h2>
+        <div class="principles-grid">
+            <div class="principle">
+                <h3>🎯 Zero External Dependencies</h3>
+                <p>
+                    No npm, no Node.js, no CSS frameworks. All styling is custom CSS using CSS variables
+                    for theming. The only JavaScript is Blazor's <code>blazor.web.js</code> runtime.
+                </p>
+            </div>
+
+            <div class="principle">
+                <h3>📦 Self-Contained</h3>
+                <p>
+                    Everything needed runs from a single deployable unit. SQLite eliminates the need
+                    for external database servers. Images are stored in the database, not the filesystem.
+                </p>
+            </div>
+
+            <div class="principle">
+                <h3>🔧 Centralized Package Management</h3>
+                <p>
+                    Uses <code>Directory.Packages.props</code> for consistent NuGet package versions
+                    across all projects. The modern <code>.slnx</code> solution format keeps things clean.
+                </p>
+            </div>
+
+            <div class="principle">
+                <h3>⚡ Performance First</h3>
+                <p>
+                    Public pages use Server-Side Rendering (SSR) for fast initial loads. Interactive
+                    features are scoped to admin pages where they're needed. AsNoTracking queries
+                    minimize EF Core overhead for read operations.
+                </p>
+            </div>
+
+            <div class="principle">
+                <h3>🧪 Testability</h3>
+                <p>
+                    All services use interface-based dependency injection. The rate limiting middleware
+                    accepts an injectable delay function for instant test execution instead of real waits.
+                </p>
+            </div>
+
+            <div class="principle">
+                <h3>🌍 Cross-Platform</h3>
+                <p>
+                    Runs identically on Windows, Linux, and macOS. XDG-compliant paths ensure data
+                    is stored in appropriate locations for each operating system.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section class="about-section">
+        <h2>Data Models</h2>
+        <p>
+            The core domain models represent the fundamental entities in the blogging system:
+        </p>
+
+        <div class="model-grid">
+            <div class="model-card">
+                <h3>Post</h3>
+                <p>A blog post with full content management capabilities.</p>
+                <div class="model-fields">
+                    <code>Id</code> (Guid), <code>Title</code>, <code>Slug</code>, <code>Content</code>,
+                    <code>Summary</code>, <code>AuthorId</code>, <code>CreatedAtUtc</code>,
+                    <code>UpdatedAtUtc</code>, <code>PublishedAtUtc</code>, <code>IsPublished</code>
+                </div>
+            </div>
+
+            <div class="model-card">
+                <h3>User</h3>
+                <p>An authenticated user who can create and manage content.</p>
+                <div class="model-fields">
+                    <code>Id</code> (Guid), <code>Username</code>, <code>PasswordHash</code>,
+                    <code>Email</code>, <code>DisplayName</code>, <code>CreatedAtUtc</code>
+                </div>
+            </div>
+
+            <div class="model-card">
+                <h3>Image</h3>
+                <p>An uploaded image stored as binary data in the database.</p>
+                <div class="model-fields">
+                    <code>Id</code> (Guid), <code>FileName</code>, <code>ContentType</code>,
+                    <code>Data</code> (byte[]), <code>UploadedByUserId</code>, <code>UploadedAtUtc</code>,
+                    <code>PostId</code> (optional)
+                </div>
+            </div>
+
+            <div class="model-card">
+                <h3>TelemetryLog</h3>
+                <p>Structured log entries for observability and debugging.</p>
+                <div class="model-fields">
+                    <code>Id</code> (int), <code>TimestampUtc</code>, <code>Level</code>,
+                    <code>Category</code>, <code>Message</code>, <code>Exception</code>,
+                    <code>TraceId</code>, <code>SpanId</code>, <code>Properties</code> (JSON)
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="about-section">
+        <h2>API Endpoints</h2>
+        <p>
+            While primarily a Blazor Server application, MyBlog exposes a few HTTP endpoints:
+        </p>
+
+        <div class="api-table">
+            <div class="api-row">
+                <code>GET /api/images/{'{'}id{'}'}</code>
+                <span>Retrieve an image by its GUID for embedding in posts</span>
+            </div>
+            <div class="api-row">
+                <code>POST /logout</code>
+                <span>Sign out the current user (requires authorization)</span>
+            </div>
+            <div class="api-row">
+                <code>POST /login</code>
+                <span>Form-based authentication with rate limiting</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="about-section">
+        <h2>Quick Start</h2>
+        <div class="quickstart">
+            <h3>Prerequisites</h3>
+            <p><a href="https://dotnet.microsoft.com/download/dotnet/10.0" target="_blank">.NET 10 SDK</a> or later</p>
+
+            <h3>Running Locally</h3>
+            <pre><code># Clone the repository
+git clone https://github.com/kusl/dotnetcms.git
+cd dotnetcms/src
+
+# Restore and run
+dotnet restore MyBlog.slnx
+cd MyBlog.Web
+dotnet run</code></pre>
+
+            <h3>Default Credentials</h3>
+            <p>
+                <strong>Username:</strong> <code>admin</code><br />
+                <strong>Password:</strong> <code>ChangeMe123!</code> (or set <code>MYBLOG_ADMIN_PASSWORD</code> environment variable before first run)
+            </p>
+
+            <div class="warning-box">
+                <strong>⚠️ Important:</strong> The default password is only used when creating the initial admin user.
+                Once the user exists, you must change the password through the website at <code>/admin/change-password</code>.
+            </div>
+        </div>
+    </section>
+
+    <section class="about-section stats-section">
+        <h2>Current Statistics</h2>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value">@_postCount</div>
+                <div class="stat-label">Total Posts</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">@_publishedCount</div>
+                <div class="stat-label">Published</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">@(_postCount - _publishedCount)</div>
+                <div class="stat-label">Drafts</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="about-section">
+        <h2>Open Source</h2>
+        <p>
+            MyBlog is open source software. The complete source code, including this page, is available
+            on GitHub. Contributions, bug reports, and feature requests are welcome!
+        </p>
+        <p>
+            <a href="@(Configuration["Application:GitForgeUrl"] ?? "https://github.com/kusl/dotnetcms")"
+               target="_blank"
+               class="github-link">
+                View on GitHub →
+            </a>
+        </p>
+    </section>
+
+    <footer class="about-footer">
+        <p>
+            Built with ❤️ using .NET 10 and Blazor Server
+        </p>
+        <p class="version-info">
+            <small>
+                Runtime: @System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription |
+                OS: @System.Runtime.InteropServices.RuntimeInformation.OSDescription
+            </small>
+        </p>
+    </footer>
+</article>
+
+@code {
+    private const string _trackingSlug = "__about_page__";
+    private int _postCount;
+    private int _publishedCount;
+
+    protected override async Task OnInitializedAsync()
+    {
+        ReaderTrackingService.JoinPost(_trackingSlug);
+        ReaderTrackingService.OnCountChanged += HandleCountChanged;
+
+        var (posts, totalCount) = await PostRepository.GetPublishedPostsAsync(1, int.MaxValue);
+        _publishedCount = totalCount;
+        _postCount = await PostRepository.GetCountAsync();
+    }
+
+    private void HandleCountChanged(string slug, int count)
+    {
+        if (slug == _trackingSlug)
+        {
+            InvokeAsync(StateHasChanged);
+        }
+    }
+
+    public void Dispose()
+    {
+        ReaderTrackingService.OnCountChanged -= HandleCountChanged;
+        ReaderTrackingService.LeavePost(_trackingSlug);
+    }
+}
