@@ -1,6 +1,6 @@
 ===============================================================================
 PROJECT EXPORT
-Generated: Wed Jan 14 12:06:15 PM EST 2026
+Generated: Thu Jan 15 08:47:50 AM EST 2026
 Project Path: /home/kushal/src/dotnet/dotnetcms
 ===============================================================================
 
@@ -118,6 +118,7 @@ DIRECTORY STRUCTURE:
 │   │   │   │   │   ├── UserList.razor
 │   │   │   │   │   └── UserList.razor.css
 │   │   │   │   ├── About.razor
+│   │   │   │   ├── About.razor.css
 │   │   │   │   ├── AccessDenied.razor
 │   │   │   │   ├── Home.razor
 │   │   │   │   ├── Login.razor
@@ -13203,6 +13204,595 @@ MODIFIED: 2026-01-13 21:18:21
 
 
 ================================================================================
+FILE: src/MyBlog.Web/Components/Pages/About.razor.css
+SIZE: 10.55 KB
+MODIFIED: 2026-01-15 08:46:44
+================================================================================
+
+/* About Page Styles */
+.about-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--spacing);
+}
+
+/* Header */
+.about-header {
+    text-align: center;
+    padding: calc(var(--spacing) * 2) 0;
+    border-bottom: 1px solid var(--color-border);
+    margin-bottom: calc(var(--spacing) * 2);
+}
+
+.about-header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    color: var(--color-primary);
+}
+
+.about-tagline {
+    font-size: 1.25rem;
+    color: var(--color-text-muted);
+    margin-bottom: 1rem;
+}
+
+.reader-info {
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+}
+
+/* Sections */
+.about-section {
+    margin-bottom: calc(var(--spacing) * 3);
+    padding-bottom: calc(var(--spacing) * 2);
+    border-bottom: 1px solid var(--color-border);
+}
+
+.about-section:last-of-type {
+    border-bottom: none;
+}
+
+.about-section h2 {
+    font-size: 1.75rem;
+    margin-bottom: 1rem;
+    color: var(--color-text);
+    position: relative;
+    padding-bottom: 0.5rem;
+}
+
+.about-section h2::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 60px;
+    height: 3px;
+    background: var(--color-primary);
+    border-radius: 2px;
+}
+
+.about-section p {
+    line-height: 1.8;
+    margin-bottom: 1rem;
+}
+
+/* Architecture Grid */
+.architecture-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.arch-card {
+    background: var(--color-bg-alt);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.arch-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.arch-card h3 {
+    color: var(--color-primary);
+    margin-bottom: 0.25rem;
+    font-size: 1.25rem;
+}
+
+.arch-subtitle {
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+    margin-bottom: 1rem;
+    font-weight: 500;
+}
+
+.arch-contents {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--color-border);
+    font-size: 0.9rem;
+}
+
+.arch-contents ul {
+    margin: 0.5rem 0 0 1.25rem;
+    padding: 0;
+}
+
+.arch-contents li {
+    margin-bottom: 0.25rem;
+}
+
+.arch-contents code {
+    background: var(--color-bg);
+    padding: 0.125rem 0.375rem;
+    border-radius: 3px;
+    font-size: 0.85em;
+}
+
+/* Technology Grid */
+.tech-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.tech-category {
+    background: var(--color-bg-alt);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+}
+
+.tech-category h3 {
+    font-size: 1.1rem;
+    margin-bottom: 0.75rem;
+    color: var(--color-primary);
+    border-bottom: 2px solid var(--color-primary);
+    padding-bottom: 0.5rem;
+}
+
+.tech-category ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.tech-category li {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--color-border);
+    font-size: 0.95rem;
+}
+
+.tech-category li:last-child {
+    border-bottom: none;
+}
+
+/* Feature Grid */
+.feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.feature-card {
+    background: var(--color-bg-alt);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    transition: transform 0.2s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-2px);
+}
+
+.feature-icon {
+    font-size: 2.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.feature-card h3 {
+    font-size: 1.15rem;
+    margin-bottom: 0.75rem;
+    color: var(--color-text);
+}
+
+.feature-details {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--color-border);
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+}
+
+.feature-details code {
+    background: var(--color-bg);
+    padding: 0.125rem 0.25rem;
+    border-radius: 3px;
+    font-size: 0.9em;
+}
+
+/* Admin Features */
+.admin-features {
+    display: grid;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.admin-feature {
+    background: var(--color-bg-alt);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: 1.25rem;
+}
+
+.admin-feature h3 {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+    color: var(--color-text);
+}
+
+.admin-feature code {
+    background: var(--color-bg);
+    padding: 0.125rem 0.375rem;
+    border-radius: 3px;
+    font-size: 0.85em;
+    color: var(--color-primary);
+}
+
+/* Configuration Tables */
+.config-section {
+    margin-top: 1.5rem;
+}
+
+.config-section h3 {
+    font-size: 1.15rem;
+    margin-bottom: 1rem;
+    color: var(--color-text);
+}
+
+.config-table {
+    background: var(--color-bg-alt);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    overflow: hidden;
+}
+
+.config-row {
+    display: grid;
+    grid-template-columns: minmax(200px, 1fr) 2fr auto;
+    gap: 1rem;
+    padding: 1rem;
+    border-bottom: 1px solid var(--color-border);
+    align-items: center;
+}
+
+.config-row:last-child {
+    border-bottom: none;
+}
+
+.config-row code {
+    background: var(--color-bg);
+    padding: 0.25rem 0.5rem;
+    border-radius: 3px;
+    font-size: 0.85rem;
+    color: var(--color-primary);
+    word-break: break-all;
+}
+
+.config-row em {
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+    white-space: nowrap;
+}
+
+/* Deployment Section */
+.deployment-section {
+    margin-top: 1.5rem;
+    background: var(--color-bg-alt);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+}
+
+.deployment-section h3 {
+    font-size: 1.15rem;
+    margin-bottom: 1rem;
+    color: var(--color-primary);
+}
+
+.deployment-section ol {
+    margin: 0;
+    padding-left: 1.5rem;
+}
+
+.deployment-section li {
+    margin-bottom: 0.5rem;
+}
+
+.deployment-section ul {
+    margin: 0.5rem 0 0 0;
+    padding-left: 1.5rem;
+}
+
+/* Principles Grid */
+.principles-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.principle {
+    background: var(--color-bg-alt);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+}
+
+.principle h3 {
+    font-size: 1.1rem;
+    margin-bottom: 0.75rem;
+    color: var(--color-text);
+}
+
+.principle p {
+    font-size: 0.95rem;
+    margin: 0;
+}
+
+/* Model Grid */
+.model-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.model-card {
+    background: var(--color-bg-alt);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+}
+
+.model-card h3 {
+    color: var(--color-primary);
+    margin-bottom: 0.5rem;
+    font-size: 1.2rem;
+}
+
+.model-fields {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--color-border);
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+}
+
+.model-fields code {
+    background: var(--color-bg);
+    padding: 0.125rem 0.25rem;
+    border-radius: 3px;
+    margin-right: 0.25rem;
+}
+
+/* API Table */
+.api-table {
+    background: var(--color-bg-alt);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin-top: 1rem;
+}
+
+.api-row {
+    display: grid;
+    grid-template-columns: minmax(200px, auto) 1fr;
+    gap: 1rem;
+    padding: 1rem;
+    border-bottom: 1px solid var(--color-border);
+    align-items: center;
+}
+
+.api-row:last-child {
+    border-bottom: none;
+}
+
+.api-row code {
+    background: var(--color-bg);
+    padding: 0.375rem 0.625rem;
+    border-radius: 3px;
+    font-size: 0.9rem;
+    color: var(--color-primary);
+    font-weight: 500;
+}
+
+/* Quick Start */
+.quickstart {
+    background: var(--color-bg-alt);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    margin-top: 1rem;
+}
+
+.quickstart h3 {
+    font-size: 1.1rem;
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+    color: var(--color-primary);
+}
+
+.quickstart h3:first-child {
+    margin-top: 0;
+}
+
+.quickstart pre {
+    background: var(--color-bg);
+    padding: 1rem;
+    border-radius: var(--radius);
+    overflow-x: auto;
+    margin: 0.5rem 0;
+}
+
+.quickstart code {
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+.warning-box {
+    background: #fef3cd;
+    border: 1px solid #ffc107;
+    border-radius: var(--radius);
+    padding: 1rem;
+    margin-top: 1rem;
+    color: #856404;
+}
+
+/* Stats Section */
+.stats-section {
+    text-align: center;
+}
+
+.stats-grid {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+    margin-top: 1.5rem;
+}
+
+.stat-card {
+    background: var(--color-bg-alt);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: 1.5rem 2.5rem;
+    min-width: 140px;
+}
+
+.stat-value {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: var(--color-primary);
+}
+
+.stat-label {
+    font-size: 0.95rem;
+    color: var(--color-text-muted);
+    margin-top: 0.25rem;
+}
+
+/* GitHub Link */
+.github-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--color-primary);
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius);
+    text-decoration: none;
+    font-weight: 500;
+    transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.github-link:hover {
+    background: var(--color-primary-dark, #1a5490);
+    transform: translateY(-1px);
+    color: white;
+    text-decoration: none;
+}
+
+/* Footer */
+.about-footer {
+    text-align: center;
+    padding: calc(var(--spacing) * 2) 0;
+    margin-top: calc(var(--spacing) * 2);
+    border-top: 1px solid var(--color-border);
+}
+
+.about-footer p {
+    margin: 0.5rem 0;
+}
+
+.version-info {
+    color: var(--color-text-muted);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .about-header h1 {
+        font-size: 2rem;
+    }
+
+    .about-tagline {
+        font-size: 1.1rem;
+    }
+
+    .about-section h2 {
+        font-size: 1.5rem;
+    }
+
+    .config-row {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+    }
+
+    .config-row em {
+        white-space: normal;
+    }
+
+    .api-row {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+    }
+
+    .stats-grid {
+        gap: 1rem;
+    }
+
+    .stat-card {
+        padding: 1rem 1.5rem;
+        min-width: 100px;
+    }
+
+    .stat-value {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .about-page {
+        padding: 0 0.75rem;
+    }
+
+    .arch-card,
+    .feature-card,
+    .principle,
+    .model-card {
+        padding: 1rem;
+    }
+
+    .quickstart {
+        padding: 1rem;
+    }
+
+    .quickstart pre {
+        padding: 0.75rem;
+        font-size: 0.8rem;
+    }
+}
+
+
+================================================================================
 FILE: src/MyBlog.Web/Components/Pages/Admin/UserEditor.razor.css
 SIZE: 1.32 KB
 MODIFIED: 2026-01-12 21:21:00
@@ -15316,9 +15906,9 @@ echo "=============================================="
 
 
 ===============================================================================
-EXPORT COMPLETED: Wed Jan 14 12:06:16 PM EST 2026
-Total Files Found: 82
-Files Exported: 82
+EXPORT COMPLETED: Thu Jan 15 08:47:51 AM EST 2026
+Total Files Found: 83
+Files Exported: 83
 Files Skipped: 0 (binary or large files)
 Output File: /home/kushal/src/dotnet/dotnetcms/docs/llm/dump.txt
 ===============================================================================
