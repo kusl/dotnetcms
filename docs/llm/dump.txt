@@ -1,6 +1,6 @@
 ===============================================================================
 PROJECT EXPORT
-Generated: Fri Jan 16 11:29:17 AM EST 2026
+Generated: Fri Jan 16 02:32:08 PM EST 2026
 Project Path: /home/kushal/src/dotnet/dotnetcms
 ===============================================================================
 
@@ -29,8 +29,11 @@ DIRECTORY STRUCTURE:
 │       │   ├── 0016.txt
 │       │   ├── 0017.txt
 │       │   ├── 0018.txt
-│       │   └── 0019.txt
+│       │   ├── 0019.txt
+│       │   └── 0020.txt
 │       ├── analysis_20260116_100403.log
+│       ├── analysis_20260116_124216.log
+│       ├── analysis_20260116_125037.log
 │       ├── analysis_report.md
 │       ├── chatgpt.md
 │       ├── claude.md
@@ -16005,8 +16008,8 @@ echo "=============================================="
 
 ================================================================================
 FILE: thinking.sh
-SIZE: 8.07 KB
-MODIFIED: 2026-01-16 11:28:10
+SIZE: 8.31 KB
+MODIFIED: 2026-01-16 14:31:02
 ================================================================================
 
 #!/bin/bash
@@ -16023,7 +16026,7 @@ PROJECT_ROOT="${PWD}"
 OUTPUT_DIR="${PROJECT_ROOT}/docs/llm"
 DUMP_FILE="${OUTPUT_DIR}/source.txt"
 MODEL="${LLM_MODEL:-llama3.3:70b-instruct-q4_K_M}"
-OUTPUT_FILE="${OUTPUT_DIR}/thinking_$(date +%Y%m%d_%H%M%S).md"
+OUTPUT_FILE="${OUTPUT_DIR}/custom_llm_response.md"
 LOG_FILE="${OUTPUT_DIR}/analysis_$(date +%Y%m%d_%H%M%S).log"
 MAX_CONTEXT_CHARS=120000  # ~30k tokens, safe for most models
 
@@ -16239,8 +16242,12 @@ PROJECT SOURCE CODE:
 $(cat "$DUMP_FILE")
 "
 
-# Run the analysis
-if echo "$PROMPT" | ollama run "$MODEL" > "$OUTPUT_FILE" 2>&1; then
+# Run the analysis (OLLAMA_NOPRUNE prevents context truncation warnings)
+# Use script to fake a TTY, then strip ANSI codes, OR use --nowordwrap
+if echo "$PROMPT" | OLLAMA_NOPRUNE=1 ollama run "$MODEL" --nowordwrap 2>/dev/null | \
+   sed 's/\x1b\[[0-9;]*[a-zA-Z]//g' | \
+   sed 's/\x1b\[?[0-9]*[a-zA-Z]//g' | \
+   tr -d '\r' > "$OUTPUT_FILE"; then
     ANALYSIS_TIME=$(($(date +%s) - ANALYSIS_START))
     OUTPUT_SIZE=$(wc -l < "$OUTPUT_FILE")
     
@@ -16283,7 +16290,7 @@ echo "=============================================="
 
 
 ===============================================================================
-EXPORT COMPLETED: Fri Jan 16 11:29:18 AM EST 2026
+EXPORT COMPLETED: Fri Jan 16 02:32:09 PM EST 2026
 Total Files Found: 85
 Files Exported: 85
 Files Skipped: 0 (binary or large files)
