@@ -12,7 +12,7 @@ PROJECT_ROOT="${PWD}"
 OUTPUT_DIR="${PROJECT_ROOT}/docs/llm"
 DUMP_FILE="${OUTPUT_DIR}/source.txt"
 MODEL="${LLM_MODEL:-llama3.3:70b-instruct-q4_K_M}"
-OUTPUT_FILE="${OUTPUT_DIR}/thinking_$(date +%Y%m%d_%H%M%S).md"
+OUTPUT_FILE="${OUTPUT_DIR}/custom_llm_response.md"
 LOG_FILE="${OUTPUT_DIR}/analysis_$(date +%Y%m%d_%H%M%S).log"
 MAX_CONTEXT_CHARS=120000  # ~30k tokens, safe for most models
 
@@ -228,8 +228,12 @@ PROJECT SOURCE CODE:
 $(cat "$DUMP_FILE")
 "
 
-# Run the analysis
-if echo "$PROMPT" | ollama run "$MODEL" > "$OUTPUT_FILE" 2>&1; then
+# Run the analysis (OLLAMA_NOPRUNE prevents context truncation warnings)
+# Use script to fake a TTY, then strip ANSI codes, OR use --nowordwrap
+if echo "$PROMPT" | OLLAMA_NOPRUNE=1 ollama run "$MODEL" --nowordwrap 2>/dev/null | \
+   sed 's/\x1b\[[0-9;]*[a-zA-Z]//g' | \
+   sed 's/\x1b\[?[0-9]*[a-zA-Z]//g' | \
+   tr -d '\r' > "$OUTPUT_FILE"; then
     ANALYSIS_TIME=$(($(date +%s) - ANALYSIS_START))
     OUTPUT_SIZE=$(wc -l < "$OUTPUT_FILE")
     
