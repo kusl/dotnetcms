@@ -1,15 +1,22 @@
-PROJECT STRUCTURE MAP:
+# PROJECT ANALYSIS EXPORT
+# Generated: 2026-01-16 10:23:16
+# Project: dotnetcms
+
+## PROJECT STRUCTURE MAP
+
 src/Directory.Build.props
+src/Directory.Packages.props
+src/global.json
 src/MyBlog.Core/Constants/AppConstants.cs
 src/MyBlog.Core/Interfaces/IAuthService.cs
 src/MyBlog.Core/Interfaces/IImageRepository.cs
 src/MyBlog.Core/Interfaces/IMarkdownService.cs
 src/MyBlog.Core/Interfaces/IPasswordService.cs
 src/MyBlog.Core/Interfaces/IPostRepository.cs
+src/MyBlog.Core/Interfaces/IReaderTrackingService.cs
 src/MyBlog.Core/Interfaces/ISlugService.cs
 src/MyBlog.Core/Interfaces/ITelemetryLogRepository.cs
 src/MyBlog.Core/Interfaces/IUserRepository.cs
-src/MyBlog.Core/Interfaces/IReaderTrackingService.cs
 src/MyBlog.Core/Models/Image.cs
 src/MyBlog.Core/Models/Post.cs
 src/MyBlog.Core/Models/PostDto.cs
@@ -25,58 +32,55 @@ src/MyBlog.Infrastructure/Repositories/ImageRepository.cs
 src/MyBlog.Infrastructure/Repositories/PostRepository.cs
 src/MyBlog.Infrastructure/Repositories/TelemetryLogRepository.cs
 src/MyBlog.Infrastructure/Repositories/UserRepository.cs
+src/MyBlog.Infrastructure/ServiceCollectionExtensions.cs
 src/MyBlog.Infrastructure/Services/AuthService.cs
 src/MyBlog.Infrastructure/Services/PasswordService.cs
-src/MyBlog.Infrastructure/Services/TelemetryCleanupService.cs
 src/MyBlog.Infrastructure/Services/ReaderTrackingService.cs
+src/MyBlog.Infrastructure/Services/TelemetryCleanupService.cs
 src/MyBlog.Infrastructure/Telemetry/DatabaseLogExporter.cs
 src/MyBlog.Infrastructure/Telemetry/FileLogExporter.cs
 src/MyBlog.Infrastructure/Telemetry/TelemetryPathResolver.cs
-src/MyBlog.Infrastructure/ServiceCollectionExtensions.cs
+src/MyBlog.Tests/Integration/AuthServiceLongPasswordTests.cs
 src/MyBlog.Tests/Integration/AuthServiceTests.cs
 src/MyBlog.Tests/Integration/PasswordChangeTests.cs
 src/MyBlog.Tests/Integration/PostRepositoryTests.cs
 src/MyBlog.Tests/Integration/TelemetryCleanupTests.cs
-src/MyBlog.Tests/Integration/AuthServiceLongPasswordTests.cs
+src/MyBlog.Tests/MyBlog.Tests.csproj
 src/MyBlog.Tests/Unit/LoginRateLimitMiddlewareTests.cs
 src/MyBlog.Tests/Unit/MarkdownServiceTests.cs
 src/MyBlog.Tests/Unit/PasswordServiceTests.cs
 src/MyBlog.Tests/Unit/SlugServiceTests.cs
-src/MyBlog.Tests/MyBlog.Tests.csproj
+src/MyBlog.Web/appsettings.Development.json
+src/MyBlog.Web/appsettings.json
+src/MyBlog.Web/Components/App.razor
+src/MyBlog.Web/Components/_Imports.razor
 src/MyBlog.Web/Components/Layout/MainLayout.razor
+src/MyBlog.Web/Components/Pages/About.razor
 src/MyBlog.Web/Components/Pages/AccessDenied.razor
-src/MyBlog.Web/Components/Pages/Admin/ImageManager.razor
-src/MyBlog.Web/Components/Pages/Admin/PostList.razor
-src/MyBlog.Web/Components/Pages/Admin/PostEditor.razor
-src/MyBlog.Web/Components/Pages/Admin/UserEditor.razor
-src/MyBlog.Web/Components/Pages/Admin/UserList.razor
 src/MyBlog.Web/Components/Pages/Admin/ChangePassword.razor
 src/MyBlog.Web/Components/Pages/Admin/Dashboard.razor
+src/MyBlog.Web/Components/Pages/Admin/ImageManager.razor
+src/MyBlog.Web/Components/Pages/Admin/PostEditor.razor
+src/MyBlog.Web/Components/Pages/Admin/PostList.razor
+src/MyBlog.Web/Components/Pages/Admin/UserEditor.razor
+src/MyBlog.Web/Components/Pages/Admin/UserList.razor
 src/MyBlog.Web/Components/Pages/Home.razor
 src/MyBlog.Web/Components/Pages/Login.razor
 src/MyBlog.Web/Components/Pages/PostDetail.razor
-src/MyBlog.Web/Components/Pages/About.razor
 src/MyBlog.Web/Components/Routes.razor
+src/MyBlog.Web/Components/Shared/Footer.razor
 src/MyBlog.Web/Components/Shared/MarkdownRenderer.razor
 src/MyBlog.Web/Components/Shared/Pagination.razor
 src/MyBlog.Web/Components/Shared/PostCard.razor
-src/MyBlog.Web/Components/Shared/RedirectToLogin.razor
-src/MyBlog.Web/Components/Shared/Footer.razor
 src/MyBlog.Web/Components/Shared/ReaderBadge.razor
-src/MyBlog.Web/Components/_Imports.razor
-src/MyBlog.Web/Components/App.razor
+src/MyBlog.Web/Components/Shared/RedirectToLogin.razor
 src/MyBlog.Web/Middleware/LoginRateLimitMiddleware.cs
 src/MyBlog.Web/MyBlog.Web.csproj
 src/MyBlog.Web/Program.cs
-src/MyBlog.Web/appsettings.Development.json
-src/MyBlog.Web/appsettings.json
-src/global.json
-src/Directory.Packages.props
-
 
 
 ================================================================================
-FILE PATH: src/Directory.Build.props
+FILE: src/Directory.Build.props
 ================================================================================
 <Project>
   <PropertyGroup>
@@ -96,11 +100,54 @@ FILE PATH: src/Directory.Build.props
   </PropertyGroup>
 </Project>
 
+--- END OF FILE ---
+
+================================================================================
+FILE: src/Directory.Packages.props
+================================================================================
+<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- Core Framework (.NET 10) -->
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.2" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.1" />
+    <PackageVersion Include="Microsoft.AspNetCore.Identity" Version="2.3.9" />
+    <PackageVersion Include="Microsoft.Extensions.Hosting" Version="10.0.1" />
+    <!-- OpenTelemetry (official packages only) -->
+    <PackageVersion Include="OpenTelemetry" Version="1.14.0" />
+    <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.14.0" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.14.0" />
+    <PackageVersion Include="OpenTelemetry.Exporter.Console" Version="1.14.0" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.14.0" />
+    <!-- Testing (xUnit v3) -->
+    <PackageVersion Include="xunit.v3" Version="3.2.1" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
+    <PackageVersion Include="Microsoft.Testing.Extensions.TrxReport" Version="2.0.2" />
+  </ItemGroup>
+</Project>
+--- END OF FILE ---
+
+================================================================================
+FILE: src/global.json
+================================================================================
+{
+  "sdk": {
+    "version": "10.0.100",
+    "rollForward": "latestFeature"
+  },
+  "test": {
+    "runner": "Microsoft.Testing.Platform"
+  }
+}
 
 --- END OF FILE ---
 
 ================================================================================
-FILE PATH: src/MyBlog.Core/Constants/AppConstants.cs
+FILE: src/MyBlog.Core/Constants/AppConstants.cs
 ================================================================================
 namespace MyBlog.Core.Constants;
 
@@ -126,11 +173,10 @@ public static class AppConstants
         ["image/jpeg", "image/png", "image/gif", "image/webp"];
 }
 
-
 --- END OF FILE ---
 
 ================================================================================
-FILE PATH: src/MyBlog.Core/Interfaces/IAuthService.cs
+FILE: src/MyBlog.Core/Interfaces/IAuthService.cs
 ================================================================================
 using MyBlog.Core.Models;
 
@@ -163,11 +209,10 @@ public interface IAuthService
         CancellationToken cancellationToken = default);
 }
 
-
 --- END OF FILE ---
 
 ================================================================================
-FILE PATH: src/MyBlog.Core/Interfaces/IImageRepository.cs
+FILE: src/MyBlog.Core/Interfaces/IImageRepository.cs
 ================================================================================
 using MyBlog.Core.Models;
 
@@ -191,11 +236,10 @@ public interface IImageRepository
     Task DeleteAsync(Guid id, CancellationToken cancellationToken = default);
 }
 
-
 --- END OF FILE ---
 
 ================================================================================
-FILE PATH: src/MyBlog.Core/Interfaces/IMarkdownService.cs
+FILE: src/MyBlog.Core/Interfaces/IMarkdownService.cs
 ================================================================================
 namespace MyBlog.Core.Interfaces;
 
@@ -208,11 +252,10 @@ public interface IMarkdownService
     string ToHtml(string markdown);
 }
 
-
 --- END OF FILE ---
 
 ================================================================================
-FILE PATH: src/MyBlog.Core/Interfaces/IPasswordService.cs
+FILE: src/MyBlog.Core/Interfaces/IPasswordService.cs
 ================================================================================
 namespace MyBlog.Core.Interfaces;
 
@@ -228,11 +271,10 @@ public interface IPasswordService
     bool VerifyPassword(string hashedPassword, string providedPassword);
 }
 
-
 --- END OF FILE ---
 
 ================================================================================
-FILE PATH: src/MyBlog.Core/Interfaces/IPostRepository.cs
+FILE: src/MyBlog.Core/Interfaces/IPostRepository.cs
 ================================================================================
 using MyBlog.Core.Models;
 
@@ -277,11 +319,32 @@ public interface IPostRepository
     Task<bool> IsSlugTakenAsync(string slug, Guid? excludePostId = null, CancellationToken cancellationToken = default);
 }
 
+--- END OF FILE ---
+
+================================================================================
+FILE: src/MyBlog.Core/Interfaces/IReaderTrackingService.cs
+================================================================================
+namespace MyBlog.Core.Interfaces;
+
+public interface IReaderTrackingService
+{
+    // Called when a user opens a post
+    void JoinPost(string slug);
+
+    // Called when a user leaves (closes tab/navigates away)
+    void LeavePost(string slug);
+
+    // Gets the current count
+    int GetReaderCount(string slug);
+
+    // Event that fires when the count changes
+    event Action<string, int>? OnCountChanged;
+}
 
 --- END OF FILE ---
 
 ================================================================================
-FILE PATH: src/MyBlog.Core/Interfaces/ISlugService.cs
+FILE: src/MyBlog.Core/Interfaces/ISlugService.cs
 ================================================================================
 namespace MyBlog.Core.Interfaces;
 
@@ -294,11 +357,10 @@ public interface ISlugService
     string GenerateSlug(string title);
 }
 
-
 --- END OF FILE ---
 
 ================================================================================
-FILE PATH: src/MyBlog.Core/Interfaces/ITelemetryLogRepository.cs
+FILE: src/MyBlog.Core/Interfaces/ITelemetryLogRepository.cs
 ================================================================================
 using MyBlog.Core.Models;
 
@@ -320,11 +382,10 @@ public interface ITelemetryLogRepository
         int count, CancellationToken cancellationToken = default);
 }
 
-
 --- END OF FILE ---
 
 ================================================================================
-FILE PATH: src/MyBlog.Core/Interfaces/IUserRepository.cs
+FILE: src/MyBlog.Core/Interfaces/IUserRepository.cs
 ================================================================================
 using MyBlog.Core.Models;
 
@@ -357,34 +418,10 @@ public interface IUserRepository
     Task DeleteAsync(Guid id, CancellationToken cancellationToken = default);
 }
 
-
 --- END OF FILE ---
 
 ================================================================================
-FILE PATH: src/MyBlog.Core/Interfaces/IReaderTrackingService.cs
-================================================================================
-namespace MyBlog.Core.Interfaces;
-
-public interface IReaderTrackingService
-{
-    // Called when a user opens a post
-    void JoinPost(string slug);
-
-    // Called when a user leaves (closes tab/navigates away)
-    void LeavePost(string slug);
-
-    // Gets the current count
-    int GetReaderCount(string slug);
-
-    // Event that fires when the count changes
-    event Action<string, int>? OnCountChanged;
-}
-
-
---- END OF FILE ---
-
-================================================================================
-FILE PATH: src/MyBlog.Core/Models/Image.cs
+FILE: src/MyBlog.Core/Models/Image.cs
 ================================================================================
 namespace MyBlog.Core.Models;
 
@@ -421,11 +458,10 @@ public sealed class Image
     public User? UploadedBy { get; set; }
 }
 
-
 --- END OF FILE ---
 
 ================================================================================
-FILE PATH: src/MyBlog.Core/Models/Post.cs
+FILE: src/MyBlog.Core/Models/Post.cs
 ================================================================================
 namespace MyBlog.Core.Models;
 
@@ -471,11 +507,10 @@ public sealed class Post
     public ICollection<Image> Images { get; set; } = [];
 }
 
-
 --- END OF FILE ---
 
 ================================================================================
-FILE PATH: src/MyBlog.Core/Models/PostDto.cs
+FILE: src/MyBlog.Core/Models/PostDto.cs
 ================================================================================
 namespace MyBlog.Core.Models;
 
@@ -516,11 +551,10 @@ public sealed record PostDetailDto(
     DateTime? PublishedAtUtc,
     bool IsPublished);
 
-
 --- END OF FILE ---
 
 ================================================================================
-FILE PATH: src/MyBlog.Core/Models/TelemetryLog.cs
+FILE: src/MyBlog.Core/Models/TelemetryLog.cs
 ================================================================================
 namespace MyBlog.Core.Models;
 
@@ -557,11 +591,10 @@ public sealed class TelemetryLog
     public string? Properties { get; set; }
 }
 
-
 --- END OF FILE ---
 
 ================================================================================
-FILE PATH: src/MyBlog.Core/Models/User.cs
+FILE: src/MyBlog.Core/Models/User.cs
 ================================================================================
 namespace MyBlog.Core.Models;
 
@@ -595,11 +628,10 @@ public sealed class User
     public ICollection<Image> UploadedImages { get; set; } = [];
 }
 
-
 --- END OF FILE ---
 
 ================================================================================
-FILE PATH: src/MyBlog.Core/MyBlog.Core.csproj
+FILE: src/MyBlog.Core/MyBlog.Core.csproj
 ================================================================================
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
@@ -607,11 +639,10 @@ FILE PATH: src/MyBlog.Core/MyBlog.Core.csproj
   </PropertyGroup>
 </Project>
 
-
 --- END OF FILE ---
 
 ================================================================================
-FILE PATH: src/MyBlog.Core/Services/MarkdownService.cs
+FILE: src/MyBlog.Core/Services/MarkdownService.cs
 ================================================================================
 using System.Text;
 using System.Text.RegularExpressions;
@@ -825,11 +856,10 @@ public sealed partial class MarkdownService : IMarkdownService
     private static partial Regex ItalicPattern();
 }
 
-
 --- END OF FILE ---
 
 ================================================================================
-FILE PATH: src/MyBlog.Core/Services/SlugService.cs
+FILE: src/MyBlog.Core/Services/SlugService.cs
 ================================================================================
 using System.Globalization;
 using System.Text;
@@ -888,11 +918,10 @@ public sealed partial class SlugService : ISlugService
     private static partial Regex MultipleHyphenPattern();
 }
 
-
 --- END OF FILE ---
 
 ================================================================================
-FILE PATH: src/MyBlog.Infrastructure/Data/BlogDbContext.cs
+FILE: src/MyBlog.Infrastructure/Data/BlogDbContext.cs
 ================================================================================
 using Microsoft.EntityFrameworkCore;
 using MyBlog.Core.Models;
@@ -979,11 +1008,10 @@ public sealed class BlogDbContext : DbContext
     }
 }
 
-
 --- END OF FILE ---
 
 ================================================================================
-FILE PATH: src/MyBlog.Infrastructure/Data/DatabasePathResolver.cs
+FILE: src/MyBlog.Infrastructure/Data/DatabasePathResolver.cs
 ================================================================================
 namespace MyBlog.Infrastructure.Data;
 
@@ -1045,11 +1073,10 @@ public static class DatabasePathResolver
     }
 }
 
-
 --- END OF FILE ---
 
 ================================================================================
-FILE PATH: src/MyBlog.Infrastructure/MyBlog.Infrastructure.csproj
+FILE: src/MyBlog.Infrastructure/MyBlog.Infrastructure.csproj
 ================================================================================
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
@@ -1067,11 +1094,10 @@ FILE PATH: src/MyBlog.Infrastructure/MyBlog.Infrastructure.csproj
   </ItemGroup>
 </Project>
 
-
 --- END OF FILE ---
 
 ================================================================================
-FILE PATH: src/MyBlog.Infrastructure/Repositories/ImageRepository.cs
+FILE: src/MyBlog.Infrastructure/Repositories/ImageRepository.cs
 ================================================================================
 using Microsoft.EntityFrameworkCore;
 using MyBlog.Core.Interfaces;
@@ -1128,11 +1154,10 @@ public sealed class ImageRepository : IImageRepository
     }
 }
 
-
 --- END OF FILE ---
 
 ================================================================================
-FILE PATH: src/MyBlog.Infrastructure/Repositories/PostRepository.cs
+FILE: src/MyBlog.Infrastructure/Repositories/PostRepository.cs
 ================================================================================
 using Microsoft.EntityFrameworkCore;
 using MyBlog.Core.Interfaces;
@@ -1297,11 +1322,10 @@ public sealed class PostRepository : IPostRepository
     }
 }
 
-
 --- END OF FILE ---
 
 ================================================================================
-FILE PATH: src/MyBlog.Infrastructure/Repositories/TelemetryLogRepository.cs
+FILE: src/MyBlog.Infrastructure/Repositories/TelemetryLogRepository.cs
 ================================================================================
 using Microsoft.EntityFrameworkCore;
 using MyBlog.Core.Interfaces;
@@ -1351,11 +1375,10 @@ public sealed class TelemetryLogRepository : ITelemetryLogRepository
     }
 }
 
-
 --- END OF FILE ---
 
 ================================================================================
-FILE PATH: src/MyBlog.Infrastructure/Repositories/UserRepository.cs
+FILE: src/MyBlog.Infrastructure/Repositories/UserRepository.cs
 ================================================================================
 using Microsoft.EntityFrameworkCore;
 using MyBlog.Core.Interfaces;
@@ -1416,11 +1439,71 @@ public sealed class UserRepository : IUserRepository
     }
 }
 
+--- END OF FILE ---
+
+================================================================================
+FILE: src/MyBlog.Infrastructure/ServiceCollectionExtensions.cs
+================================================================================
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using MyBlog.Core.Interfaces;
+using MyBlog.Core.Services;
+using MyBlog.Infrastructure.Data;
+using MyBlog.Infrastructure.Repositories;
+using MyBlog.Infrastructure.Services;
+
+namespace MyBlog.Infrastructure;
+
+/// <summary>
+/// Extension methods for registering infrastructure services.
+/// </summary>
+public static class ServiceCollectionExtensions
+{
+    /// <summary>
+    /// Adds infrastructure services to the DI container.
+    /// </summary>
+    public static IServiceCollection AddInfrastructure(
+        this IServiceCollection services,
+        IConfiguration configuration)
+    {
+        // Database
+        var connectionString = configuration.GetConnectionString("DefaultConnection");
+        if (string.IsNullOrEmpty(connectionString) || connectionString == "Data Source=myblog.db")
+        {
+            // Use XDG-compliant path
+            var dbPath = DatabasePathResolver.GetDatabasePath();
+            connectionString = $"Data Source={dbPath}";
+        }
+
+        services.AddDbContext<BlogDbContext>(options =>
+            options.UseSqlite(connectionString));
+
+        // Repositories
+        services.AddScoped<IPostRepository, PostRepository>();
+        services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IImageRepository, ImageRepository>();
+        services.AddScoped<ITelemetryLogRepository, TelemetryLogRepository>();
+
+        // Services
+        services.AddSingleton<IPasswordService, PasswordService>();
+        services.AddSingleton<ISlugService, SlugService>();
+        services.AddSingleton<IMarkdownService, MarkdownService>();
+        services.AddScoped<IAuthService, AuthService>();
+
+        services.AddSingleton<IReaderTrackingService, ReaderTrackingService>();
+
+        // Background services
+        services.AddHostedService<TelemetryCleanupService>();
+
+        return services;
+    }
+}
 
 --- END OF FILE ---
 
 ================================================================================
-FILE PATH: src/MyBlog.Infrastructure/Services/AuthService.cs
+FILE: src/MyBlog.Infrastructure/Services/AuthService.cs
 ================================================================================
 using Microsoft.Extensions.Configuration;
 using MyBlog.Core.Interfaces;
@@ -1529,11 +1612,10 @@ public sealed class AuthService : IAuthService
     }
 }
 
-
 --- END OF FILE ---
 
 ================================================================================
-FILE PATH: src/MyBlog.Infrastructure/Services/PasswordService.cs
+FILE: src/MyBlog.Infrastructure/Services/PasswordService.cs
 ================================================================================
 using Microsoft.AspNetCore.Identity;
 using MyBlog.Core.Interfaces;
@@ -1563,11 +1645,57 @@ public sealed class PasswordService : IPasswordService
     }
 }
 
+--- END OF FILE ---
+
+================================================================================
+FILE: src/MyBlog.Infrastructure/Services/ReaderTrackingService.cs
+================================================================================
+using System.Collections.Concurrent;
+using MyBlog.Core.Interfaces;
+
+namespace MyBlog.Infrastructure.Services;
+
+public class ReaderTrackingService : IReaderTrackingService
+{
+    // Thread-safe dictionary to store counts: Slug -> Count
+    private readonly ConcurrentDictionary<string, int> _activeReaders = new();
+
+    public event Action<string, int>? OnCountChanged;
+
+    public void JoinPost(string slug)
+    {
+        // Atomically increment the count
+        var newCount = _activeReaders.AddOrUpdate(slug, 1, (_, count) => count + 1);
+
+        // Notify subscribers
+        OnCountChanged?.Invoke(slug, newCount);
+    }
+
+    public void LeavePost(string slug)
+    {
+        // Atomically decrement the count
+        var newCount = _activeReaders.AddOrUpdate(slug, 0, (_, count) => count > 0 ? count - 1 : 0);
+
+        // If count is 0, we could remove the key, but keeping it is harmless for small blogs
+        if (newCount == 0)
+        {
+            _activeReaders.TryRemove(slug, out _);
+        }
+
+        // Notify subscribers
+        OnCountChanged?.Invoke(slug, newCount);
+    }
+
+    public int GetReaderCount(string slug)
+    {
+        return _activeReaders.TryGetValue(slug, out var count) ? count : 0;
+    }
+}
 
 --- END OF FILE ---
 
 ================================================================================
-FILE PATH: src/MyBlog.Infrastructure/Services/TelemetryCleanupService.cs
+FILE: src/MyBlog.Infrastructure/Services/TelemetryCleanupService.cs
 ================================================================================
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -1635,59 +1763,10 @@ public sealed class TelemetryCleanupService : BackgroundService
     }
 }
 
-
 --- END OF FILE ---
 
 ================================================================================
-FILE PATH: src/MyBlog.Infrastructure/Services/ReaderTrackingService.cs
-================================================================================
-using System.Collections.Concurrent;
-using MyBlog.Core.Interfaces;
-
-namespace MyBlog.Infrastructure.Services;
-
-public class ReaderTrackingService : IReaderTrackingService
-{
-    // Thread-safe dictionary to store counts: Slug -> Count
-    private readonly ConcurrentDictionary<string, int> _activeReaders = new();
-
-    public event Action<string, int>? OnCountChanged;
-
-    public void JoinPost(string slug)
-    {
-        // Atomically increment the count
-        var newCount = _activeReaders.AddOrUpdate(slug, 1, (_, count) => count + 1);
-
-        // Notify subscribers
-        OnCountChanged?.Invoke(slug, newCount);
-    }
-
-    public void LeavePost(string slug)
-    {
-        // Atomically decrement the count
-        var newCount = _activeReaders.AddOrUpdate(slug, 0, (_, count) => count > 0 ? count - 1 : 0);
-
-        // If count is 0, we could remove the key, but keeping it is harmless for small blogs
-        if (newCount == 0)
-        {
-            _activeReaders.TryRemove(slug, out _);
-        }
-
-        // Notify subscribers
-        OnCountChanged?.Invoke(slug, newCount);
-    }
-
-    public int GetReaderCount(string slug)
-    {
-        return _activeReaders.TryGetValue(slug, out var count) ? count : 0;
-    }
-}
-
-
---- END OF FILE ---
-
-================================================================================
-FILE PATH: src/MyBlog.Infrastructure/Telemetry/DatabaseLogExporter.cs
+FILE: src/MyBlog.Infrastructure/Telemetry/DatabaseLogExporter.cs
 ================================================================================
 using System.Text.Json;
 using Microsoft.Extensions.DependencyInjection;
@@ -1762,11 +1841,10 @@ public sealed class DatabaseLogExporter : BaseExporter<LogRecord>
     }
 }
 
-
 --- END OF FILE ---
 
 ================================================================================
-FILE PATH: src/MyBlog.Infrastructure/Telemetry/FileLogExporter.cs
+FILE: src/MyBlog.Infrastructure/Telemetry/FileLogExporter.cs
 ================================================================================
 using System.Text;
 using System.Text.Json;
@@ -1903,11 +1981,10 @@ public sealed class FileLogExporter : BaseExporter<LogRecord>
     }
 }
 
-
 --- END OF FILE ---
 
 ================================================================================
-FILE PATH: src/MyBlog.Infrastructure/Telemetry/TelemetryPathResolver.cs
+FILE: src/MyBlog.Infrastructure/Telemetry/TelemetryPathResolver.cs
 ================================================================================
 namespace MyBlog.Infrastructure.Telemetry;
 
@@ -1980,672 +2057,10 @@ public static class TelemetryPathResolver
     }
 }
 
-
 --- END OF FILE ---
 
 ================================================================================
-FILE PATH: src/MyBlog.Infrastructure/ServiceCollectionExtensions.cs
-================================================================================
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using MyBlog.Core.Interfaces;
-using MyBlog.Core.Services;
-using MyBlog.Infrastructure.Data;
-using MyBlog.Infrastructure.Repositories;
-using MyBlog.Infrastructure.Services;
-
-namespace MyBlog.Infrastructure;
-
-/// <summary>
-/// Extension methods for registering infrastructure services.
-/// </summary>
-public static class ServiceCollectionExtensions
-{
-    /// <summary>
-    /// Adds infrastructure services to the DI container.
-    /// </summary>
-    public static IServiceCollection AddInfrastructure(
-        this IServiceCollection services,
-        IConfiguration configuration)
-    {
-        // Database
-        var connectionString = configuration.GetConnectionString("DefaultConnection");
-        if (string.IsNullOrEmpty(connectionString) || connectionString == "Data Source=myblog.db")
-        {
-            // Use XDG-compliant path
-            var dbPath = DatabasePathResolver.GetDatabasePath();
-            connectionString = $"Data Source={dbPath}";
-        }
-
-        services.AddDbContext<BlogDbContext>(options =>
-            options.UseSqlite(connectionString));
-
-        // Repositories
-        services.AddScoped<IPostRepository, PostRepository>();
-        services.AddScoped<IUserRepository, UserRepository>();
-        services.AddScoped<IImageRepository, ImageRepository>();
-        services.AddScoped<ITelemetryLogRepository, TelemetryLogRepository>();
-
-        // Services
-        services.AddSingleton<IPasswordService, PasswordService>();
-        services.AddSingleton<ISlugService, SlugService>();
-        services.AddSingleton<IMarkdownService, MarkdownService>();
-        services.AddScoped<IAuthService, AuthService>();
-
-        services.AddSingleton<IReaderTrackingService, ReaderTrackingService>();
-
-        // Background services
-        services.AddHostedService<TelemetryCleanupService>();
-
-        return services;
-    }
-}
-
-
---- END OF FILE ---
-
-================================================================================
-FILE PATH: src/MyBlog.Tests/Integration/AuthServiceTests.cs
-================================================================================
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using MyBlog.Core.Models;
-using MyBlog.Infrastructure.Data;
-using MyBlog.Infrastructure.Repositories;
-using MyBlog.Infrastructure.Services;
-using Xunit;
-
-namespace MyBlog.Tests.Integration;
-
-public class AuthServiceTests : IAsyncDisposable
-{
-    private readonly BlogDbContext _context;
-    private readonly AuthService _sut;
-    private readonly PasswordService _passwordService = new();
-
-    public AuthServiceTests()
-    {
-        var options = new DbContextOptionsBuilder<BlogDbContext>()
-            .UseSqlite("Data Source=:memory:")
-            .Options;
-
-        _context = new BlogDbContext(options);
-        _context.Database.OpenConnection();
-        _context.Database.EnsureCreated();
-
-        var userRepository = new UserRepository(_context);
-        var configuration = new ConfigurationBuilder()
-            .AddInMemoryCollection(new Dictionary<string, string?>
-            {
-                ["Authentication:DefaultAdminPassword"] = "TestAdmin123!"
-            })
-            .Build();
-
-        _sut = new AuthService(userRepository, _passwordService, configuration);
-    }
-
-    public async ValueTask DisposeAsync()
-    {
-        await _context.DisposeAsync();
-    }
-
-    [Fact]
-    public async Task AuthenticateAsync_WithValidCredentials_ReturnsUser()
-    {
-        var ct = TestContext.Current.CancellationToken;
-        var password = "TestPassword123";
-        var user = new User
-        {
-            Id = Guid.NewGuid(),
-            Username = "testuser",
-            PasswordHash = _passwordService.HashPassword(password),
-            Email = "test@example.com",
-            DisplayName = "Test User",
-            CreatedAtUtc = DateTime.UtcNow
-        };
-        _context.Users.Add(user);
-        await _context.SaveChangesAsync(ct);
-
-        var result = await _sut.AuthenticateAsync("testuser", password, ct);
-
-        Assert.NotNull(result);
-        Assert.Equal("testuser", result.Username);
-    }
-
-    [Fact]
-    public async Task AuthenticateAsync_WithInvalidPassword_ReturnsNull()
-    {
-        var ct = TestContext.Current.CancellationToken;
-        var user = new User
-        {
-            Id = Guid.NewGuid(),
-            Username = "testuser",
-            PasswordHash = _passwordService.HashPassword("CorrectPassword"),
-            Email = "test@example.com",
-            DisplayName = "Test User",
-            CreatedAtUtc = DateTime.UtcNow
-        };
-        _context.Users.Add(user);
-        await _context.SaveChangesAsync(ct);
-
-        var result = await _sut.AuthenticateAsync("testuser", "WrongPassword", ct);
-
-        Assert.Null(result);
-    }
-
-    [Fact]
-    public async Task AuthenticateAsync_WithNonExistentUser_ReturnsNull()
-    {
-        var ct = TestContext.Current.CancellationToken;
-        var result = await _sut.AuthenticateAsync("nonexistent", "password", ct);
-        Assert.Null(result);
-    }
-
-    [Fact]
-    public async Task EnsureAdminUserAsync_WhenNoUsersExist_CreatesAdmin()
-    {
-        var ct = TestContext.Current.CancellationToken;
-        await _sut.EnsureAdminUserAsync(ct);
-
-        var admin = await _context.Users.FirstOrDefaultAsync(u => u.Username == "admin", ct);
-        Assert.NotNull(admin);
-    }
-
-    [Fact]
-    public async Task EnsureAdminUserAsync_WhenUsersExist_DoesNotCreateAnother()
-    {
-        var ct = TestContext.Current.CancellationToken;
-        var existingUser = new User
-        {
-            Id = Guid.NewGuid(),
-            Username = "existing",
-            PasswordHash = "hash",
-            Email = "existing@example.com",
-            DisplayName = "Existing",
-            CreatedAtUtc = DateTime.UtcNow
-        };
-        _context.Users.Add(existingUser);
-        await _context.SaveChangesAsync(ct);
-
-        await _sut.EnsureAdminUserAsync(ct);
-
-        var userCount = await _context.Users.CountAsync(ct);
-        Assert.Equal(1, userCount);
-    }
-}
-
-
---- END OF FILE ---
-
-================================================================================
-FILE PATH: src/MyBlog.Tests/Integration/PasswordChangeTests.cs
-================================================================================
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using MyBlog.Core.Models;
-using MyBlog.Infrastructure.Data;
-using MyBlog.Infrastructure.Repositories;
-using MyBlog.Infrastructure.Services;
-using Xunit;
-
-namespace MyBlog.Tests.Integration;
-
-public class PasswordChangeTests : IAsyncDisposable
-{
-    private readonly BlogDbContext _context;
-    private readonly AuthService _sut;
-    private readonly PasswordService _passwordService = new();
-    private readonly UserRepository _userRepository;
-
-    public PasswordChangeTests()
-    {
-        var options = new DbContextOptionsBuilder<BlogDbContext>()
-            .UseSqlite("Data Source=:memory:")
-            .Options;
-
-        _context = new BlogDbContext(options);
-        _context.Database.OpenConnection();
-        _context.Database.EnsureCreated();
-
-        _userRepository = new UserRepository(_context);
-        var configuration = new ConfigurationBuilder()
-            .AddInMemoryCollection(new Dictionary<string, string?>
-            {
-                ["Authentication:DefaultAdminPassword"] = "TestAdmin123!"
-            })
-            .Build();
-
-        _sut = new AuthService(_userRepository, _passwordService, configuration);
-    }
-
-    public async ValueTask DisposeAsync()
-    {
-        await _context.DisposeAsync();
-    }
-
-    [Fact]
-    public async Task ChangePasswordAsync_WithCorrectCurrentPassword_ReturnsTrue()
-    {
-        var ct = TestContext.Current.CancellationToken;
-        var originalPassword = "OriginalPass123!";
-        var newPassword = "NewPassword456!";
-
-        var user = new User
-        {
-            Id = Guid.NewGuid(),
-            Username = "testuser",
-            PasswordHash = _passwordService.HashPassword(originalPassword),
-            Email = "test@example.com",
-            DisplayName = "Test User",
-            CreatedAtUtc = DateTime.UtcNow
-        };
-        _context.Users.Add(user);
-        await _context.SaveChangesAsync(ct);
-
-        var result = await _sut.ChangePasswordAsync(user.Id, originalPassword, newPassword, ct);
-
-        Assert.True(result);
-    }
-
-    [Fact]
-    public async Task ChangePasswordAsync_WithCorrectPassword_AllowsLoginWithNewPassword()
-    {
-        var ct = TestContext.Current.CancellationToken;
-        var originalPassword = "OriginalPass123!";
-        var newPassword = "NewPassword456!";
-
-        var user = new User
-        {
-            Id = Guid.NewGuid(),
-            Username = "testuser",
-            PasswordHash = _passwordService.HashPassword(originalPassword),
-            Email = "test@example.com",
-            DisplayName = "Test User",
-            CreatedAtUtc = DateTime.UtcNow
-        };
-        _context.Users.Add(user);
-        await _context.SaveChangesAsync(ct);
-
-        await _sut.ChangePasswordAsync(user.Id, originalPassword, newPassword, ct);
-
-        // Should authenticate with new password
-        var authenticated = await _sut.AuthenticateAsync("testuser", newPassword, ct);
-        Assert.NotNull(authenticated);
-
-        // Should NOT authenticate with old password
-        var oldAuth = await _sut.AuthenticateAsync("testuser", originalPassword, ct);
-        Assert.Null(oldAuth);
-    }
-
-    [Fact]
-    public async Task ChangePasswordAsync_WithWrongCurrentPassword_ReturnsFalse()
-    {
-        var ct = TestContext.Current.CancellationToken;
-        var correctPassword = "CorrectPass123!";
-        var wrongPassword = "WrongPassword!";
-
-        var user = new User
-        {
-            Id = Guid.NewGuid(),
-            Username = "testuser",
-            PasswordHash = _passwordService.HashPassword(correctPassword),
-            Email = "test@example.com",
-            DisplayName = "Test User",
-            CreatedAtUtc = DateTime.UtcNow
-        };
-        _context.Users.Add(user);
-        await _context.SaveChangesAsync(ct);
-
-        var result = await _sut.ChangePasswordAsync(user.Id, wrongPassword, "NewPass123!", ct);
-
-        Assert.False(result);
-    }
-
-    [Fact]
-    public async Task ChangePasswordAsync_WithWrongPassword_DoesNotChangePassword()
-    {
-        var ct = TestContext.Current.CancellationToken;
-        var correctPassword = "CorrectPass123!";
-
-        var user = new User
-        {
-            Id = Guid.NewGuid(),
-            Username = "testuser",
-            PasswordHash = _passwordService.HashPassword(correctPassword),
-            Email = "test@example.com",
-            DisplayName = "Test User",
-            CreatedAtUtc = DateTime.UtcNow
-        };
-        _context.Users.Add(user);
-        await _context.SaveChangesAsync(ct);
-
-        await _sut.ChangePasswordAsync(user.Id, "WrongPassword!", "NewPass123!", ct);
-
-        // Original password should still work
-        var authenticated = await _sut.AuthenticateAsync("testuser", correctPassword, ct);
-        Assert.NotNull(authenticated);
-    }
-
-    [Fact]
-    public async Task ChangePasswordAsync_WithNonExistentUser_ReturnsFalse()
-    {
-        var ct = TestContext.Current.CancellationToken;
-        var result = await _sut.ChangePasswordAsync(Guid.NewGuid(), "any", "password", ct);
-        Assert.False(result);
-    }
-
-    [Fact]
-    public async Task ResetPasswordAsync_SetsNewPassword()
-    {
-        var ct = TestContext.Current.CancellationToken;
-        var originalPassword = "OriginalPass123!";
-        var newPassword = "ResetPassword789!";
-
-        var user = new User
-        {
-            Id = Guid.NewGuid(),
-            Username = "testuser",
-            PasswordHash = _passwordService.HashPassword(originalPassword),
-            Email = "test@example.com",
-            DisplayName = "Test User",
-            CreatedAtUtc = DateTime.UtcNow
-        };
-        _context.Users.Add(user);
-        await _context.SaveChangesAsync(ct);
-
-        await _sut.ResetPasswordAsync(user.Id, newPassword, ct);
-
-        var authenticated = await _sut.AuthenticateAsync("testuser", newPassword, ct);
-        Assert.NotNull(authenticated);
-    }
-
-    [Fact]
-    public async Task ResetPasswordAsync_WithNonExistentUser_ThrowsException()
-    {
-        var ct = TestContext.Current.CancellationToken;
-        await Assert.ThrowsAsync<InvalidOperationException>(
-            () => _sut.ResetPasswordAsync(Guid.NewGuid(), "password", ct));
-    }
-}
-
-
---- END OF FILE ---
-
-================================================================================
-FILE PATH: src/MyBlog.Tests/Integration/PostRepositoryTests.cs
-================================================================================
-using Microsoft.EntityFrameworkCore;
-using MyBlog.Core.Models;
-using MyBlog.Infrastructure.Data;
-using MyBlog.Infrastructure.Repositories;
-using Xunit;
-
-namespace MyBlog.Tests.Integration;
-
-public class PostRepositoryTests : IAsyncDisposable
-{
-    private readonly BlogDbContext _context;
-    private readonly PostRepository _sut;
-    private readonly User _testUser;
-
-    public PostRepositoryTests()
-    {
-        var options = new DbContextOptionsBuilder<BlogDbContext>()
-            .UseSqlite("Data Source=:memory:")
-            .Options;
-
-        _context = new BlogDbContext(options);
-        _context.Database.OpenConnection();
-        _context.Database.EnsureCreated();
-
-        _testUser = new User
-        {
-            Id = Guid.NewGuid(),
-            Username = "testuser",
-            PasswordHash = "hash",
-            Email = "test@example.com",
-            DisplayName = "Test User",
-            CreatedAtUtc = DateTime.UtcNow
-        };
-        _context.Users.Add(_testUser);
-        _context.SaveChanges();
-
-        _sut = new PostRepository(_context);
-    }
-
-    public async ValueTask DisposeAsync()
-    {
-        await _context.DisposeAsync();
-    }
-
-    [Fact]
-    public async Task CreateAsync_AddsPostToDatabase()
-    {
-        var ct = TestContext.Current.CancellationToken;
-        var post = CreateTestPost("Test Post");
-
-        var result = await _sut.CreateAsync(post, ct);
-
-        Assert.NotEqual(Guid.Empty, result.Id);
-        var saved = await _context.Posts.FindAsync([result.Id], ct);
-        Assert.NotNull(saved);
-        Assert.Equal("Test Post", saved.Title);
-    }
-
-    [Fact]
-    public async Task GetByIdAsync_WithExistingId_ReturnsPost()
-    {
-        var ct = TestContext.Current.CancellationToken;
-        var post = CreateTestPost("Test Post");
-        await _sut.CreateAsync(post, ct);
-
-        var result = await _sut.GetByIdAsync(post.Id, ct);
-
-        Assert.NotNull(result);
-        Assert.Equal("Test Post", result.Title);
-    }
-
-    [Fact]
-    public async Task GetByIdAsync_WithNonExistingId_ReturnsNull()
-    {
-        var ct = TestContext.Current.CancellationToken;
-        var result = await _sut.GetByIdAsync(Guid.NewGuid(), ct);
-        Assert.Null(result);
-    }
-
-    [Fact]
-    public async Task GetBySlugAsync_WithExistingSlug_ReturnsPost()
-    {
-        var ct = TestContext.Current.CancellationToken;
-        var post = CreateTestPost("Test Post", "test-post");
-        await _sut.CreateAsync(post, ct);
-
-        var result = await _sut.GetBySlugAsync("test-post", ct);
-
-        Assert.NotNull(result);
-        Assert.Equal("Test Post", result.Title);
-    }
-
-    [Fact]
-    public async Task GetPublishedPostsAsync_ReturnsOnlyPublishedPosts()
-    {
-        var ct = TestContext.Current.CancellationToken;
-        await _sut.CreateAsync(CreateTestPost("Published", isPublished: true), ct);
-        await _sut.CreateAsync(CreateTestPost("Draft", isPublished: false), ct);
-
-        var (posts, totalCount) = await _sut.GetPublishedPostsAsync(1, 10, ct);
-
-        Assert.Single(posts);
-        Assert.Equal("Published", posts.First().Title);
-        Assert.Equal(1, totalCount);
-    }
-
-    [Fact]
-    public async Task UpdateAsync_ModifiesPost()
-    {
-        var ct = TestContext.Current.CancellationToken;
-        var post = CreateTestPost("Original Title");
-        await _sut.CreateAsync(post, ct);
-
-        post.Title = "Updated Title";
-        await _sut.UpdateAsync(post, ct);
-
-        var result = await _sut.GetByIdAsync(post.Id, ct);
-        Assert.Equal("Updated Title", result!.Title);
-    }
-
-    [Fact]
-    public async Task DeleteAsync_RemovesPost()
-    {
-        var ct = TestContext.Current.CancellationToken;
-        var post = CreateTestPost("To Delete");
-        await _sut.CreateAsync(post, ct);
-
-        await _sut.DeleteAsync(post.Id, ct);
-
-        var result = await _sut.GetByIdAsync(post.Id, ct);
-        Assert.Null(result);
-    }
-
-    [Fact]
-    public async Task GetPublishedPostsAsync_ReturnsCorrectCount()
-    {
-        var ct = TestContext.Current.CancellationToken;
-        await _sut.CreateAsync(CreateTestPost("Post 1", isPublished: true), ct);
-        await _sut.CreateAsync(CreateTestPost("Post 2", isPublished: true), ct);
-        await _sut.CreateAsync(CreateTestPost("Draft", isPublished: false), ct);
-
-        var (_, totalCount) = await _sut.GetPublishedPostsAsync(1, 10, ct);
-
-        Assert.Equal(2, totalCount);
-    }
-
-    private Post CreateTestPost(string title, string? slug = null, bool isPublished = true)
-    {
-        return new Post
-        {
-            Id = Guid.NewGuid(),
-            Title = title,
-            Slug = slug ?? title.ToLower().Replace(" ", "-"),
-            Content = "Test content",
-            Summary = "Test summary",
-            AuthorId = _testUser.Id,
-            CreatedAtUtc = DateTime.UtcNow,
-            UpdatedAtUtc = DateTime.UtcNow,
-            IsPublished = isPublished,
-            PublishedAtUtc = isPublished ? DateTime.UtcNow : null
-        };
-    }
-}
-
-
---- END OF FILE ---
-
-================================================================================
-FILE PATH: src/MyBlog.Tests/Integration/TelemetryCleanupTests.cs
-================================================================================
-using Microsoft.EntityFrameworkCore;
-using MyBlog.Core.Models;
-using MyBlog.Infrastructure.Data;
-using MyBlog.Infrastructure.Repositories;
-using Xunit;
-
-namespace MyBlog.Tests.Integration;
-
-public class TelemetryCleanupTests : IAsyncDisposable
-{
-    private readonly BlogDbContext _context;
-    private readonly TelemetryLogRepository _sut;
-
-    public TelemetryCleanupTests()
-    {
-        var options = new DbContextOptionsBuilder<BlogDbContext>()
-            .UseSqlite("Data Source=:memory:")
-            .Options;
-
-        _context = new BlogDbContext(options);
-        _context.Database.OpenConnection();
-        _context.Database.EnsureCreated();
-
-        _sut = new TelemetryLogRepository(_context);
-    }
-
-    public async ValueTask DisposeAsync()
-    {
-        await _context.DisposeAsync();
-    }
-
-    [Fact]
-    public async Task DeleteOlderThanAsync_RemovesOldLogs()
-    {
-        var ct = TestContext.Current.CancellationToken;
-
-        // Add old logs
-        var oldLog = new TelemetryLog
-        {
-            TimestampUtc = DateTime.UtcNow.AddDays(-60),
-            Level = "Information",
-            Category = "Test",
-            Message = "Old log"
-        };
-        _context.TelemetryLogs.Add(oldLog);
-
-        // Add recent log
-        var recentLog = new TelemetryLog
-        {
-            TimestampUtc = DateTime.UtcNow.AddDays(-5),
-            Level = "Information",
-            Category = "Test",
-            Message = "Recent log"
-        };
-        _context.TelemetryLogs.Add(recentLog);
-        await _context.SaveChangesAsync(ct);
-
-        var cutoff = DateTime.UtcNow.AddDays(-30);
-        var deleted = await _sut.DeleteOlderThanAsync(cutoff, ct);
-
-        Assert.Equal(1, deleted);
-        var remaining = await _context.TelemetryLogs.CountAsync(ct);
-        Assert.Equal(1, remaining);
-    }
-
-    [Fact]
-    public async Task DeleteOlderThanAsync_WithNoOldLogs_ReturnsZero()
-    {
-        var ct = TestContext.Current.CancellationToken;
-
-        var recentLog = new TelemetryLog
-        {
-            TimestampUtc = DateTime.UtcNow.AddDays(-5),
-            Level = "Information",
-            Category = "Test",
-            Message = "Recent log"
-        };
-        _context.TelemetryLogs.Add(recentLog);
-        await _context.SaveChangesAsync(ct);
-
-        var cutoff = DateTime.UtcNow.AddDays(-30);
-        var deleted = await _sut.DeleteOlderThanAsync(cutoff, ct);
-
-        Assert.Equal(0, deleted);
-    }
-
-    [Fact]
-    public async Task DeleteOlderThanAsync_WithEmptyTable_ReturnsZero()
-    {
-        var ct = TestContext.Current.CancellationToken;
-        var cutoff = DateTime.UtcNow.AddDays(-30);
-        var deleted = await _sut.DeleteOlderThanAsync(cutoff, ct);
-        Assert.Equal(0, deleted);
-    }
-}
-
-
---- END OF FILE ---
-
-================================================================================
-FILE PATH: src/MyBlog.Tests/Integration/AuthServiceLongPasswordTests.cs
+FILE: src/MyBlog.Tests/Integration/AuthServiceLongPasswordTests.cs
 ================================================================================
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -2969,11 +2384,630 @@ public sealed class AuthServiceLongPasswordTests : IAsyncDisposable
     }
 }
 
+--- END OF FILE ---
+
+================================================================================
+FILE: src/MyBlog.Tests/Integration/AuthServiceTests.cs
+================================================================================
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using MyBlog.Core.Models;
+using MyBlog.Infrastructure.Data;
+using MyBlog.Infrastructure.Repositories;
+using MyBlog.Infrastructure.Services;
+using Xunit;
+
+namespace MyBlog.Tests.Integration;
+
+public class AuthServiceTests : IAsyncDisposable
+{
+    private readonly BlogDbContext _context;
+    private readonly AuthService _sut;
+    private readonly PasswordService _passwordService = new();
+
+    public AuthServiceTests()
+    {
+        var options = new DbContextOptionsBuilder<BlogDbContext>()
+            .UseSqlite("Data Source=:memory:")
+            .Options;
+
+        _context = new BlogDbContext(options);
+        _context.Database.OpenConnection();
+        _context.Database.EnsureCreated();
+
+        var userRepository = new UserRepository(_context);
+        var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["Authentication:DefaultAdminPassword"] = "TestAdmin123!"
+            })
+            .Build();
+
+        _sut = new AuthService(userRepository, _passwordService, configuration);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await _context.DisposeAsync();
+    }
+
+    [Fact]
+    public async Task AuthenticateAsync_WithValidCredentials_ReturnsUser()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var password = "TestPassword123";
+        var user = new User
+        {
+            Id = Guid.NewGuid(),
+            Username = "testuser",
+            PasswordHash = _passwordService.HashPassword(password),
+            Email = "test@example.com",
+            DisplayName = "Test User",
+            CreatedAtUtc = DateTime.UtcNow
+        };
+        _context.Users.Add(user);
+        await _context.SaveChangesAsync(ct);
+
+        var result = await _sut.AuthenticateAsync("testuser", password, ct);
+
+        Assert.NotNull(result);
+        Assert.Equal("testuser", result.Username);
+    }
+
+    [Fact]
+    public async Task AuthenticateAsync_WithInvalidPassword_ReturnsNull()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var user = new User
+        {
+            Id = Guid.NewGuid(),
+            Username = "testuser",
+            PasswordHash = _passwordService.HashPassword("CorrectPassword"),
+            Email = "test@example.com",
+            DisplayName = "Test User",
+            CreatedAtUtc = DateTime.UtcNow
+        };
+        _context.Users.Add(user);
+        await _context.SaveChangesAsync(ct);
+
+        var result = await _sut.AuthenticateAsync("testuser", "WrongPassword", ct);
+
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public async Task AuthenticateAsync_WithNonExistentUser_ReturnsNull()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var result = await _sut.AuthenticateAsync("nonexistent", "password", ct);
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public async Task EnsureAdminUserAsync_WhenNoUsersExist_CreatesAdmin()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await _sut.EnsureAdminUserAsync(ct);
+
+        var admin = await _context.Users.FirstOrDefaultAsync(u => u.Username == "admin", ct);
+        Assert.NotNull(admin);
+    }
+
+    [Fact]
+    public async Task EnsureAdminUserAsync_WhenUsersExist_DoesNotCreateAnother()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var existingUser = new User
+        {
+            Id = Guid.NewGuid(),
+            Username = "existing",
+            PasswordHash = "hash",
+            Email = "existing@example.com",
+            DisplayName = "Existing",
+            CreatedAtUtc = DateTime.UtcNow
+        };
+        _context.Users.Add(existingUser);
+        await _context.SaveChangesAsync(ct);
+
+        await _sut.EnsureAdminUserAsync(ct);
+
+        var userCount = await _context.Users.CountAsync(ct);
+        Assert.Equal(1, userCount);
+    }
+}
 
 --- END OF FILE ---
 
 ================================================================================
-FILE PATH: src/MyBlog.Tests/Unit/LoginRateLimitMiddlewareTests.cs
+FILE: src/MyBlog.Tests/Integration/PasswordChangeTests.cs
+================================================================================
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using MyBlog.Core.Models;
+using MyBlog.Infrastructure.Data;
+using MyBlog.Infrastructure.Repositories;
+using MyBlog.Infrastructure.Services;
+using Xunit;
+
+namespace MyBlog.Tests.Integration;
+
+public class PasswordChangeTests : IAsyncDisposable
+{
+    private readonly BlogDbContext _context;
+    private readonly AuthService _sut;
+    private readonly PasswordService _passwordService = new();
+    private readonly UserRepository _userRepository;
+
+    public PasswordChangeTests()
+    {
+        var options = new DbContextOptionsBuilder<BlogDbContext>()
+            .UseSqlite("Data Source=:memory:")
+            .Options;
+
+        _context = new BlogDbContext(options);
+        _context.Database.OpenConnection();
+        _context.Database.EnsureCreated();
+
+        _userRepository = new UserRepository(_context);
+        var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["Authentication:DefaultAdminPassword"] = "TestAdmin123!"
+            })
+            .Build();
+
+        _sut = new AuthService(_userRepository, _passwordService, configuration);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await _context.DisposeAsync();
+    }
+
+    [Fact]
+    public async Task ChangePasswordAsync_WithCorrectCurrentPassword_ReturnsTrue()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var originalPassword = "OriginalPass123!";
+        var newPassword = "NewPassword456!";
+
+        var user = new User
+        {
+            Id = Guid.NewGuid(),
+            Username = "testuser",
+            PasswordHash = _passwordService.HashPassword(originalPassword),
+            Email = "test@example.com",
+            DisplayName = "Test User",
+            CreatedAtUtc = DateTime.UtcNow
+        };
+        _context.Users.Add(user);
+        await _context.SaveChangesAsync(ct);
+
+        var result = await _sut.ChangePasswordAsync(user.Id, originalPassword, newPassword, ct);
+
+        Assert.True(result);
+    }
+
+    [Fact]
+    public async Task ChangePasswordAsync_WithCorrectPassword_AllowsLoginWithNewPassword()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var originalPassword = "OriginalPass123!";
+        var newPassword = "NewPassword456!";
+
+        var user = new User
+        {
+            Id = Guid.NewGuid(),
+            Username = "testuser",
+            PasswordHash = _passwordService.HashPassword(originalPassword),
+            Email = "test@example.com",
+            DisplayName = "Test User",
+            CreatedAtUtc = DateTime.UtcNow
+        };
+        _context.Users.Add(user);
+        await _context.SaveChangesAsync(ct);
+
+        await _sut.ChangePasswordAsync(user.Id, originalPassword, newPassword, ct);
+
+        // Should authenticate with new password
+        var authenticated = await _sut.AuthenticateAsync("testuser", newPassword, ct);
+        Assert.NotNull(authenticated);
+
+        // Should NOT authenticate with old password
+        var oldAuth = await _sut.AuthenticateAsync("testuser", originalPassword, ct);
+        Assert.Null(oldAuth);
+    }
+
+    [Fact]
+    public async Task ChangePasswordAsync_WithWrongCurrentPassword_ReturnsFalse()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var correctPassword = "CorrectPass123!";
+        var wrongPassword = "WrongPassword!";
+
+        var user = new User
+        {
+            Id = Guid.NewGuid(),
+            Username = "testuser",
+            PasswordHash = _passwordService.HashPassword(correctPassword),
+            Email = "test@example.com",
+            DisplayName = "Test User",
+            CreatedAtUtc = DateTime.UtcNow
+        };
+        _context.Users.Add(user);
+        await _context.SaveChangesAsync(ct);
+
+        var result = await _sut.ChangePasswordAsync(user.Id, wrongPassword, "NewPass123!", ct);
+
+        Assert.False(result);
+    }
+
+    [Fact]
+    public async Task ChangePasswordAsync_WithWrongPassword_DoesNotChangePassword()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var correctPassword = "CorrectPass123!";
+
+        var user = new User
+        {
+            Id = Guid.NewGuid(),
+            Username = "testuser",
+            PasswordHash = _passwordService.HashPassword(correctPassword),
+            Email = "test@example.com",
+            DisplayName = "Test User",
+            CreatedAtUtc = DateTime.UtcNow
+        };
+        _context.Users.Add(user);
+        await _context.SaveChangesAsync(ct);
+
+        await _sut.ChangePasswordAsync(user.Id, "WrongPassword!", "NewPass123!", ct);
+
+        // Original password should still work
+        var authenticated = await _sut.AuthenticateAsync("testuser", correctPassword, ct);
+        Assert.NotNull(authenticated);
+    }
+
+    [Fact]
+    public async Task ChangePasswordAsync_WithNonExistentUser_ReturnsFalse()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var result = await _sut.ChangePasswordAsync(Guid.NewGuid(), "any", "password", ct);
+        Assert.False(result);
+    }
+
+    [Fact]
+    public async Task ResetPasswordAsync_SetsNewPassword()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var originalPassword = "OriginalPass123!";
+        var newPassword = "ResetPassword789!";
+
+        var user = new User
+        {
+            Id = Guid.NewGuid(),
+            Username = "testuser",
+            PasswordHash = _passwordService.HashPassword(originalPassword),
+            Email = "test@example.com",
+            DisplayName = "Test User",
+            CreatedAtUtc = DateTime.UtcNow
+        };
+        _context.Users.Add(user);
+        await _context.SaveChangesAsync(ct);
+
+        await _sut.ResetPasswordAsync(user.Id, newPassword, ct);
+
+        var authenticated = await _sut.AuthenticateAsync("testuser", newPassword, ct);
+        Assert.NotNull(authenticated);
+    }
+
+    [Fact]
+    public async Task ResetPasswordAsync_WithNonExistentUser_ThrowsException()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await Assert.ThrowsAsync<InvalidOperationException>(
+            () => _sut.ResetPasswordAsync(Guid.NewGuid(), "password", ct));
+    }
+}
+
+--- END OF FILE ---
+
+================================================================================
+FILE: src/MyBlog.Tests/Integration/PostRepositoryTests.cs
+================================================================================
+using Microsoft.EntityFrameworkCore;
+using MyBlog.Core.Models;
+using MyBlog.Infrastructure.Data;
+using MyBlog.Infrastructure.Repositories;
+using Xunit;
+
+namespace MyBlog.Tests.Integration;
+
+public class PostRepositoryTests : IAsyncDisposable
+{
+    private readonly BlogDbContext _context;
+    private readonly PostRepository _sut;
+    private readonly User _testUser;
+
+    public PostRepositoryTests()
+    {
+        var options = new DbContextOptionsBuilder<BlogDbContext>()
+            .UseSqlite("Data Source=:memory:")
+            .Options;
+
+        _context = new BlogDbContext(options);
+        _context.Database.OpenConnection();
+        _context.Database.EnsureCreated();
+
+        _testUser = new User
+        {
+            Id = Guid.NewGuid(),
+            Username = "testuser",
+            PasswordHash = "hash",
+            Email = "test@example.com",
+            DisplayName = "Test User",
+            CreatedAtUtc = DateTime.UtcNow
+        };
+        _context.Users.Add(_testUser);
+        _context.SaveChanges();
+
+        _sut = new PostRepository(_context);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await _context.DisposeAsync();
+    }
+
+    [Fact]
+    public async Task CreateAsync_AddsPostToDatabase()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var post = CreateTestPost("Test Post");
+
+        var result = await _sut.CreateAsync(post, ct);
+
+        Assert.NotEqual(Guid.Empty, result.Id);
+        var saved = await _context.Posts.FindAsync([result.Id], ct);
+        Assert.NotNull(saved);
+        Assert.Equal("Test Post", saved.Title);
+    }
+
+    [Fact]
+    public async Task GetByIdAsync_WithExistingId_ReturnsPost()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var post = CreateTestPost("Test Post");
+        await _sut.CreateAsync(post, ct);
+
+        var result = await _sut.GetByIdAsync(post.Id, ct);
+
+        Assert.NotNull(result);
+        Assert.Equal("Test Post", result.Title);
+    }
+
+    [Fact]
+    public async Task GetByIdAsync_WithNonExistingId_ReturnsNull()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var result = await _sut.GetByIdAsync(Guid.NewGuid(), ct);
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public async Task GetBySlugAsync_WithExistingSlug_ReturnsPost()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var post = CreateTestPost("Test Post", "test-post");
+        await _sut.CreateAsync(post, ct);
+
+        var result = await _sut.GetBySlugAsync("test-post", ct);
+
+        Assert.NotNull(result);
+        Assert.Equal("Test Post", result.Title);
+    }
+
+    [Fact]
+    public async Task GetPublishedPostsAsync_ReturnsOnlyPublishedPosts()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await _sut.CreateAsync(CreateTestPost("Published", isPublished: true), ct);
+        await _sut.CreateAsync(CreateTestPost("Draft", isPublished: false), ct);
+
+        var (posts, totalCount) = await _sut.GetPublishedPostsAsync(1, 10, ct);
+
+        Assert.Single(posts);
+        Assert.Equal("Published", posts.First().Title);
+        Assert.Equal(1, totalCount);
+    }
+
+    [Fact]
+    public async Task UpdateAsync_ModifiesPost()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var post = CreateTestPost("Original Title");
+        await _sut.CreateAsync(post, ct);
+
+        post.Title = "Updated Title";
+        await _sut.UpdateAsync(post, ct);
+
+        var result = await _sut.GetByIdAsync(post.Id, ct);
+        Assert.Equal("Updated Title", result!.Title);
+    }
+
+    [Fact]
+    public async Task DeleteAsync_RemovesPost()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var post = CreateTestPost("To Delete");
+        await _sut.CreateAsync(post, ct);
+
+        await _sut.DeleteAsync(post.Id, ct);
+
+        var result = await _sut.GetByIdAsync(post.Id, ct);
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public async Task GetPublishedPostsAsync_ReturnsCorrectCount()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await _sut.CreateAsync(CreateTestPost("Post 1", isPublished: true), ct);
+        await _sut.CreateAsync(CreateTestPost("Post 2", isPublished: true), ct);
+        await _sut.CreateAsync(CreateTestPost("Draft", isPublished: false), ct);
+
+        var (_, totalCount) = await _sut.GetPublishedPostsAsync(1, 10, ct);
+
+        Assert.Equal(2, totalCount);
+    }
+
+    private Post CreateTestPost(string title, string? slug = null, bool isPublished = true)
+    {
+        return new Post
+        {
+            Id = Guid.NewGuid(),
+            Title = title,
+            Slug = slug ?? title.ToLower().Replace(" ", "-"),
+            Content = "Test content",
+            Summary = "Test summary",
+            AuthorId = _testUser.Id,
+            CreatedAtUtc = DateTime.UtcNow,
+            UpdatedAtUtc = DateTime.UtcNow,
+            IsPublished = isPublished,
+            PublishedAtUtc = isPublished ? DateTime.UtcNow : null
+        };
+    }
+}
+
+--- END OF FILE ---
+
+================================================================================
+FILE: src/MyBlog.Tests/Integration/TelemetryCleanupTests.cs
+================================================================================
+using Microsoft.EntityFrameworkCore;
+using MyBlog.Core.Models;
+using MyBlog.Infrastructure.Data;
+using MyBlog.Infrastructure.Repositories;
+using Xunit;
+
+namespace MyBlog.Tests.Integration;
+
+public class TelemetryCleanupTests : IAsyncDisposable
+{
+    private readonly BlogDbContext _context;
+    private readonly TelemetryLogRepository _sut;
+
+    public TelemetryCleanupTests()
+    {
+        var options = new DbContextOptionsBuilder<BlogDbContext>()
+            .UseSqlite("Data Source=:memory:")
+            .Options;
+
+        _context = new BlogDbContext(options);
+        _context.Database.OpenConnection();
+        _context.Database.EnsureCreated();
+
+        _sut = new TelemetryLogRepository(_context);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await _context.DisposeAsync();
+    }
+
+    [Fact]
+    public async Task DeleteOlderThanAsync_RemovesOldLogs()
+    {
+        var ct = TestContext.Current.CancellationToken;
+
+        // Add old logs
+        var oldLog = new TelemetryLog
+        {
+            TimestampUtc = DateTime.UtcNow.AddDays(-60),
+            Level = "Information",
+            Category = "Test",
+            Message = "Old log"
+        };
+        _context.TelemetryLogs.Add(oldLog);
+
+        // Add recent log
+        var recentLog = new TelemetryLog
+        {
+            TimestampUtc = DateTime.UtcNow.AddDays(-5),
+            Level = "Information",
+            Category = "Test",
+            Message = "Recent log"
+        };
+        _context.TelemetryLogs.Add(recentLog);
+        await _context.SaveChangesAsync(ct);
+
+        var cutoff = DateTime.UtcNow.AddDays(-30);
+        var deleted = await _sut.DeleteOlderThanAsync(cutoff, ct);
+
+        Assert.Equal(1, deleted);
+        var remaining = await _context.TelemetryLogs.CountAsync(ct);
+        Assert.Equal(1, remaining);
+    }
+
+    [Fact]
+    public async Task DeleteOlderThanAsync_WithNoOldLogs_ReturnsZero()
+    {
+        var ct = TestContext.Current.CancellationToken;
+
+        var recentLog = new TelemetryLog
+        {
+            TimestampUtc = DateTime.UtcNow.AddDays(-5),
+            Level = "Information",
+            Category = "Test",
+            Message = "Recent log"
+        };
+        _context.TelemetryLogs.Add(recentLog);
+        await _context.SaveChangesAsync(ct);
+
+        var cutoff = DateTime.UtcNow.AddDays(-30);
+        var deleted = await _sut.DeleteOlderThanAsync(cutoff, ct);
+
+        Assert.Equal(0, deleted);
+    }
+
+    [Fact]
+    public async Task DeleteOlderThanAsync_WithEmptyTable_ReturnsZero()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var cutoff = DateTime.UtcNow.AddDays(-30);
+        var deleted = await _sut.DeleteOlderThanAsync(cutoff, ct);
+        Assert.Equal(0, deleted);
+    }
+}
+
+--- END OF FILE ---
+
+================================================================================
+FILE: src/MyBlog.Tests/MyBlog.Tests.csproj
+================================================================================
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>MyBlog.Tests</RootNamespace>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit.v3" />
+    <PackageReference Include="Microsoft.Testing.Extensions.TrxReport" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\MyBlog.Core\MyBlog.Core.csproj" />
+    <ProjectReference Include="..\MyBlog.Web\MyBlog.Web.csproj" />
+    <ProjectReference Include="..\MyBlog.Infrastructure\MyBlog.Infrastructure.csproj" />
+  </ItemGroup>
+</Project>
+
+--- END OF FILE ---
+
+================================================================================
+FILE: src/MyBlog.Tests/Unit/LoginRateLimitMiddlewareTests.cs
 ================================================================================
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -3185,11 +3219,10 @@ public sealed class LoginRateLimitMiddlewareTests : IDisposable
     }
 }
 
-
 --- END OF FILE ---
 
 ================================================================================
-FILE PATH: src/MyBlog.Tests/Unit/MarkdownServiceTests.cs
+FILE: src/MyBlog.Tests/Unit/MarkdownServiceTests.cs
 ================================================================================
 using MyBlog.Core.Services;
 using Xunit;
@@ -3314,11 +3347,10 @@ public class MarkdownServiceTests
     }
 }
 
-
 --- END OF FILE ---
 
 ================================================================================
-FILE PATH: src/MyBlog.Tests/Unit/PasswordServiceTests.cs
+FILE: src/MyBlog.Tests/Unit/PasswordServiceTests.cs
 ================================================================================
 using MyBlog.Infrastructure.Services;
 using Xunit;
@@ -3376,11 +3408,10 @@ public class PasswordServiceTests
     }
 }
 
-
 --- END OF FILE ---
 
 ================================================================================
-FILE PATH: src/MyBlog.Tests/Unit/SlugServiceTests.cs
+FILE: src/MyBlog.Tests/Unit/SlugServiceTests.cs
 ================================================================================
 using MyBlog.Core.Services;
 using Xunit;
@@ -3453,37 +3484,110 @@ public class SlugServiceTests
     }
 }
 
+--- END OF FILE ---
+
+================================================================================
+FILE: src/MyBlog.Web/appsettings.Development.json
+================================================================================
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Debug",
+      "Microsoft.AspNetCore": "Information"
+    }
+  }
+}
 
 --- END OF FILE ---
 
 ================================================================================
-FILE PATH: src/MyBlog.Tests/MyBlog.Tests.csproj
+FILE: src/MyBlog.Web/appsettings.json
 ================================================================================
-<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <RootNamespace>MyBlog.Tests</RootNamespace>
-    <IsTestProject>true</IsTestProject>
-  </PropertyGroup>
-  
-  <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" />
-    <PackageReference Include="xunit.v3" />
-    <PackageReference Include="Microsoft.Testing.Extensions.TrxReport" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <ProjectReference Include="..\MyBlog.Core\MyBlog.Core.csproj" />
-    <ProjectReference Include="..\MyBlog.Web\MyBlog.Web.csproj" />
-    <ProjectReference Include="..\MyBlog.Infrastructure\MyBlog.Infrastructure.csproj" />
-  </ItemGroup>
-</Project>
-
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "Data Source=myblog.db"
+  },
+  "Authentication": {
+    "SessionTimeoutMinutes": 30,
+    "DefaultAdminPassword": "ChangeMe123!"
+  },
+  "Telemetry": {
+    "RetentionDays": 30,
+    "EnableFileLogging": true,
+    "EnableDatabaseLogging": true
+  },
+  "Application": {
+    "Title": "MyBlog",
+    "PostsPerPage": 10,
+    "RequireHttps": false,
+    "GitForgeUrl": "https://github.com/kusl/dotnetcms"
+  },
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning",
+      "Microsoft.EntityFrameworkCore": "Warning"
+    }
+  }
+}
 
 --- END OF FILE ---
 
 ================================================================================
-FILE PATH: src/MyBlog.Web/Components/Layout/MainLayout.razor
+FILE: src/MyBlog.Web/Components/App.razor
+================================================================================
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@(Title ?? "MyBlog")</title>
+    <base href="/" />
+    <link rel="stylesheet" href="css/site.css" />
+    <link rel="stylesheet" href="MyBlog.Web.styles.css" />
+    <HeadOutlet />
+</head>
+<body>
+<Routes />
+<script src="js/site.js"></script>
+<script src="_framework/blazor.web.js"></script>
+</body>
+</html>
+
+@code {
+    [CascadingParameter]
+    private HttpContext? HttpContext { get; set; }
+
+    private string? Title => HttpContext?.RequestServices
+        .GetService<IConfiguration>()?["Application:Title"];
+}
+
+--- END OF FILE ---
+
+================================================================================
+FILE: src/MyBlog.Web/Components/_Imports.razor
+================================================================================
+@using System.Net.Http
+@using System.Net.Http.Json
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components.Routing
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Components.Web.Virtualization
+@using Microsoft.JSInterop
+@using static Microsoft.AspNetCore.Components.Web.RenderMode
+@using MyBlog.Core.Constants
+@using MyBlog.Core.Interfaces
+@using MyBlog.Core.Models
+@using MyBlog.Web.Components
+@using MyBlog.Web.Components.Layout
+@using MyBlog.Web.Components.Shared
+
+--- END OF FILE ---
+
+================================================================================
+FILE: src/MyBlog.Web/Components/Layout/MainLayout.razor
 ================================================================================
 @inherits LayoutComponentBase
 @inject IConfiguration Configuration
@@ -3522,1155 +3626,10 @@ FILE PATH: src/MyBlog.Web/Components/Layout/MainLayout.razor
     <Footer />
 </div>
 
-
 --- END OF FILE ---
 
 ================================================================================
-FILE PATH: src/MyBlog.Web/Components/Pages/AccessDenied.razor
-================================================================================
-@page "/access-denied"
-
-<PageTitle>Access Denied</PageTitle>
-
-<div class="container" style="max-width: 600px; margin-top: 50px; text-align: center;">
-    <h1 style="color: var(--color-danger);">Access Denied</h1>
-    <p>You do not have permission to view this resource.</p>
-    <div style="margin-top: 20px;">
-        <a href="/" class="btn btn-primary">Return Home</a>
-        <form action="/logout" method="post" style="display: inline;">
-            <AntiforgeryToken />
-            <button type="submit" class="btn btn-link">Logout</button>
-        </form>
-    </div>
-</div>
-
---- END OF FILE ---
-
-================================================================================
-FILE PATH: src/MyBlog.Web/Components/Pages/Admin/ImageManager.razor
-================================================================================
-@page "/admin/images"
-@rendermode InteractiveServer
-@attribute [Authorize]
-@inject IImageRepository ImageRepository
-@inject AuthenticationStateProvider AuthStateProvider
-@using System.Security.Claims
-
-<PageTitle>Manage Images</PageTitle>
-
-<h1>Manage Images</h1>
-
-<div class="image-upload">
-    <h3>Upload New Image</h3>
-    <InputFile OnChange="HandleFileUpload" accept="image/*" disabled="@_uploading" />
-    @if (_uploading)
-    {
-        <p>Uploading...</p>
-    }
-    @if (!string.IsNullOrEmpty(_uploadStatus))
-    {
-        <p class="@(_uploadError ? "error" : "success")">@_uploadStatus</p>
-    }
-</div>
-
-<h3>Uploaded Images</h3>
-@if (_images is null)
-{
-    <p>Loading...</p>
-}
-else if (_images.Count == 0)
-{
-    <p>No images uploaded yet.</p>
-}
-else
-{
-    <div class="image-grid">
-        @foreach (var image in _images)
-        {
-            <div class="image-card">
-                <img src="/api/images/@image.Id" alt="@image.FileName" />
-                <div class="image-info">
-                    <p>@image.FileName</p>
-                    <code>/api/images/@image.Id</code>
-                    <button @onclick="() => DeleteImage(image.Id)" class="btn-link danger" disabled="@_deleting">Delete</button>
-                </div>
-            </div>
-        }
-    </div>
-}
-
-@code {
-    private IReadOnlyList<Image>? _images;
-    private string? _uploadStatus;
-    private bool _uploadError;
-    private bool _uploading;
-    private bool _deleting;
-
-    protected override async Task OnInitializedAsync()
-    {
-        await LoadImages();
-    }
-
-    private async Task LoadImages()
-    {
-        _images = await ImageRepository.GetAllAsync();
-    }
-
-    private async Task HandleFileUpload(InputFileChangeEventArgs e)
-    {
-        _uploadStatus = null;
-        _uploadError = false;
-        _uploading = true;
-
-        try
-        {
-            var file = e.File;
-            if (file.Size > AppConstants.MaxImageSizeBytes)
-            {
-                _uploadStatus = "File too large. Maximum size is 5MB.";
-                _uploadError = true;
-                return;
-            }
-
-            if (!AppConstants.AllowedImageTypes.Contains(file.ContentType))
-            {
-                _uploadStatus = "Invalid file type. Only JPEG, PNG, GIF, and WebP are allowed.";
-                _uploadError = true;
-                return;
-            }
-
-            var authState = await AuthStateProvider.GetAuthenticationStateAsync();
-            var userIdClaim = authState.User.FindFirst(ClaimTypes.NameIdentifier);
-            
-            if (userIdClaim is null || !Guid.TryParse(userIdClaim.Value, out var userId))
-            {
-                _uploadStatus = "Unable to identify current user. Please log in again.";
-                _uploadError = true;
-                return;
-            }
-
-            using var stream = file.OpenReadStream(AppConstants.MaxImageSizeBytes);
-            using var ms = new MemoryStream();
-            await stream.CopyToAsync(ms);
-
-            var image = new Image
-            {
-                Id = Guid.NewGuid(),
-                FileName = file.Name,
-                ContentType = file.ContentType,
-                Data = ms.ToArray(),
-                UploadedAtUtc = DateTime.UtcNow,
-                UploadedByUserId = userId
-            };
-
-            await ImageRepository.CreateAsync(image);
-            _uploadStatus = "Image uploaded successfully!";
-            await LoadImages();
-        }
-        catch (Exception ex)
-        {
-            _uploadStatus = $"Upload failed: {ex.Message}";
-            _uploadError = true;
-        }
-        finally
-        {
-            _uploading = false;
-        }
-    }
-
-    private async Task DeleteImage(Guid id)
-    {
-        _deleting = true;
-        try
-        {
-            await ImageRepository.DeleteAsync(id);
-            await LoadImages();
-        }
-        finally
-        {
-            _deleting = false;
-        }
-    }
-}
-
-
---- END OF FILE ---
-
-================================================================================
-FILE PATH: src/MyBlog.Web/Components/Pages/Admin/PostList.razor
-================================================================================
-@page "/admin/posts"
-@rendermode InteractiveServer
-@attribute [Authorize]
-@inject IPostRepository PostRepository
-@inject NavigationManager Navigation
-
-<PageTitle>Manage Posts</PageTitle>
-
-<h1>Manage Posts</h1>
-
-<p><a href="/admin/posts/new" class="btn btn-primary">Create New Post</a></p>
-
-@if (_posts is null)
-{
-    <p>Loading...</p>
-}
-else if (_posts.Count == 0)
-{
-    <p>No posts yet.</p>
-}
-else
-{
-    <table class="admin-table">
-        <thead>
-            <tr>
-                <th>Title</th>
-                <th>Author</th>
-                <th>Status</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var post in _posts)
-            {
-                <tr>
-                    <td>@post.Title</td>
-                    <td>@post.AuthorDisplayName</td>
-                    <td>@(post.IsPublished ? "Published" : "Draft")</td>
-                    <td>
-                        <a href="/admin/posts/edit/@post.Id">Edit</a>
-                        <button @onclick="() => DeletePost(post.Id)" class="btn-link danger" disabled="@_deleting">Delete</button>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
-
-@code {
-    private IReadOnlyList<PostListItemDto>? _posts;
-    private bool _deleting;
-
-    protected override async Task OnInitializedAsync()
-    {
-        await LoadPosts();
-    }
-
-    private async Task LoadPosts()
-    {
-        _posts = await PostRepository.GetAllPostsAsync();
-    }
-
-    private async Task DeletePost(Guid id)
-    {
-        _deleting = true;
-        try
-        {
-            await PostRepository.DeleteAsync(id);
-            await LoadPosts();
-        }
-        finally
-        {
-            _deleting = false;
-        }
-    }
-}
-
-
---- END OF FILE ---
-
-================================================================================
-FILE PATH: src/MyBlog.Web/Components/Pages/Admin/PostEditor.razor
-================================================================================
-@page "/admin/posts/new"
-@page "/admin/posts/edit/{Id:guid}"
-@rendermode InteractiveServer
-@attribute [Authorize]
-@inject IPostRepository PostRepository
-@inject ISlugService SlugService
-@inject NavigationManager Navigation
-@inject AuthenticationStateProvider AuthStateProvider
-@using System.Security.Claims
-
-<PageTitle>@(IsEdit ? "Edit Post" : "New Post")</PageTitle>
-
-<h1>@(IsEdit ? "Edit Post" : "New Post")</h1>
-
-@if (_loading)
-{
-    <p>Loading...</p>
-}
-else if (IsEdit && _existingPost is null)
-{
-    <p>Post not found.</p>
-    <a href="/admin/posts">Back to Posts</a>
-}
-else
-{
-    <div class="post-editor">
-        <div class="editor-form">
-            <div class="form-group">
-                <label for="title">Title</label>
-                <input type="text" id="title" @bind="_title" @bind:event="oninput" />
-            </div>
-
-            <div class="form-group">
-                <label for="summary">Summary</label>
-                <textarea id="summary" @bind="_summary" rows="2"></textarea>
-            </div>
-
-            <div class="form-group">
-                <label for="content">Content (Markdown)</label>
-                <textarea id="content" @bind="_content" @bind:event="oninput" rows="20"></textarea>
-            </div>
-
-            <div class="form-group checkbox">
-                <label>
-                    <input type="checkbox" @bind="_isPublished" />
-                    Published
-                </label>
-            </div>
-
-            @if (!string.IsNullOrEmpty(_error))
-            {
-                <div class="error-message">@_error</div>
-            }
-
-            <div class="form-actions">
-                <button @onclick="Save" class="btn btn-primary" disabled="@_saving">
-                    @(_saving ? "Saving..." : "Save")
-                </button>
-                <a href="/admin/posts" class="btn">Cancel</a>
-            </div>
-        </div>
-
-        <div class="editor-preview">
-            <h3>Preview</h3>
-            <div class="preview-content">
-                <MarkdownRenderer Content="@_content" />
-            </div>
-        </div>
-    </div>
-}
-
-@code {
-    [Parameter]
-    public Guid? Id { get; set; }
-
-    private bool IsEdit => Id.HasValue;
-    private bool _loading = true;
-    private bool _saving;
-    private string _title = "";
-    private string _summary = "";
-    private string _content = "";
-    private bool _isPublished;
-    private string? _error;
-    private Post? _existingPost;
-
-    protected override async Task OnInitializedAsync()
-    {
-        if (IsEdit)
-        {
-            _existingPost = await PostRepository.GetByIdAsync(Id!.Value);
-            if (_existingPost is not null)
-            {
-                _title = _existingPost.Title;
-                _summary = _existingPost.Summary;
-                _content = _existingPost.Content;
-                _isPublished = _existingPost.IsPublished;
-            }
-        }
-        _loading = false;
-    }
-
-    private async Task Save()
-    {
-        if (string.IsNullOrWhiteSpace(_title))
-        {
-            _error = "Title is required.";
-            return;
-        }
-
-        _saving = true;
-        _error = null;
-
-        try
-        {
-            var authState = await AuthStateProvider.GetAuthenticationStateAsync();
-            var userIdClaim = authState.User.FindFirst(ClaimTypes.NameIdentifier);
-
-            if (userIdClaim is null || !Guid.TryParse(userIdClaim.Value, out var userId))
-            {
-                _error = "Unable to identify current user. Please log in again.";
-                _saving = false;
-                return;
-            }
-
-            // Generate unique slug
-            var baseSlug = SlugService.GenerateSlug(_title);
-            var finalSlug = baseSlug;
-            var counter = 1;
-
-            // Loop until we find a slug that isn't taken (excluding current post if editing)
-            while (await PostRepository.IsSlugTakenAsync(finalSlug, IsEdit ? Id : null))
-            {
-                finalSlug = $"{baseSlug}-{counter}";
-                counter++;
-            }
-
-            if (IsEdit && _existingPost is not null)
-            {
-                _existingPost.Title = _title;
-                _existingPost.Slug = finalSlug; // Update slug with unique version
-                _existingPost.Summary = _summary;
-                _existingPost.Content = _content;
-                _existingPost.IsPublished = _isPublished;
-                _existingPost.UpdatedAtUtc = DateTime.UtcNow;
-                if (_isPublished && !_existingPost.PublishedAtUtc.HasValue)
-                {
-                    _existingPost.PublishedAtUtc = DateTime.UtcNow;
-                }
-
-                await PostRepository.UpdateAsync(_existingPost);
-            }
-            else
-            {
-                var post = new Post
-                {
-                    Id = Guid.NewGuid(),
-                    Title = _title,
-                    Slug = finalSlug, // Use unique slug
-                    Summary = _summary,
-                    Content = _content,
-                    AuthorId = userId,
-                    CreatedAtUtc = DateTime.UtcNow,
-                    UpdatedAtUtc = DateTime.UtcNow,
-                    IsPublished = _isPublished,
-                    PublishedAtUtc = _isPublished ? DateTime.UtcNow : null
-                };
-                await PostRepository.CreateAsync(post);
-            }
-
-            Navigation.NavigateTo("/admin/posts");
-        }
-        catch (Exception ex)
-        {
-            _error = $"Failed to save: {ex.Message}";
-        }
-        finally
-        {
-            _saving = false;
-        }
-    }
-}
-
-
---- END OF FILE ---
-
-================================================================================
-FILE PATH: src/MyBlog.Web/Components/Pages/Admin/UserEditor.razor
-================================================================================
-@page "/admin/users/new"
-@page "/admin/users/edit/{Id:guid}"
-@attribute [Authorize(Roles = AppConstants.AdminRole)]
-@rendermode InteractiveServer
-@inject IUserRepository UserRepository
-@inject IPasswordService PasswordService
-@inject NavigationManager Navigation
-
-<PageTitle>@(IsEdit ? "Edit User" : "New User")</PageTitle>
-
-<h1>@(IsEdit ? "Edit User" : "New User")</h1>
-
-<div class="user-editor" style="max-width: 600px;">
-    @if (!string.IsNullOrEmpty(_error))
-    {
-        <div class="error-message">@_error</div>
-    }
-
-    <div class="form-group">
-        <label for="username">Username</label>
-        <input type="text" id="username" @bind="_username" required />
-    </div>
-
-    <div class="form-group">
-        <label for="displayName">Display Name</label>
-        <input type="text" id="displayName" @bind="_displayName" required />
-    </div>
-
-    <div class="form-group">
-        <label for="email">Email</label>
-        <input type="email" id="email" @bind="_email" required />
-    </div>
-
-    <div class="form-group">
-        <label for="password">Password @(IsEdit ? "(Leave blank to keep current)" : "")</label>
-        <input type="password" id="password" @bind="_password" required="@(!IsEdit)" />
-        @if (!IsEdit) 
-        {
-            <small>Required for new users.</small>
-        }
-    </div>
-
-    <div class="form-actions">
-        <button @onclick="Save" class="btn btn-primary" disabled="@_saving">
-            @(_saving ? "Saving..." : "Save User")
-        </button>
-        <a href="/admin/users" class="btn btn-secondary">Cancel</a>
-    </div>
-</div>
-
-@code {
-    [Parameter]
-    public Guid? Id { get; set; }
-
-    private bool IsEdit => Id.HasValue;
-    private bool _saving;
-    private string? _error;
-
-    // Form fields
-    private string _username = "";
-    private string _displayName = "";
-    private string _email = "";
-    private string _password = "";
-
-    private User? _existingUser;
-
-    protected override async Task OnParametersSetAsync()
-    {
-        if (IsEdit)
-        {
-            _existingUser = await UserRepository.GetByIdAsync(Id!.Value);
-            if (_existingUser is null)
-            {
-                Navigation.NavigateTo("/admin/users");
-                return;
-            }
-
-            _username = _existingUser.Username;
-            _displayName = _existingUser.DisplayName;
-            _email = _existingUser.Email;
-        }
-    }
-
-    private async Task Save()
-    {
-        _error = null;
-        _saving = true;
-
-        try
-        {
-            if (string.IsNullOrWhiteSpace(_username) || string.IsNullOrWhiteSpace(_displayName) || string.IsNullOrWhiteSpace(_email))
-            {
-                _error = "All fields are required.";
-                return;
-            }
-
-            // Check if username is taken (by another user)
-            var duplicate = await UserRepository.GetByUsernameAsync(_username);
-            if (duplicate is not null && duplicate.Id != Id)
-            {
-                _error = "Username is already taken.";
-                return;
-            }
-
-            if (IsEdit && _existingUser is not null)
-            {
-                // Update existing
-                _existingUser.Username = _username;
-                _existingUser.DisplayName = _displayName;
-                _existingUser.Email = _email;
-
-                // Only update password if provided
-                if (!string.IsNullOrWhiteSpace(_password))
-                {
-                     if (_password.Length < 8)
-                     {
-                         _error = "Password must be at least 8 characters.";
-                         return;
-                     }
-                    _existingUser.PasswordHash = PasswordService.HashPassword(_password);
-                }
-
-                await UserRepository.UpdateAsync(_existingUser);
-            }
-            else
-            {
-                // Create new
-                if (string.IsNullOrWhiteSpace(_password) || _password.Length < 8)
-                {
-                    _error = "Password is required (min 8 chars) for new users.";
-                    return;
-                }
-
-                var newUser = new User
-                {
-                    Id = Guid.NewGuid(),
-                    Username = _username,
-                    DisplayName = _displayName,
-                    Email = _email,
-                    PasswordHash = PasswordService.HashPassword(_password),
-                    CreatedAtUtc = DateTime.UtcNow
-                };
-
-                await UserRepository.CreateAsync(newUser);
-            }
-
-            Navigation.NavigateTo("/admin/users");
-        }
-        catch (Exception ex)
-        {
-            _error = $"Error saving user: {ex.Message}";
-        }
-        finally
-        {
-            _saving = false;
-        }
-    }
-}
-
-
---- END OF FILE ---
-
-================================================================================
-FILE PATH: src/MyBlog.Web/Components/Pages/Admin/UserList.razor
-================================================================================
-@page "/admin/users"
-@attribute [Authorize(Roles = AppConstants.AdminRole)]
-@rendermode InteractiveServer
-@inject IUserRepository UserRepository
-@inject AuthenticationStateProvider AuthStateProvider
-@inject IJSRuntime JsRuntime
-@using System.Security.Claims
-@using MyBlog.Core.Models
-
-<PageTitle>Manage Users</PageTitle>
-
-<div class="admin-container">
-    <div class="admin-header">
-        <h1>Manage Users</h1>
-        <a href="/admin/users/new" class="btn btn-primary">Create New User</a>
-    </div>
-
-    @if (_users is null)
-    {
-        <p>Loading...</p>
-    }
-    else
-    {
-        <div class="responsive-user-list">
-            @* Header - Hidden on mobile *@
-            <div class="list-header d-none-mobile">
-                <div class="col">Username</div>
-                <div class="col">Display Name</div>
-                <div class="col">Email</div>
-                <div class="col actions">Actions</div>
-            </div>
-
-            @foreach (var user in _users)
-            {
-                <div class="list-row">
-                    <div class="list-item">
-                        <span class="mobile-label">Username:</span>
-                        <a href="/admin/users/edit/@user.Id">@user.Username</a>
-                    </div>
-                    <div class="list-item">
-                        <span class="mobile-label">Name:</span>
-                        @user.DisplayName
-                    </div>
-                    <div class="list-item email-cell">
-                        <span class="mobile-label">Email:</span>
-                        @user.Email
-                    </div>
-                    <div class="list-item actions">
-                        <a href="/admin/users/edit/@user.Id" class="btn btn-sm">Edit</a>
-                        @if (user.Id != _currentUserId)
-                        {
-                            <button @onclick="() => DeleteUser(user.Id)" class="btn btn-sm btn-danger">Delete</button>
-                        }
-                        else
-                        {
-                            <span class="current-user-badge">(Current)</span>
-                        }
-                    </div>
-                </div>
-            }
-        </div>
-    }
-</div>
-
-@code {
-    private IReadOnlyList<User>? _users;
-    private Guid _currentUserId;
-
-    protected override async Task OnInitializedAsync()
-    {
-        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
-        var idClaim = authState.User.FindFirst(ClaimTypes.NameIdentifier);
-        if (idClaim != null && Guid.TryParse(idClaim.Value, out var id))
-        {
-            _currentUserId = id;
-        }
-
-        await LoadUsers();
-    }
-
-    private async Task LoadUsers()
-    {
-        _users = await UserRepository.GetAllAsync();
-    }
-
-    private async Task DeleteUser(Guid id)
-    {
-        if (id == _currentUserId) return;
-
-        var confirm = await JsRuntime.InvokeAsync<bool>("confirm", "Are you sure you want to delete this user?");
-        
-        if (confirm)
-        {
-            await UserRepository.DeleteAsync(id);
-            await LoadUsers();
-        }
-    }
-}
-
-
---- END OF FILE ---
-
-================================================================================
-FILE PATH: src/MyBlog.Web/Components/Pages/Admin/ChangePassword.razor
-================================================================================
-@page "/admin/change-password"
-@attribute [Authorize]
-@inject IAuthService AuthService
-@inject IHttpContextAccessor HttpContextAccessor
-@inject NavigationManager Navigation
-@using System.Security.Claims
-@rendermode InteractiveServer
-
-<PageTitle>Change Password</PageTitle>
-
-<h1>Change Password</h1>
-
-<div class="change-password-form">
-    @if (!string.IsNullOrEmpty(_successMessage))
-    {
-        <div class="success-message">@_successMessage</div>
-    }
-
-    @if (!string.IsNullOrEmpty(_errorMessage))
-    {
-        <div class="error-message">@_errorMessage</div>
-    }
-
-    <form method="post" @onsubmit="HandleSubmit" @formname="changepassword">
-        <AntiforgeryToken />
-
-        <div class="form-group">
-            <label for="currentPassword">Current Password</label>
-            <input type="password" id="currentPassword" name="currentPassword" @bind="_currentPassword" required />
-        </div>
-
-        <div class="form-group">
-            <label for="newPassword">New Password</label>
-            <input type="password" id="newPassword" name="newPassword" @bind="_newPassword" required minlength="8" />
-            <small>Minimum 8 characters</small>
-        </div>
-
-        <div class="form-group">
-            <label for="confirmPassword">Confirm New Password</label>
-            <input type="password" id="confirmPassword" name="confirmPassword" @bind="_confirmPassword" required />
-        </div>
-
-        <div class="form-actions">
-            <button type="submit" class="btn btn-primary">Change Password</button>
-            <a href="/admin" class="btn btn-secondary">Cancel</a>
-        </div>
-    </form>
-</div>
-
-@code {
-    private string _currentPassword = "";
-    private string _newPassword = "";
-    private string _confirmPassword = "";
-    private string? _successMessage;
-    private string? _errorMessage;
-
-    [SupplyParameterFromForm(Name = "currentPassword")]
-    public string? FormCurrentPassword { get; set; }
-
-    [SupplyParameterFromForm(Name = "newPassword")]
-    public string? FormNewPassword { get; set; }
-
-    [SupplyParameterFromForm(Name = "confirmPassword")]
-    public string? FormConfirmPassword { get; set; }
-
-    private async Task HandleSubmit()
-    {
-        _successMessage = null;
-        _errorMessage = null;
-
-        // Use form values if available (SSR form post), otherwise use bound values
-        var currentPassword = FormCurrentPassword ?? _currentPassword;
-        var newPassword = FormNewPassword ?? _newPassword;
-        var confirmPassword = FormConfirmPassword ?? _confirmPassword;
-
-        // Validation
-        if (string.IsNullOrWhiteSpace(newPassword) || newPassword.Length < 8)
-        {
-            _errorMessage = "New password must be at least 8 characters.";
-            return;
-        }
-
-        if (newPassword != confirmPassword)
-        {
-            _errorMessage = "New password and confirmation do not match.";
-            return;
-        }
-
-        if (currentPassword == newPassword)
-        {
-            _errorMessage = "New password must be different from current password.";
-            return;
-        }
-
-        // Get current user ID
-        var context = HttpContextAccessor.HttpContext;
-        var userIdClaim = context?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        
-        if (string.IsNullOrEmpty(userIdClaim) || !Guid.TryParse(userIdClaim, out var userId))
-        {
-            _errorMessage = "Unable to identify current user. Please log in again.";
-            return;
-        }
-
-        // Attempt password change
-        var success = await AuthService.ChangePasswordAsync(userId, currentPassword, newPassword);
-
-        if (success)
-        {
-            _successMessage = "Password changed successfully!";
-            _currentPassword = "";
-            _newPassword = "";
-            _confirmPassword = "";
-            // Clear form values as well
-            FormCurrentPassword = null;
-            FormNewPassword = null;
-            FormConfirmPassword = null;
-        }
-        else
-        {
-            _errorMessage = "Current password is incorrect.";
-        }
-    }
-}
-
-
---- END OF FILE ---
-
-================================================================================
-FILE PATH: src/MyBlog.Web/Components/Pages/Admin/Dashboard.razor
-================================================================================
-@page "/admin"
-@attribute [Authorize]
-@inject IPostRepository PostRepository
-@rendermode InteractiveServer
-
-<PageTitle>Admin Dashboard</PageTitle>
-
-<h1>Admin Dashboard</h1>
-
-<div class="dashboard-stats">
-    <div class="stat-card">
-        <h3>Total Posts</h3>
-        <p class="stat-value">@_postCount</p>
-    </div>
-</div>
-
-<div class="admin-nav">
-    <a href="/admin/posts" class="btn">Manage Posts</a>
-    <a href="/admin/posts/new" class="btn">New Post</a>
-    <a href="/admin/images" class="btn">Manage Images</a>
-</div>
-
-<h2>Recent Posts</h2>
-@if (_recentPosts is null)
-{
-    <p>Loading...</p>
-}
-else if (_recentPosts.Count == 0)
-{
-    <p>No posts yet.</p>
-}
-else
-{
-    <table class="admin-table">
-        <thead>
-            <tr>
-                <th>Title</th>
-                <th>Status</th>
-                <th>Updated</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var post in _recentPosts)
-            {
-                <tr>
-                    <td><a href="/admin/posts/edit/@post.Id">@post.Title</a></td>
-                    <td>@(post.IsPublished ? "Published" : "Draft")</td>
-                    <td>@(post.PublishedAtUtc?.ToString("MMM d, yyyy") ?? "—")</td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
-
-@code {
-    private int _postCount;
-    private IReadOnlyList<PostListItemDto>? _recentPosts;
-
-    protected override async Task OnInitializedAsync()
-    {
-        _postCount = await PostRepository.GetCountAsync();
-        _recentPosts = await PostRepository.GetRecentPostsAsync(5);
-    }
-}
-
-
---- END OF FILE ---
-
-================================================================================
-FILE PATH: src/MyBlog.Web/Components/Pages/Home.razor
-================================================================================
-@page "/"
-@inject IPostRepository PostRepository
-@inject IConfiguration Configuration
-
-<PageTitle>@(Configuration["Application:Title"] ?? "MyBlog")</PageTitle>
-
-<h1>Welcome to @(Configuration["Application:Title"] ?? "MyBlog")</h1>
-
-@if (_posts is null)
-{
-    <p>Loading...</p>
-}
-else if (_posts.Count == 0)
-{
-    <p>No posts yet. Check back soon!</p>
-}
-else
-{
-    <div class="post-list">
-        @foreach (var post in _posts)
-        {
-            <PostCard Post="post" />
-        }
-    </div>
-
-    <Pagination CurrentPage="_currentPage" TotalPages="_totalPages" BaseUrl="/" />
-}
-
-@code {
-    private IReadOnlyList<PostListItemDto>? _posts;
-    private int _currentPage = 1;
-    private int _totalPages = 1;
-
-    [SupplyParameterFromQuery(Name = "page")]
-    public int? Page { get; set; }
-
-    protected override async Task OnParametersSetAsync()
-    {
-        _currentPage = Page ?? 1;
-        if (_currentPage < 1) _currentPage = 1;
-
-        var pageSize = Configuration.GetValue("Application:PostsPerPage", 10);
-        var (posts, totalCount) = await PostRepository.GetPublishedPostsAsync(_currentPage, pageSize);
-        
-        _posts = posts;
-        _totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
-    }
-}
-
-
---- END OF FILE ---
-
-================================================================================
-FILE PATH: src/MyBlog.Web/Components/Pages/Login.razor
-================================================================================
-@page "/login"
-@inject IAuthService AuthService
-@inject NavigationManager Navigation
-@inject IHttpContextAccessor HttpContextAccessor
-@using System.Security.Claims
-@using Microsoft.AspNetCore.Authentication
-@using Microsoft.AspNetCore.Authentication.Cookies
-
-<PageTitle>Login</PageTitle>
-
-<div class="login-page">
-    <h1>Login</h1>
-
-    @if (!string.IsNullOrEmpty(_error))
-    {
-        <div class="error-message">@_error</div>
-    }
-
-    <form method="post" @onsubmit="HandleLogin" @formname="login">
-        <AntiforgeryToken />
-        
-        <div class="form-group">
-            <label for="username">Username</label>
-            <input type="text" id="username" name="username" @bind="_username" required />
-        </div>
-
-        <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" id="password" name="password" @bind="_password" required />
-        </div>
-
-        <button type="submit" class="btn btn-primary">Login</button>
-    </form>
-</div>
-
-@code {
-    private string _username = "";
-    private string _password = "";
-    private string? _error;
-
-    [SupplyParameterFromQuery]
-    public string? ReturnUrl { get; set; }
-
-    [SupplyParameterFromForm(Name = "username")]
-    public string? FormUsername { get; set; }
-
-    [SupplyParameterFromForm(Name = "password")]
-    public string? FormPassword { get; set; }
-
-    private async Task HandleLogin()
-    {
-        var username = FormUsername ?? _username;
-        var password = FormPassword ?? _password;
-
-        if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
-        {
-            _error = "Username and password are required";
-            return;
-        }
-
-        var user = await AuthService.AuthenticateAsync(username, password);
-        if (user is null)
-        {
-            _error = "Invalid username or password";
-            return;
-        }
-
-        // FIX: Added the Role claim here so [Authorize(Roles="Admin")] works
-        var claims = new List<Claim>
-        {
-            new(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new(ClaimTypes.Name, user.Username),
-            new("DisplayName", user.DisplayName),
-            new(ClaimTypes.Role, AppConstants.AdminRole) 
-        };
-
-        var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-        var principal = new ClaimsPrincipal(identity);
-
-        var context = HttpContextAccessor.HttpContext!;
-        await context.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
-        
-        Navigation.NavigateTo(ReturnUrl ?? "/admin", forceLoad: true);
-    }
-}
-
-
---- END OF FILE ---
-
-================================================================================
-FILE PATH: src/MyBlog.Web/Components/Pages/PostDetail.razor
-================================================================================
-@page "/post/{Slug}"
-@inject IPostRepository PostRepository
-@inject NavigationManager Navigation
-@using MyBlog.Web.Components.Shared
-
-@if (_post is null)
-{
-    @if (_notFound)
-    {
-        <PageTitle>Not Found</PageTitle>
-        <h1>Post Not Found</h1>
-        <p>The post you're looking for doesn't exist.</p>
-        <a href="/">← Back to Home</a>
-    }
-    else
-    {
-        <p>Loading...</p>
-    }
-}
-else
-{
-    <PageTitle>@_post.Title</PageTitle>
-
-    <article class="post-detail">
-        <header class="post-header">
-            <h1>@_post.Title</h1>
-            <div class="post-meta">
-                <span class="author">By @_post.AuthorDisplayName</span>
-                @if (_post.PublishedAtUtc.HasValue)
-                {
-                    <span class="date">Published @_post.PublishedAtUtc.Value.ToString("MMMM d, yyyy")</span>
-                }
-
-                @* This isolates the interactivity to JUST the badge *@
-                <ReaderBadge Slug="@_post.Slug" @rendermode="InteractiveServer" />
-
-                @* This uses the standard JS function we added *@
-                <button type="button" class="btn-link share-btn" data-title="@_post.Title" onclick="sharePost(this.dataset.title)">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="18" cy="5" r="3"></circle>
-                        <circle cx="6" cy="12" r="3"></circle>
-                        <circle cx="18" cy="19" r="3"></circle>
-                        <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
-                        <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
-                    </svg>
-                    Share
-                </button>
-            </div>
-        </header>
-
-        <div class="post-content">
-            <MarkdownRenderer Content="@_post.Content" />
-        </div>
-    </article>
-
-    <a href="/" class="back-link">← Back to Home</a>
-}
-
-@code {
-    [Parameter]
-    public string Slug { get; set; } = "";
-    private PostDetailDto? _post;
-    private bool _notFound;
-
-    protected override async Task OnParametersSetAsync()
-    {
-        _post = await PostRepository.GetBySlugAsync(Slug);
-        _notFound = _post is null;
-
-        if (_post is not null && !_post.IsPublished)
-        {
-            _post = null;
-            _notFound = true;
-        }
-    }
-}
-
-
---- END OF FILE ---
-
-================================================================================
-FILE PATH: src/MyBlog.Web/Components/Pages/About.razor
+FILE: src/MyBlog.Web/Components/Pages/About.razor
 ================================================================================
 @page "/about"
 @rendermode InteractiveServer
@@ -5383,11 +4342,1143 @@ dotnet run</code></pre>
     }
 }
 
+--- END OF FILE ---
+
+================================================================================
+FILE: src/MyBlog.Web/Components/Pages/AccessDenied.razor
+================================================================================
+@page "/access-denied"
+
+<PageTitle>Access Denied</PageTitle>
+
+<div class="container" style="max-width: 600px; margin-top: 50px; text-align: center;">
+    <h1 style="color: var(--color-danger);">Access Denied</h1>
+    <p>You do not have permission to view this resource.</p>
+    <div style="margin-top: 20px;">
+        <a href="/" class="btn btn-primary">Return Home</a>
+        <form action="/logout" method="post" style="display: inline;">
+            <AntiforgeryToken />
+            <button type="submit" class="btn btn-link">Logout</button>
+        </form>
+    </div>
+</div>
+--- END OF FILE ---
+
+================================================================================
+FILE: src/MyBlog.Web/Components/Pages/Admin/ChangePassword.razor
+================================================================================
+@page "/admin/change-password"
+@attribute [Authorize]
+@inject IAuthService AuthService
+@inject IHttpContextAccessor HttpContextAccessor
+@inject NavigationManager Navigation
+@using System.Security.Claims
+@rendermode InteractiveServer
+
+<PageTitle>Change Password</PageTitle>
+
+<h1>Change Password</h1>
+
+<div class="change-password-form">
+    @if (!string.IsNullOrEmpty(_successMessage))
+    {
+        <div class="success-message">@_successMessage</div>
+    }
+
+    @if (!string.IsNullOrEmpty(_errorMessage))
+    {
+        <div class="error-message">@_errorMessage</div>
+    }
+
+    <form method="post" @onsubmit="HandleSubmit" @formname="changepassword">
+        <AntiforgeryToken />
+
+        <div class="form-group">
+            <label for="currentPassword">Current Password</label>
+            <input type="password" id="currentPassword" name="currentPassword" @bind="_currentPassword" required />
+        </div>
+
+        <div class="form-group">
+            <label for="newPassword">New Password</label>
+            <input type="password" id="newPassword" name="newPassword" @bind="_newPassword" required minlength="8" />
+            <small>Minimum 8 characters</small>
+        </div>
+
+        <div class="form-group">
+            <label for="confirmPassword">Confirm New Password</label>
+            <input type="password" id="confirmPassword" name="confirmPassword" @bind="_confirmPassword" required />
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Change Password</button>
+            <a href="/admin" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+
+@code {
+    private string _currentPassword = "";
+    private string _newPassword = "";
+    private string _confirmPassword = "";
+    private string? _successMessage;
+    private string? _errorMessage;
+
+    [SupplyParameterFromForm(Name = "currentPassword")]
+    public string? FormCurrentPassword { get; set; }
+
+    [SupplyParameterFromForm(Name = "newPassword")]
+    public string? FormNewPassword { get; set; }
+
+    [SupplyParameterFromForm(Name = "confirmPassword")]
+    public string? FormConfirmPassword { get; set; }
+
+    private async Task HandleSubmit()
+    {
+        _successMessage = null;
+        _errorMessage = null;
+
+        // Use form values if available (SSR form post), otherwise use bound values
+        var currentPassword = FormCurrentPassword ?? _currentPassword;
+        var newPassword = FormNewPassword ?? _newPassword;
+        var confirmPassword = FormConfirmPassword ?? _confirmPassword;
+
+        // Validation
+        if (string.IsNullOrWhiteSpace(newPassword) || newPassword.Length < 8)
+        {
+            _errorMessage = "New password must be at least 8 characters.";
+            return;
+        }
+
+        if (newPassword != confirmPassword)
+        {
+            _errorMessage = "New password and confirmation do not match.";
+            return;
+        }
+
+        if (currentPassword == newPassword)
+        {
+            _errorMessage = "New password must be different from current password.";
+            return;
+        }
+
+        // Get current user ID
+        var context = HttpContextAccessor.HttpContext;
+        var userIdClaim = context?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        
+        if (string.IsNullOrEmpty(userIdClaim) || !Guid.TryParse(userIdClaim, out var userId))
+        {
+            _errorMessage = "Unable to identify current user. Please log in again.";
+            return;
+        }
+
+        // Attempt password change
+        var success = await AuthService.ChangePasswordAsync(userId, currentPassword, newPassword);
+
+        if (success)
+        {
+            _successMessage = "Password changed successfully!";
+            _currentPassword = "";
+            _newPassword = "";
+            _confirmPassword = "";
+            // Clear form values as well
+            FormCurrentPassword = null;
+            FormNewPassword = null;
+            FormConfirmPassword = null;
+        }
+        else
+        {
+            _errorMessage = "Current password is incorrect.";
+        }
+    }
+}
 
 --- END OF FILE ---
 
 ================================================================================
-FILE PATH: src/MyBlog.Web/Components/Routes.razor
+FILE: src/MyBlog.Web/Components/Pages/Admin/Dashboard.razor
+================================================================================
+@page "/admin"
+@attribute [Authorize]
+@inject IPostRepository PostRepository
+@rendermode InteractiveServer
+
+<PageTitle>Admin Dashboard</PageTitle>
+
+<h1>Admin Dashboard</h1>
+
+<div class="dashboard-stats">
+    <div class="stat-card">
+        <h3>Total Posts</h3>
+        <p class="stat-value">@_postCount</p>
+    </div>
+</div>
+
+<div class="admin-nav">
+    <a href="/admin/posts" class="btn">Manage Posts</a>
+    <a href="/admin/posts/new" class="btn">New Post</a>
+    <a href="/admin/images" class="btn">Manage Images</a>
+</div>
+
+<h2>Recent Posts</h2>
+@if (_recentPosts is null)
+{
+    <p>Loading...</p>
+}
+else if (_recentPosts.Count == 0)
+{
+    <p>No posts yet.</p>
+}
+else
+{
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Status</th>
+                <th>Updated</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var post in _recentPosts)
+            {
+                <tr>
+                    <td><a href="/admin/posts/edit/@post.Id">@post.Title</a></td>
+                    <td>@(post.IsPublished ? "Published" : "Draft")</td>
+                    <td>@(post.PublishedAtUtc?.ToString("MMM d, yyyy") ?? "—")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private int _postCount;
+    private IReadOnlyList<PostListItemDto>? _recentPosts;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _postCount = await PostRepository.GetCountAsync();
+        _recentPosts = await PostRepository.GetRecentPostsAsync(5);
+    }
+}
+
+--- END OF FILE ---
+
+================================================================================
+FILE: src/MyBlog.Web/Components/Pages/Admin/ImageManager.razor
+================================================================================
+@page "/admin/images"
+@rendermode InteractiveServer
+@attribute [Authorize]
+@inject IImageRepository ImageRepository
+@inject AuthenticationStateProvider AuthStateProvider
+@using System.Security.Claims
+
+<PageTitle>Manage Images</PageTitle>
+
+<h1>Manage Images</h1>
+
+<div class="image-upload">
+    <h3>Upload New Image</h3>
+    <InputFile OnChange="HandleFileUpload" accept="image/*" disabled="@_uploading" />
+    @if (_uploading)
+    {
+        <p>Uploading...</p>
+    }
+    @if (!string.IsNullOrEmpty(_uploadStatus))
+    {
+        <p class="@(_uploadError ? "error" : "success")">@_uploadStatus</p>
+    }
+</div>
+
+<h3>Uploaded Images</h3>
+@if (_images is null)
+{
+    <p>Loading...</p>
+}
+else if (_images.Count == 0)
+{
+    <p>No images uploaded yet.</p>
+}
+else
+{
+    <div class="image-grid">
+        @foreach (var image in _images)
+        {
+            <div class="image-card">
+                <img src="/api/images/@image.Id" alt="@image.FileName" />
+                <div class="image-info">
+                    <p>@image.FileName</p>
+                    <code>/api/images/@image.Id</code>
+                    <button @onclick="() => DeleteImage(image.Id)" class="btn-link danger" disabled="@_deleting">Delete</button>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@code {
+    private IReadOnlyList<Image>? _images;
+    private string? _uploadStatus;
+    private bool _uploadError;
+    private bool _uploading;
+    private bool _deleting;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadImages();
+    }
+
+    private async Task LoadImages()
+    {
+        _images = await ImageRepository.GetAllAsync();
+    }
+
+    private async Task HandleFileUpload(InputFileChangeEventArgs e)
+    {
+        _uploadStatus = null;
+        _uploadError = false;
+        _uploading = true;
+
+        try
+        {
+            var file = e.File;
+            if (file.Size > AppConstants.MaxImageSizeBytes)
+            {
+                _uploadStatus = "File too large. Maximum size is 5MB.";
+                _uploadError = true;
+                return;
+            }
+
+            if (!AppConstants.AllowedImageTypes.Contains(file.ContentType))
+            {
+                _uploadStatus = "Invalid file type. Only JPEG, PNG, GIF, and WebP are allowed.";
+                _uploadError = true;
+                return;
+            }
+
+            var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+            var userIdClaim = authState.User.FindFirst(ClaimTypes.NameIdentifier);
+            
+            if (userIdClaim is null || !Guid.TryParse(userIdClaim.Value, out var userId))
+            {
+                _uploadStatus = "Unable to identify current user. Please log in again.";
+                _uploadError = true;
+                return;
+            }
+
+            using var stream = file.OpenReadStream(AppConstants.MaxImageSizeBytes);
+            using var ms = new MemoryStream();
+            await stream.CopyToAsync(ms);
+
+            var image = new Image
+            {
+                Id = Guid.NewGuid(),
+                FileName = file.Name,
+                ContentType = file.ContentType,
+                Data = ms.ToArray(),
+                UploadedAtUtc = DateTime.UtcNow,
+                UploadedByUserId = userId
+            };
+
+            await ImageRepository.CreateAsync(image);
+            _uploadStatus = "Image uploaded successfully!";
+            await LoadImages();
+        }
+        catch (Exception ex)
+        {
+            _uploadStatus = $"Upload failed: {ex.Message}";
+            _uploadError = true;
+        }
+        finally
+        {
+            _uploading = false;
+        }
+    }
+
+    private async Task DeleteImage(Guid id)
+    {
+        _deleting = true;
+        try
+        {
+            await ImageRepository.DeleteAsync(id);
+            await LoadImages();
+        }
+        finally
+        {
+            _deleting = false;
+        }
+    }
+}
+
+--- END OF FILE ---
+
+================================================================================
+FILE: src/MyBlog.Web/Components/Pages/Admin/PostEditor.razor
+================================================================================
+@page "/admin/posts/new"
+@page "/admin/posts/edit/{Id:guid}"
+@rendermode InteractiveServer
+@attribute [Authorize]
+@inject IPostRepository PostRepository
+@inject ISlugService SlugService
+@inject NavigationManager Navigation
+@inject AuthenticationStateProvider AuthStateProvider
+@using System.Security.Claims
+
+<PageTitle>@(IsEdit ? "Edit Post" : "New Post")</PageTitle>
+
+<h1>@(IsEdit ? "Edit Post" : "New Post")</h1>
+
+@if (_loading)
+{
+    <p>Loading...</p>
+}
+else if (IsEdit && _existingPost is null)
+{
+    <p>Post not found.</p>
+    <a href="/admin/posts">Back to Posts</a>
+}
+else
+{
+    <div class="post-editor">
+        <div class="editor-form">
+            <div class="form-group">
+                <label for="title">Title</label>
+                <input type="text" id="title" @bind="_title" @bind:event="oninput" />
+            </div>
+
+            <div class="form-group">
+                <label for="summary">Summary</label>
+                <textarea id="summary" @bind="_summary" rows="2"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="content">Content (Markdown)</label>
+                <textarea id="content" @bind="_content" @bind:event="oninput" rows="20"></textarea>
+            </div>
+
+            <div class="form-group checkbox">
+                <label>
+                    <input type="checkbox" @bind="_isPublished" />
+                    Published
+                </label>
+            </div>
+
+            @if (!string.IsNullOrEmpty(_error))
+            {
+                <div class="error-message">@_error</div>
+            }
+
+            <div class="form-actions">
+                <button @onclick="Save" class="btn btn-primary" disabled="@_saving">
+                    @(_saving ? "Saving..." : "Save")
+                </button>
+                <a href="/admin/posts" class="btn">Cancel</a>
+            </div>
+        </div>
+
+        <div class="editor-preview">
+            <h3>Preview</h3>
+            <div class="preview-content">
+                <MarkdownRenderer Content="@_content" />
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public Guid? Id { get; set; }
+
+    private bool IsEdit => Id.HasValue;
+    private bool _loading = true;
+    private bool _saving;
+    private string _title = "";
+    private string _summary = "";
+    private string _content = "";
+    private bool _isPublished;
+    private string? _error;
+    private Post? _existingPost;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (IsEdit)
+        {
+            _existingPost = await PostRepository.GetByIdAsync(Id!.Value);
+            if (_existingPost is not null)
+            {
+                _title = _existingPost.Title;
+                _summary = _existingPost.Summary;
+                _content = _existingPost.Content;
+                _isPublished = _existingPost.IsPublished;
+            }
+        }
+        _loading = false;
+    }
+
+    private async Task Save()
+    {
+        if (string.IsNullOrWhiteSpace(_title))
+        {
+            _error = "Title is required.";
+            return;
+        }
+
+        _saving = true;
+        _error = null;
+
+        try
+        {
+            var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+            var userIdClaim = authState.User.FindFirst(ClaimTypes.NameIdentifier);
+
+            if (userIdClaim is null || !Guid.TryParse(userIdClaim.Value, out var userId))
+            {
+                _error = "Unable to identify current user. Please log in again.";
+                _saving = false;
+                return;
+            }
+
+            // Generate unique slug
+            var baseSlug = SlugService.GenerateSlug(_title);
+            var finalSlug = baseSlug;
+            var counter = 1;
+
+            // Loop until we find a slug that isn't taken (excluding current post if editing)
+            while (await PostRepository.IsSlugTakenAsync(finalSlug, IsEdit ? Id : null))
+            {
+                finalSlug = $"{baseSlug}-{counter}";
+                counter++;
+            }
+
+            if (IsEdit && _existingPost is not null)
+            {
+                _existingPost.Title = _title;
+                _existingPost.Slug = finalSlug; // Update slug with unique version
+                _existingPost.Summary = _summary;
+                _existingPost.Content = _content;
+                _existingPost.IsPublished = _isPublished;
+                _existingPost.UpdatedAtUtc = DateTime.UtcNow;
+                if (_isPublished && !_existingPost.PublishedAtUtc.HasValue)
+                {
+                    _existingPost.PublishedAtUtc = DateTime.UtcNow;
+                }
+
+                await PostRepository.UpdateAsync(_existingPost);
+            }
+            else
+            {
+                var post = new Post
+                {
+                    Id = Guid.NewGuid(),
+                    Title = _title,
+                    Slug = finalSlug, // Use unique slug
+                    Summary = _summary,
+                    Content = _content,
+                    AuthorId = userId,
+                    CreatedAtUtc = DateTime.UtcNow,
+                    UpdatedAtUtc = DateTime.UtcNow,
+                    IsPublished = _isPublished,
+                    PublishedAtUtc = _isPublished ? DateTime.UtcNow : null
+                };
+                await PostRepository.CreateAsync(post);
+            }
+
+            Navigation.NavigateTo("/admin/posts");
+        }
+        catch (Exception ex)
+        {
+            _error = $"Failed to save: {ex.Message}";
+        }
+        finally
+        {
+            _saving = false;
+        }
+    }
+}
+
+--- END OF FILE ---
+
+================================================================================
+FILE: src/MyBlog.Web/Components/Pages/Admin/PostList.razor
+================================================================================
+@page "/admin/posts"
+@rendermode InteractiveServer
+@attribute [Authorize]
+@inject IPostRepository PostRepository
+@inject NavigationManager Navigation
+
+<PageTitle>Manage Posts</PageTitle>
+
+<h1>Manage Posts</h1>
+
+<p><a href="/admin/posts/new" class="btn btn-primary">Create New Post</a></p>
+
+@if (_posts is null)
+{
+    <p>Loading...</p>
+}
+else if (_posts.Count == 0)
+{
+    <p>No posts yet.</p>
+}
+else
+{
+    <table class="admin-table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var post in _posts)
+            {
+                <tr>
+                    <td>@post.Title</td>
+                    <td>@post.AuthorDisplayName</td>
+                    <td>@(post.IsPublished ? "Published" : "Draft")</td>
+                    <td>
+                        <a href="/admin/posts/edit/@post.Id">Edit</a>
+                        <button @onclick="() => DeletePost(post.Id)" class="btn-link danger" disabled="@_deleting">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private IReadOnlyList<PostListItemDto>? _posts;
+    private bool _deleting;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadPosts();
+    }
+
+    private async Task LoadPosts()
+    {
+        _posts = await PostRepository.GetAllPostsAsync();
+    }
+
+    private async Task DeletePost(Guid id)
+    {
+        _deleting = true;
+        try
+        {
+            await PostRepository.DeleteAsync(id);
+            await LoadPosts();
+        }
+        finally
+        {
+            _deleting = false;
+        }
+    }
+}
+
+--- END OF FILE ---
+
+================================================================================
+FILE: src/MyBlog.Web/Components/Pages/Admin/UserEditor.razor
+================================================================================
+@page "/admin/users/new"
+@page "/admin/users/edit/{Id:guid}"
+@attribute [Authorize(Roles = AppConstants.AdminRole)]
+@rendermode InteractiveServer
+@inject IUserRepository UserRepository
+@inject IPasswordService PasswordService
+@inject NavigationManager Navigation
+
+<PageTitle>@(IsEdit ? "Edit User" : "New User")</PageTitle>
+
+<h1>@(IsEdit ? "Edit User" : "New User")</h1>
+
+<div class="user-editor" style="max-width: 600px;">
+    @if (!string.IsNullOrEmpty(_error))
+    {
+        <div class="error-message">@_error</div>
+    }
+
+    <div class="form-group">
+        <label for="username">Username</label>
+        <input type="text" id="username" @bind="_username" required />
+    </div>
+
+    <div class="form-group">
+        <label for="displayName">Display Name</label>
+        <input type="text" id="displayName" @bind="_displayName" required />
+    </div>
+
+    <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" @bind="_email" required />
+    </div>
+
+    <div class="form-group">
+        <label for="password">Password @(IsEdit ? "(Leave blank to keep current)" : "")</label>
+        <input type="password" id="password" @bind="_password" required="@(!IsEdit)" />
+        @if (!IsEdit) 
+        {
+            <small>Required for new users.</small>
+        }
+    </div>
+
+    <div class="form-actions">
+        <button @onclick="Save" class="btn btn-primary" disabled="@_saving">
+            @(_saving ? "Saving..." : "Save User")
+        </button>
+        <a href="/admin/users" class="btn btn-secondary">Cancel</a>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public Guid? Id { get; set; }
+
+    private bool IsEdit => Id.HasValue;
+    private bool _saving;
+    private string? _error;
+
+    // Form fields
+    private string _username = "";
+    private string _displayName = "";
+    private string _email = "";
+    private string _password = "";
+
+    private User? _existingUser;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (IsEdit)
+        {
+            _existingUser = await UserRepository.GetByIdAsync(Id!.Value);
+            if (_existingUser is null)
+            {
+                Navigation.NavigateTo("/admin/users");
+                return;
+            }
+
+            _username = _existingUser.Username;
+            _displayName = _existingUser.DisplayName;
+            _email = _existingUser.Email;
+        }
+    }
+
+    private async Task Save()
+    {
+        _error = null;
+        _saving = true;
+
+        try
+        {
+            if (string.IsNullOrWhiteSpace(_username) || string.IsNullOrWhiteSpace(_displayName) || string.IsNullOrWhiteSpace(_email))
+            {
+                _error = "All fields are required.";
+                return;
+            }
+
+            // Check if username is taken (by another user)
+            var duplicate = await UserRepository.GetByUsernameAsync(_username);
+            if (duplicate is not null && duplicate.Id != Id)
+            {
+                _error = "Username is already taken.";
+                return;
+            }
+
+            if (IsEdit && _existingUser is not null)
+            {
+                // Update existing
+                _existingUser.Username = _username;
+                _existingUser.DisplayName = _displayName;
+                _existingUser.Email = _email;
+
+                // Only update password if provided
+                if (!string.IsNullOrWhiteSpace(_password))
+                {
+                     if (_password.Length < 8)
+                     {
+                         _error = "Password must be at least 8 characters.";
+                         return;
+                     }
+                    _existingUser.PasswordHash = PasswordService.HashPassword(_password);
+                }
+
+                await UserRepository.UpdateAsync(_existingUser);
+            }
+            else
+            {
+                // Create new
+                if (string.IsNullOrWhiteSpace(_password) || _password.Length < 8)
+                {
+                    _error = "Password is required (min 8 chars) for new users.";
+                    return;
+                }
+
+                var newUser = new User
+                {
+                    Id = Guid.NewGuid(),
+                    Username = _username,
+                    DisplayName = _displayName,
+                    Email = _email,
+                    PasswordHash = PasswordService.HashPassword(_password),
+                    CreatedAtUtc = DateTime.UtcNow
+                };
+
+                await UserRepository.CreateAsync(newUser);
+            }
+
+            Navigation.NavigateTo("/admin/users");
+        }
+        catch (Exception ex)
+        {
+            _error = $"Error saving user: {ex.Message}";
+        }
+        finally
+        {
+            _saving = false;
+        }
+    }
+}
+
+--- END OF FILE ---
+
+================================================================================
+FILE: src/MyBlog.Web/Components/Pages/Admin/UserList.razor
+================================================================================
+@page "/admin/users"
+@attribute [Authorize(Roles = AppConstants.AdminRole)]
+@rendermode InteractiveServer
+@inject IUserRepository UserRepository
+@inject AuthenticationStateProvider AuthStateProvider
+@inject IJSRuntime JsRuntime
+@using System.Security.Claims
+@using MyBlog.Core.Models
+
+<PageTitle>Manage Users</PageTitle>
+
+<div class="admin-container">
+    <div class="admin-header">
+        <h1>Manage Users</h1>
+        <a href="/admin/users/new" class="btn btn-primary">Create New User</a>
+    </div>
+
+    @if (_users is null)
+    {
+        <p>Loading...</p>
+    }
+    else
+    {
+        <div class="responsive-user-list">
+            @* Header - Hidden on mobile *@
+            <div class="list-header d-none-mobile">
+                <div class="col">Username</div>
+                <div class="col">Display Name</div>
+                <div class="col">Email</div>
+                <div class="col actions">Actions</div>
+            </div>
+
+            @foreach (var user in _users)
+            {
+                <div class="list-row">
+                    <div class="list-item">
+                        <span class="mobile-label">Username:</span>
+                        <a href="/admin/users/edit/@user.Id">@user.Username</a>
+                    </div>
+                    <div class="list-item">
+                        <span class="mobile-label">Name:</span>
+                        @user.DisplayName
+                    </div>
+                    <div class="list-item email-cell">
+                        <span class="mobile-label">Email:</span>
+                        @user.Email
+                    </div>
+                    <div class="list-item actions">
+                        <a href="/admin/users/edit/@user.Id" class="btn btn-sm">Edit</a>
+                        @if (user.Id != _currentUserId)
+                        {
+                            <button @onclick="() => DeleteUser(user.Id)" class="btn btn-sm btn-danger">Delete</button>
+                        }
+                        else
+                        {
+                            <span class="current-user-badge">(Current)</span>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    private IReadOnlyList<User>? _users;
+    private Guid _currentUserId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var idClaim = authState.User.FindFirst(ClaimTypes.NameIdentifier);
+        if (idClaim != null && Guid.TryParse(idClaim.Value, out var id))
+        {
+            _currentUserId = id;
+        }
+
+        await LoadUsers();
+    }
+
+    private async Task LoadUsers()
+    {
+        _users = await UserRepository.GetAllAsync();
+    }
+
+    private async Task DeleteUser(Guid id)
+    {
+        if (id == _currentUserId) return;
+
+        var confirm = await JsRuntime.InvokeAsync<bool>("confirm", "Are you sure you want to delete this user?");
+        
+        if (confirm)
+        {
+            await UserRepository.DeleteAsync(id);
+            await LoadUsers();
+        }
+    }
+}
+
+--- END OF FILE ---
+
+================================================================================
+FILE: src/MyBlog.Web/Components/Pages/Home.razor
+================================================================================
+@page "/"
+@inject IPostRepository PostRepository
+@inject IConfiguration Configuration
+
+<PageTitle>@(Configuration["Application:Title"] ?? "MyBlog")</PageTitle>
+
+<h1>Welcome to @(Configuration["Application:Title"] ?? "MyBlog")</h1>
+
+@if (_posts is null)
+{
+    <p>Loading...</p>
+}
+else if (_posts.Count == 0)
+{
+    <p>No posts yet. Check back soon!</p>
+}
+else
+{
+    <div class="post-list">
+        @foreach (var post in _posts)
+        {
+            <PostCard Post="post" />
+        }
+    </div>
+
+    <Pagination CurrentPage="_currentPage" TotalPages="_totalPages" BaseUrl="/" />
+}
+
+@code {
+    private IReadOnlyList<PostListItemDto>? _posts;
+    private int _currentPage = 1;
+    private int _totalPages = 1;
+
+    [SupplyParameterFromQuery(Name = "page")]
+    public int? Page { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        _currentPage = Page ?? 1;
+        if (_currentPage < 1) _currentPage = 1;
+
+        var pageSize = Configuration.GetValue("Application:PostsPerPage", 10);
+        var (posts, totalCount) = await PostRepository.GetPublishedPostsAsync(_currentPage, pageSize);
+        
+        _posts = posts;
+        _totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
+    }
+}
+
+--- END OF FILE ---
+
+================================================================================
+FILE: src/MyBlog.Web/Components/Pages/Login.razor
+================================================================================
+@page "/login"
+@inject IAuthService AuthService
+@inject NavigationManager Navigation
+@inject IHttpContextAccessor HttpContextAccessor
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Authentication
+@using Microsoft.AspNetCore.Authentication.Cookies
+
+<PageTitle>Login</PageTitle>
+
+<div class="login-page">
+    <h1>Login</h1>
+
+    @if (!string.IsNullOrEmpty(_error))
+    {
+        <div class="error-message">@_error</div>
+    }
+
+    <form method="post" @onsubmit="HandleLogin" @formname="login">
+        <AntiforgeryToken />
+        
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" @bind="_username" required />
+        </div>
+
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" @bind="_password" required />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Login</button>
+    </form>
+</div>
+
+@code {
+    private string _username = "";
+    private string _password = "";
+    private string? _error;
+
+    [SupplyParameterFromQuery]
+    public string? ReturnUrl { get; set; }
+
+    [SupplyParameterFromForm(Name = "username")]
+    public string? FormUsername { get; set; }
+
+    [SupplyParameterFromForm(Name = "password")]
+    public string? FormPassword { get; set; }
+
+    private async Task HandleLogin()
+    {
+        var username = FormUsername ?? _username;
+        var password = FormPassword ?? _password;
+
+        if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+        {
+            _error = "Username and password are required";
+            return;
+        }
+
+        var user = await AuthService.AuthenticateAsync(username, password);
+        if (user is null)
+        {
+            _error = "Invalid username or password";
+            return;
+        }
+
+        // FIX: Added the Role claim here so [Authorize(Roles="Admin")] works
+        var claims = new List<Claim>
+        {
+            new(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new(ClaimTypes.Name, user.Username),
+            new("DisplayName", user.DisplayName),
+            new(ClaimTypes.Role, AppConstants.AdminRole) 
+        };
+
+        var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+        var principal = new ClaimsPrincipal(identity);
+
+        var context = HttpContextAccessor.HttpContext!;
+        await context.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+        
+        Navigation.NavigateTo(ReturnUrl ?? "/admin", forceLoad: true);
+    }
+}
+
+--- END OF FILE ---
+
+================================================================================
+FILE: src/MyBlog.Web/Components/Pages/PostDetail.razor
+================================================================================
+@page "/post/{Slug}"
+@inject IPostRepository PostRepository
+@inject NavigationManager Navigation
+@using MyBlog.Web.Components.Shared
+
+@if (_post is null)
+{
+    @if (_notFound)
+    {
+        <PageTitle>Not Found</PageTitle>
+        <h1>Post Not Found</h1>
+        <p>The post you're looking for doesn't exist.</p>
+        <a href="/">← Back to Home</a>
+    }
+    else
+    {
+        <p>Loading...</p>
+    }
+}
+else
+{
+    <PageTitle>@_post.Title</PageTitle>
+
+    <article class="post-detail">
+        <header class="post-header">
+            <h1>@_post.Title</h1>
+            <div class="post-meta">
+                <span class="author">By @_post.AuthorDisplayName</span>
+                @if (_post.PublishedAtUtc.HasValue)
+                {
+                    <span class="date">Published @_post.PublishedAtUtc.Value.ToString("MMMM d, yyyy")</span>
+                }
+
+                @* This isolates the interactivity to JUST the badge *@
+                <ReaderBadge Slug="@_post.Slug" @rendermode="InteractiveServer" />
+
+                @* This uses the standard JS function we added *@
+                <button type="button" class="btn-link share-btn" data-title="@_post.Title" onclick="sharePost(this.dataset.title)">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="18" cy="5" r="3"></circle>
+                        <circle cx="6" cy="12" r="3"></circle>
+                        <circle cx="18" cy="19" r="3"></circle>
+                        <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                        <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                    </svg>
+                    Share
+                </button>
+            </div>
+        </header>
+
+        <div class="post-content">
+            <MarkdownRenderer Content="@_post.Content" />
+        </div>
+    </article>
+
+    <a href="/" class="back-link">← Back to Home</a>
+}
+
+@code {
+    [Parameter]
+    public string Slug { get; set; } = "";
+    private PostDetailDto? _post;
+    private bool _notFound;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        _post = await PostRepository.GetBySlugAsync(Slug);
+        _notFound = _post is null;
+
+        if (_post is not null && !_post.IsPublished)
+        {
+            _post = null;
+            _notFound = true;
+        }
+    }
+}
+
+--- END OF FILE ---
+
+================================================================================
+FILE: src/MyBlog.Web/Components/Routes.razor
 ================================================================================
 <Router AppAssembly="typeof(Program).Assembly">
     <Found Context="routeData">
@@ -5400,11 +5491,38 @@ FILE PATH: src/MyBlog.Web/Components/Routes.razor
     </Found>
 </Router>
 
+--- END OF FILE ---
+
+================================================================================
+FILE: src/MyBlog.Web/Components/Shared/Footer.razor
+================================================================================
+@inject IConfiguration Configuration
+
+<footer class="footer">
+    <div class="container">
+        <p>&copy; @DateTime.Now.Year @(Configuration["Application:Title"] ?? "MyBlog")</p>
+
+        @{
+            var gitUrl = Configuration["Application:GitForgeUrl"];
+            if (!string.IsNullOrWhiteSpace(gitUrl) &&
+                Uri.TryCreate(gitUrl, UriKind.Absolute, out var validatedUri) &&
+                (validatedUri.Scheme == Uri.UriSchemeHttp || validatedUri.Scheme == Uri.UriSchemeHttps))
+            {
+                <a href="@gitUrl" target="_blank" rel="noopener noreferrer" class="footer-link">
+                    <svg height="16" width="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+                        <path d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"></path>
+                    </svg>
+                    <span>Source Code</span>
+                </a>
+            }
+        }
+    </div>
+</footer>
 
 --- END OF FILE ---
 
 ================================================================================
-FILE PATH: src/MyBlog.Web/Components/Shared/MarkdownRenderer.razor
+FILE: src/MyBlog.Web/Components/Shared/MarkdownRenderer.razor
 ================================================================================
 @inject IMarkdownService MarkdownService
 
@@ -5417,11 +5535,10 @@ FILE PATH: src/MyBlog.Web/Components/Shared/MarkdownRenderer.razor
     public string? Content { get; set; }
 }
 
-
 --- END OF FILE ---
 
 ================================================================================
-FILE PATH: src/MyBlog.Web/Components/Shared/Pagination.razor
+FILE: src/MyBlog.Web/Components/Shared/Pagination.razor
 ================================================================================
 @if (TotalPages > 1)
 {
@@ -5454,11 +5571,10 @@ FILE PATH: src/MyBlog.Web/Components/Shared/Pagination.razor
         page == 1 ? BaseUrl : $"{BaseUrl}?page={page}";
 }
 
-
 --- END OF FILE ---
 
 ================================================================================
-FILE PATH: src/MyBlog.Web/Components/Shared/PostCard.razor
+FILE: src/MyBlog.Web/Components/Shared/PostCard.razor
 ================================================================================
 <article class="post-card">
     <h2 class="post-card-title">
@@ -5484,55 +5600,10 @@ FILE PATH: src/MyBlog.Web/Components/Shared/PostCard.razor
     public PostListItemDto Post { get; set; } = default!;
 }
 
-
 --- END OF FILE ---
 
 ================================================================================
-FILE PATH: src/MyBlog.Web/Components/Shared/RedirectToLogin.razor
-================================================================================
-@inject NavigationManager Navigation
-
-@code {
-    protected override void OnInitialized()
-    {
-        Navigation.NavigateTo($"/login?returnUrl={Uri.EscapeDataString(Navigation.Uri)}", forceLoad: true);
-    }
-}
-
-
---- END OF FILE ---
-
-================================================================================
-FILE PATH: src/MyBlog.Web/Components/Shared/Footer.razor
-================================================================================
-@inject IConfiguration Configuration
-
-<footer class="footer">
-    <div class="container">
-        <p>&copy; @DateTime.Now.Year @(Configuration["Application:Title"] ?? "MyBlog")</p>
-
-        @{
-            var gitUrl = Configuration["Application:GitForgeUrl"];
-            if (!string.IsNullOrWhiteSpace(gitUrl) &&
-                Uri.TryCreate(gitUrl, UriKind.Absolute, out var validatedUri) &&
-                (validatedUri.Scheme == Uri.UriSchemeHttp || validatedUri.Scheme == Uri.UriSchemeHttps))
-            {
-                <a href="@gitUrl" target="_blank" rel="noopener noreferrer" class="footer-link">
-                    <svg height="16" width="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
-                        <path d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"></path>
-                    </svg>
-                    <span>Source Code</span>
-                </a>
-            }
-        }
-    </div>
-</footer>
-
-
---- END OF FILE ---
-
-================================================================================
-FILE PATH: src/MyBlog.Web/Components/Shared/ReaderBadge.razor
+FILE: src/MyBlog.Web/Components/Shared/ReaderBadge.razor
 ================================================================================
 @using MyBlog.Core.Interfaces
 @inject IReaderTrackingService TrackingService
@@ -5583,66 +5654,24 @@ FILE PATH: src/MyBlog.Web/Components/Shared/ReaderBadge.razor
     }
 }
 
-
 --- END OF FILE ---
 
 ================================================================================
-FILE PATH: src/MyBlog.Web/Components/_Imports.razor
+FILE: src/MyBlog.Web/Components/Shared/RedirectToLogin.razor
 ================================================================================
-@using System.Net.Http
-@using System.Net.Http.Json
-@using Microsoft.AspNetCore.Authorization
-@using Microsoft.AspNetCore.Components.Authorization
-@using Microsoft.AspNetCore.Components.Forms
-@using Microsoft.AspNetCore.Components.Routing
-@using Microsoft.AspNetCore.Components.Web
-@using Microsoft.AspNetCore.Components.Web.Virtualization
-@using Microsoft.JSInterop
-@using static Microsoft.AspNetCore.Components.Web.RenderMode
-@using MyBlog.Core.Constants
-@using MyBlog.Core.Interfaces
-@using MyBlog.Core.Models
-@using MyBlog.Web.Components
-@using MyBlog.Web.Components.Layout
-@using MyBlog.Web.Components.Shared
-
-
---- END OF FILE ---
-
-================================================================================
-FILE PATH: src/MyBlog.Web/Components/App.razor
-================================================================================
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@(Title ?? "MyBlog")</title>
-    <base href="/" />
-    <link rel="stylesheet" href="css/site.css" />
-    <link rel="stylesheet" href="MyBlog.Web.styles.css" />
-    <HeadOutlet />
-</head>
-<body>
-<Routes />
-<script src="js/site.js"></script>
-<script src="_framework/blazor.web.js"></script>
-</body>
-</html>
+@inject NavigationManager Navigation
 
 @code {
-    [CascadingParameter]
-    private HttpContext? HttpContext { get; set; }
-
-    private string? Title => HttpContext?.RequestServices
-        .GetService<IConfiguration>()?["Application:Title"];
+    protected override void OnInitialized()
+    {
+        Navigation.NavigateTo($"/login?returnUrl={Uri.EscapeDataString(Navigation.Uri)}", forceLoad: true);
+    }
 }
-
 
 --- END OF FILE ---
 
 ================================================================================
-FILE PATH: src/MyBlog.Web/Middleware/LoginRateLimitMiddleware.cs
+FILE: src/MyBlog.Web/Middleware/LoginRateLimitMiddleware.cs
 ================================================================================
 using System.Collections.Concurrent;
 
@@ -5836,11 +5865,10 @@ public static class LoginRateLimitMiddlewareExtensions
     }
 }
 
-
 --- END OF FILE ---
 
 ================================================================================
-FILE PATH: src/MyBlog.Web/MyBlog.Web.csproj
+FILE: src/MyBlog.Web/MyBlog.Web.csproj
 ================================================================================
 <Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
@@ -5858,11 +5886,10 @@ FILE PATH: src/MyBlog.Web/MyBlog.Web.csproj
     <ProjectReference Include="..\MyBlog.Infrastructure\MyBlog.Infrastructure.csproj" />
   </ItemGroup>
 </Project>
-
 --- END OF FILE ---
 
 ================================================================================
-FILE PATH: src/MyBlog.Web/Program.cs
+FILE: src/MyBlog.Web/Program.cs
 ================================================================================
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -5981,102 +6008,6 @@ app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
 app.Run();
-
-
---- END OF FILE ---
-
-================================================================================
-FILE PATH: src/MyBlog.Web/appsettings.Development.json
-================================================================================
-{
-  "Logging": {
-    "LogLevel": {
-      "Default": "Debug",
-      "Microsoft.AspNetCore": "Information"
-    }
-  }
-}
-
-
---- END OF FILE ---
-
-================================================================================
-FILE PATH: src/MyBlog.Web/appsettings.json
-================================================================================
-{
-  "ConnectionStrings": {
-    "DefaultConnection": "Data Source=myblog.db"
-  },
-  "Authentication": {
-    "SessionTimeoutMinutes": 30,
-    "DefaultAdminPassword": "ChangeMe123!"
-  },
-  "Telemetry": {
-    "RetentionDays": 30,
-    "EnableFileLogging": true,
-    "EnableDatabaseLogging": true
-  },
-  "Application": {
-    "Title": "MyBlog",
-    "PostsPerPage": 10,
-    "RequireHttps": false,
-    "GitForgeUrl": "https://github.com/kusl/dotnetcms"
-  },
-  "Logging": {
-    "LogLevel": {
-      "Default": "Information",
-      "Microsoft.AspNetCore": "Warning",
-      "Microsoft.EntityFrameworkCore": "Warning"
-    }
-  }
-}
-
-
---- END OF FILE ---
-
-================================================================================
-FILE PATH: src/global.json
-================================================================================
-{
-  "sdk": {
-    "version": "10.0.100",
-    "rollForward": "latestFeature"
-  },
-  "test": {
-    "runner": "Microsoft.Testing.Platform"
-  }
-}
-
-
---- END OF FILE ---
-
-================================================================================
-FILE PATH: src/Directory.Packages.props
-================================================================================
-<Project>
-  <PropertyGroup>
-    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
-    <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
-  </PropertyGroup>
-  <ItemGroup>
-    <!-- Core Framework (.NET 10) -->
-    <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.2" />
-    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.1" />
-    <PackageVersion Include="Microsoft.AspNetCore.Identity" Version="2.3.9" />
-    <PackageVersion Include="Microsoft.Extensions.Hosting" Version="10.0.1" />
-    <!-- OpenTelemetry (official packages only) -->
-    <PackageVersion Include="OpenTelemetry" Version="1.14.0" />
-    <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.14.0" />
-    <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.14.0" />
-    <PackageVersion Include="OpenTelemetry.Exporter.Console" Version="1.14.0" />
-    <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.14.0" />
-    <!-- Testing (xUnit v3) -->
-    <PackageVersion Include="xunit.v3" Version="3.2.1" />
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
-    <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
-    <PackageVersion Include="Microsoft.Testing.Extensions.TrxReport" Version="2.0.2" />
-  </ItemGroup>
-</Project>
 
 --- END OF FILE ---
 
