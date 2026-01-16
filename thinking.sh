@@ -12,7 +12,7 @@ PROJECT_ROOT="${PWD}"
 OUTPUT_DIR="${PROJECT_ROOT}/docs/llm"
 DUMP_FILE="${OUTPUT_DIR}/source.txt"
 MODEL="${LLM_MODEL:-llama3.3:70b-instruct-q4_K_M}"
-OUTPUT_FILE="${OUTPUT_DIR}/custom_llm_response.md"
+OUTPUT_FILE="${OUTPUT_DIR}/thinking_$(date +%Y%m%d_%H%M%S).md"
 LOG_FILE="${OUTPUT_DIR}/analysis_$(date +%Y%m%d_%H%M%S).log"
 MAX_CONTEXT_CHARS=120000  # ~30k tokens, safe for most models
 
