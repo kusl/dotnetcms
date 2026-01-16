@@ -7,7 +7,7 @@
 # Configuration
 OUTPUT_DIR="docs/llm"
 DUMP_FILE="$OUTPUT_DIR/source.txt"
-MODEL="deepseek-r1:8b"
+MODEL="llama3.3:70b-instruct-q4_K_M"
 OUTPUT_FILE="$OUTPUT_DIR/custom_llm_response.md"
 
 mkdir -p "$OUTPUT_DIR"
