@@ -5,7 +5,7 @@
 {
     <span class="reader-badge" title="Live reader count">
         <span class="reader-dot">●</span>
-        @_count @if (_count == 1) { <span>person</span> } else { <span>people</span> } reading
+        @_count @(_count == 1 ? "person" : "people") reading
     </span>
 }
 
