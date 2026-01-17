@@ -4198,3 +4198,203 @@ else
 
 
 
+You are absolutely right. While we fixed the content rendering and real-time updates, the **Post Detail page is missing critical Metadata (SEO) tags**.
+
+Currently, search engines and social media platforms (Twitter, LinkedIn, Slack) see a generic page without a description, image, or proper title because the `<head>` section is not being populated with the post's specific data.
+
+Here is the **complete solution** to inject SEO and Social Sharing metadata into the page head.
+
+### Changes Summary
+
+1. **Modify `PostDetail.razor**`:
+* Add `<HeadContent>` to inject tags into the HTML `<head>`.
+* Add **Standard SEO** tags (`description`, `author`, `canonical`).
+* Add **Open Graph (OG)** tags for Facebook/LinkedIn/Slack (`og:title`, `og:image`, etc.).
+* Add **Twitter Card** tags for large image previews.
+* Add logic to **extract the first image** from the Markdown content to use as the preview image.
+
+
+
+---
+
+### **1. Update PostDetail.razor**
+
+**File:** `src/MyBlog.Web/Components/Pages/PostDetail.razor`
+
+```razor
+@page "/post/{Slug}"
+@using System.Text.RegularExpressions
+@inject IPostRepository PostRepository
+@inject NavigationManager Navigation
+@inject IConfiguration Configuration
+
+@if (_post is null)
+{
+    @if (_notFound)
+    {
+        <PageTitle>Not Found</PageTitle>
+        <h1>Post Not Found</h1>
+        <p>The post you're looking for doesn't exist.</p>
+        <a href="/">← Back to Home</a>
+    }
+    else
+    {
+        <p>Loading...</p>
+    }
+}
+else
+{
+    @* --- 1. Browser Tab Title --- *@
+    <PageTitle>@_post.Title</PageTitle>
+
+    @* --- 2. SEO & Social Metadata (Injected into <head>) --- *@
+    <HeadContent>
+        @* Standard SEO *@
+        <meta name="description" content="@_post.Summary" />
+        <meta name="author" content="@_post.AuthorDisplayName" />
+        <link rel="canonical" href="@_currentUrl" />
+
+        @* Open Graph / Facebook / LinkedIn *@
+        <meta property="og:type" content="article" />
+        <meta property="og:site_name" content="@(Configuration["Application:Title"] ?? "MyBlog")" />
+        <meta property="og:title" content="@_post.Title" />
+        <meta property="og:description" content="@_post.Summary" />
+        <meta property="og:url" content="@_currentUrl" />
+
+        @if (!string.IsNullOrEmpty(_previewImage))
+        {
+            <meta property="og:image" content="@_previewImage" />
+            <meta property="og:image:alt" content="@_post.Title" />
+        }
+
+        @* Twitter Cards *@
+        <meta name="twitter:card" content="@(string.IsNullOrEmpty(_previewImage) ? "summary" : "summary_large_image")" />
+        <meta name="twitter:title" content="@_post.Title" />
+        <meta name="twitter:description" content="@_post.Summary" />
+        @if (!string.IsNullOrEmpty(_previewImage))
+        {
+            <meta name="twitter:image" content="@_previewImage" />
+        }
+    </HeadContent>
+
+    @* --- 3. Visible Page Content --- *@
+    <article class="post-detail">
+        <header class="post-header">
+            <h1>@_post.Title</h1>
+            <div class="post-meta">
+                <span class="author">By @_post.AuthorDisplayName</span>
+                @if (_post.PublishedAtUtc.HasValue)
+                {
+                    <span class="date">Published @_post.PublishedAtUtc.Value.ToString("MMMM d, yyyy")</span>
+                }
+
+                @* Real-time Reader Badge *@
+                <ReaderBadge Slug="@Slug" />
+
+                @* Social Share Button (Visible UI) *@
+                <button type="button" class="btn-link share-btn" data-title="@_post.Title" onclick="sharePost(this.dataset.title)">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="18" cy="5" r="3"></circle>
+                        <circle cx="6" cy="12" r="3"></circle>
+                        <circle cx="18" cy="19" r="3"></circle>
+                        <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                        <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                    </svg>
+                    Share
+                </button>
+            </div>
+        </header>
+
+        <div class="post-content">
+            <MarkdownRenderer Content="@_post.Content" />
+        </div>
+    </article>
+
+    <a href="/" class="back-link">← Back to Home</a>
+}
+
+@code {
+    [Parameter]
+    public string Slug { get; set; } = "";
+
+    private PostDetailDto? _post;
+    private bool _notFound;
+    private string _currentUrl = "";
+    private string? _previewImage;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        // 1. Load Data
+        _post = await PostRepository.GetBySlugAsync(Slug);
+        _notFound = _post is null;
+
+        // 2. Validate visibility
+        if (_post is not null && !_post.IsPublished)
+        {
+            _post = null;
+            _notFound = true;
+        }
+
+        // 3. Prepare Metadata
+        if (_post is not null)
+        {
+            // Get Absolute URL for Canonical/OG tags
+            _currentUrl = Navigation.Uri;
+
+            // Extract the first image from Markdown to use as the preview image
+            // Regex matches: ![alt](url)
+            var imageMatch = Regex.Match(_post.Content, @"!\[.*?\]\((.*?)\)");
+            if (imageMatch.Success)
+            {
+                var url = imageMatch.Groups[1].Value;
+                // If it's a relative URL (like /api/images/...), make it absolute
+                if (url.StartsWith("/"))
+                {
+                    _previewImage = Navigation.ToAbsoluteUri(url).ToString();
+                }
+                else
+                {
+                    _previewImage = url;
+                }
+            }
+        }
+    }
+}
+
+```
+
+---
+
+### **How to Verify**
+
+1. **Rebuild and Run**: `dotnet run --project src/MyBlog.Web`.
+2. **Navigate** to a blog post.
+3. **View Source (Ctrl+U)**: You will now see proper `<meta>` tags in the `<head>` section.
+4. **Test Sharing**:
+* If running locally (`localhost`), social media scrapers (Twitter/LinkedIn) **cannot** see your site.
+* To test properly, use **ngrok** to tunnel your local site: `ngrok http 5000` (or your port).
+* Or check the tags in the browser's "Elements" inspector to confirm they are populated.
+
+
+
+### **Why this was happening**
+
+Blazor components render into the `<body>` by default. To affect the `<head>` (which is defined in `App.razor` outside the router), we must use the `<HeadContent>` component. This component "teleports" the content inside it up to the `<head>` of the document during rendering.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
