@@ -12,7 +12,7 @@
         <h1>About @(Configuration["Application:Title"] ?? "MyBlog")</h1>
         <p class="about-tagline">A lightweight, self-hosted blogging platform built with modern .NET technologies</p>
         <div class="reader-info">
-            <ReaderBadge Slug="@_trackingSlug" />
+            <ReaderBadge Slug="@TrackingSlug" />
         </div>
     </header>
 
@@ -680,15 +680,12 @@ dotnet run</code></pre>
 </article>
 
 @code {
-    private const string _trackingSlug = "__about_page__";
+    private const string TrackingSlug = "__about_page__";
     private int _postCount;
     private int _publishedCount;
 
     protected override async Task OnInitializedAsync()
     {
-        ReaderTrackingService.JoinPost(_trackingSlug);
-        ReaderTrackingService.OnCountChanged += HandleCountChanged;
-
         var (posts, totalCount) = await PostRepository.GetPublishedPostsAsync(1, int.MaxValue);
         _publishedCount = totalCount;
         _postCount = await PostRepository.GetCountAsync();
@@ -696,7 +693,7 @@ dotnet run</code></pre>
 
     private void HandleCountChanged(string slug, int count)
     {
-        if (slug == _trackingSlug)
+        if (slug == TrackingSlug)
         {
             InvokeAsync(StateHasChanged);
         }
@@ -704,7 +701,5 @@ dotnet run</code></pre>
 
     public void Dispose()
     {
-        ReaderTrackingService.OnCountChanged -= HandleCountChanged;
-        ReaderTrackingService.LeavePost(_trackingSlug);
     }
 }
