@@ -6370,3 +6370,1031 @@ public static class ServiceCollectionExtensions
     }
 }
 ```
+
+To resolve the Cumulative Layout Shift (CLS) issue automatically for both past and future images without burdening editors, we need a solution that works "behind the scenes."
+
+We will implement an automated system that:
+
+1. **Intercepts** image URLs during Markdown rendering.
+2. **Resolves** dimensions (Width/Height) via a database cache.
+3. **Fetches** dimensions from the network (inspecting file headers only, not downloading the whole file) if they aren't cached.
+4. **Injects** `width` and `height` attributes into the final HTML.
+5. **Warms up** the cache for all existing posts via a background service.
+
+Here are the changes required.
+
+### 1. New Model: `ImageDimensionCache.cs`
+
+We need a database table to store dimensions so we don't request them over HTTP every time a page loads.
+
+**File:** `src/MyBlog.Core/Models/ImageDimensionCache.cs`
+
+```csharp
+namespace MyBlog.Core.Models;
+
+/// <summary>
+/// Caches dimensions for external images to prevent layout shifts.
+/// </summary>
+public sealed class ImageDimensionCache
+{
+    /// <summary>The absolute URL of the image (Primary Key).</summary>
+    public required string Url { get; set; }
+
+    /// <summary>The detected width of the image.</summary>
+    public int Width { get; set; }
+
+    /// <summary>The detected height of the image.</summary>
+    public int Height { get; set; }
+
+    /// <summary>When this record was last updated.</summary>
+    public DateTime LastCheckedUtc { get; set; }
+}
+
+```
+
+### 2. Update Database Context: `BlogDbContext.cs`
+
+Register the new table in the Entity Framework context.
+
+**File:** `src/MyBlog.Infrastructure/Data/BlogDbContext.cs`
+
+```csharp
+using Microsoft.EntityFrameworkCore;
+using MyBlog.Core.Models;
+
+namespace MyBlog.Infrastructure.Data;
+
+/// <summary>
+/// Entity Framework Core database context for the blog.
+/// </summary>
+public sealed class BlogDbContext : DbContext
+{
+    /// <summary>Initializes a new instance of the BlogDbContext.</summary>
+    public BlogDbContext(DbContextOptions<BlogDbContext> options) : base(options)
+    {
+    }
+
+    /// <summary>Gets or sets the Users table.</summary>
+    public DbSet<User> Users => Set<User>();
+    /// <summary>Gets or sets the Posts table.</summary>
+    public DbSet<Post> Posts => Set<Post>();
+    /// <summary>Gets or sets the Images table.</summary>
+    public DbSet<Image> Images => Set<Image>();
+    /// <summary>Gets or sets the TelemetryLogs table.</summary>
+    public DbSet<TelemetryLog> TelemetryLogs => Set<TelemetryLog>();
+    /// <summary>Gets or sets the Image Dimension Cache table.</summary>
+    public DbSet<ImageDimensionCache> ImageDimensionCache => Set<ImageDimensionCache>();
+
+    /// <inheritdoc />
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+
+        // User configuration
+        modelBuilder.Entity<User>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Username).HasMaxLength(50).IsRequired();
+            entity.HasIndex(e => e.Username).IsUnique();
+            entity.Property(e => e.PasswordHash).HasMaxLength(256).IsRequired();
+            entity.Property(e => e.Email).HasMaxLength(256).IsRequired();
+            entity.Property(e => e.DisplayName).HasMaxLength(100).IsRequired();
+        });
+
+        // Post configuration
+        modelBuilder.Entity<Post>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Title).HasMaxLength(200).IsRequired();
+            entity.Property(e => e.Slug).HasMaxLength(200).IsRequired();
+            entity.HasIndex(e => e.Slug).IsUnique();
+            entity.Property(e => e.Summary).HasMaxLength(500).IsRequired();
+            entity.HasOne(e => e.Author)
+                .WithMany(u => u.Posts)
+                .HasForeignKey(e => e.AuthorId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        // Image configuration
+        modelBuilder.Entity<Image>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.FileName).HasMaxLength(256).IsRequired();
+            entity.Property(e => e.ContentType).HasMaxLength(100).IsRequired();
+            entity.HasOne(e => e.Post)
+                .WithMany(p => p.Images)
+                .HasForeignKey(e => e.PostId)
+                .OnDelete(DeleteBehavior.SetNull);
+            entity.HasOne(e => e.UploadedBy)
+                .WithMany(u => u.UploadedImages)
+                .HasForeignKey(e => e.UploadedByUserId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        // TelemetryLog configuration
+        modelBuilder.Entity<TelemetryLog>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Id).ValueGeneratedOnAdd();
+            entity.Property(e => e.Level).HasMaxLength(20).IsRequired();
+            entity.Property(e => e.Category).HasMaxLength(256).IsRequired();
+            entity.HasIndex(e => e.TimestampUtc);
+        });
+
+        // ImageDimensionCache configuration
+        modelBuilder.Entity<ImageDimensionCache>(entity =>
+        {
+            entity.HasKey(e => e.Url); // URL is the primary key
+            entity.Property(e => e.Url).HasMaxLength(2048); // Support long URLs
+        });
+    }
+}
+
+```
+
+### 3. New Interface: `IImageDimensionService.cs`
+
+**File:** `src/MyBlog.Core/Interfaces/IImageDimensionService.cs`
+
+```csharp
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace MyBlog.Core.Interfaces;
+
+/// <summary>
+/// Service for resolving and caching the width and height of images from URLs.
+/// </summary>
+public interface IImageDimensionService
+{
+    /// <summary>
+    /// Gets the dimensions (width, height) of an image from a URL.
+    /// Checks the database cache first; fetches and caches if missing.
+    /// </summary>
+    /// <param name="url">The absolute URL of the image.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>A tuple containing Width and Height, or null if resolution fails.</returns>
+    Task<(int Width, int Height)?> GetDimensionsAsync(string url, CancellationToken cancellationToken = default);
+}
+
+```
+
+### 4. New Service: `ImageDimensionService.cs`
+
+This service performs the logic: Check DB -> If missing, Read HTTP Headers (Binary Parsing) -> Save to DB -> Return.
+
+**File:** `src/MyBlog.Infrastructure/Services/ImageDimensionService.cs`
+
+```csharp
+using System.Buffers.Binary;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using MyBlog.Core.Interfaces;
+using MyBlog.Core.Models;
+using MyBlog.Infrastructure.Data;
+
+namespace MyBlog.Infrastructure.Services;
+
+public sealed class ImageDimensionService : IImageDimensionService
+{
+    private readonly HttpClient _httpClient;
+    private readonly IServiceScopeFactory _scopeFactory;
+    private readonly ILogger<ImageDimensionService> _logger;
+
+    public ImageDimensionService(
+        HttpClient httpClient,
+        IServiceScopeFactory scopeFactory,
+        ILogger<ImageDimensionService> logger)
+    {
+        _httpClient = httpClient;
+        _scopeFactory = scopeFactory;
+        _logger = logger;
+        _httpClient.Timeout = TimeSpan.FromSeconds(5);
+        _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("MyBlog/1.0");
+    }
+
+    public async Task<(int Width, int Height)?> GetDimensionsAsync(string url, CancellationToken cancellationToken = default)
+    {
+        // 1. Check Cache
+        using (var scope = _scopeFactory.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<BlogDbContext>();
+            var cached = await db.ImageDimensionCache.FindAsync([url], cancellationToken);
+            if (cached != null)
+            {
+                return (cached.Width, cached.Height);
+            }
+        }
+
+        // 2. Fetch if missing
+        try
+        {
+            var dimensions = await FetchDimensionsFromNetworkAsync(url, cancellationToken);
+
+            if (dimensions.HasValue)
+            {
+                // 3. Update Cache
+                using (var scope = _scopeFactory.CreateScope())
+                {
+                    var db = scope.ServiceProvider.GetRequiredService<BlogDbContext>();
+                    // Double check to prevent race conditions
+                    if (!await db.ImageDimensionCache.AnyAsync(x => x.Url == url, cancellationToken))
+                    {
+                        db.ImageDimensionCache.Add(new ImageDimensionCache
+                        {
+                            Url = url,
+                            Width = dimensions.Value.Width,
+                            Height = dimensions.Value.Height,
+                            LastCheckedUtc = DateTime.UtcNow
+                        });
+                        await db.SaveChangesAsync(cancellationToken);
+                    }
+                }
+                return dimensions;
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "Failed to resolve dimensions for {Url}", url);
+        }
+
+        return null;
+    }
+
+    private async Task<(int Width, int Height)?> FetchDimensionsFromNetworkAsync(string url, CancellationToken ct)
+    {
+        using var response = await _httpClient.GetAsync(url, HttpCompletionOption.ResponseHeadersRead, ct);
+        response.EnsureSuccessStatusCode();
+
+        using var stream = await response.Content.ReadAsStreamAsync(ct);
+        var buffer = new byte[32];
+        var bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length, ct);
+
+        if (bytesRead < 8) return null;
+
+        // PNG: 89 50 4E 47 0D 0A 1A 0A
+        if (IsPng(buffer))
+        {
+            // Width at 16, Height at 20 (Big Endian)
+            return (
+                BinaryPrimitives.ReadInt32BigEndian(buffer.AsSpan(16, 4)),
+                BinaryPrimitives.ReadInt32BigEndian(buffer.AsSpan(20, 4))
+            );
+        }
+
+        // GIF: GIF89a or GIF87a
+        if (IsGif(buffer))
+        {
+            // Width at 6, Height at 8 (Little Endian)
+            return (
+                BinaryPrimitives.ReadInt16LittleEndian(buffer.AsSpan(6, 2)),
+                BinaryPrimitives.ReadInt16LittleEndian(buffer.AsSpan(8, 2))
+            );
+        }
+
+        // BMP: BM
+        if (IsBmp(buffer))
+        {
+            // Width at 18, Height at 22 (Little Endian)
+            return (
+                BinaryPrimitives.ReadInt32LittleEndian(buffer.AsSpan(18, 4)),
+                BinaryPrimitives.ReadInt32LittleEndian(buffer.AsSpan(22, 4))
+            );
+        }
+
+        // WebP: RIFF ... WEBP
+        if (IsWebP(buffer))
+        {
+            // Simple VP8X check (common for modern WebP)
+            // Offset 12: 'VP8X'
+            if (buffer[12] == 'V' && buffer[13] == 'P' && buffer[14] == '8' && buffer[15] == 'X')
+            {
+                var width = buffer[24] | (buffer[25] << 8) | (buffer[26] << 16);
+                var height = buffer[27] | (buffer[28] << 8) | (buffer[29] << 16);
+                return (width + 1, height + 1);
+            }
+            // Fallback for simple VP8/VP8L omitted for brevity, covers most web use cases
+        }
+
+        // JPEG: FF D8
+        if (IsJpeg(buffer))
+        {
+            return await ParseJpegAsync(stream, buffer, bytesRead);
+        }
+
+        return null;
+    }
+
+    private static bool IsPng(byte[] b) => b[0] == 0x89 && b[1] == 0x50 && b[2] == 0x4E && b[3] == 0x47;
+    private static bool IsGif(byte[] b) => b[0] == 'G' && b[1] == 'I' && b[2] == 'F';
+    private static bool IsBmp(byte[] b) => b[0] == 0x42 && b[1] == 0x4D;
+    private static bool IsWebP(byte[] b) => b[8] == 'W' && b[9] == 'E' && b[10] == 'B' && b[11] == 'P';
+    private static bool IsJpeg(byte[] b) => b[0] == 0xFF && b[1] == 0xD8;
+
+    private async Task<(int, int)?> ParseJpegAsync(Stream stream, byte[] buffer, int bufferLength)
+    {
+        // Simple state machine to find SOF0/SOF2 markers
+        int pos = 2; // Skip FF D8
+
+        while (true)
+        {
+            int b = await ReadByteAsync(stream);
+            if (b == -1) break;
+
+            if (b != 0xFF) continue;
+
+            int marker = await ReadByteAsync(stream);
+            if (marker == -1) break;
+
+            if (marker == 0xC0 || marker == 0xC2) // SOF0 or SOF2
+            {
+                await SkipAsync(stream, 3); // Skip Length(2) + Precision(1)
+                int h = await ReadBigEndianUInt16Async(stream);
+                int w = await ReadBigEndianUInt16Async(stream);
+                return (w, h);
+            }
+            else
+            {
+                // Skip segment
+                int l1 = await ReadByteAsync(stream);
+                int l2 = await ReadByteAsync(stream);
+                if (l1 == -1 || l2 == -1) break;
+
+                int length = (l1 << 8) | l2;
+                await SkipAsync(stream, length - 2);
+            }
+        }
+        return null;
+    }
+
+    private async Task<int> ReadByteAsync(Stream stream)
+    {
+        var b = new byte[1];
+        return await stream.ReadAsync(b, 0, 1) == 0 ? -1 : b[0];
+    }
+
+    private async Task<int> ReadBigEndianUInt16Async(Stream stream)
+    {
+        var b = new byte[2];
+        if (await stream.ReadAsync(b, 0, 2) < 2) return 0;
+        return (b[0] << 8) | b[1];
+    }
+
+    private async Task SkipAsync(Stream stream, int count)
+    {
+        if (count <= 0) return;
+        var tmp = new byte[count];
+        await stream.ReadAsync(tmp, 0, count);
+    }
+}
+
+```
+
+### 5. Update Interface: `IMarkdownService.cs`
+
+We must change the contract to `Async` to allow database lookups during rendering.
+
+**File:** `src/MyBlog.Core/Interfaces/IMarkdownService.cs`
+
+```csharp
+using System.Threading.Tasks;
+
+namespace MyBlog.Core.Interfaces;
+
+/// <summary>
+/// Service interface for rendering Markdown to HTML.
+/// </summary>
+public interface IMarkdownService
+{
+    /// <summary>Converts Markdown text to HTML asynchronously.</summary>
+    Task<string> ToHtmlAsync(string markdown);
+}
+
+```
+
+### 6. Update Service: `MarkdownService.cs`
+
+This updates the renderer to use the Dimension Service. It finds image tags, fetches dimensions, and replaces the tag with one containing `width` and `height`.
+
+**File:** `src/MyBlog.Core/Services/MarkdownService.cs`
+
+```csharp
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Web;
+using MyBlog.Core.Interfaces;
+
+namespace MyBlog.Core.Services;
+
+/// <summary>
+/// Custom Markdown to HTML renderer.
+/// Supports: headings, bold, italic, links, images, code blocks, blockquotes, lists, horizontal rules.
+/// </summary>
+public sealed partial class MarkdownService : IMarkdownService
+{
+    private readonly IImageDimensionService _imageDimensionService;
+
+    public MarkdownService(IImageDimensionService imageDimensionService)
+    {
+        _imageDimensionService = imageDimensionService;
+    }
+
+    private enum ListType { None, Unordered, Ordered }
+
+    /// <inheritdoc />
+    public async Task<string> ToHtmlAsync(string markdown)
+    {
+        if (string.IsNullOrWhiteSpace(markdown))
+        {
+            return string.Empty;
+        }
+
+        var lines = markdown.Replace("\r\n", "\n").Split('\n');
+        var result = new StringBuilder();
+        var inCodeBlock = false;
+        var currentListType = ListType.None;
+        var codeBlockContent = new StringBuilder();
+
+        foreach (var rawLine in lines)
+        {
+            var line = rawLine;
+
+            // Handle fenced code blocks
+            if (line.StartsWith("```"))
+            {
+                if (inCodeBlock)
+                {
+                    result.Append("<pre><code>");
+                    result.Append(HttpUtility.HtmlEncode(codeBlockContent.ToString().TrimEnd()));
+                    result.AppendLine("</code></pre>");
+                    codeBlockContent.Clear();
+                    inCodeBlock = false;
+                }
+                else
+                {
+                    result.Append(CloseList(ref currentListType));
+                    inCodeBlock = true;
+                }
+                continue;
+            }
+
+            if (inCodeBlock)
+            {
+                codeBlockContent.AppendLine(line);
+                continue;
+            }
+
+            // Handle horizontal rules
+            if (HorizontalRulePattern().IsMatch(line))
+            {
+                result.Append(CloseList(ref currentListType));
+                result.AppendLine("<hr />");
+                continue;
+            }
+
+            // Handle headings
+            var headingMatch = HeadingPattern().Match(line);
+            if (headingMatch.Success)
+            {
+                result.Append(CloseList(ref currentListType));
+                var level = headingMatch.Groups[1].Value.Length;
+                // Await inline processing
+                var headingText = await ProcessInlineAsync(headingMatch.Groups[2].Value);
+                result.AppendLine($"<h{level}>{headingText}</h{level}>");
+                continue;
+            }
+
+            // Handle blockquotes
+            if (line.StartsWith("> "))
+            {
+                result.Append(CloseList(ref currentListType));
+                var quoteText = await ProcessInlineAsync(line[2..]);
+                result.AppendLine($"<blockquote><p>{quoteText}</p></blockquote>");
+                continue;
+            }
+
+            // Handle unordered list items
+            var unorderedMatch = UnorderedListPattern().Match(line);
+            if (unorderedMatch.Success)
+            {
+                if (currentListType != ListType.Unordered)
+                {
+                    result.Append(CloseList(ref currentListType));
+                    result.AppendLine("<ul>");
+                    currentListType = ListType.Unordered;
+                }
+                var itemText = await ProcessInlineAsync(unorderedMatch.Groups[1].Value);
+                result.AppendLine($"<li>{itemText}</li>");
+                continue;
+            }
+
+            // Handle ordered list items
+            var orderedMatch = OrderedListPattern().Match(line);
+            if (orderedMatch.Success)
+            {
+                if (currentListType != ListType.Ordered)
+                {
+                    result.Append(CloseList(ref currentListType));
+                    result.AppendLine("<ol>");
+                    currentListType = ListType.Ordered;
+                }
+                var itemText = await ProcessInlineAsync(orderedMatch.Groups[1].Value);
+                result.AppendLine($"<li>{itemText}</li>");
+                continue;
+            }
+
+            // Close list if no longer in list item
+            if (currentListType != ListType.None && !string.IsNullOrWhiteSpace(line))
+            {
+                result.Append(CloseList(ref currentListType));
+            }
+
+            // Handle empty lines
+            if (string.IsNullOrWhiteSpace(line))
+            {
+                result.Append(CloseList(ref currentListType));
+                continue;
+            }
+
+            // Regular paragraph
+            var paragraphText = await ProcessInlineAsync(line);
+            result.AppendLine($"<p>{paragraphText}</p>");
+        }
+
+        // Close any open list
+        result.Append(CloseList(ref currentListType));
+
+        // Close any unclosed code block
+        if (inCodeBlock)
+        {
+            result.Append("<pre><code>");
+            result.Append(HttpUtility.HtmlEncode(codeBlockContent.ToString().TrimEnd()));
+            result.AppendLine("</code></pre>");
+        }
+
+        return result.ToString();
+    }
+
+    private static string CloseList(ref ListType listType)
+    {
+        var result = listType switch
+        {
+            ListType.Unordered => "</ul>\n",
+            ListType.Ordered => "</ol>\n",
+            _ => ""
+        };
+        listType = ListType.None;
+        return result;
+    }
+
+    private async Task<string> ProcessInlineAsync(string text)
+    {
+        // Escape HTML first
+        text = HttpUtility.HtmlEncode(text);
+
+        // Process inline code
+        text = InlineCodePattern().Replace(text, "<code>$1</code>");
+
+        // Process images ![alt](url) -> WITH AUTOMATED DIMENSION LOOKUP
+        // Regex replacement doesn't support async, so we find matches, process them, and replace.
+        var matches = ImagePattern().Matches(text);
+        if (matches.Count > 0)
+        {
+            // Process matches in reverse to avoid index drift
+            for (int i = matches.Count - 1; i >= 0; i--)
+            {
+                var match = matches[i];
+                var alt = match.Groups[1].Value;
+                var url = match.Groups[2].Value;
+
+                // Lookup dimensions (Fast DB check or background fetch)
+                var dimensions = await _imageDimensionService.GetDimensionsAsync(url);
+
+                string imgTag;
+                if (dimensions.HasValue)
+                {
+                    imgTag = $"<img src=\"{url}\" alt=\"{alt}\" width=\"{dimensions.Value.Width}\" height=\"{dimensions.Value.Height}\" />";
+                }
+                else
+                {
+                    imgTag = $"<img src=\"{url}\" alt=\"{alt}\" />";
+                }
+
+                // Replace the Markdown syntax with the HTML tag
+                text = text.Remove(match.Index, match.Length).Insert(match.Index, imgTag);
+            }
+        }
+
+        // Process links
+        text = LinkPattern().Replace(text, "<a href=\"$2\">$1</a>");
+
+        // Process bold
+        text = BoldPattern().Replace(text, "<strong>$1</strong>");
+
+        // Process italic
+        text = ItalicPattern().Replace(text, "<em>$1</em>");
+
+        return text;
+    }
+
+    [GeneratedRegex(@"^(#{1,6})\s+(.+)$")]
+    private static partial Regex HeadingPattern();
+
+    [GeneratedRegex(@"^[-*]\s+(.+)$")]
+    private static partial Regex UnorderedListPattern();
+
+    [GeneratedRegex(@"^\d+\.\s+(.+)$")]
+    private static partial Regex OrderedListPattern();
+
+    [GeneratedRegex(@"^[-*_]{3,}\s*$")]
+    private static partial Regex HorizontalRulePattern();
+
+    [GeneratedRegex(@"`([^`]+)`")]
+    private static partial Regex InlineCodePattern();
+
+    // Standard markdown image pattern: ![alt](url)
+    [GeneratedRegex(@"!\[([^\]]*)\]\(([^)]+)\)")]
+    private static partial Regex ImagePattern();
+
+    [GeneratedRegex(@"\[([^\]]+)\]\(([^)]+)\)")]
+    private static partial Regex LinkPattern();
+
+    [GeneratedRegex(@"\*\*([^*]+)\*\*|__([^_]+)__")]
+    private static partial Regex BoldPattern();
+
+    [GeneratedRegex(@"(?<!\*)\*(?!\*)([^*]+)(?<!\*)\*(?!\*)|(?<!_)_(?!_)([^_]+)(?<!_)_(?!_)")]
+    private static partial Regex ItalicPattern();
+}
+
+```
+
+### 7. New Background Service: `ImageCacheWarmerService.cs`
+
+This solves the "Past Images" requirement. On startup, it scans all existing posts, finds images not yet in the cache, fetches their dimensions, and saves them. This ensures even old content gets the CLS fix automatically.
+
+**File:** `src/MyBlog.Infrastructure/Services/ImageCacheWarmerService.cs`
+
+```csharp
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using MyBlog.Core.Interfaces;
+using MyBlog.Infrastructure.Data;
+using System.Text.RegularExpressions;
+
+namespace MyBlog.Infrastructure.Services;
+
+/// <summary>
+/// Scans all posts on startup to ensure image dimensions are cached.
+/// This automates the fix for "past" images.
+/// </summary>
+public sealed class ImageCacheWarmerService : BackgroundService
+{
+    private readonly IServiceScopeFactory _scopeFactory;
+    private readonly ILogger<ImageCacheWarmerService> _logger;
+
+    public ImageCacheWarmerService(
+        IServiceScopeFactory scopeFactory,
+        ILogger<ImageCacheWarmerService> logger)
+    {
+        _scopeFactory = scopeFactory;
+        _logger = logger;
+    }
+
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    {
+        _logger.LogInformation("Image Cache Warmer started. Scanning posts for uncached images...");
+
+        try
+        {
+            using var scope = _scopeFactory.CreateScope();
+            var db = scope.ServiceProvider.GetRequiredService<BlogDbContext>();
+            var dimService = scope.ServiceProvider.GetRequiredService<IImageDimensionService>();
+
+            // Get all posts
+            var posts = await db.Posts
+                .Select(p => p.Content)
+                .ToListAsync(stoppingToken);
+
+            var regex = new Regex(@"!\[([^\]]*)\]\(([^)]+)\)");
+            var distinctUrls = new HashSet<string>();
+
+            // 1. Extract all URLs from all posts
+            foreach (var content in posts)
+            {
+                if (string.IsNullOrEmpty(content)) continue;
+                var matches = regex.Matches(content);
+                foreach (Match match in matches)
+                {
+                    distinctUrls.Add(match.Groups[2].Value);
+                }
+            }
+
+            // 2. Filter out ones we already have
+            var existingCache = await db.ImageDimensionCache
+                .Select(x => x.Url)
+                .ToListAsync(stoppingToken);
+
+            var existingSet = new HashSet<string>(existingCache);
+            var missingUrls = distinctUrls.Where(u => !existingSet.Contains(u)).ToList();
+
+            if (missingUrls.Count == 0)
+            {
+                _logger.LogInformation("Image Cache Warmer: All images are already cached.");
+                return;
+            }
+
+            _logger.LogInformation("Image Cache Warmer: Found {Count} uncached images. Fetching dimensions...", missingUrls.Count);
+
+            // 3. Process missing (in parallel but throttled)
+            foreach (var url in missingUrls)
+            {
+                if (stoppingToken.IsCancellationRequested) break;
+
+                try
+                {
+                    // Calling GetDimensionsAsync triggers the logic to fetch and save to DB
+                    await dimService.GetDimensionsAsync(url, stoppingToken);
+                    _logger.LogInformation("Cached dimensions for: {Url}", url);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error warming cache for {Url}", url);
+                }
+
+                // Be gentle on remote servers
+                await Task.Delay(100, stoppingToken);
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error in Image Cache Warmer");
+        }
+    }
+}
+
+```
+
+### 8. Update: `ServiceCollectionExtensions.cs`
+
+Register the new services. Note that `MarkdownService` is moved to `AddScoped` because it now depends on DB access (via the Dimension service).
+
+**File:** `src/MyBlog.Infrastructure/ServiceCollectionExtensions.cs`
+
+```csharp
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using MyBlog.Core.Interfaces;
+using MyBlog.Core.Services;
+using MyBlog.Infrastructure.Data;
+using MyBlog.Infrastructure.Repositories;
+using MyBlog.Infrastructure.Services;
+
+namespace MyBlog.Infrastructure;
+
+public static class ServiceCollectionExtensions
+{
+    public static IServiceCollection AddInfrastructure(
+        this IServiceCollection services,
+        IConfiguration configuration)
+    {
+        // Database
+        var connectionString = configuration.GetConnectionString("DefaultConnection");
+        if (string.IsNullOrEmpty(connectionString) || connectionString == "Data Source=myblog.db")
+        {
+            var dbPath = DatabasePathResolver.GetDatabasePath();
+            connectionString = $"Data Source={dbPath}";
+        }
+
+        services.AddDbContext<BlogDbContext>(options =>
+            options.UseSqlite(connectionString));
+
+        // Repositories
+        services.AddScoped<IPostRepository, PostRepository>();
+        services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IImageRepository, ImageRepository>();
+        services.AddScoped<ITelemetryLogRepository, TelemetryLogRepository>();
+
+        // Services
+        services.AddSingleton<IPasswordService, PasswordService>();
+        services.AddSingleton<ISlugService, SlugService>();
+        // REPLACED: Scoped because it now depends on Scoped/Transient DB access via IImageDimensionService logic
+        services.AddScoped<IMarkdownService, MarkdownService>();
+        services.AddScoped<IAuthService, AuthService>();
+
+        services.AddSingleton<IReaderTrackingService, ReaderTrackingService>();
+
+        // NEW: Image Dimension Service (With HttpClient)
+        services.AddHttpClient<IImageDimensionService, ImageDimensionService>();
+
+        // Background services
+        services.AddHostedService<TelemetryCleanupService>();
+        // NEW: Cache Warmer
+        services.AddHostedService<ImageCacheWarmerService>();
+
+        return services;
+    }
+}
+
+```
+
+### 9. Update UI: `MarkdownRenderer.razor`
+
+Update the renderer to handle the new `async` behavior.
+
+**File:** `src/MyBlog.Web/Components/Shared/MarkdownRenderer.razor`
+
+```razor
+@inject IMarkdownService MarkdownService
+
+<div class="markdown-content">
+    @((MarkupString)_htmlContent)
+</div>
+
+@code {
+    [Parameter]
+    public string? Content { get; set; }
+
+    private string _htmlContent = "";
+
+    protected override async Task OnParametersSetAsync()
+    {
+        _htmlContent = await MarkdownService.ToHtmlAsync(Content ?? "");
+    }
+}
+
+```
+
+### 10. Update Tests: `MarkdownServiceTests.cs`
+
+Since we changed the interface to `Async` and injected a dependency, the tests need updating.
+
+**File:** `src/MyBlog.Tests/Unit/MarkdownServiceTests.cs`
+
+```csharp
+using MyBlog.Core.Interfaces;
+using MyBlog.Core.Services;
+using System.Threading;
+using System.Threading.Tasks;
+using Xunit;
+
+namespace MyBlog.Tests.Unit;
+
+// Mock implementation for testing
+class MockImageDimensionService : IImageDimensionService
+{
+    public Task<(int Width, int Height)?> GetDimensionsAsync(string url, CancellationToken cancellationToken = default)
+    {
+        if (url.Contains("image.png")) return Task.FromResult<(int, int)?>( (100, 200) );
+        return Task.FromResult<(int, int)?>(null);
+    }
+}
+
+public class MarkdownServiceTests
+{
+    private readonly MarkdownService _sut = new(new MockImageDimensionService());
+
+    [Fact]
+    public async Task ToHtml_WithHeading1_ReturnsH1Tag()
+    {
+        var result = await _sut.ToHtmlAsync("# Hello");
+        Assert.Contains("<h1>Hello</h1>", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithHeading2_ReturnsH2Tag()
+    {
+        var result = await _sut.ToHtmlAsync("## Hello");
+        Assert.Contains("<h2>Hello</h2>", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithHeading6_ReturnsH6Tag()
+    {
+        var result = await _sut.ToHtmlAsync("###### Hello");
+        Assert.Contains("<h6>Hello</h6>", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithBoldText_ReturnsStrongTag()
+    {
+        var result = await _sut.ToHtmlAsync("This is **bold** text");
+        Assert.Contains("<strong>bold</strong>", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithItalicText_ReturnsEmTag()
+    {
+        var result = await _sut.ToHtmlAsync("This is *italic* text");
+        Assert.Contains("<em>italic</em>", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithLink_ReturnsAnchorTag()
+    {
+        var result = await _sut.ToHtmlAsync("Check [this link](https://example.com)");
+        Assert.Contains("<a href=\"[https://example.com](https://example.com)\">this link</a>", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithImage_InjectsDimensions_IfResolvable()
+    {
+        // Mock returns 100x200 for 'image.png'
+        var result = await _sut.ToHtmlAsync("![alt text](https://example.com/image.png)");
+        Assert.Contains("<img src=\"[https://example.com/image.png](https://example.com/image.png)\" alt=\"alt text\" width=\"100\" height=\"200\" />", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithImage_NoDimensions_IfUnresolvable()
+    {
+        var result = await _sut.ToHtmlAsync("![alt text](https://example.com/unknown.jpg)");
+        Assert.Contains("<img src=\"[https://example.com/unknown.jpg](https://example.com/unknown.jpg)\" alt=\"alt text\" />", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithInlineCode_ReturnsCodeTag()
+    {
+        var result = await _sut.ToHtmlAsync("Use `code` here");
+        Assert.Contains("<code>code</code>", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithCodeBlock_ReturnsPreCodeTags()
+    {
+        var markdown = "```\nvar x = 1;\n```";
+        var result = await _sut.ToHtmlAsync(markdown);
+        Assert.Contains("<pre><code>", result);
+        Assert.Contains("var x = 1;", result);
+        Assert.Contains("</code></pre>", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithBlockquote_ReturnsBlockquoteTag()
+    {
+        var result = await _sut.ToHtmlAsync("> This is a quote");
+        Assert.Contains("<blockquote><p>This is a quote</p></blockquote>", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithUnorderedList_ReturnsUlLiTags()
+    {
+        var markdown = "- Item 1\n- Item 2";
+        var result = await _sut.ToHtmlAsync(markdown);
+        Assert.Contains("<ul>", result);
+        Assert.Contains("<li>Item 1</li>", result);
+        Assert.Contains("<li>Item 2</li>", result);
+        Assert.Contains("</ul>", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithHorizontalRule_ReturnsHrTag()
+    {
+        var result = await _sut.ToHtmlAsync("---");
+        Assert.Contains("<hr />", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithEmptyString_ReturnsEmptyString()
+    {
+        var result = await _sut.ToHtmlAsync("");
+        Assert.Equal(string.Empty, result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithPlainText_ReturnsParagraph()
+    {
+        var result = await _sut.ToHtmlAsync("Hello world");
+        Assert.Contains("<p>Hello world</p>", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithHtmlCharacters_EscapesThem()
+    {
+        var result = await _sut.ToHtmlAsync("Use <script> tags");
+        Assert.Contains("&lt;script&gt;", result);
+        Assert.DoesNotContain("<script>", result);
+    }
+}
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

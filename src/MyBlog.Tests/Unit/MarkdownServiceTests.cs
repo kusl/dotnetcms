@@ -1,90 +1,115 @@
+using MyBlog.Core.Interfaces;
 using MyBlog.Core.Services;
+using System.Threading;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace MyBlog.Tests.Unit;
 
+// Mock implementation for testing
+class MockImageDimensionService : IImageDimensionService
+{
+    public Task<(int Width, int Height)?> GetDimensionsAsync(string url, CancellationToken cancellationToken = default)
+    {
+        if (url.Contains("image.png"))
+        {
+            return Task.FromResult<(int, int)?>( (100, 200) );
+        }
+
+        return Task.FromResult<(int, int)?>(null);
+    }
+}
+
 public class MarkdownServiceTests
 {
-    private readonly MarkdownService _sut = new();
+    private readonly MarkdownService _sut = new(new MockImageDimensionService());
 
     [Fact]
-    public void ToHtml_WithHeading1_ReturnsH1Tag()
+    public async Task ToHtml_WithHeading1_ReturnsH1Tag()
     {
-        var result = _sut.ToHtml("# Hello");
+        var result = await _sut.ToHtmlAsync("# Hello");
         Assert.Contains("<h1>Hello</h1>", result);
     }
 
     [Fact]
-    public void ToHtml_WithHeading2_ReturnsH2Tag()
+    public async Task ToHtml_WithHeading2_ReturnsH2Tag()
     {
-        var result = _sut.ToHtml("## Hello");
+        var result = await _sut.ToHtmlAsync("## Hello");
         Assert.Contains("<h2>Hello</h2>", result);
     }
 
     [Fact]
-    public void ToHtml_WithHeading6_ReturnsH6Tag()
+    public async Task ToHtml_WithHeading6_ReturnsH6Tag()
     {
-        var result = _sut.ToHtml("###### Hello");
+        var result = await _sut.ToHtmlAsync("###### Hello");
         Assert.Contains("<h6>Hello</h6>", result);
     }
 
     [Fact]
-    public void ToHtml_WithBoldText_ReturnsStrongTag()
+    public async Task ToHtml_WithBoldText_ReturnsStrongTag()
     {
-        var result = _sut.ToHtml("This is **bold** text");
+        var result = await _sut.ToHtmlAsync("This is **bold** text");
         Assert.Contains("<strong>bold</strong>", result);
     }
 
     [Fact]
-    public void ToHtml_WithItalicText_ReturnsEmTag()
+    public async Task ToHtml_WithItalicText_ReturnsEmTag()
     {
-        var result = _sut.ToHtml("This is *italic* text");
+        var result = await _sut.ToHtmlAsync("This is *italic* text");
         Assert.Contains("<em>italic</em>", result);
     }
 
     [Fact]
-    public void ToHtml_WithLink_ReturnsAnchorTag()
+    public async Task ToHtml_WithLink_ReturnsAnchorTag()
     {
-        var result = _sut.ToHtml("Check [this link](https://example.com)");
-        Assert.Contains("<a href=\"https://example.com\">this link</a>", result);
+        var result = await _sut.ToHtmlAsync("Check [this link](https://example.com)");
+        Assert.Contains("<a href=\"[https://example.com](https://example.com)\">this link</a>", result);
     }
 
     [Fact]
-    public void ToHtml_WithImage_ReturnsImgTag()
+    public async Task ToHtml_WithImage_InjectsDimensions_IfResolvable()
     {
-        var result = _sut.ToHtml("![alt text](https://example.com/image.png)");
-        Assert.Contains("<img src=\"https://example.com/image.png\" alt=\"alt text\" />", result);
+        // Mock returns 100x200 for 'image.png'
+        var result = await _sut.ToHtmlAsync("![alt text](https://example.com/image.png)");
+        Assert.Contains("<img src=\"[https://example.com/image.png](https://example.com/image.png)\" alt=\"alt text\" width=\"100\" height=\"200\" />", result);
     }
 
     [Fact]
-    public void ToHtml_WithInlineCode_ReturnsCodeTag()
+    public async Task ToHtml_WithImage_NoDimensions_IfUnresolvable()
     {
-        var result = _sut.ToHtml("Use `code` here");
+        var result = await _sut.ToHtmlAsync("![alt text](https://example.com/unknown.jpg)");
+        Assert.Contains("<img src=\"[https://example.com/unknown.jpg](https://example.com/unknown.jpg)\" alt=\"alt text\" />", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithInlineCode_ReturnsCodeTag()
+    {
+        var result = await _sut.ToHtmlAsync("Use `code` here");
         Assert.Contains("<code>code</code>", result);
     }
 
     [Fact]
-    public void ToHtml_WithCodeBlock_ReturnsPreCodeTags()
+    public async Task ToHtml_WithCodeBlock_ReturnsPreCodeTags()
     {
         var markdown = "```\nvar x = 1;\n```";
-        var result = _sut.ToHtml(markdown);
+        var result = await _sut.ToHtmlAsync(markdown);
         Assert.Contains("<pre><code>", result);
         Assert.Contains("var x = 1;", result);
         Assert.Contains("</code></pre>", result);
     }
 
     [Fact]
-    public void ToHtml_WithBlockquote_ReturnsBlockquoteTag()
+    public async Task ToHtml_WithBlockquote_ReturnsBlockquoteTag()
     {
-        var result = _sut.ToHtml("> This is a quote");
+        var result = await _sut.ToHtmlAsync("> This is a quote");
         Assert.Contains("<blockquote><p>This is a quote</p></blockquote>", result);
     }
 
     [Fact]
-    public void ToHtml_WithUnorderedList_ReturnsUlLiTags()
+    public async Task ToHtml_WithUnorderedList_ReturnsUlLiTags()
     {
         var markdown = "- Item 1\n- Item 2";
-        var result = _sut.ToHtml(markdown);
+        var result = await _sut.ToHtmlAsync(markdown);
         Assert.Contains("<ul>", result);
         Assert.Contains("<li>Item 1</li>", result);
         Assert.Contains("<li>Item 2</li>", result);
@@ -92,30 +117,30 @@ public class MarkdownServiceTests
     }
 
     [Fact]
-    public void ToHtml_WithHorizontalRule_ReturnsHrTag()
+    public async Task ToHtml_WithHorizontalRule_ReturnsHrTag()
     {
-        var result = _sut.ToHtml("---");
+        var result = await _sut.ToHtmlAsync("---");
         Assert.Contains("<hr />", result);
     }
 
     [Fact]
-    public void ToHtml_WithEmptyString_ReturnsEmptyString()
+    public async Task ToHtml_WithEmptyString_ReturnsEmptyString()
     {
-        var result = _sut.ToHtml("");
+        var result = await _sut.ToHtmlAsync("");
         Assert.Equal(string.Empty, result);
     }
 
     [Fact]
-    public void ToHtml_WithPlainText_ReturnsParagraph()
+    public async Task ToHtml_WithPlainText_ReturnsParagraph()
     {
-        var result = _sut.ToHtml("Hello world");
+        var result = await _sut.ToHtmlAsync("Hello world");
         Assert.Contains("<p>Hello world</p>", result);
     }
 
     [Fact]
-    public void ToHtml_WithHtmlCharacters_EscapesThem()
+    public async Task ToHtml_WithHtmlCharacters_EscapesThem()
     {
-        var result = _sut.ToHtml("Use <script> tags");
+        var result = await _sut.ToHtmlAsync("Use <script> tags");
         Assert.Contains("&lt;script&gt;", result);
         Assert.DoesNotContain("<script>", result);
     }
