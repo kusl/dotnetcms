@@ -15,15 +15,14 @@ public sealed class BlogDbContext : DbContext
 
     /// <summary>Gets or sets the Users table.</summary>
     public DbSet<User> Users => Set<User>();
-
     /// <summary>Gets or sets the Posts table.</summary>
     public DbSet<Post> Posts => Set<Post>();
-
     /// <summary>Gets or sets the Images table.</summary>
     public DbSet<Image> Images => Set<Image>();
-
     /// <summary>Gets or sets the TelemetryLogs table.</summary>
     public DbSet<TelemetryLog> TelemetryLogs => Set<TelemetryLog>();
+    /// <summary>Gets or sets the Image Dimension Cache table.</summary>
+    public DbSet<ImageDimensionCache> ImageDimensionCache => Set<ImageDimensionCache>();
 
     /// <inheritdoc />
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -79,6 +78,13 @@ public sealed class BlogDbContext : DbContext
             entity.Property(e => e.Level).HasMaxLength(20).IsRequired();
             entity.Property(e => e.Category).HasMaxLength(256).IsRequired();
             entity.HasIndex(e => e.TimestampUtc);
+        });
+
+        // ImageDimensionCache configuration
+        modelBuilder.Entity<ImageDimensionCache>(entity =>
+        {
+            entity.HasKey(e => e.Url); // URL is the primary key
+            entity.Property(e => e.Url).HasMaxLength(2048); // Support long URLs
         });
     }
 }

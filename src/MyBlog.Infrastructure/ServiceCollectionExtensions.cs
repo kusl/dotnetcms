@@ -9,14 +9,8 @@ using MyBlog.Infrastructure.Services;
 
 namespace MyBlog.Infrastructure;
 
-/// <summary>
-/// Extension methods for registering infrastructure services.
-/// </summary>
 public static class ServiceCollectionExtensions
 {
-    /// <summary>
-    /// Adds infrastructure services to the DI container.
-    /// </summary>
     public static IServiceCollection AddInfrastructure(
         this IServiceCollection services,
         IConfiguration configuration)
@@ -25,7 +19,6 @@ public static class ServiceCollectionExtensions
         var connectionString = configuration.GetConnectionString("DefaultConnection");
         if (string.IsNullOrEmpty(connectionString) || connectionString == "Data Source=myblog.db")
         {
-            // Use XDG-compliant path
             var dbPath = DatabasePathResolver.GetDatabasePath();
             connectionString = $"Data Source={dbPath}";
         }
@@ -42,13 +35,19 @@ public static class ServiceCollectionExtensions
         // Services
         services.AddSingleton<IPasswordService, PasswordService>();
         services.AddSingleton<ISlugService, SlugService>();
-        services.AddSingleton<IMarkdownService, MarkdownService>();
+        // REPLACED: Scoped because it now depends on Scoped/Transient DB access via IImageDimensionService logic
+        services.AddScoped<IMarkdownService, MarkdownService>();
         services.AddScoped<IAuthService, AuthService>();
 
         services.AddSingleton<IReaderTrackingService, ReaderTrackingService>();
 
+        // NEW: Image Dimension Service (With HttpClient)
+        services.AddHttpClient<IImageDimensionService, ImageDimensionService>();
+
         // Background services
         services.AddHostedService<TelemetryCleanupService>();
+        // NEW: Cache Warmer
+        services.AddHostedService<ImageCacheWarmerService>();
 
         return services;
     }

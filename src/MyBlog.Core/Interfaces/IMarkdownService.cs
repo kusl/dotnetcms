@@ -6,5 +6,5 @@ namespace MyBlog.Core.Interfaces;
 public interface IMarkdownService
 {
     /// <summary>Converts Markdown text to HTML.</summary>
-    string ToHtml(string markdown);
+    Task<string> ToHtmlAsync(string markdown);
 }

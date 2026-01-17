@@ -7,15 +7,21 @@ namespace MyBlog.Core.Services;
 
 /// <summary>
 /// Custom Markdown to HTML renderer.
-/// Supports: headings, bold, italic, links, images, code blocks, blockquotes, 
-/// unordered lists, ordered lists, horizontal rules.
+/// Supports: headings, bold, italic, links, images, code blocks, blockquotes, lists, horizontal rules.
 /// </summary>
 public sealed partial class MarkdownService : IMarkdownService
 {
+    private readonly IImageDimensionService _imageDimensionService;
+
+    public MarkdownService(IImageDimensionService imageDimensionService)
+    {
+        _imageDimensionService = imageDimensionService;
+    }
+
     private enum ListType { None, Unordered, Ordered }
 
     /// <inheritdoc />
-    public string ToHtml(string markdown)
+    public async Task<string> ToHtmlAsync(string markdown)
     {
         if (string.IsNullOrWhiteSpace(markdown))
         {
@@ -71,7 +77,8 @@ public sealed partial class MarkdownService : IMarkdownService
             {
                 result.Append(CloseList(ref currentListType));
                 var level = headingMatch.Groups[1].Value.Length;
-                var headingText = ProcessInline(headingMatch.Groups[2].Value);
+                // Await the inline processing
+                var headingText = await ProcessInlineAsync(headingMatch.Groups[2].Value);
                 result.AppendLine($"<h{level}>{headingText}</h{level}>");
                 continue;
             }
@@ -80,12 +87,12 @@ public sealed partial class MarkdownService : IMarkdownService
             if (line.StartsWith("> "))
             {
                 result.Append(CloseList(ref currentListType));
-                var quoteText = ProcessInline(line[2..]);
+                var quoteText = await ProcessInlineAsync(line[2..]);
                 result.AppendLine($"<blockquote><p>{quoteText}</p></blockquote>");
                 continue;
             }
 
-            // Handle unordered list items (- or *)
+            // Handle unordered list items
             var unorderedMatch = UnorderedListPattern().Match(line);
             if (unorderedMatch.Success)
             {
@@ -95,12 +102,12 @@ public sealed partial class MarkdownService : IMarkdownService
                     result.AppendLine("<ul>");
                     currentListType = ListType.Unordered;
                 }
-                var itemText = ProcessInline(unorderedMatch.Groups[1].Value);
+                var itemText = await ProcessInlineAsync(unorderedMatch.Groups[1].Value);
                 result.AppendLine($"<li>{itemText}</li>");
                 continue;
             }
 
-            // Handle ordered list items (1. 2. 3. etc.)
+            // Handle ordered list items
             var orderedMatch = OrderedListPattern().Match(line);
             if (orderedMatch.Success)
             {
@@ -110,7 +117,7 @@ public sealed partial class MarkdownService : IMarkdownService
                     result.AppendLine("<ol>");
                     currentListType = ListType.Ordered;
                 }
-                var itemText = ProcessInline(orderedMatch.Groups[1].Value);
+                var itemText = await ProcessInlineAsync(orderedMatch.Groups[1].Value);
                 result.AppendLine($"<li>{itemText}</li>");
                 continue;
             }
@@ -129,7 +136,7 @@ public sealed partial class MarkdownService : IMarkdownService
             }
 
             // Regular paragraph
-            var paragraphText = ProcessInline(line);
+            var paragraphText = await ProcessInlineAsync(line);
             result.AppendLine($"<p>{paragraphText}</p>");
         }
 
@@ -159,24 +166,51 @@ public sealed partial class MarkdownService : IMarkdownService
         return result;
     }
 
-    private static string ProcessInline(string text)
+    private async Task<string> ProcessInlineAsync(string text)
     {
         // Escape HTML first
         text = HttpUtility.HtmlEncode(text);
 
-        // Process inline code (must be before bold/italic to avoid conflicts)
+        // Process inline code
         text = InlineCodePattern().Replace(text, "<code>$1</code>");
 
-        // Process images ![alt](url)
-        text = ImagePattern().Replace(text, "<img src=\"$2\" alt=\"$1\" />");
+        // Process images ![alt](url) -> WITH AUTOMATED DIMENSION LOOKUP
+        // Regex replacement doesn't support async, so we find matches, process them, and replace.
+        var matches = ImagePattern().Matches(text);
+        if (matches.Count > 0)
+        {
+            // Process matches in reverse to avoid index drift
+            for (int i = matches.Count - 1; i >= 0; i--)
+            {
+                var match = matches[i];
+                var alt = match.Groups[1].Value;
+                var url = match.Groups[2].Value;
 
-        // Process links [text](url)
+                // Lookup dimensions (Fast DB check or background fetch)
+                var dimensions = await _imageDimensionService.GetDimensionsAsync(url);
+
+                string imgTag;
+                if (dimensions.HasValue)
+                {
+                    imgTag = $"<img src=\"{url}\" alt=\"{alt}\" width=\"{dimensions.Value.Width}\" height=\"{dimensions.Value.Height}\" />";
+                }
+                else
+                {
+                    imgTag = $"<img src=\"{url}\" alt=\"{alt}\" />";
+                }
+
+                // Replace the Markdown syntax with the HTML tag
+                text = text.Remove(match.Index, match.Length).Insert(match.Index, imgTag);
+            }
+        }
+
+        // Process links
         text = LinkPattern().Replace(text, "<a href=\"$2\">$1</a>");
 
-        // Process bold **text** or __text__
+        // Process bold
         text = BoldPattern().Replace(text, "<strong>$1</strong>");
 
-        // Process italic *text* or _text_
+        // Process italic
         text = ItalicPattern().Replace(text, "<em>$1</em>");
 
         return text;
@@ -197,6 +231,7 @@ public sealed partial class MarkdownService : IMarkdownService
     [GeneratedRegex(@"`([^`]+)`")]
     private static partial Regex InlineCodePattern();
 
+    // Standard markdown image pattern: ![alt](url)
     [GeneratedRegex(@"!\[([^\]]*)\]\(([^)]+)\)")]
     private static partial Regex ImagePattern();
 
