@@ -2,15 +2,26 @@ namespace MyBlog.Core.Interfaces;
 
 public interface IReaderTrackingService
 {
-    // Called when a user opens a post
-    void JoinPost(string slug);
+    /// <summary>
+    /// Registers a connection viewing a specific post.
+    /// </summary>
+    /// <returns>The new reader count for this slug.</returns>
+    int JoinPost(string slug, string connectionId);
 
-    // Called when a user leaves (closes tab/navigates away)
-    void LeavePost(string slug);
+    /// <summary>
+    /// Unregisters a connection from a specific post.
+    /// </summary>
+    /// <returns>The new reader count for this slug.</returns>
+    int LeavePost(string slug, string connectionId);
 
-    // Gets the current count
+    /// <summary>
+    /// Handles a disconnection event (e.g. tab closed) and determines which slug was being viewed.
+    /// </summary>
+    /// <returns>A tuple containing the Slug that was left (if any) and the new count.</returns>
+    (string? Slug, int NewCount) Disconnect(string connectionId);
+
+    /// <summary>
+    /// Gets the current count for a specific post.
+    /// </summary>
     int GetReaderCount(string slug);
-
-    // Event that fires when the count changes
-    event Action<string, int>? OnCountChanged;
 }

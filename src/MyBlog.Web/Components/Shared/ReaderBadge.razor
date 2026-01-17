@@ -1,47 +1,66 @@
-@inject IReaderTrackingService TrackingService
-@implements IDisposable
+@using Microsoft.AspNetCore.SignalR.Client
+@inject NavigationManager Navigation
+@implements IAsyncDisposable
 
-@if (_count > 0)
-{
-    <span class="reader-badge" title="Live reader count">
-        <span class="reader-dot">●</span>
-        @_count @(_count == 1 ? "person" : "people") reading
-    </span>
-}
+<div class="reader-badge" title="Active readers on this post">
+    <span class="reader-dot">●</span>
+    <span>@(_count) reading now</span>
+</div>
 
 @code {
-    [Parameter]
+    [Parameter, EditorRequired]
     public string Slug { get; set; } = "";
 
+    private HubConnection? _hubConnection;
     private int _count;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        if (string.IsNullOrEmpty(Slug)) return;
+        // Create the connection
+        _hubConnection = new HubConnectionBuilder()
+            .WithUrl(Navigation.ToAbsoluteUri("/readerHub"))
+            .WithAutomaticReconnect()
+            .Build();
 
-        // Join the group and get initial count
-        TrackingService.JoinPost(Slug);
-        _count = TrackingService.GetReaderCount(Slug);
-
-        // Listen for updates
-        TrackingService.OnCountChanged += HandleCountChanged;
-    }
-
-    private void HandleCountChanged(string slug, int count)
-    {
-        if (slug == Slug)
+        // Register the listener BEFORE starting the connection
+        _hubConnection.On<int>("UpdateCount", (newCount) =>
         {
-            _count = count;
+            _count = newCount;
             InvokeAsync(StateHasChanged);
+        });
+
+        try
+        {
+            // Start connection
+            await _hubConnection.StartAsync();
+
+            // Tell the server we are viewing this specific slug
+            if (!string.IsNullOrEmpty(Slug))
+            {
+                await _hubConnection.InvokeAsync("JoinPage", Slug);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error connecting to ReaderHub: {ex.Message}");
         }
     }
 
-    public void Dispose()
+    public async ValueTask DisposeAsync()
     {
-        if (!string.IsNullOrEmpty(Slug))
+        if (_hubConnection is not null)
         {
-            TrackingService.LeavePost(Slug);
-            TrackingService.OnCountChanged -= HandleCountChanged;
+            if (!string.IsNullOrEmpty(Slug) && _hubConnection.State == HubConnectionState.Connected)
+            {
+                // Gracefully leave the page if possible
+                try
+                {
+                    await _hubConnection.InvokeAsync("LeavePage", Slug);
+                }
+                catch { /* Connection might be closed already, ignore */ }
+            }
+
+            await _hubConnection.DisposeAsync();
         }
     }
 }

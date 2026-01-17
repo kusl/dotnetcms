@@ -5,37 +5,45 @@ namespace MyBlog.Infrastructure.Services;
 
 public class ReaderTrackingService : IReaderTrackingService
 {
-    // Thread-safe dictionary to store counts: Slug -> Count
-    private readonly ConcurrentDictionary<string, int> _activeReaders = new();
+    // Maps Slug -> Count of active readers
+    private readonly ConcurrentDictionary<string, int> _slugCounts = new();
 
-    public event Action<string, int>? OnCountChanged;
+    // Maps ConnectionId -> Slug (Reverse lookup to handle disconnects)
+    private readonly ConcurrentDictionary<string, string> _connectionMap = new();
 
-    public void JoinPost(string slug)
+    public int JoinPost(string slug, string connectionId)
     {
-        // Atomically increment the count
-        var newCount = _activeReaders.AddOrUpdate(slug, 1, (_, count) => count + 1);
+        // Map the connection to the slug
+        _connectionMap.AddOrUpdate(connectionId, slug, (_, _) => slug);
 
-        // Notify subscribers
-        OnCountChanged?.Invoke(slug, newCount);
+        // Increment the count for this slug
+        return _slugCounts.AddOrUpdate(slug, 1, (_, count) => count + 1);
     }
 
-    public void LeavePost(string slug)
+    public int LeavePost(string slug, string connectionId)
     {
-        // Atomically decrement the count
-        var newCount = _activeReaders.AddOrUpdate(slug, 0, (_, count) => count > 0 ? count - 1 : 0);
+        // Remove the connection mapping
+        _connectionMap.TryRemove(connectionId, out _);
 
-        // If count is 0, we could remove the key, but keeping it is harmless for small blogs
-        if (newCount == 0)
+        // Decrement the count
+        return _slugCounts.AddOrUpdate(slug, 0, (_, count) => count > 0 ? count - 1 : 0);
+    }
+
+    public (string? Slug, int NewCount) Disconnect(string connectionId)
+    {
+        // Find which slug this connection was watching
+        if (_connectionMap.TryRemove(connectionId, out var slug))
         {
-            _activeReaders.TryRemove(slug, out _);
+            // Decrement that slug's count
+            var newCount = _slugCounts.AddOrUpdate(slug, 0, (_, count) => count > 0 ? count - 1 : 0);
+            return (slug, newCount);
         }
 
-        // Notify subscribers
-        OnCountChanged?.Invoke(slug, newCount);
+        return (null, 0);
     }
 
     public int GetReaderCount(string slug)
     {
-        return _activeReaders.TryGetValue(slug, out var count) ? count : 0;
+        return _slugCounts.TryGetValue(slug, out var count) ? count : 0;
     }
 }

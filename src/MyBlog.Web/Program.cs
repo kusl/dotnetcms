@@ -8,6 +8,7 @@ using MyBlog.Infrastructure.Data;
 using MyBlog.Infrastructure.Services;
 using MyBlog.Infrastructure.Telemetry;
 using MyBlog.Web.Components;
+using MyBlog.Web.Hubs; // ADD THIS
 using MyBlog.Web.Middleware;
 using OpenTelemetry;
 using OpenTelemetry.Logs;
@@ -20,6 +21,9 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+// ADD THIS: Register SignalR
+builder.Services.AddSignalR();
 
 builder.Services.AddInfrastructure(builder.Configuration);
 
@@ -34,7 +38,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.Cookie.Name = AppConstants.AuthCookieName;
         options.LoginPath = "/login";
         options.LogoutPath = "/logout";
-        options.AccessDeniedPath = "/access-denied"; // FIX: Added explicit Access Denied path
+        options.AccessDeniedPath = "/access-denied";
         options.ExpireTimeSpan = TimeSpan.FromMinutes(sessionTimeout);
         options.SlidingExpiration = true;
         options.Cookie.HttpOnly = true;
@@ -51,6 +55,7 @@ builder.Services.AddAntiforgery();
 // OpenTelemetry configuration
 var serviceName = "MyBlog.Web";
 var serviceVersion = typeof(Program).Assembly.GetName().Version?.ToString() ?? "1.0.0";
+
 builder.Services.AddOpenTelemetry()
     .ConfigureResource(resource => resource
         .AddService(serviceName: serviceName, serviceVersion: serviceVersion))
@@ -110,6 +115,9 @@ app.MapPost("/logout", async (HttpContext context) =>
     await context.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
     return Results.Redirect("/");
 }).RequireAuthorization();
+
+// ADD THIS: Map the Hub
+app.MapHub<ReaderHub>("/readerHub");
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
