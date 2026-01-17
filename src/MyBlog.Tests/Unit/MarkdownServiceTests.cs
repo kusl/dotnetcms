@@ -63,7 +63,7 @@ public class MarkdownServiceTests
     public async Task ToHtml_WithLink_ReturnsAnchorTag()
     {
         var result = await _sut.ToHtmlAsync("Check [this link](https://example.com)");
-        Assert.Contains("<a href=\"[https://example.com](https://example.com)\">this link</a>", result);
+        Assert.Contains("<p>Check <a href=\"https://example.com\">this link</a></p>", result);
     }
 
     [Fact]
@@ -71,14 +71,22 @@ public class MarkdownServiceTests
     {
         // Mock returns 100x200 for 'image.png'
         var result = await _sut.ToHtmlAsync("![alt text](https://example.com/image.png)");
-        Assert.Contains("<img src=\"[https://example.com/image.png](https://example.com/image.png)\" alt=\"alt text\" width=\"100\" height=\"200\" />", result);
+        Assert.Contains("<p><img src=\"https://example.com/image.png\" alt=\"alt text\" width=\"100\" height=\"200\" /></p>\n", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithImage_InjectsParagraphs_IfResolvable()
+    {
+        // Mock returns 100x200 for 'image.png'
+        var result = await _sut.ToHtmlAsync("Check out this photo of when I was younger. ![high school graduation photo](https://example.com/image.png)");
+        Assert.Contains("<p>Check out this photo of when I was younger. <img src=\"https://example.com/image.png\" alt=\"high school graduation photo\" width=\"100\" height=\"200\" /></p>\n", result);
     }
 
     [Fact]
     public async Task ToHtml_WithImage_NoDimensions_IfUnresolvable()
     {
         var result = await _sut.ToHtmlAsync("![alt text](https://example.com/unknown.jpg)");
-        Assert.Contains("<img src=\"[https://example.com/unknown.jpg](https://example.com/unknown.jpg)\" alt=\"alt text\" />", result);
+        Assert.Contains("<p><img src=\"https://example.com/unknown.jpg\" alt=\"alt text\" /></p>\n", result);
     }
 
     [Fact]
