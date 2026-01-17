@@ -1,6 +1,6 @@
 ===============================================================================
 PROJECT EXPORT
-Generated: Fri Jan 16 08:24:55 PM EST 2026
+Generated: Fri Jan 16 08:42:23 PM EST 2026
 Project Path: /home/kushal/src/dotnet/MyBlog
 ===============================================================================
 
@@ -144,6 +144,8 @@ DIRECTORY STRUCTURE:
 │   │   │   ├── App.razor
 │   │   │   ├── _Imports.razor
 │   │   │   └── Routes.razor
+│   │   ├── Hubs
+│   │   │   └── ReaderHub.cs
 │   │   ├── Middleware
 │   │   │   └── LoginRateLimitMiddleware.cs
 │   │   ├── wwwroot
@@ -4097,8 +4099,8 @@ MODIFIED: 2026-01-01 22:21:17
 
 ================================================================================
 FILE: src/Directory.Packages.props
-SIZE: 1.36 KB
-MODIFIED: 2026-01-13 21:25:12
+SIZE: 1.45 KB
+MODIFIED: 2026-01-16 20:29:40
 ================================================================================
 
 <Project>
@@ -4108,6 +4110,7 @@ MODIFIED: 2026-01-13 21:25:12
   </PropertyGroup>
   <ItemGroup>
     <!-- Core Framework (.NET 10) -->
+    <PackageVersion Include="Microsoft.AspNetCore.SignalR.Client" Version="10.0.2" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.2" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.1" />
     <PackageVersion Include="Microsoft.AspNetCore.Identity" Version="2.3.9" />
@@ -10004,25 +10007,36 @@ public interface IPostRepository
 
 ================================================================================
 FILE: src/MyBlog.Core/Interfaces/IReaderTrackingService.cs
-SIZE: .39 KB
-MODIFIED: 2026-01-13 08:55:34
+SIZE: .90 KB
+MODIFIED: 2026-01-16 20:30:07
 ================================================================================
 
 namespace MyBlog.Core.Interfaces;
 
 public interface IReaderTrackingService
 {
-    // Called when a user opens a post
-    void JoinPost(string slug);
+    /// <summary>
+    /// Registers a connection viewing a specific post.
+    /// </summary>
+    /// <returns>The new reader count for this slug.</returns>
+    int JoinPost(string slug, string connectionId);
 
-    // Called when a user leaves (closes tab/navigates away)
-    void LeavePost(string slug);
+    /// <summary>
+    /// Unregisters a connection from a specific post.
+    /// </summary>
+    /// <returns>The new reader count for this slug.</returns>
+    int LeavePost(string slug, string connectionId);
 
-    // Gets the current count
+    /// <summary>
+    /// Handles a disconnection event (e.g. tab closed) and determines which slug was being viewed.
+    /// </summary>
+    /// <returns>A tuple containing the Slug that was left (if any) and the new count.</returns>
+    (string? Slug, int NewCount) Disconnect(string connectionId);
+
+    /// <summary>
+    /// Gets the current count for a specific post.
+    /// </summary>
     int GetReaderCount(string slug);
-
-    // Event that fires when the count changes
-    event Action<string, int>? OnCountChanged;
 }
 
 
@@ -11374,8 +11388,8 @@ public sealed class PasswordService : IPasswordService
 
 ================================================================================
 FILE: src/MyBlog.Infrastructure/Services/ReaderTrackingService.cs
-SIZE: 1.19 KB
-MODIFIED: 2026-01-16 19:03:44
+SIZE: 1.57 KB
+MODIFIED: 2026-01-16 20:30:23
 ================================================================================
 
 using System.Collections.Concurrent;
@@ -11385,38 +11399,46 @@ namespace MyBlog.Infrastructure.Services;
 
 public class ReaderTrackingService : IReaderTrackingService
 {
-    // Thread-safe dictionary to store counts: Slug -> Count
-    private readonly ConcurrentDictionary<string, int> _activeReaders = new();
+    // Maps Slug -> Count of active readers
+    private readonly ConcurrentDictionary<string, int> _slugCounts = new();
 
-    public event Action<string, int>? OnCountChanged;
+    // Maps ConnectionId -> Slug (Reverse lookup to handle disconnects)
+    private readonly ConcurrentDictionary<string, string> _connectionMap = new();
 
-    public void JoinPost(string slug)
+    public int JoinPost(string slug, string connectionId)
     {
-        // Atomically increment the count
-        var newCount = _activeReaders.AddOrUpdate(slug, 1, (_, count) => count + 1);
+        // Map the connection to the slug
+        _connectionMap.AddOrUpdate(connectionId, slug, (_, _) => slug);
 
-        // Notify subscribers
-        OnCountChanged?.Invoke(slug, newCount);
+        // Increment the count for this slug
+        return _slugCounts.AddOrUpdate(slug, 1, (_, count) => count + 1);
     }
 
-    public void LeavePost(string slug)
+    public int LeavePost(string slug, string connectionId)
     {
-        // Atomically decrement the count
-        var newCount = _activeReaders.AddOrUpdate(slug, 0, (_, count) => count > 0 ? count - 1 : 0);
+        // Remove the connection mapping
+        _connectionMap.TryRemove(connectionId, out _);
 
-        // If count is 0, we could remove the key, but keeping it is harmless for small blogs
-        if (newCount == 0)
+        // Decrement the count
+        return _slugCounts.AddOrUpdate(slug, 0, (_, count) => count > 0 ? count - 1 : 0);
+    }
+
+    public (string? Slug, int NewCount) Disconnect(string connectionId)
+    {
+        // Find which slug this connection was watching
+        if (_connectionMap.TryRemove(connectionId, out var slug))
         {
-            _activeReaders.TryRemove(slug, out _);
+            // Decrement that slug's count
+            var newCount = _slugCounts.AddOrUpdate(slug, 0, (_, count) => count > 0 ? count - 1 : 0);
+            return (slug, newCount);
         }
 
-        // Notify subscribers
-        OnCountChanged?.Invoke(slug, newCount);
+        return (null, 0);
     }
 
     public int GetReaderCount(string slug)
     {
-        return _activeReaders.TryGetValue(slug, out var count) ? count : 0;
+        return _slugCounts.TryGetValue(slug, out var count) ? count : 0;
     }
 }
 
@@ -14137,6 +14159,62 @@ MODIFIED: 2026-01-13 21:06:07
 
 
 ================================================================================
+FILE: src/MyBlog.Web/Hubs/ReaderHub.cs
+SIZE: 1.39 KB
+MODIFIED: 2026-01-16 20:30:48
+================================================================================
+
+using Microsoft.AspNetCore.SignalR;
+using MyBlog.Core.Interfaces;
+
+namespace MyBlog.Web.Hubs;
+
+public class ReaderHub : Hub
+{
+    private readonly IReaderTrackingService _trackingService;
+
+    public ReaderHub(IReaderTrackingService trackingService)
+    {
+        _trackingService = trackingService;
+    }
+
+    public async Task JoinPage(string slug)
+    {
+        // Add this connection to the SignalR group for this slug
+        await Groups.AddToGroupAsync(Context.ConnectionId, slug);
+
+        // Update state
+        var newCount = _trackingService.JoinPost(slug, Context.ConnectionId);
+
+        // Broadcast new count to everyone in this group
+        await Clients.Group(slug).SendAsync("UpdateCount", newCount);
+    }
+
+    public async Task LeavePage(string slug)
+    {
+        await Groups.RemoveFromGroupAsync(Context.ConnectionId, slug);
+
+        var newCount = _trackingService.LeavePost(slug, Context.ConnectionId);
+
+        await Clients.Group(slug).SendAsync("UpdateCount", newCount);
+    }
+
+    public override async Task OnDisconnectedAsync(Exception? exception)
+    {
+        // Handle abrupt disconnects (tab closed, network lost)
+        var (slug, newCount) = _trackingService.Disconnect(Context.ConnectionId);
+
+        if (!string.IsNullOrEmpty(slug))
+        {
+            await Clients.Group(slug).SendAsync("UpdateCount", newCount);
+        }
+
+        await base.OnDisconnectedAsync(exception);
+    }
+}
+
+
+================================================================================
 FILE: src/MyBlog.Web/Middleware/LoginRateLimitMiddleware.cs
 SIZE: 5.64 KB
 MODIFIED: 2026-01-11 12:43:24
@@ -14337,8 +14415,8 @@ public static class LoginRateLimitMiddlewareExtensions
 
 ================================================================================
 FILE: src/MyBlog.Web/MyBlog.Web.csproj
-SIZE: .55 KB
-MODIFIED: 2026-01-13 21:22:06
+SIZE: .62 KB
+MODIFIED: 2026-01-16 20:29:40
 ================================================================================
 
 <Project Sdk="Microsoft.NET.Sdk.Web">
@@ -14347,6 +14425,7 @@ MODIFIED: 2026-01-13 21:22:06
   </PropertyGroup>
   
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" />
     <PackageReference Include="OpenTelemetry.Extensions.Hosting" />
     <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" />
     <PackageReference Include="OpenTelemetry.Exporter.Console" />
@@ -14360,8 +14439,8 @@ MODIFIED: 2026-01-13 21:22:06
 
 ================================================================================
 FILE: src/MyBlog.Web/Program.cs
-SIZE: 3.73 KB
-MODIFIED: 2026-01-14 19:57:11
+SIZE: 3.84 KB
+MODIFIED: 2026-01-16 20:31:17
 ================================================================================
 
 using Microsoft.AspNetCore.Authentication;
@@ -14374,6 +14453,7 @@ using MyBlog.Infrastructure.Data;
 using MyBlog.Infrastructure.Services;
 using MyBlog.Infrastructure.Telemetry;
 using MyBlog.Web.Components;
+using MyBlog.Web.Hubs; // ADD THIS
 using MyBlog.Web.Middleware;
 using OpenTelemetry;
 using OpenTelemetry.Logs;
@@ -14386,6 +14466,9 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+// ADD THIS: Register SignalR
+builder.Services.AddSignalR();
 
 builder.Services.AddInfrastructure(builder.Configuration);
 
@@ -14400,7 +14483,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.Cookie.Name = AppConstants.AuthCookieName;
         options.LoginPath = "/login";
         options.LogoutPath = "/logout";
-        options.AccessDeniedPath = "/access-denied"; // FIX: Added explicit Access Denied path
+        options.AccessDeniedPath = "/access-denied";
         options.ExpireTimeSpan = TimeSpan.FromMinutes(sessionTimeout);
         options.SlidingExpiration = true;
         options.Cookie.HttpOnly = true;
@@ -14417,6 +14500,7 @@ builder.Services.AddAntiforgery();
 // OpenTelemetry configuration
 var serviceName = "MyBlog.Web";
 var serviceVersion = typeof(Program).Assembly.GetName().Version?.ToString() ?? "1.0.0";
+
 builder.Services.AddOpenTelemetry()
     .ConfigureResource(resource => resource
         .AddService(serviceName: serviceName, serviceVersion: serviceVersion))
@@ -14476,6 +14560,9 @@ app.MapPost("/logout", async (HttpContext context) =>
     await context.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
     return Results.Redirect("/");
 }).RequireAuthorization();
+
+// ADD THIS: Map the Hub
+app.MapHub<ReaderHub>("/readerHub");
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
@@ -16292,9 +16379,9 @@ echo "=============================================="
 
 
 ===============================================================================
-EXPORT COMPLETED: Fri Jan 16 08:24:56 PM EST 2026
-Total Files Found: 85
-Files Exported: 85
+EXPORT COMPLETED: Fri Jan 16 08:42:24 PM EST 2026
+Total Files Found: 86
+Files Exported: 86
 Files Skipped: 0 (binary or large files)
 Output File: /home/kushal/src/dotnet/MyBlog/docs/llm/dump.txt
 ===============================================================================

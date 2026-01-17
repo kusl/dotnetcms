@@ -2,9 +2,9 @@
 @inject NavigationManager Navigation
 @implements IAsyncDisposable
 
-<div class="reader-badge" title="Active readers on this post">
+<div class="reader-badge" title="Active readers on this post. Share this post to increase this number!">
     <span class="reader-dot">●</span>
-    <span>@(_count) reading now</span>
+    <span>@_count @(_count == 1 ? "person" : "people") reading now.</span>
 </div>
 
 @code {
