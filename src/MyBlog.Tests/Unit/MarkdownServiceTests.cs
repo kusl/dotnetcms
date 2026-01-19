@@ -1,7 +1,7 @@
-using MyBlog.Core.Interfaces;
-using MyBlog.Core.Services;
 using System.Threading;
 using System.Threading.Tasks;
+using MyBlog.Core.Interfaces;
+using MyBlog.Core.Services;
 using Xunit;
 
 namespace MyBlog.Tests.Unit;
@@ -13,7 +13,7 @@ class MockImageDimensionService : IImageDimensionService
     {
         if (url.Contains("image.png"))
         {
-            return Task.FromResult<(int, int)?>( (100, 200) );
+            return Task.FromResult<(int, int)?>((100, 200));
         }
 
         return Task.FromResult<(int, int)?>(null);
