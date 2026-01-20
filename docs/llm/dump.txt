@@ -1,6 +1,6 @@
 ===============================================================================
 PROJECT EXPORT
-Generated: Mon Jan 19 06:12:04 PM EST 2026
+Generated: Mon Jan 19 07:53:59 PM EST 2026
 Project Path: /home/kushal/src/dotnet/MyBlog
 ===============================================================================
 
@@ -47,7 +47,8 @@ DIRECTORY STRUCTURE:
 │       ├── source_only.txt
 │       ├── source.txt
 │       ├── thinking_20260116_100403.md
-│       └── thinking_20260116_150733.md
+│       ├── thinking_20260116_150733.md
+│       └── z-ai.md
 ├── .github
 │   └── workflows
 │       └── build-deploy.yml
@@ -346,7 +347,7 @@ PROMPT="You are a senior .NET Solution Architect. Attached is the full source co
 
 Perform a COMPREHENSIVE review of the entire project. Do not limit yourself to specific files.
 
-read every single line in the prompt very carefully and very thoroughly.
+read every single line in the prompt very carefully and very thoroughly. 
 do not skip any line at all.
 
 Review the solution for:
@@ -587,7 +588,7 @@ SKIPPED=0
 while IFS= read -r file; do
     COUNTER=$((COUNTER + 1))
     FILENAME="${file#./}"
-
+    
     # Skip binary files (check if file is text)
     if file "$file" | grep -qE "binary|executable|data|image"; then
         # For some files we want to note they exist but not dump contents
@@ -604,11 +605,11 @@ while IFS= read -r file; do
             continue
         fi
     fi
-
+    
     # Get file info
     FILESIZE=$(stat -c%s "$file" 2>/dev/null || stat -f%z "$file" 2>/dev/null || echo "0")
     MODIFIED=$(stat -c%y "$file" 2>/dev/null | cut -d'.' -f1 || stat -f"%Sm" -t "%Y-%m-%d %H:%M:%S" "$file" 2>/dev/null || echo "unknown")
-
+    
     # Skip very large files (>500KB) - they're probably not source code
     if [ "$FILESIZE" -gt 512000 ]; then
         SKIPPED=$((SKIPPED + 1))
@@ -623,9 +624,9 @@ while IFS= read -r file; do
         } >> "$OUTPUT_FILE"
         continue
     fi
-
+    
     echo "Processing ($COUNTER/$FILE_COUNT): $FILENAME"
-
+    
     {
         echo "================================================================================"
         echo "FILE: $FILENAME"
@@ -637,7 +638,7 @@ while IFS= read -r file; do
         echo ""
         echo ""
     } >> "$OUTPUT_FILE"
-
+    
 done < "$TMPFILE"
 
 # Cleanup
@@ -729,7 +730,7 @@ cat << 'EOF' > "$SRC_DIR/MyBlog.Web/Components/Pages/Login.razor"
 
     <form method="post" @onsubmit="HandleLogin" @formname="login">
         <AntiforgeryToken />
-
+        
         <div class="form-group">
             <label for="username">Username</label>
             <input type="text" id="username" name="username" @bind="_username" required />
@@ -765,7 +766,7 @@ cat << 'EOF' > "$SRC_DIR/MyBlog.Web/Components/Pages/Login.razor"
         var password = FormPassword ?? _password;
 
         var user = await AuthService.AuthenticateAsync(username, password);
-
+        
         if (user is null)
         {
             _error = "Invalid username or password";
@@ -894,7 +895,7 @@ cat << 'EOF' > "$SRC_DIR/MyBlog.Web/Components/Pages/Admin/ChangePassword.razor"
         // Get current user ID
         var context = HttpContextAccessor.HttpContext;
         var userIdClaim = context?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
+        
         if (string.IsNullOrEmpty(userIdClaim) || !Guid.TryParse(userIdClaim, out var userId))
         {
             _errorMessage = "Unable to identify current user. Please log in again.";
@@ -1387,7 +1388,7 @@ cat << 'EOF' > "$SRC_DIR/MyBlog.Web/Components/Pages/Login.razor"
 
     <form method="post" @onsubmit="HandleLogin" @formname="login">
         <AntiforgeryToken />
-
+        
         <div class="form-group">
             <label for="username">Username</label>
             <input type="text" id="username" name="username" @bind="_username" required />
@@ -1429,7 +1430,7 @@ cat << 'EOF' > "$SRC_DIR/MyBlog.Web/Components/Pages/Login.razor"
         }
 
         var user = await AuthService.AuthenticateAsync(username, password);
-
+        
         if (user is null)
         {
             _error = "Invalid username or password";
@@ -1521,7 +1522,7 @@ namespace MyBlog.Core.Services;
 
 /// <summary>
 /// Custom Markdown to HTML renderer.
-/// Supports: headings, bold, italic, links, images, code blocks, blockquotes,
+/// Supports: headings, bold, italic, links, images, code blocks, blockquotes, 
 /// unordered lists, ordered lists, horizontal rules.
 /// </summary>
 public sealed partial class MarkdownService : IMarkdownService
@@ -1753,7 +1754,7 @@ MODIFIED: 2025-12-28 15:42:56
 # - FileMetricExporter (doesn't exist)
 # - TelemetryPaths (doesn't exist - use TelemetryPathResolver)
 # - DbSeeder (doesn't exist - use IAuthService.EnsureAdminUserAsync)
-#
+# 
 # This script fixes Program.cs to use only classes that actually exist.
 # =============================================================================
 set -euo pipefail
@@ -1843,7 +1844,7 @@ builder.Logging.AddOpenTelemetry(logging =>
     logging.IncludeFormattedMessage = true;
     logging.IncludeScopes = true;
     logging.AddConsoleExporter();
-
+    
     // Add file exporter if we have a writable directory
     if (telemetryDir is not null)
     {
@@ -1860,7 +1861,7 @@ using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<BlogDbContext>();
     await db.Database.MigrateAsync();
-
+    
     // Seed admin user using the auth service
     var authService = scope.ServiceProvider.GetRequiredService<IAuthService>();
     await authService.EnsureAdminUserAsync();
@@ -1917,7 +1918,7 @@ echo "Changes made:"
 echo ""
 echo "  1. Program.cs:"
 echo "     - Removed reference to non-existent FileActivityExporter"
-echo "     - Removed reference to non-existent FileMetricExporter"
+echo "     - Removed reference to non-existent FileMetricExporter"  
 echo "     - Removed reference to non-existent TelemetryPaths"
 echo "     - Removed reference to non-existent DbSeeder"
 echo "     - Using TelemetryPathResolver.GetTelemetryDirectory() instead"
@@ -1935,8 +1936,8 @@ echo ""
 
 ================================================================================
 FILE: fix-slug-collision.sh
-SIZE: 13.50 KB
-MODIFIED: 2026-01-11 12:28:37
+SIZE: 13.47 KB
+MODIFIED: 2026-01-19 18:31:34
 ================================================================================
 
 #!/bin/bash
@@ -2395,7 +2396,7 @@ cat << 'EOF' > src/MyBlog.Web/Components/Pages/Login.razor
 
     <form method="post" @onsubmit="HandleLogin" @formname="login">
         <AntiforgeryToken />
-
+        
         <div class="form-group">
             <label for="username">Username</label>
             <input type="text" id="username" name="username" @bind="_username" required />
@@ -2448,7 +2449,7 @@ cat << 'EOF' > src/MyBlog.Web/Components/Pages/Login.razor
             new(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new(ClaimTypes.Name, user.Username),
             new("DisplayName", user.DisplayName),
-            new(ClaimTypes.Role, AppConstants.AdminRole)
+            new(ClaimTypes.Role, AppConstants.AdminRole) 
         };
 
         var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -2456,7 +2457,7 @@ cat << 'EOF' > src/MyBlog.Web/Components/Pages/Login.razor
 
         var context = HttpContextAccessor.HttpContext!;
         await context.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
-
+        
         Navigation.NavigateTo(ReturnUrl ?? "/admin", forceLoad: true);
     }
 }
@@ -2478,7 +2479,7 @@ using MyBlog.Infrastructure.Services;
 using MyBlog.Infrastructure.Telemetry;
 using MyBlog.Web.Components;
 using MyBlog.Web.Middleware;
-using OpenTelemetry;
+using OpenTelemetry; 
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
@@ -2775,7 +2776,7 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
     runs-on: ${{ matrix.os }}
-
+    
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -2792,14 +2793,14 @@ jobs:
         run: dotnet build src/MyBlog.slnx -c Release --no-restore
 
       - name: Run tests
-        run:
+        run: 
           dotnet run --project src/MyBlog.Tests/MyBlog.Tests.csproj
 
   deploy:
     needs: build-test
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop'
     runs-on: windows-latest
-
+    
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -2822,18 +2823,18 @@ jobs:
           DEPLOY_PASSWORD: ${{ secrets.SERVER_PASSWORD }}
         run: |
           $msdeployPath = "C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe"
-
+          
           if (-not (Test-Path $msdeployPath)) {
             Write-Host "Installing Web Deploy..."
             choco install webdeploy -y --no-progress
           }
-
+          
           Write-Host "Deploying to $env:DEPLOY_HOST..."
           Write-Host "Note: Using AppOffline rule to prevent file-in-use errors"
 
           $sourceArg = "-source:contentPath=$env:DEPLOY_SOURCE"
           $destArg = "-dest:contentPath=$env:DEPLOY_SITE,computerName=https://$($env:DEPLOY_HOST):8172/MsDeploy.axd?site=$env:DEPLOY_SITE,userName=$env:DEPLOY_USER,password=$env:DEPLOY_PASSWORD,AuthType='Basic'"
-
+          
           # Key fix: Added -enableRule:AppOffline to stop the app during deployment
           # This creates app_offline.htm, waits for app to stop, deploys, then removes the file
           & $msdeployPath -verb:sync $sourceArg $destArg `
@@ -2842,12 +2843,12 @@ jobs:
             -enableRule:AppOffline `
             -retryAttempts:3 `
             -retryInterval:3000
-
+          
           if ($LASTEXITCODE -ne 0) {
             Write-Error "Deployment failed with exit code $LASTEXITCODE"
             exit 1
           }
-
+          
           Write-Host "Deployment completed successfully!"
 
 
@@ -3554,8 +3555,8 @@ else
         if (id == _currentUserId) return; // Prevent suicide
 
         var confirm = await Application.Current?.MainPage?.DisplayAlert("Confirm", "Are you sure you want to delete this user?", "Yes", "No") ?? true;
-
-        // Note: Simple JS confirm isn't available in SSR easily without interop,
+        
+        // Note: Simple JS confirm isn't available in SSR easily without interop, 
         // so we'll just delete for now. In a real app, use a modal or JSInterop confirm.
         await UserRepository.DeleteAsync(id);
         await LoadUsers();
@@ -3604,7 +3605,7 @@ cat << 'EOF' > "$SRC_DIR/MyBlog.Web/Components/Pages/Admin/UserEditor.razor"
     <div class="form-group">
         <label for="password">Password @(_isEdit ? "(Leave blank to keep current)" : "")</label>
         <input type="password" id="password" @bind="_password" required="@(!_isEdit)" />
-        @if (!_isEdit)
+        @if (!_isEdit) 
         {
             <small>Required for new users.</small>
         }
@@ -4093,7 +4094,7 @@ MODIFIED: 2026-01-01 22:21:17
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <AnalysisLevel>latest</AnalysisLevel>
   </PropertyGroup>
-
+  
   <PropertyGroup Condition="$(MSBuildProjectName.Contains('.Tests'))">
     <IsPackable>false</IsPackable>
     <OutputType>Exe</OutputType>
@@ -4489,7 +4490,7 @@ if ! grep -q "UseLoginRateLimit" "$SRC_DIR/MyBlog.Web/Program.cs" 2>/dev/null; t
     if ! grep -q "using MyBlog.Web.Middleware" "$SRC_DIR/MyBlog.Web/Program.cs" 2>/dev/null; then
         sed -i '1s/^/using MyBlog.Web.Middleware;\n/' "$SRC_DIR/MyBlog.Web/Program.cs"
     fi
-
+    
     # Add middleware after UseRouting (or after app is created if UseRouting doesn't exist)
     if grep -q "app.UseRouting" "$SRC_DIR/MyBlog.Web/Program.cs"; then
         sed -i '/app\.UseRouting/a app.UseLoginRateLimit();' "$SRC_DIR/MyBlog.Web/Program.cs"
@@ -4929,7 +4930,7 @@ public sealed class LoginRateLimitMiddlewareTests
         for (var i = 0; i < 100; i++)
         {
             var context = CreateHttpContext("/login", "POST", uniqueIp);
-
+            
             // Use a timeout to ensure we're not blocked forever
             using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(60));
             try
@@ -4950,7 +4951,7 @@ public sealed class LoginRateLimitMiddlewareTests
         var context = new DefaultHttpContext();
         context.Request.Path = path;
         context.Request.Method = method;
-
+        
         if (remoteIp != null)
         {
             context.Connection.RemoteIpAddress = System.Net.IPAddress.Parse(remoteIp);
@@ -5468,8 +5469,8 @@ echo ""
 
 ================================================================================
 FILE: src/generate-myblog.sh
-SIZE: 118.95 KB
-MODIFIED: 2025-12-28 08:41:44
+SIZE: 118.82 KB
+MODIFIED: 2026-01-19 18:31:34
 ================================================================================
 
 #!/bin/bash
@@ -9724,7 +9725,7 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
     runs-on: ${{ matrix.os }}
-
+    
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -9755,7 +9756,7 @@ jobs:
     needs: build-test
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop'
     runs-on: windows-latest
-
+    
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -9778,18 +9779,18 @@ jobs:
           DEPLOY_PASSWORD: ${{ secrets.SERVER_PASSWORD }}
         run: |
           $msdeployPath = "C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe"
-
+          
           if (-not (Test-Path $msdeployPath)) {
             Write-Host "Installing Web Deploy..."
             choco install webdeploy -y --no-progress
           }
-
+          
           Write-Host "Deploying to $env:DEPLOY_HOST..."
           Write-Host "Note: Using AppOffline rule to prevent file-in-use errors"
 
           $sourceArg = "-source:contentPath=$env:DEPLOY_SOURCE"
           $destArg = "-dest:contentPath=$env:DEPLOY_SITE,computerName=https://$($env:DEPLOY_HOST):8172/MsDeploy.axd?site=$env:DEPLOY_SITE,userName=$env:DEPLOY_USER,password=$env:DEPLOY_PASSWORD,AuthType='Basic'"
-
+          
           # Key fix: Added -enableRule:AppOffline to stop the app during deployment
           # This creates app_offline.htm, waits for app to stop, deploys, then removes the file
           & $msdeployPath -verb:sync $sourceArg $destArg `
@@ -9798,12 +9799,12 @@ jobs:
             -enableRule:AppOffline `
             -retryAttempts:3 `
             -retryInterval:3000
-
+          
           if ($LASTEXITCODE -ne 0) {
             Write-Error "Deployment failed with exit code $LASTEXITCODE"
             exit 1
           }
-
+          
           Write-Host "Deployment completed successfully!"
 
 
@@ -10072,8 +10073,8 @@ public interface IReaderTrackingService
 
 ================================================================================
 FILE: src/MyBlog.Core/Interfaces/ISlugService.cs
-SIZE: .24 KB
-MODIFIED: 2025-12-28 08:44:06
+SIZE: .25 KB
+MODIFIED: 2026-01-19 18:32:54
 ================================================================================
 
 namespace MyBlog.Core.Interfaces;
@@ -10084,7 +10085,7 @@ namespace MyBlog.Core.Interfaces;
 public interface ISlugService
 {
     /// <summary>Generates a slug from a title.</summary>
-    string GenerateSlug(string title);
+    string GenerateSlugOrUuid(string title);
 }
 
 
@@ -10669,8 +10670,8 @@ public sealed partial class MarkdownService : IMarkdownService
 
 ================================================================================
 FILE: src/MyBlog.Core/Services/SlugService.cs
-SIZE: 1.59 KB
-MODIFIED: 2025-12-28 08:44:06
+SIZE: 1.73 KB
+MODIFIED: 2026-01-19 19:46:10
 ================================================================================
 
 using System.Globalization;
@@ -10686,10 +10687,15 @@ namespace MyBlog.Core.Services;
 public sealed partial class SlugService : ISlugService
 {
     /// <inheritdoc />
-    public string GenerateSlug(string title)
+    public string GenerateSlugOrUuid(string title)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(title);
+        var slug = GenerateSlug(title);
 
+        return !string.IsNullOrWhiteSpace(slug) ? slug : $"post-{Guid.CreateVersion7().ToString()}";
+    }
+
+    private string GenerateSlug(string title)
+    {
         // Normalize unicode and convert to lowercase
         var normalized = title.Normalize(NormalizationForm.FormD);
         var sb = new StringBuilder();
@@ -10906,14 +10912,14 @@ MODIFIED: 2026-01-16 21:56:40
   <PropertyGroup>
     <RootNamespace>MyBlog.Infrastructure</RootNamespace>
   </PropertyGroup>
-
+  
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
     <PackageReference Include="Microsoft.AspNetCore.Identity" />
     <PackageReference Include="Microsoft.Extensions.Http" />
     <PackageReference Include="OpenTelemetry" />
   </ItemGroup>
-
+  
   <ItemGroup>
     <ProjectReference Include="..\MyBlog.Core\MyBlog.Core.csproj" />
   </ItemGroup>
@@ -13204,14 +13210,14 @@ MODIFIED: 2026-01-11 12:52:12
     <RootNamespace>MyBlog.Tests</RootNamespace>
     <IsTestProject>true</IsTestProject>
   </PropertyGroup>
-
+  
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <PackageReference Include="xunit.v3" />
     <PackageReference Include="Microsoft.Testing.Extensions.TrxReport" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
   </ItemGroup>
-
+  
   <ItemGroup>
     <ProjectReference Include="..\MyBlog.Core\MyBlog.Core.csproj" />
     <ProjectReference Include="..\MyBlog.Web\MyBlog.Web.csproj" />
@@ -13665,8 +13671,8 @@ public class PasswordServiceTests
 
 ================================================================================
 FILE: src/MyBlog.Tests/Unit/SlugServiceTests.cs
-SIZE: 1.85 KB
-MODIFIED: 2025-12-28 08:44:06
+SIZE: 2.18 KB
+MODIFIED: 2026-01-19 19:52:01
 ================================================================================
 
 using MyBlog.Core.Services;
@@ -13727,16 +13733,25 @@ public class SlugServiceTests
         Assert.Equal("hello-world-test", result);
     }
 
-    [Fact]
-    public void GenerateSlug_WithEmptyString_ThrowsArgumentException()
+    [Theory]
+    [InlineData("")]
+    [InlineData(" ")]
+    [InlineData("   ")]
+    [InlineData("       ")]
+    public void GenerateSlug_WithEmptyStringOrWhitespace_ReturnsGuidWithPrefix(string input)
     {
-        Assert.Throws<ArgumentException>(() => _sut.GenerateSlugOrUuid(""));
-    }
+        // Act
+        var result = _sut.GenerateSlugOrUuid(input);
 
-    [Fact]
-    public void GenerateSlug_WithWhitespaceOnly_ThrowsArgumentException()
-    {
-        Assert.Throws<ArgumentException>(() => _sut.GenerateSlugOrUuid("   "));
+        // Assert
+        Assert.StartsWith("post-", result);
+
+        // Extract the GUID part (the part after "post-")
+        var guidPart = result.Replace("post-", "");
+
+        // Assert it is a valid GUID
+        var isValidGuid = Guid.TryParse(guidPart, out _);
+        Assert.True(isValidGuid, $"Expected a valid GUID but got {guidPart}");
     }
 }
 
@@ -14412,7 +14427,7 @@ MODIFIED: 2026-01-01 21:17:11
     padding: 0.75rem;
     border: 1px solid #ccc;
     border-radius: 4px;
-    box-sizing: border-box;
+    box-sizing: border-box; 
 }
 
 /* Error Message */
@@ -14490,7 +14505,7 @@ MODIFIED: 2026-01-01 22:33:51
 /* Mobile view: Stack columns into rows */
 @media (max-width: 768px) {
     .d-none-mobile { display: none; }
-
+    
     .list-row {
         flex-direction: column;
         gap: 0.5rem;
@@ -14505,10 +14520,10 @@ MODIFIED: 2026-01-01 22:33:51
     }
 
     .mobile-label { display: inline-block; }
-    .actions {
-        flex: 1;
-        margin-top: 1rem;
-        padding-top: 1rem;
+    .actions { 
+        flex: 1; 
+        margin-top: 1rem; 
+        padding-top: 1rem; 
         border-top: 1px dashed var(--color-border);
         text-align: left;
         justify-content: flex-start;
@@ -14887,7 +14902,7 @@ MODIFIED: 2026-01-16 20:29:40
   <PropertyGroup>
     <RootNamespace>MyBlog.Web</RootNamespace>
   </PropertyGroup>
-
+  
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" />
     <PackageReference Include="OpenTelemetry.Extensions.Hosting" />
@@ -14895,7 +14910,7 @@ MODIFIED: 2026-01-16 20:29:40
     <PackageReference Include="OpenTelemetry.Exporter.Console" />
     <PackageReference Include="OpenTelemetry.Instrumentation.Http" />
   </ItemGroup>
-
+  
   <ItemGroup>
     <ProjectReference Include="..\MyBlog.Infrastructure\MyBlog.Infrastructure.csproj" />
   </ItemGroup>
@@ -15958,7 +15973,7 @@ cat << 'EOF' > "$SRC_DIR/MyBlog.Web/Components/Pages/Admin/ChangePassword.razor"
         // Get current user ID
         var context = HttpContextAccessor.HttpContext;
         var userIdClaim = context?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
+        
         if (string.IsNullOrEmpty(userIdClaim) || !Guid.TryParse(userIdClaim, out var userId))
         {
             _errorMessage = "Unable to identify current user. Please log in again.";
@@ -16005,7 +16020,7 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
     runs-on: ${{ matrix.os }}
-
+    
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -16036,7 +16051,7 @@ jobs:
     needs: build-test
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop'
     runs-on: windows-latest
-
+    
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -16059,18 +16074,18 @@ jobs:
           DEPLOY_PASSWORD: ${{ secrets.SERVER_PASSWORD }}
         run: |
           $msdeployPath = "C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe"
-
+          
           if (-not (Test-Path $msdeployPath)) {
             Write-Host "Installing Web Deploy..."
             choco install webdeploy -y --no-progress
           }
-
+          
           Write-Host "Deploying to $env:DEPLOY_HOST..."
           Write-Host "Note: Using AppOffline rule to prevent file-in-use errors"
 
           $sourceArg = "-source:contentPath=$env:DEPLOY_SOURCE"
           $destArg = "-dest:contentPath=$env:DEPLOY_SITE,computerName=https://$($env:DEPLOY_HOST):8172/MsDeploy.axd?site=$env:DEPLOY_SITE,userName=$env:DEPLOY_USER,password=$env:DEPLOY_PASSWORD,AuthType='Basic'"
-
+          
           # Key fix: Added -enableRule:AppOffline to stop the app during deployment
           # This creates app_offline.htm, waits for app to stop, deploys, then removes the file
           & $msdeployPath -verb:sync $sourceArg $destArg `
@@ -16079,12 +16094,12 @@ jobs:
             -enableRule:AppOffline `
             -retryAttempts:3 `
             -retryInterval:3000
-
+          
           if ($LASTEXITCODE -ne 0) {
             Write-Error "Deployment failed with exit code $LASTEXITCODE"
             exit 1
           }
-
+          
           Write-Host "Deployment completed successfully!"
 EOF
 
@@ -16145,7 +16160,7 @@ public class PasswordChangeTests : IAsyncDisposable
         var ct = TestContext.Current.CancellationToken;
         var originalPassword = "OriginalPass123!";
         var newPassword = "NewPassword456!";
-
+        
         var user = new User
         {
             Id = Guid.NewGuid(),
@@ -16169,7 +16184,7 @@ public class PasswordChangeTests : IAsyncDisposable
         var ct = TestContext.Current.CancellationToken;
         var originalPassword = "OriginalPass123!";
         var newPassword = "NewPassword456!";
-
+        
         var user = new User
         {
             Id = Guid.NewGuid(),
@@ -16187,7 +16202,7 @@ public class PasswordChangeTests : IAsyncDisposable
         // Should authenticate with new password
         var authenticated = await _sut.AuthenticateAsync("testuser", newPassword, ct);
         Assert.NotNull(authenticated);
-
+        
         // Should NOT authenticate with old password
         var oldAuth = await _sut.AuthenticateAsync("testuser", originalPassword, ct);
         Assert.Null(oldAuth);
@@ -16199,7 +16214,7 @@ public class PasswordChangeTests : IAsyncDisposable
         var ct = TestContext.Current.CancellationToken;
         var correctPassword = "CorrectPass123!";
         var wrongPassword = "WrongPassword!";
-
+        
         var user = new User
         {
             Id = Guid.NewGuid(),
@@ -16222,7 +16237,7 @@ public class PasswordChangeTests : IAsyncDisposable
     {
         var ct = TestContext.Current.CancellationToken;
         var correctPassword = "CorrectPass123!";
-
+        
         var user = new User
         {
             Id = Guid.NewGuid(),
@@ -16256,7 +16271,7 @@ public class PasswordChangeTests : IAsyncDisposable
         var ct = TestContext.Current.CancellationToken;
         var originalPassword = "OriginalPass123!";
         var newPassword = "ResetPassword789!";
-
+        
         var user = new User
         {
             Id = Guid.NewGuid(),
@@ -16710,7 +16725,7 @@ echo "$FILE_LIST" | while IFS= read -r file; do
     if (( CURRENT % 10 == 0 )); then
         printf "\r  Processing: %d/%d files..." "$CURRENT" "$FILE_COUNT"
     fi
-
+    
     {
         echo "================================================================================"
         echo "FILE: $file"
@@ -16803,7 +16818,7 @@ if echo "$PROMPT" | OLLAMA_NOPRUNE=1 ollama run "$MODEL" --nowordwrap 2>/dev/nul
    tr -d '\r' > "$OUTPUT_FILE"; then
     ANALYSIS_TIME=$(($(date +%s) - ANALYSIS_START))
     OUTPUT_SIZE=$(wc -l < "$OUTPUT_FILE")
-
+    
     log "Analysis completed in ${ANALYSIS_TIME}s ($(( ANALYSIS_TIME / 60 ))m $(( ANALYSIS_TIME % 60 ))s)"
     log "Output: ${OUTPUT_SIZE} lines"
 else
@@ -16843,7 +16858,7 @@ echo "=============================================="
 
 
 ===============================================================================
-EXPORT COMPLETED: Mon Jan 19 06:12:05 PM EST 2026
+EXPORT COMPLETED: Mon Jan 19 07:54:00 PM EST 2026
 Total Files Found: 90
 Files Exported: 90
 Files Skipped: 0 (binary or large files)
