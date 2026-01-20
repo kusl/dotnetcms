@@ -1,6 +1,6 @@
 ===============================================================================
 PROJECT EXPORT
-Generated: Mon Jan 19 08:13:01 PM EST 2026
+Generated: Mon Jan 19 08:26:10 PM EST 2026
 Project Path: /home/kushal/src/dotnet/MyBlog
 ===============================================================================
 
@@ -146,6 +146,7 @@ DIRECTORY STRUCTURE:
 │   │   │   │   ├── MarkdownRenderer.razor
 │   │   │   │   ├── Pagination.razor
 │   │   │   │   ├── PostCard.razor
+│   │   │   │   ├── PostCard.razor.css
 │   │   │   │   ├── ReaderBadge.razor
 │   │   │   │   ├── ReaderBadge.razor.css
 │   │   │   │   └── RedirectToLogin.razor
@@ -11823,8 +11824,8 @@ MODIFIED: 2026-01-01 22:33:51
 
 ================================================================================
 FILE: src/MyBlog.Web/Components/Pages/PostDetail.razor.css
-SIZE: .51 KB
-MODIFIED: 2026-01-13 21:09:37
+SIZE: .55 KB
+MODIFIED: 2026-01-19 20:24:14
 ================================================================================
 
 /* PostDetail.razor.css */
@@ -11853,6 +11854,10 @@ MODIFIED: 2026-01-13 21:09:37
 
 .share-btn.success {
     color: var(--color-success);
+}
+
+article {
+    word-break: break-word;
 }
 
 
@@ -11890,6 +11895,17 @@ MODIFIED: 2026-01-13 20:55:51
 
 .footer-link svg {
     flex-shrink: 0;
+}
+
+
+================================================================================
+FILE: src/MyBlog.Web/Components/Shared/PostCard.razor.css
+SIZE: .03 KB
+MODIFIED: 2026-01-19 20:24:56
+================================================================================
+
+article {
+    word-break: break-word;
 }
 
 
@@ -13864,9 +13880,9 @@ echo "=============================================="
 
 
 ===============================================================================
-EXPORT COMPLETED: Mon Jan 19 08:13:02 PM EST 2026
-Total Files Found: 77
-Files Exported: 77
+EXPORT COMPLETED: Mon Jan 19 08:26:11 PM EST 2026
+Total Files Found: 78
+Files Exported: 78
 Files Skipped: 0 (binary or large files)
 Output File: /home/kushal/src/dotnet/MyBlog/docs/llm/dump.txt
 ===============================================================================
