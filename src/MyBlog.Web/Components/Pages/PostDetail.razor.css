@@ -25,3 +25,7 @@
 .share-btn.success {
     color: var(--color-success);
 }
+
+article {
+    word-break: break-word;
+}
