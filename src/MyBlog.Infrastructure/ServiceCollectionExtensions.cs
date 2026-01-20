@@ -42,7 +42,7 @@ public static class ServiceCollectionExtensions
         // Services
         services.AddSingleton<IPasswordService, PasswordService>();
         services.AddSingleton<ISlugService, SlugService>();
-        
+
         // MarkdownService is Scoped because it depends on Scoped IImageDimensionService
         services.AddScoped<IMarkdownService, MarkdownService>();
         services.AddScoped<IAuthService, AuthService>();

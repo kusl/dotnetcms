@@ -113,7 +113,7 @@ public class MarkdownServiceTests
         // Use the throwing service to test error handling
         var throwingService = new ThrowingImageDimensionService();
         var sut = new MarkdownService(throwingService);
-        
+
         // Should NOT throw - should gracefully degrade to image without dimensions
         var result = NormalizeNewlines(await sut.ToHtmlAsync("![alt text](https://example.com/image.png)"));
         Assert.Contains("<p><img src=\"https://example.com/image.png\" alt=\"alt text\" /></p>\n", result);
@@ -198,7 +198,7 @@ public class MarkdownServiceTests
     {
         var markdown = "![img1](https://example.com/image.png) and ![img2](https://example.com/other.jpg)";
         var result = NormalizeNewlines(await _sut.ToHtmlAsync(markdown));
-        
+
         // First image should have dimensions (contains 'image.png')
         Assert.Contains("width=\"100\" height=\"200\"", result);
         // Second image should not have dimensions (doesn't match mock)

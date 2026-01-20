@@ -2598,3 +2598,21 @@ The root cause of the errors is that the `ImageDimensionCache` table doesn't exi
 
 
 
+I updated the code from the previous conversation and made some fixes to build the application 
+However, I still have this error 
+2>Program.cs(77,37): Error ASP0000 : Calling 'BuildServiceProvider' from application code results in an additional copy of singleton services being created. Consider alternatives such as dependency injecting services as parameters to 'Configure'. (https://aka.ms/AA5k895)
+2>------- Finished building project: MyBlog.Web. Succeeded: False. Errors: 1. Warnings: 0
+Build completed in 00:00:03.582
+I have included the latest dump in `dump.txt`
+please read each and every line of the code 
+don't skim it 
+don't try to change the coding style 
+don't remove braces around the if 
+don't change the primary constructor back to whatever you did 
+don't make unnecessary changes 
+do make the code build, 
+do make the tests pass 
+and do make everything work properly 
+and follow engineering best practices 
+and please do not hallucinate 
+give me full files for all files that changed 

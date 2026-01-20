@@ -5,7 +5,6 @@ using MyBlog.Core.Constants;
 using MyBlog.Core.Interfaces;
 using MyBlog.Infrastructure;
 using MyBlog.Infrastructure.Data;
-using MyBlog.Infrastructure.Services;
 using MyBlog.Infrastructure.Telemetry;
 using MyBlog.Web.Components;
 using MyBlog.Web.Hubs;
@@ -27,9 +26,6 @@ builder.Services.AddSignalR();
 
 builder.Services.AddInfrastructure(builder.Configuration);
 
-// Register TelemetryCleanupService as a hosted service
-builder.Services.AddHostedService<TelemetryCleanupService>();
-
 // Configure authentication
 var sessionTimeout = builder.Configuration.GetValue("Authentication:SessionTimeoutMinutes", 30);
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -49,75 +45,66 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 
 builder.Services.AddAuthorization();
 builder.Services.AddCascadingAuthenticationState();
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddAntiforgery();
 
-// Configure OpenTelemetry
-var telemetryDir = TelemetryPathResolver.GetTelemetryDirectory();
-var enableFileLogging = builder.Configuration.GetValue("Telemetry:EnableFileLogging", true);
-var enableDbLogging = builder.Configuration.GetValue("Telemetry:EnableDatabaseLogging", true);
+// OpenTelemetry configuration
+var serviceName = "MyBlog.Web";
+var serviceVersion = typeof(Program).Assembly.GetName().Version?.ToString() ?? "1.0.0";
 
 builder.Services.AddOpenTelemetry()
-    .ConfigureResource(r => r.AddService("MyBlog"))
-    .WithTracing(tracing =>
-    {
-        tracing.AddAspNetCoreInstrumentation();
-    })
-    .WithMetrics(metrics =>
-    {
-        metrics.AddAspNetCoreInstrumentation();
-    });
+    .ConfigureResource(resource => resource
+        .AddService(serviceName: serviceName, serviceVersion: serviceVersion))
+    .WithTracing(tracing => tracing
+        .AddAspNetCoreInstrumentation()
+        .AddHttpClientInstrumentation()
+        .AddSource(serviceName)
+        .AddConsoleExporter())
+    .WithMetrics(metrics => metrics
+        .AddAspNetCoreInstrumentation()
+        .AddHttpClientInstrumentation()
+        .AddConsoleExporter());
 
-builder.Logging.AddOpenTelemetry(options =>
+// Configure logging with OpenTelemetry
+// Note: We only add the FileLogExporter here since it doesn't require DI.
+// Database logging is handled by the TelemetryCleanupService which has access to the DI container.
+var telemetryDir = TelemetryPathResolver.GetTelemetryDirectory();
+builder.Logging.AddOpenTelemetry(logging =>
 {
-    options.IncludeScopes = true;
-    options.IncludeFormattedMessage = true;
+    logging.IncludeFormattedMessage = true;
+    logging.IncludeScopes = true;
+    logging.AddConsoleExporter();
 
-    if (enableDbLogging)
+    if (telemetryDir is not null)
     {
-        options.AddProcessor(new BatchLogRecordExportProcessor(
-            new DatabaseLogExporter(builder.Services.BuildServiceProvider()
-                .GetRequiredService<IServiceScopeFactory>())));
-    }
-
-    if (enableFileLogging && telemetryDir is not null)
-    {
-        options.AddProcessor(new BatchLogRecordExportProcessor(
-            new FileLogExporter(telemetryDir)));
+        var logsPath = Path.Combine(telemetryDir, "logs");
+        Directory.CreateDirectory(logsPath);
+        logging.AddProcessor(new BatchLogRecordExportProcessor(new FileLogExporter(logsPath)));
     }
 });
 
 var app = builder.Build();
 
-// Initialize database with proper migration support
+// Initialize database
 using (var scope = app.Services.CreateScope())
 {
-    var context = scope.ServiceProvider.GetRequiredService<BlogDbContext>();
-    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
-    
-    // Ensure database exists and apply any pending model changes
-    await context.Database.EnsureCreatedAsync();
-    
-    // Ensure ImageDimensionCache table exists (for existing databases)
-    await EnsureImageDimensionCacheTableAsync(context, logger);
+    var db = scope.ServiceProvider.GetRequiredService<BlogDbContext>();
+    await db.Database.MigrateAsync();
 
     var authService = scope.ServiceProvider.GetRequiredService<IAuthService>();
     await authService.EnsureAdminUserAsync();
 }
 
-// Configure pipeline
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
-    if (builder.Configuration.GetValue("Application:RequireHttps", false))
-    {
-        app.UseHsts();
-        app.UseHttpsRedirection();
-    }
 }
 
 app.UseStaticFiles();
+app.UseAntiforgery();
+
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseAntiforgery();
 
 app.UseLoginRateLimit();
 
@@ -127,62 +114,9 @@ app.MapPost("/logout", async (HttpContext context) =>
     return Results.Redirect("/");
 }).RequireAuthorization();
 
-// Map the SignalR Hub
 app.MapHub<ReaderHub>("/readerHub");
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
-// Image endpoint
-app.MapGet("/api/images/{id:guid}", async (Guid id, IImageRepository repo, CancellationToken ct) =>
-{
-    var image = await repo.GetByIdAsync(id, ct);
-    return image is null
-        ? Results.NotFound()
-        : Results.File(image.Data, image.ContentType, image.FileName);
-});
-
 app.Run();
-
-/// <summary>
-/// Ensures the ImageDimensionCache table exists for databases created before this feature was added.
-/// This is a safe operation that only creates the table if it doesn't exist.
-/// </summary>
-static async Task EnsureImageDimensionCacheTableAsync(BlogDbContext context, ILogger logger)
-{
-    try
-    {
-        var connection = context.Database.GetDbConnection();
-        if (connection.State != System.Data.ConnectionState.Open)
-        {
-            await connection.OpenAsync();
-        }
-
-        // Check if table exists
-        using var checkCommand = connection.CreateCommand();
-        checkCommand.CommandText = "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='ImageDimensionCache'";
-        var exists = Convert.ToInt64(await checkCommand.ExecuteScalarAsync()) > 0;
-
-        if (!exists)
-        {
-            logger.LogInformation("Creating ImageDimensionCache table...");
-            
-            using var createCommand = connection.CreateCommand();
-            createCommand.CommandText = @"
-                CREATE TABLE ImageDimensionCache (
-                    Url TEXT PRIMARY KEY NOT NULL,
-                    Width INTEGER NOT NULL,
-                    Height INTEGER NOT NULL,
-                    LastCheckedUtc TEXT NOT NULL
-                )";
-            await createCommand.ExecuteNonQueryAsync();
-            
-            logger.LogInformation("ImageDimensionCache table created successfully.");
-        }
-    }
-    catch (Exception ex)
-    {
-        // Log but don't fail startup - the app can work without this table
-        logger.LogWarning(ex, "Could not ensure ImageDimensionCache table exists. Image dimension caching may not work.");
-    }
-}

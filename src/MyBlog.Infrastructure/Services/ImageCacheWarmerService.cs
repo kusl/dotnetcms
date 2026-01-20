@@ -30,7 +30,7 @@ public sealed class ImageCacheWarmerService : BackgroundService
     {
         // Give the app time to fully start up
         await Task.Delay(TimeSpan.FromSeconds(5), stoppingToken);
-        
+
         _logger.LogInformation("Image Cache Warmer started. Scanning posts for uncached images...");
 
         try
@@ -98,7 +98,7 @@ public sealed class ImageCacheWarmerService : BackgroundService
             // 3. Process missing (in parallel but throttled)
             var successCount = 0;
             var failCount = 0;
-            
+
             foreach (var url in missingUrls.TakeWhile(_ => !stoppingToken.IsCancellationRequested))
             {
                 try
@@ -107,7 +107,7 @@ public sealed class ImageCacheWarmerService : BackgroundService
                     var dimensions = await dimService.GetDimensionsAsync(url, stoppingToken);
                     if (dimensions.HasValue)
                     {
-                        _logger.LogDebug("Cached dimensions for: {Url} ({Width}x{Height})", 
+                        _logger.LogDebug("Cached dimensions for: {Url} ({Width}x{Height})",
                             url, dimensions.Value.Width, dimensions.Value.Height);
                         successCount++;
                     }
@@ -127,7 +127,7 @@ public sealed class ImageCacheWarmerService : BackgroundService
                 await Task.Delay(100, stoppingToken);
             }
 
-            _logger.LogInformation("Image Cache Warmer completed. Cached: {Success}, Failed: {Failed}", 
+            _logger.LogInformation("Image Cache Warmer completed. Cached: {Success}, Failed: {Failed}",
                 successCount, failCount);
         }
         catch (OperationCanceledException)
@@ -152,7 +152,7 @@ public sealed class ImageCacheWarmerService : BackgroundService
             {
                 await connection.OpenAsync(ct);
             }
-            
+
             using var command = connection.CreateCommand();
             command.CommandText = "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='ImageDimensionCache'";
             var result = await command.ExecuteScalarAsync(ct);
