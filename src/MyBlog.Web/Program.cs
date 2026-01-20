@@ -89,7 +89,13 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<BlogDbContext>();
-    await db.Database.MigrateAsync();
+
+    // EnsureCreated creates the database and all tables if the database doesn't exist.
+    // For existing databases, we need to manually ensure new tables exist.
+    await db.Database.EnsureCreatedAsync();
+
+    // Apply any pending schema updates for existing databases
+    await DatabaseSchemaUpdater.ApplyUpdatesAsync(db);
 
     var authService = scope.ServiceProvider.GetRequiredService<IAuthService>();
     await authService.EnsureAdminUserAsync();
