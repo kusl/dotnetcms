@@ -1,6 +1,6 @@
 ===============================================================================
 PROJECT EXPORT
-Generated: Tue Jan 20 09:23:22 AM EST 2026
+Generated: Tue Jan 20 09:26:58 AM EST 2026
 Project Path: /home/kushal/src/dotnet/MyBlog
 ===============================================================================
 
@@ -75,7 +75,8 @@ DIRECTORY STRUCTURE:
 │   ├── MyBlog.Infrastructure
 │   │   ├── Data
 │   │   │   ├── BlogDbContext.cs
-│   │   │   └── DatabasePathResolver.cs
+│   │   │   ├── DatabasePathResolver.cs
+│   │   │   └── DatabaseSchemaUpdater.cs
 │   │   ├── Repositories
 │   │   │   ├── ImageRepository.cs
 │   │   │   ├── PostRepository.cs
@@ -2632,6 +2633,74 @@ public static class DatabasePathResolver
             // Fallback to local directory
             return Path.Combine(AppContext.BaseDirectory, "data");
         }
+    }
+}
+
+
+================================================================================
+FILE: src/MyBlog.Infrastructure/Data/DatabaseSchemaUpdater.cs
+SIZE: 2.24 KB
+MODIFIED: 2026-01-20 09:25:48
+================================================================================
+
+using Microsoft.EntityFrameworkCore;
+
+namespace MyBlog.Infrastructure.Data;
+
+/// <summary>
+/// Handles incremental schema updates for existing databases.
+/// Since we're not using formal EF Core migrations, this class ensures
+/// new tables and columns are added to existing databases on deployment.
+/// </summary>
+public static class DatabaseSchemaUpdater
+{
+    /// <summary>
+    /// Applies any pending schema updates to the database.
+    /// This is safe to run multiple times - it only creates objects that don't exist.
+    /// </summary>
+    public static async Task ApplyUpdatesAsync(BlogDbContext db)
+    {
+        var connection = db.Database.GetDbConnection();
+        if (connection.State != System.Data.ConnectionState.Open)
+        {
+            await connection.OpenAsync();
+        }
+
+        // Check and create ImageDimensionCache table if it doesn't exist
+        await EnsureImageDimensionCacheTableAsync(db);
+    }
+
+    private static async Task EnsureImageDimensionCacheTableAsync(BlogDbContext db)
+    {
+        var tableExists = await TableExistsAsync(db, "ImageDimensionCache");
+        if (!tableExists)
+        {
+            // Create the ImageDimensionCache table using raw SQL
+            // This matches the schema defined in BlogDbContext.OnModelCreating
+            await db.Database.ExecuteSqlRawAsync("""
+                CREATE TABLE IF NOT EXISTS "ImageDimensionCache" (
+                    "Url" TEXT NOT NULL CONSTRAINT "PK_ImageDimensionCache" PRIMARY KEY,
+                    "Width" INTEGER NOT NULL,
+                    "Height" INTEGER NOT NULL,
+                    "LastCheckedUtc" TEXT NOT NULL
+                )
+                """);
+        }
+    }
+
+    private static async Task<bool> TableExistsAsync(BlogDbContext db, string tableName)
+    {
+        var connection = db.Database.GetDbConnection();
+        using var command = connection.CreateCommand();
+        command.CommandText = "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name=@tableName";
+
+        var parameter = command.CreateParameter();
+        parameter.ParameterName = "@tableName";
+        parameter.Value = tableName;
+        command.Parameters.Add(parameter);
+
+        var result = await command.ExecuteScalarAsync();
+        return Convert.ToInt64(result) > 0;
     }
 }
 
@@ -6902,8 +6971,8 @@ MODIFIED: 2026-01-16 20:29:40
 
 ================================================================================
 FILE: src/MyBlog.Web/Program.cs
-SIZE: 3.82 KB
-MODIFIED: 2026-01-20 09:17:33
+SIZE: 4.10 KB
+MODIFIED: 2026-01-20 09:25:14
 ================================================================================
 
 using Microsoft.AspNetCore.Authentication;
@@ -6997,7 +7066,13 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<BlogDbContext>();
-    await db.Database.MigrateAsync();
+
+    // EnsureCreated creates the database and all tables if the database doesn't exist.
+    // For existing databases, we need to manually ensure new tables exist.
+    await db.Database.EnsureCreatedAsync();
+
+    // Apply any pending schema updates for existing databases
+    await DatabaseSchemaUpdater.ApplyUpdatesAsync(db);
 
     var authService = scope.ServiceProvider.GetRequiredService<IAuthService>();
     await authService.EnsureAdminUserAsync();
@@ -7562,9 +7637,9 @@ a:hover {
 
 
 ===============================================================================
-EXPORT COMPLETED: Tue Jan 20 09:23:23 AM EST 2026
-Total Files Found: 72
-Files Exported: 72
+EXPORT COMPLETED: Tue Jan 20 09:26:59 AM EST 2026
+Total Files Found: 73
+Files Exported: 73
 Files Skipped: 0 (binary or large files)
 Output File: /home/kushal/src/dotnet/MyBlog/docs/llm/dump.txt
 ===============================================================================
