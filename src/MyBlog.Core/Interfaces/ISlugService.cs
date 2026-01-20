@@ -6,5 +6,5 @@ namespace MyBlog.Core.Interfaces;
 public interface ISlugService
 {
     /// <summary>Generates a slug from a title.</summary>
-    string GenerateSlug(string title);
+    string GenerateSlugOrUuid(string title);
 }

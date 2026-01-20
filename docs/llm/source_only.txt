@@ -577,7 +577,7 @@ namespace MyBlog.Core.Services;
 
 /// <summary>
 /// Custom Markdown to HTML renderer.
-/// Supports: headings, bold, italic, links, images, code blocks, blockquotes, 
+/// Supports: headings, bold, italic, links, images, code blocks, blockquotes,
 /// unordered lists, ordered lists, horizontal rules.
 /// </summary>
 public sealed partial class MarkdownService : IMarkdownService
@@ -3327,62 +3327,62 @@ public class SlugServiceTests
     [Fact]
     public void GenerateSlug_WithSimpleTitle_ReturnsLowercaseWithHyphens()
     {
-        var result = _sut.GenerateSlug("Hello World");
+        var result = _sut.GenerateSlugOrUuid("Hello World");
         Assert.Equal("hello-world", result);
     }
 
     [Fact]
     public void GenerateSlug_WithSpecialCharacters_RemovesThem()
     {
-        var result = _sut.GenerateSlug("Hello, World! How's it going?");
+        var result = _sut.GenerateSlugOrUuid("Hello, World! How's it going?");
         Assert.Equal("hello-world-hows-it-going", result);
     }
 
     [Fact]
     public void GenerateSlug_WithMultipleSpaces_CollapsesToSingleHyphen()
     {
-        var result = _sut.GenerateSlug("Hello    World");
+        var result = _sut.GenerateSlugOrUuid("Hello    World");
         Assert.Equal("hello-world", result);
     }
 
     [Fact]
     public void GenerateSlug_WithUnicode_RemovesDiacritics()
     {
-        var result = _sut.GenerateSlug("Café résumé");
+        var result = _sut.GenerateSlugOrUuid("Café résumé");
         Assert.Equal("cafe-resume", result);
     }
 
     [Fact]
     public void GenerateSlug_WithLeadingTrailingSpaces_TrimsHyphens()
     {
-        var result = _sut.GenerateSlug("  Hello World  ");
+        var result = _sut.GenerateSlugOrUuid("  Hello World  ");
         Assert.Equal("hello-world", result);
     }
 
     [Fact]
     public void GenerateSlug_WithNumbers_PreservesNumbers()
     {
-        var result = _sut.GenerateSlug("Top 10 Tips for 2024");
+        var result = _sut.GenerateSlugOrUuid("Top 10 Tips for 2024");
         Assert.Equal("top-10-tips-for-2024", result);
     }
 
     [Fact]
     public void GenerateSlug_WithUnderscores_ConvertsToHyphens()
     {
-        var result = _sut.GenerateSlug("hello_world_test");
+        var result = _sut.GenerateSlugOrUuid("hello_world_test");
         Assert.Equal("hello-world-test", result);
     }
 
     [Fact]
     public void GenerateSlug_WithEmptyString_ThrowsArgumentException()
     {
-        Assert.Throws<ArgumentException>(() => _sut.GenerateSlug(""));
+        Assert.Throws<ArgumentException>(() => _sut.GenerateSlugOrUuid(""));
     }
 
     [Fact]
     public void GenerateSlug_WithWhitespaceOnly_ThrowsArgumentException()
     {
-        Assert.Throws<ArgumentException>(() => _sut.GenerateSlug("   "));
+        Assert.Throws<ArgumentException>(() => _sut.GenerateSlugOrUuid("   "));
     }
 }
 
@@ -3548,7 +3548,7 @@ else
 
             var authState = await AuthStateProvider.GetAuthenticationStateAsync();
             var userIdClaim = authState.User.FindFirst(ClaimTypes.NameIdentifier);
-            
+
             if (userIdClaim is null || !Guid.TryParse(userIdClaim.Value, out var userId))
             {
                 _uploadStatus = "Unable to identify current user. Please log in again.";
@@ -3814,7 +3814,7 @@ else
             }
 
             // Generate unique slug
-            var baseSlug = SlugService.GenerateSlug(_title);
+            var baseSlug = SlugService.GenerateSlugOrUuid(_title);
             var finalSlug = baseSlug;
             var counter = 1;
 
@@ -3913,7 +3913,7 @@ FILE PATH: src/MyBlog.Web/Components/Pages/Admin/UserEditor.razor
     <div class="form-group">
         <label for="password">Password @(IsEdit ? "(Leave blank to keep current)" : "")</label>
         <input type="password" id="password" @bind="_password" required="@(!IsEdit)" />
-        @if (!IsEdit) 
+        @if (!IsEdit)
         {
             <small>Required for new users.</small>
         }
@@ -4132,7 +4132,7 @@ FILE PATH: src/MyBlog.Web/Components/Pages/Admin/UserList.razor
         if (id == _currentUserId) return;
 
         var confirm = await JsRuntime.InvokeAsync<bool>("confirm", "Are you sure you want to delete this user?");
-        
+
         if (confirm)
         {
             await UserRepository.DeleteAsync(id);
@@ -4244,7 +4244,7 @@ FILE PATH: src/MyBlog.Web/Components/Pages/Admin/ChangePassword.razor
         // Get current user ID
         var context = HttpContextAccessor.HttpContext;
         var userIdClaim = context?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        
+
         if (string.IsNullOrEmpty(userIdClaim) || !Guid.TryParse(userIdClaim, out var userId))
         {
             _errorMessage = "Unable to identify current user. Please log in again.";
@@ -4392,7 +4392,7 @@ else
 
         var pageSize = Configuration.GetValue("Application:PostsPerPage", 10);
         var (posts, totalCount) = await PostRepository.GetPublishedPostsAsync(_currentPage, pageSize);
-        
+
         _posts = posts;
         _totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
     }
@@ -4424,7 +4424,7 @@ FILE PATH: src/MyBlog.Web/Components/Pages/Login.razor
 
     <form method="post" @onsubmit="HandleLogin" @formname="login">
         <AntiforgeryToken />
-        
+
         <div class="form-group">
             <label for="username">Username</label>
             <input type="text" id="username" name="username" @bind="_username" required />
@@ -4477,7 +4477,7 @@ FILE PATH: src/MyBlog.Web/Components/Pages/Login.razor
             new(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new(ClaimTypes.Name, user.Username),
             new("DisplayName", user.DisplayName),
-            new(ClaimTypes.Role, AppConstants.AdminRole) 
+            new(ClaimTypes.Role, AppConstants.AdminRole)
         };
 
         var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -4485,7 +4485,7 @@ FILE PATH: src/MyBlog.Web/Components/Pages/Login.razor
 
         var context = HttpContextAccessor.HttpContext!;
         await context.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
-        
+
         Navigation.NavigateTo(ReturnUrl ?? "/admin", forceLoad: true);
     }
 }
@@ -5337,9 +5337,9 @@ FILE PATH: src/MyBlog.Web/Components/Shared/Pagination.razor
         {
             <a href="@GetPageUrl(CurrentPage - 1)" class="page-link">← Previous</a>
         }
-        
+
         <span class="page-info">Page @CurrentPage of @TotalPages</span>
-        
+
         @if (CurrentPage < TotalPages)
         {
             <a href="@GetPageUrl(CurrentPage + 1)" class="page-link">Next →</a>

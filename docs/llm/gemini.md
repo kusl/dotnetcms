@@ -3073,7 +3073,7 @@ else
             }
 
             // Generate unique slug
-            var baseSlug = SlugService.GenerateSlug(_title);
+            var baseSlug = SlugService.GenerateSlugOrUuid(_title);
             var finalSlug = baseSlug;
             var counter = 1;
 
@@ -5095,7 +5095,7 @@ else
             _content = await ProcessImagesForDimensions(_content);
 
             // Generate unique slug
-            var baseSlug = SlugService.GenerateSlug(_title);
+            var baseSlug = SlugService.GenerateSlugOrUuid(_title);
             var finalSlug = baseSlug;
             var counter = 1;
 

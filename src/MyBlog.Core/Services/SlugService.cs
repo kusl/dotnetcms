@@ -11,10 +11,15 @@ namespace MyBlog.Core.Services;
 public sealed partial class SlugService : ISlugService
 {
     /// <inheritdoc />
-    public string GenerateSlug(string title)
+    public string GenerateSlugOrUuid(string title)
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(title);
+        var slug = GenerateSlug(title);
 
+        return !string.IsNullOrWhiteSpace(slug) ? slug : $"post-{Guid.CreateVersion7().ToString()}";
+    }
+
+    private string GenerateSlug(string title)
+    {
         // Normalize unicode and convert to lowercase
         var normalized = title.Normalize(NormalizationForm.FormD);
         var sb = new StringBuilder();

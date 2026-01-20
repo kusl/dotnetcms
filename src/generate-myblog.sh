@@ -87,7 +87,7 @@ cat << 'EOF' > "$SRC_DIR/Directory.Build.props"
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <AnalysisLevel>latest</AnalysisLevel>
   </PropertyGroup>
-  
+
   <PropertyGroup Condition="$(MSBuildProjectName.Contains('.Tests'))">
     <IsPackable>false</IsPackable>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
@@ -108,12 +108,12 @@ cat << 'EOF' > "$SRC_DIR/Directory.Packages.props"
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.1" />
     <PackageVersion Include="Microsoft.AspNetCore.Identity" Version="2.3.1" />
     <PackageVersion Include="Microsoft.Extensions.Hosting" Version="10.0.1" />
-    
+
     <!-- OpenTelemetry (official packages only) -->
     <PackageVersion Include="OpenTelemetry" Version="1.14.0" />
     <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.14.0" />
     <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.14.0" />
-    
+
     <!-- Testing (xUnit v3) -->
     <PackageVersion Include="xunit.v3" Version="3.2.1" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
@@ -856,13 +856,13 @@ cat << 'EOF' > "$SRC_DIR/MyBlog.Infrastructure/MyBlog.Infrastructure.csproj"
   <PropertyGroup>
     <RootNamespace>MyBlog.Infrastructure</RootNamespace>
   </PropertyGroup>
-  
+
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
     <PackageReference Include="Microsoft.AspNetCore.Identity" />
     <PackageReference Include="OpenTelemetry" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <ProjectReference Include="..\MyBlog.Core\MyBlog.Core.csproj" />
   </ItemGroup>
@@ -1863,12 +1863,12 @@ cat << 'EOF' > "$SRC_DIR/MyBlog.Web/MyBlog.Web.csproj"
   <PropertyGroup>
     <RootNamespace>MyBlog.Web</RootNamespace>
   </PropertyGroup>
-  
+
   <ItemGroup>
     <PackageReference Include="OpenTelemetry.Extensions.Hosting" />
     <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <ProjectReference Include="..\MyBlog.Infrastructure\MyBlog.Infrastructure.csproj" />
   </ItemGroup>
@@ -2188,9 +2188,9 @@ cat << 'EOF' > "$SRC_DIR/MyBlog.Web/Components/Shared/Pagination.razor"
         {
             <a href="@GetPageUrl(CurrentPage - 1)" class="page-link">← Previous</a>
         }
-        
+
         <span class="page-info">Page @CurrentPage of @TotalPages</span>
-        
+
         @if (CurrentPage < TotalPages)
         {
             <a href="@GetPageUrl(CurrentPage + 1)" class="page-link">Next →</a>
@@ -2272,7 +2272,7 @@ else
 
         var pageSize = Configuration.GetValue("Application:PostsPerPage", 10);
         var (posts, totalCount) = await PostRepository.GetPublishedPostsAsync(_currentPage, pageSize);
-        
+
         _posts = posts;
         _totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
     }
@@ -2302,7 +2302,7 @@ cat << 'EOF' > "$SRC_DIR/MyBlog.Web/Components/Pages/PostDetail.razor"
 else
 {
     <PageTitle>@_post.Title</PageTitle>
-    
+
     <article class="post-detail">
         <header class="post-header">
             <h1>@_post.Title</h1>
@@ -2334,7 +2334,7 @@ else
     {
         _post = await PostRepository.GetBySlugAsync(Slug);
         _notFound = _post is null;
-        
+
         // Don't show unpublished posts to public
         if (_post is not null && !_post.IsPublished)
         {
@@ -2355,7 +2355,7 @@ cat << 'EOF' > "$SRC_DIR/MyBlog.Web/Components/Pages/About.razor"
 <h1>About</h1>
 
 <p>
-    Welcome to @(Configuration["Application:Title"] ?? "MyBlog"), a simple blog built with 
+    Welcome to @(Configuration["Application:Title"] ?? "MyBlog"), a simple blog built with
     .NET 10 and Blazor Server.
 </p>
 
@@ -2390,7 +2390,7 @@ cat << 'EOF' > "$SRC_DIR/MyBlog.Web/Components/Pages/Login.razor"
 
     <form method="post" @onsubmit="HandleLogin" @formname="login">
         <AntiforgeryToken />
-        
+
         <div class="form-group">
             <label for="username">Username</label>
             <input type="text" id="username" @bind="_username" required />
@@ -2693,7 +2693,7 @@ cat << 'EOF' > "$SRC_DIR/MyBlog.Web/Components/Pages/Admin/PostEditor.razor"
         if (_isEdit && _existingPost is not null)
         {
             _existingPost.Title = _title;
-            _existingPost.Slug = SlugService.GenerateSlug(_title);
+            _existingPost.Slug = SlugService.GenerateSlugOrUuid(_title);
             _existingPost.Summary = _summary;
             _existingPost.Content = _content;
             _existingPost.IsPublished = _isPublished;
@@ -2711,7 +2711,7 @@ cat << 'EOF' > "$SRC_DIR/MyBlog.Web/Components/Pages/Admin/PostEditor.razor"
             {
                 Id = Guid.NewGuid(),
                 Title = _title,
-                Slug = SlugService.GenerateSlug(_title),
+                Slug = SlugService.GenerateSlugOrUuid(_title),
                 Summary = _summary,
                 Content = _content,
                 AuthorId = userId,
@@ -3341,30 +3341,30 @@ a:hover {
 @media (max-width: 768px) {
     h1 { font-size: 2rem; }
     h2 { font-size: 1.5rem; }
-    
+
     .header .container {
         flex-direction: column;
         text-align: center;
     }
-    
+
     .nav {
         flex-wrap: wrap;
         justify-content: center;
     }
-    
+
     .post-editor {
         grid-template-columns: 1fr;
     }
-    
+
     .editor-preview {
         order: -1;
         max-height: 300px;
     }
-    
+
     .dashboard-stats {
         flex-direction: column;
     }
-    
+
     .admin-nav {
         flex-wrap: wrap;
     }
@@ -3388,13 +3388,13 @@ cat << 'EOF' > "$SRC_DIR/MyBlog.Tests/MyBlog.Tests.csproj"
     <RootNamespace>MyBlog.Tests</RootNamespace>
     <IsTestProject>true</IsTestProject>
   </PropertyGroup>
-  
+
   <ItemGroup>
     <PackageReference Include="xunit.v3" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <ProjectReference Include="..\MyBlog.Core\MyBlog.Core.csproj" />
     <ProjectReference Include="..\MyBlog.Infrastructure\MyBlog.Infrastructure.csproj" />
@@ -3416,62 +3416,62 @@ public class SlugServiceTests
     [Fact]
     public void GenerateSlug_WithSimpleTitle_ReturnsLowercaseWithHyphens()
     {
-        var result = _sut.GenerateSlug("Hello World");
+        var result = _sut.GenerateSlugOrUuid("Hello World");
         Assert.Equal("hello-world", result);
     }
 
     [Fact]
     public void GenerateSlug_WithSpecialCharacters_RemovesThem()
     {
-        var result = _sut.GenerateSlug("Hello, World! How's it going?");
+        var result = _sut.GenerateSlugOrUuid("Hello, World! How's it going?");
         Assert.Equal("hello-world-hows-it-going", result);
     }
 
     [Fact]
     public void GenerateSlug_WithMultipleSpaces_CollapsesToSingleHyphen()
     {
-        var result = _sut.GenerateSlug("Hello    World");
+        var result = _sut.GenerateSlugOrUuid("Hello    World");
         Assert.Equal("hello-world", result);
     }
 
     [Fact]
     public void GenerateSlug_WithUnicode_RemovesDiacritics()
     {
-        var result = _sut.GenerateSlug("Café résumé");
+        var result = _sut.GenerateSlugOrUuid("Café résumé");
         Assert.Equal("cafe-resume", result);
     }
 
     [Fact]
     public void GenerateSlug_WithLeadingTrailingSpaces_TrimsHyphens()
     {
-        var result = _sut.GenerateSlug("  Hello World  ");
+        var result = _sut.GenerateSlugOrUuid("  Hello World  ");
         Assert.Equal("hello-world", result);
     }
 
     [Fact]
     public void GenerateSlug_WithNumbers_PreservesNumbers()
     {
-        var result = _sut.GenerateSlug("Top 10 Tips for 2024");
+        var result = _sut.GenerateSlugOrUuid("Top 10 Tips for 2024");
         Assert.Equal("top-10-tips-for-2024", result);
     }
 
     [Fact]
     public void GenerateSlug_WithUnderscores_ConvertsToHyphens()
     {
-        var result = _sut.GenerateSlug("hello_world_test");
+        var result = _sut.GenerateSlugOrUuid("hello_world_test");
         Assert.Equal("hello-world-test", result);
     }
 
     [Fact]
     public void GenerateSlug_WithEmptyString_ThrowsArgumentException()
     {
-        Assert.Throws<ArgumentException>(() => _sut.GenerateSlug(""));
+        Assert.Throws<ArgumentException>(() => _sut.GenerateSlugOrUuid(""));
     }
 
     [Fact]
     public void GenerateSlug_WithWhitespaceOnly_ThrowsArgumentException()
     {
-        Assert.Throws<ArgumentException>(() => _sut.GenerateSlug("   "));
+        Assert.Throws<ArgumentException>(() => _sut.GenerateSlugOrUuid("   "));
     }
 }
 EOF
@@ -3633,9 +3633,9 @@ public class PasswordServiceTests
     {
         var password = "TestPassword123";
         var hash = _sut.HashPassword(password);
-        
+
         var result = _sut.VerifyPassword(hash, password);
-        
+
         Assert.True(result);
     }
 
@@ -3643,9 +3643,9 @@ public class PasswordServiceTests
     public void VerifyPassword_WithWrongPassword_ReturnsFalse()
     {
         var hash = _sut.HashPassword("TestPassword123");
-        
+
         var result = _sut.VerifyPassword(hash, "WrongPassword");
-        
+
         Assert.False(result);
     }
 
@@ -3653,9 +3653,9 @@ public class PasswordServiceTests
     public void VerifyPassword_WithEmptyPassword_ReturnsFalse()
     {
         var hash = _sut.HashPassword("TestPassword123");
-        
+
         var result = _sut.VerifyPassword(hash, "");
-        
+
         Assert.False(result);
     }
 }
@@ -4079,7 +4079,7 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
     runs-on: ${{ matrix.os }}
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -4110,7 +4110,7 @@ jobs:
     needs: build-test
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop'
     runs-on: windows-latest
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -4128,26 +4128,26 @@ jobs:
         run: |
           # WebDeploy is typically pre-installed on windows-latest
           $msdeployPath = "C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe"
-          
+
           if (-not (Test-Path $msdeployPath)) {
             Write-Host "Installing Web Deploy..."
             choco install webdeploy -y --no-progress
             $msdeployPath = "C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe"
           }
-          
+
           Write-Host "Deploying to ${{ secrets.SERVER_COMPUTER_NAME }}..."
-          
+
           & $msdeployPath -verb:sync `
             -source:contentPath="${{ github.workspace }}\publish" `
             -dest:contentPath="${{ secrets.WEBSITE_NAME }}",computerName="https://${{ secrets.SERVER_COMPUTER_NAME }}:8172/msdeploy.axd",userName="${{ secrets.SERVER_USERNAME }}",password="${{ secrets.SERVER_PASSWORD }}",authType="Basic" `
             -allowUntrusted `
             -enableRule:DoNotDeleteRule
-          
+
           if ($LASTEXITCODE -ne 0) {
             Write-Error "Deployment failed with exit code $LASTEXITCODE"
             exit 1
           }
-          
+
           Write-Host "Deployment completed successfully!"
 EOF
 

@@ -346,7 +346,7 @@ PROMPT="You are a senior .NET Solution Architect. Attached is the full source co
 
 Perform a COMPREHENSIVE review of the entire project. Do not limit yourself to specific files.
 
-read every single line in the prompt very carefully and very thoroughly. 
+read every single line in the prompt very carefully and very thoroughly.
 do not skip any line at all.
 
 Review the solution for:
@@ -587,7 +587,7 @@ SKIPPED=0
 while IFS= read -r file; do
     COUNTER=$((COUNTER + 1))
     FILENAME="${file#./}"
-    
+
     # Skip binary files (check if file is text)
     if file "$file" | grep -qE "binary|executable|data|image"; then
         # For some files we want to note they exist but not dump contents
@@ -604,11 +604,11 @@ while IFS= read -r file; do
             continue
         fi
     fi
-    
+
     # Get file info
     FILESIZE=$(stat -c%s "$file" 2>/dev/null || stat -f%z "$file" 2>/dev/null || echo "0")
     MODIFIED=$(stat -c%y "$file" 2>/dev/null | cut -d'.' -f1 || stat -f"%Sm" -t "%Y-%m-%d %H:%M:%S" "$file" 2>/dev/null || echo "unknown")
-    
+
     # Skip very large files (>500KB) - they're probably not source code
     if [ "$FILESIZE" -gt 512000 ]; then
         SKIPPED=$((SKIPPED + 1))
@@ -623,9 +623,9 @@ while IFS= read -r file; do
         } >> "$OUTPUT_FILE"
         continue
     fi
-    
+
     echo "Processing ($COUNTER/$FILE_COUNT): $FILENAME"
-    
+
     {
         echo "================================================================================"
         echo "FILE: $FILENAME"
@@ -637,7 +637,7 @@ while IFS= read -r file; do
         echo ""
         echo ""
     } >> "$OUTPUT_FILE"
-    
+
 done < "$TMPFILE"
 
 # Cleanup
@@ -729,7 +729,7 @@ cat << 'EOF' > "$SRC_DIR/MyBlog.Web/Components/Pages/Login.razor"
 
     <form method="post" @onsubmit="HandleLogin" @formname="login">
         <AntiforgeryToken />
-        
+
         <div class="form-group">
             <label for="username">Username</label>
             <input type="text" id="username" name="username" @bind="_username" required />
@@ -765,7 +765,7 @@ cat << 'EOF' > "$SRC_DIR/MyBlog.Web/Components/Pages/Login.razor"
         var password = FormPassword ?? _password;
 
         var user = await AuthService.AuthenticateAsync(username, password);
-        
+
         if (user is null)
         {
             _error = "Invalid username or password";
@@ -894,7 +894,7 @@ cat << 'EOF' > "$SRC_DIR/MyBlog.Web/Components/Pages/Admin/ChangePassword.razor"
         // Get current user ID
         var context = HttpContextAccessor.HttpContext;
         var userIdClaim = context?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        
+
         if (string.IsNullOrEmpty(userIdClaim) || !Guid.TryParse(userIdClaim, out var userId))
         {
             _errorMessage = "Unable to identify current user. Please log in again.";
@@ -1387,7 +1387,7 @@ cat << 'EOF' > "$SRC_DIR/MyBlog.Web/Components/Pages/Login.razor"
 
     <form method="post" @onsubmit="HandleLogin" @formname="login">
         <AntiforgeryToken />
-        
+
         <div class="form-group">
             <label for="username">Username</label>
             <input type="text" id="username" name="username" @bind="_username" required />
@@ -1429,7 +1429,7 @@ cat << 'EOF' > "$SRC_DIR/MyBlog.Web/Components/Pages/Login.razor"
         }
 
         var user = await AuthService.AuthenticateAsync(username, password);
-        
+
         if (user is null)
         {
             _error = "Invalid username or password";
@@ -1521,7 +1521,7 @@ namespace MyBlog.Core.Services;
 
 /// <summary>
 /// Custom Markdown to HTML renderer.
-/// Supports: headings, bold, italic, links, images, code blocks, blockquotes, 
+/// Supports: headings, bold, italic, links, images, code blocks, blockquotes,
 /// unordered lists, ordered lists, horizontal rules.
 /// </summary>
 public sealed partial class MarkdownService : IMarkdownService
@@ -1753,7 +1753,7 @@ MODIFIED: 2025-12-28 15:42:56
 # - FileMetricExporter (doesn't exist)
 # - TelemetryPaths (doesn't exist - use TelemetryPathResolver)
 # - DbSeeder (doesn't exist - use IAuthService.EnsureAdminUserAsync)
-# 
+#
 # This script fixes Program.cs to use only classes that actually exist.
 # =============================================================================
 set -euo pipefail
@@ -1843,7 +1843,7 @@ builder.Logging.AddOpenTelemetry(logging =>
     logging.IncludeFormattedMessage = true;
     logging.IncludeScopes = true;
     logging.AddConsoleExporter();
-    
+
     // Add file exporter if we have a writable directory
     if (telemetryDir is not null)
     {
@@ -1860,7 +1860,7 @@ using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<BlogDbContext>();
     await db.Database.MigrateAsync();
-    
+
     // Seed admin user using the auth service
     var authService = scope.ServiceProvider.GetRequiredService<IAuthService>();
     await authService.EnsureAdminUserAsync();
@@ -1917,7 +1917,7 @@ echo "Changes made:"
 echo ""
 echo "  1. Program.cs:"
 echo "     - Removed reference to non-existent FileActivityExporter"
-echo "     - Removed reference to non-existent FileMetricExporter"  
+echo "     - Removed reference to non-existent FileMetricExporter"
 echo "     - Removed reference to non-existent TelemetryPaths"
 echo "     - Removed reference to non-existent DbSeeder"
 echo "     - Using TelemetryPathResolver.GetTelemetryDirectory() instead"
@@ -2160,7 +2160,7 @@ public sealed class PostRepository : IPostRepository
             return await _context.Posts
                 .AnyAsync(p => p.Slug == slug && p.Id != excludePostId.Value, cancellationToken);
         }
-        
+
         return await _context.Posts
             .AnyAsync(p => p.Slug == slug, cancellationToken);
     }
@@ -2287,7 +2287,7 @@ else
         {
             var authState = await AuthStateProvider.GetAuthenticationStateAsync();
             var userIdClaim = authState.User.FindFirst(ClaimTypes.NameIdentifier);
-            
+
             if (userIdClaim is null || !Guid.TryParse(userIdClaim.Value, out var userId))
             {
                 _error = "Unable to identify current user. Please log in again.";
@@ -2296,10 +2296,10 @@ else
             }
 
             // Generate unique slug
-            var baseSlug = SlugService.GenerateSlug(_title);
+            var baseSlug = SlugService.GenerateSlugOrUuid(_title);
             var finalSlug = baseSlug;
             var counter = 1;
-            
+
             // Loop until we find a slug that isn't taken (excluding current post if editing)
             while (await PostRepository.IsSlugTakenAsync(finalSlug, _isEdit ? Id : null))
             {
@@ -2395,7 +2395,7 @@ cat << 'EOF' > src/MyBlog.Web/Components/Pages/Login.razor
 
     <form method="post" @onsubmit="HandleLogin" @formname="login">
         <AntiforgeryToken />
-        
+
         <div class="form-group">
             <label for="username">Username</label>
             <input type="text" id="username" name="username" @bind="_username" required />
@@ -2448,7 +2448,7 @@ cat << 'EOF' > src/MyBlog.Web/Components/Pages/Login.razor
             new(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new(ClaimTypes.Name, user.Username),
             new("DisplayName", user.DisplayName),
-            new(ClaimTypes.Role, AppConstants.AdminRole) 
+            new(ClaimTypes.Role, AppConstants.AdminRole)
         };
 
         var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -2456,7 +2456,7 @@ cat << 'EOF' > src/MyBlog.Web/Components/Pages/Login.razor
 
         var context = HttpContextAccessor.HttpContext!;
         await context.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
-        
+
         Navigation.NavigateTo(ReturnUrl ?? "/admin", forceLoad: true);
     }
 }
@@ -2478,7 +2478,7 @@ using MyBlog.Infrastructure.Services;
 using MyBlog.Infrastructure.Telemetry;
 using MyBlog.Web.Components;
 using MyBlog.Web.Middleware;
-using OpenTelemetry; 
+using OpenTelemetry;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
@@ -2775,7 +2775,7 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
     runs-on: ${{ matrix.os }}
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -2792,14 +2792,14 @@ jobs:
         run: dotnet build src/MyBlog.slnx -c Release --no-restore
 
       - name: Run tests
-        run: 
+        run:
           dotnet run --project src/MyBlog.Tests/MyBlog.Tests.csproj
 
   deploy:
     needs: build-test
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop'
     runs-on: windows-latest
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -2822,18 +2822,18 @@ jobs:
           DEPLOY_PASSWORD: ${{ secrets.SERVER_PASSWORD }}
         run: |
           $msdeployPath = "C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe"
-          
+
           if (-not (Test-Path $msdeployPath)) {
             Write-Host "Installing Web Deploy..."
             choco install webdeploy -y --no-progress
           }
-          
+
           Write-Host "Deploying to $env:DEPLOY_HOST..."
           Write-Host "Note: Using AppOffline rule to prevent file-in-use errors"
 
           $sourceArg = "-source:contentPath=$env:DEPLOY_SOURCE"
           $destArg = "-dest:contentPath=$env:DEPLOY_SITE,computerName=https://$($env:DEPLOY_HOST):8172/MsDeploy.axd?site=$env:DEPLOY_SITE,userName=$env:DEPLOY_USER,password=$env:DEPLOY_PASSWORD,AuthType='Basic'"
-          
+
           # Key fix: Added -enableRule:AppOffline to stop the app during deployment
           # This creates app_offline.htm, waits for app to stop, deploys, then removes the file
           & $msdeployPath -verb:sync $sourceArg $destArg `
@@ -2842,12 +2842,12 @@ jobs:
             -enableRule:AppOffline `
             -retryAttempts:3 `
             -retryInterval:3000
-          
+
           if ($LASTEXITCODE -ne 0) {
             Write-Error "Deployment failed with exit code $LASTEXITCODE"
             exit 1
           }
-          
+
           Write-Host "Deployment completed successfully!"
 
 
@@ -3554,8 +3554,8 @@ else
         if (id == _currentUserId) return; // Prevent suicide
 
         var confirm = await Application.Current?.MainPage?.DisplayAlert("Confirm", "Are you sure you want to delete this user?", "Yes", "No") ?? true;
-        
-        // Note: Simple JS confirm isn't available in SSR easily without interop, 
+
+        // Note: Simple JS confirm isn't available in SSR easily without interop,
         // so we'll just delete for now. In a real app, use a modal or JSInterop confirm.
         await UserRepository.DeleteAsync(id);
         await LoadUsers();
@@ -3604,7 +3604,7 @@ cat << 'EOF' > "$SRC_DIR/MyBlog.Web/Components/Pages/Admin/UserEditor.razor"
     <div class="form-group">
         <label for="password">Password @(_isEdit ? "(Leave blank to keep current)" : "")</label>
         <input type="password" id="password" @bind="_password" required="@(!_isEdit)" />
-        @if (!_isEdit) 
+        @if (!_isEdit)
         {
             <small>Required for new users.</small>
         }
@@ -4093,7 +4093,7 @@ MODIFIED: 2026-01-01 22:21:17
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <AnalysisLevel>latest</AnalysisLevel>
   </PropertyGroup>
-  
+
   <PropertyGroup Condition="$(MSBuildProjectName.Contains('.Tests'))">
     <IsPackable>false</IsPackable>
     <OutputType>Exe</OutputType>
@@ -4489,7 +4489,7 @@ if ! grep -q "UseLoginRateLimit" "$SRC_DIR/MyBlog.Web/Program.cs" 2>/dev/null; t
     if ! grep -q "using MyBlog.Web.Middleware" "$SRC_DIR/MyBlog.Web/Program.cs" 2>/dev/null; then
         sed -i '1s/^/using MyBlog.Web.Middleware;\n/' "$SRC_DIR/MyBlog.Web/Program.cs"
     fi
-    
+
     # Add middleware after UseRouting (or after app is created if UseRouting doesn't exist)
     if grep -q "app.UseRouting" "$SRC_DIR/MyBlog.Web/Program.cs"; then
         sed -i '/app\.UseRouting/a app.UseLoginRateLimit();' "$SRC_DIR/MyBlog.Web/Program.cs"
@@ -4929,7 +4929,7 @@ public sealed class LoginRateLimitMiddlewareTests
         for (var i = 0; i < 100; i++)
         {
             var context = CreateHttpContext("/login", "POST", uniqueIp);
-            
+
             // Use a timeout to ensure we're not blocked forever
             using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(60));
             try
@@ -4950,7 +4950,7 @@ public sealed class LoginRateLimitMiddlewareTests
         var context = new DefaultHttpContext();
         context.Request.Path = path;
         context.Request.Method = method;
-        
+
         if (remoteIp != null)
         {
             context.Connection.RemoteIpAddress = System.Net.IPAddress.Parse(remoteIp);
@@ -5561,7 +5561,7 @@ cat << 'EOF' > "$SRC_DIR/Directory.Build.props"
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <AnalysisLevel>latest</AnalysisLevel>
   </PropertyGroup>
-  
+
   <PropertyGroup Condition="$(MSBuildProjectName.Contains('.Tests'))">
     <IsPackable>false</IsPackable>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
@@ -5582,12 +5582,12 @@ cat << 'EOF' > "$SRC_DIR/Directory.Packages.props"
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.1" />
     <PackageVersion Include="Microsoft.AspNetCore.Identity" Version="2.3.1" />
     <PackageVersion Include="Microsoft.Extensions.Hosting" Version="10.0.1" />
-    
+
     <!-- OpenTelemetry (official packages only) -->
     <PackageVersion Include="OpenTelemetry" Version="1.14.0" />
     <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.14.0" />
     <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.14.0" />
-    
+
     <!-- Testing (xUnit v3) -->
     <PackageVersion Include="xunit.v3" Version="3.2.1" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
@@ -6330,13 +6330,13 @@ cat << 'EOF' > "$SRC_DIR/MyBlog.Infrastructure/MyBlog.Infrastructure.csproj"
   <PropertyGroup>
     <RootNamespace>MyBlog.Infrastructure</RootNamespace>
   </PropertyGroup>
-  
+
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
     <PackageReference Include="Microsoft.AspNetCore.Identity" />
     <PackageReference Include="OpenTelemetry" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <ProjectReference Include="..\MyBlog.Core\MyBlog.Core.csproj" />
   </ItemGroup>
@@ -7337,12 +7337,12 @@ cat << 'EOF' > "$SRC_DIR/MyBlog.Web/MyBlog.Web.csproj"
   <PropertyGroup>
     <RootNamespace>MyBlog.Web</RootNamespace>
   </PropertyGroup>
-  
+
   <ItemGroup>
     <PackageReference Include="OpenTelemetry.Extensions.Hosting" />
     <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <ProjectReference Include="..\MyBlog.Infrastructure\MyBlog.Infrastructure.csproj" />
   </ItemGroup>
@@ -7662,9 +7662,9 @@ cat << 'EOF' > "$SRC_DIR/MyBlog.Web/Components/Shared/Pagination.razor"
         {
             <a href="@GetPageUrl(CurrentPage - 1)" class="page-link">← Previous</a>
         }
-        
+
         <span class="page-info">Page @CurrentPage of @TotalPages</span>
-        
+
         @if (CurrentPage < TotalPages)
         {
             <a href="@GetPageUrl(CurrentPage + 1)" class="page-link">Next →</a>
@@ -7746,7 +7746,7 @@ else
 
         var pageSize = Configuration.GetValue("Application:PostsPerPage", 10);
         var (posts, totalCount) = await PostRepository.GetPublishedPostsAsync(_currentPage, pageSize);
-        
+
         _posts = posts;
         _totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
     }
@@ -7776,7 +7776,7 @@ cat << 'EOF' > "$SRC_DIR/MyBlog.Web/Components/Pages/PostDetail.razor"
 else
 {
     <PageTitle>@_post.Title</PageTitle>
-    
+
     <article class="post-detail">
         <header class="post-header">
             <h1>@_post.Title</h1>
@@ -7808,7 +7808,7 @@ else
     {
         _post = await PostRepository.GetBySlugAsync(Slug);
         _notFound = _post is null;
-        
+
         // Don't show unpublished posts to public
         if (_post is not null && !_post.IsPublished)
         {
@@ -7829,7 +7829,7 @@ cat << 'EOF' > "$SRC_DIR/MyBlog.Web/Components/Pages/About.razor"
 <h1>About</h1>
 
 <p>
-    Welcome to @(Configuration["Application:Title"] ?? "MyBlog"), a simple blog built with 
+    Welcome to @(Configuration["Application:Title"] ?? "MyBlog"), a simple blog built with
     .NET 10 and Blazor Server.
 </p>
 
@@ -7864,7 +7864,7 @@ cat << 'EOF' > "$SRC_DIR/MyBlog.Web/Components/Pages/Login.razor"
 
     <form method="post" @onsubmit="HandleLogin" @formname="login">
         <AntiforgeryToken />
-        
+
         <div class="form-group">
             <label for="username">Username</label>
             <input type="text" id="username" @bind="_username" required />
@@ -8167,7 +8167,7 @@ cat << 'EOF' > "$SRC_DIR/MyBlog.Web/Components/Pages/Admin/PostEditor.razor"
         if (_isEdit && _existingPost is not null)
         {
             _existingPost.Title = _title;
-            _existingPost.Slug = SlugService.GenerateSlug(_title);
+            _existingPost.Slug = SlugService.GenerateSlugOrUuid(_title);
             _existingPost.Summary = _summary;
             _existingPost.Content = _content;
             _existingPost.IsPublished = _isPublished;
@@ -8185,7 +8185,7 @@ cat << 'EOF' > "$SRC_DIR/MyBlog.Web/Components/Pages/Admin/PostEditor.razor"
             {
                 Id = Guid.NewGuid(),
                 Title = _title,
-                Slug = SlugService.GenerateSlug(_title),
+                Slug = SlugService.GenerateSlugOrUuid(_title),
                 Summary = _summary,
                 Content = _content,
                 AuthorId = userId,
@@ -8815,30 +8815,30 @@ a:hover {
 @media (max-width: 768px) {
     h1 { font-size: 2rem; }
     h2 { font-size: 1.5rem; }
-    
+
     .header .container {
         flex-direction: column;
         text-align: center;
     }
-    
+
     .nav {
         flex-wrap: wrap;
         justify-content: center;
     }
-    
+
     .post-editor {
         grid-template-columns: 1fr;
     }
-    
+
     .editor-preview {
         order: -1;
         max-height: 300px;
     }
-    
+
     .dashboard-stats {
         flex-direction: column;
     }
-    
+
     .admin-nav {
         flex-wrap: wrap;
     }
@@ -8862,13 +8862,13 @@ cat << 'EOF' > "$SRC_DIR/MyBlog.Tests/MyBlog.Tests.csproj"
     <RootNamespace>MyBlog.Tests</RootNamespace>
     <IsTestProject>true</IsTestProject>
   </PropertyGroup>
-  
+
   <ItemGroup>
     <PackageReference Include="xunit.v3" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <ProjectReference Include="..\MyBlog.Core\MyBlog.Core.csproj" />
     <ProjectReference Include="..\MyBlog.Infrastructure\MyBlog.Infrastructure.csproj" />
@@ -8890,62 +8890,62 @@ public class SlugServiceTests
     [Fact]
     public void GenerateSlug_WithSimpleTitle_ReturnsLowercaseWithHyphens()
     {
-        var result = _sut.GenerateSlug("Hello World");
+        var result = _sut.GenerateSlugOrUuid("Hello World");
         Assert.Equal("hello-world", result);
     }
 
     [Fact]
     public void GenerateSlug_WithSpecialCharacters_RemovesThem()
     {
-        var result = _sut.GenerateSlug("Hello, World! How's it going?");
+        var result = _sut.GenerateSlugOrUuid("Hello, World! How's it going?");
         Assert.Equal("hello-world-hows-it-going", result);
     }
 
     [Fact]
     public void GenerateSlug_WithMultipleSpaces_CollapsesToSingleHyphen()
     {
-        var result = _sut.GenerateSlug("Hello    World");
+        var result = _sut.GenerateSlugOrUuid("Hello    World");
         Assert.Equal("hello-world", result);
     }
 
     [Fact]
     public void GenerateSlug_WithUnicode_RemovesDiacritics()
     {
-        var result = _sut.GenerateSlug("Café résumé");
+        var result = _sut.GenerateSlugOrUuid("Café résumé");
         Assert.Equal("cafe-resume", result);
     }
 
     [Fact]
     public void GenerateSlug_WithLeadingTrailingSpaces_TrimsHyphens()
     {
-        var result = _sut.GenerateSlug("  Hello World  ");
+        var result = _sut.GenerateSlugOrUuid("  Hello World  ");
         Assert.Equal("hello-world", result);
     }
 
     [Fact]
     public void GenerateSlug_WithNumbers_PreservesNumbers()
     {
-        var result = _sut.GenerateSlug("Top 10 Tips for 2024");
+        var result = _sut.GenerateSlugOrUuid("Top 10 Tips for 2024");
         Assert.Equal("top-10-tips-for-2024", result);
     }
 
     [Fact]
     public void GenerateSlug_WithUnderscores_ConvertsToHyphens()
     {
-        var result = _sut.GenerateSlug("hello_world_test");
+        var result = _sut.GenerateSlugOrUuid("hello_world_test");
         Assert.Equal("hello-world-test", result);
     }
 
     [Fact]
     public void GenerateSlug_WithEmptyString_ThrowsArgumentException()
     {
-        Assert.Throws<ArgumentException>(() => _sut.GenerateSlug(""));
+        Assert.Throws<ArgumentException>(() => _sut.GenerateSlugOrUuid(""));
     }
 
     [Fact]
     public void GenerateSlug_WithWhitespaceOnly_ThrowsArgumentException()
     {
-        Assert.Throws<ArgumentException>(() => _sut.GenerateSlug("   "));
+        Assert.Throws<ArgumentException>(() => _sut.GenerateSlugOrUuid("   "));
     }
 }
 EOF
@@ -9107,9 +9107,9 @@ public class PasswordServiceTests
     {
         var password = "TestPassword123";
         var hash = _sut.HashPassword(password);
-        
+
         var result = _sut.VerifyPassword(hash, password);
-        
+
         Assert.True(result);
     }
 
@@ -9117,9 +9117,9 @@ public class PasswordServiceTests
     public void VerifyPassword_WithWrongPassword_ReturnsFalse()
     {
         var hash = _sut.HashPassword("TestPassword123");
-        
+
         var result = _sut.VerifyPassword(hash, "WrongPassword");
-        
+
         Assert.False(result);
     }
 
@@ -9127,9 +9127,9 @@ public class PasswordServiceTests
     public void VerifyPassword_WithEmptyPassword_ReturnsFalse()
     {
         var hash = _sut.HashPassword("TestPassword123");
-        
+
         var result = _sut.VerifyPassword(hash, "");
-        
+
         Assert.False(result);
     }
 }
@@ -9553,7 +9553,7 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
     runs-on: ${{ matrix.os }}
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -9584,7 +9584,7 @@ jobs:
     needs: build-test
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop'
     runs-on: windows-latest
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -9602,26 +9602,26 @@ jobs:
         run: |
           # WebDeploy is typically pre-installed on windows-latest
           $msdeployPath = "C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe"
-          
+
           if (-not (Test-Path $msdeployPath)) {
             Write-Host "Installing Web Deploy..."
             choco install webdeploy -y --no-progress
             $msdeployPath = "C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe"
           }
-          
+
           Write-Host "Deploying to ${{ secrets.SERVER_COMPUTER_NAME }}..."
-          
+
           & $msdeployPath -verb:sync `
             -source:contentPath="${{ github.workspace }}\publish" `
             -dest:contentPath="${{ secrets.WEBSITE_NAME }}",computerName="https://${{ secrets.SERVER_COMPUTER_NAME }}:8172/msdeploy.axd",userName="${{ secrets.SERVER_USERNAME }}",password="${{ secrets.SERVER_PASSWORD }}",authType="Basic" `
             -allowUntrusted `
             -enableRule:DoNotDeleteRule
-          
+
           if ($LASTEXITCODE -ne 0) {
             Write-Error "Deployment failed with exit code $LASTEXITCODE"
             exit 1
           }
-          
+
           Write-Host "Deployment completed successfully!"
 EOF
 
@@ -9724,7 +9724,7 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
     runs-on: ${{ matrix.os }}
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -9755,7 +9755,7 @@ jobs:
     needs: build-test
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop'
     runs-on: windows-latest
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -9778,18 +9778,18 @@ jobs:
           DEPLOY_PASSWORD: ${{ secrets.SERVER_PASSWORD }}
         run: |
           $msdeployPath = "C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe"
-          
+
           if (-not (Test-Path $msdeployPath)) {
             Write-Host "Installing Web Deploy..."
             choco install webdeploy -y --no-progress
           }
-          
+
           Write-Host "Deploying to $env:DEPLOY_HOST..."
           Write-Host "Note: Using AppOffline rule to prevent file-in-use errors"
 
           $sourceArg = "-source:contentPath=$env:DEPLOY_SOURCE"
           $destArg = "-dest:contentPath=$env:DEPLOY_SITE,computerName=https://$($env:DEPLOY_HOST):8172/MsDeploy.axd?site=$env:DEPLOY_SITE,userName=$env:DEPLOY_USER,password=$env:DEPLOY_PASSWORD,AuthType='Basic'"
-          
+
           # Key fix: Added -enableRule:AppOffline to stop the app during deployment
           # This creates app_offline.htm, waits for app to stop, deploys, then removes the file
           & $msdeployPath -verb:sync $sourceArg $destArg `
@@ -9798,12 +9798,12 @@ jobs:
             -enableRule:AppOffline `
             -retryAttempts:3 `
             -retryInterval:3000
-          
+
           if ($LASTEXITCODE -ne 0) {
             Write-Error "Deployment failed with exit code $LASTEXITCODE"
             exit 1
           }
-          
+
           Write-Host "Deployment completed successfully!"
 
 
@@ -10906,14 +10906,14 @@ MODIFIED: 2026-01-16 21:56:40
   <PropertyGroup>
     <RootNamespace>MyBlog.Infrastructure</RootNamespace>
   </PropertyGroup>
-  
+
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
     <PackageReference Include="Microsoft.AspNetCore.Identity" />
     <PackageReference Include="Microsoft.Extensions.Http" />
     <PackageReference Include="OpenTelemetry" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <ProjectReference Include="..\MyBlog.Core\MyBlog.Core.csproj" />
   </ItemGroup>
@@ -13204,14 +13204,14 @@ MODIFIED: 2026-01-11 12:52:12
     <RootNamespace>MyBlog.Tests</RootNamespace>
     <IsTestProject>true</IsTestProject>
   </PropertyGroup>
-  
+
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <PackageReference Include="xunit.v3" />
     <PackageReference Include="Microsoft.Testing.Extensions.TrxReport" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <ProjectReference Include="..\MyBlog.Core\MyBlog.Core.csproj" />
     <ProjectReference Include="..\MyBlog.Web\MyBlog.Web.csproj" />
@@ -13681,62 +13681,62 @@ public class SlugServiceTests
     [Fact]
     public void GenerateSlug_WithSimpleTitle_ReturnsLowercaseWithHyphens()
     {
-        var result = _sut.GenerateSlug("Hello World");
+        var result = _sut.GenerateSlugOrUuid("Hello World");
         Assert.Equal("hello-world", result);
     }
 
     [Fact]
     public void GenerateSlug_WithSpecialCharacters_RemovesThem()
     {
-        var result = _sut.GenerateSlug("Hello, World! How's it going?");
+        var result = _sut.GenerateSlugOrUuid("Hello, World! How's it going?");
         Assert.Equal("hello-world-hows-it-going", result);
     }
 
     [Fact]
     public void GenerateSlug_WithMultipleSpaces_CollapsesToSingleHyphen()
     {
-        var result = _sut.GenerateSlug("Hello    World");
+        var result = _sut.GenerateSlugOrUuid("Hello    World");
         Assert.Equal("hello-world", result);
     }
 
     [Fact]
     public void GenerateSlug_WithUnicode_RemovesDiacritics()
     {
-        var result = _sut.GenerateSlug("Café résumé");
+        var result = _sut.GenerateSlugOrUuid("Café résumé");
         Assert.Equal("cafe-resume", result);
     }
 
     [Fact]
     public void GenerateSlug_WithLeadingTrailingSpaces_TrimsHyphens()
     {
-        var result = _sut.GenerateSlug("  Hello World  ");
+        var result = _sut.GenerateSlugOrUuid("  Hello World  ");
         Assert.Equal("hello-world", result);
     }
 
     [Fact]
     public void GenerateSlug_WithNumbers_PreservesNumbers()
     {
-        var result = _sut.GenerateSlug("Top 10 Tips for 2024");
+        var result = _sut.GenerateSlugOrUuid("Top 10 Tips for 2024");
         Assert.Equal("top-10-tips-for-2024", result);
     }
 
     [Fact]
     public void GenerateSlug_WithUnderscores_ConvertsToHyphens()
     {
-        var result = _sut.GenerateSlug("hello_world_test");
+        var result = _sut.GenerateSlugOrUuid("hello_world_test");
         Assert.Equal("hello-world-test", result);
     }
 
     [Fact]
     public void GenerateSlug_WithEmptyString_ThrowsArgumentException()
     {
-        Assert.Throws<ArgumentException>(() => _sut.GenerateSlug(""));
+        Assert.Throws<ArgumentException>(() => _sut.GenerateSlugOrUuid(""));
     }
 
     [Fact]
     public void GenerateSlug_WithWhitespaceOnly_ThrowsArgumentException()
     {
-        Assert.Throws<ArgumentException>(() => _sut.GenerateSlug("   "));
+        Assert.Throws<ArgumentException>(() => _sut.GenerateSlugOrUuid("   "));
     }
 }
 
@@ -14412,7 +14412,7 @@ MODIFIED: 2026-01-01 21:17:11
     padding: 0.75rem;
     border: 1px solid #ccc;
     border-radius: 4px;
-    box-sizing: border-box; 
+    box-sizing: border-box;
 }
 
 /* Error Message */
@@ -14490,7 +14490,7 @@ MODIFIED: 2026-01-01 22:33:51
 /* Mobile view: Stack columns into rows */
 @media (max-width: 768px) {
     .d-none-mobile { display: none; }
-    
+
     .list-row {
         flex-direction: column;
         gap: 0.5rem;
@@ -14505,10 +14505,10 @@ MODIFIED: 2026-01-01 22:33:51
     }
 
     .mobile-label { display: inline-block; }
-    .actions { 
-        flex: 1; 
-        margin-top: 1rem; 
-        padding-top: 1rem; 
+    .actions {
+        flex: 1;
+        margin-top: 1rem;
+        padding-top: 1rem;
         border-top: 1px dashed var(--color-border);
         text-align: left;
         justify-content: flex-start;
@@ -14887,7 +14887,7 @@ MODIFIED: 2026-01-16 20:29:40
   <PropertyGroup>
     <RootNamespace>MyBlog.Web</RootNamespace>
   </PropertyGroup>
-  
+
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" />
     <PackageReference Include="OpenTelemetry.Extensions.Hosting" />
@@ -14895,7 +14895,7 @@ MODIFIED: 2026-01-16 20:29:40
     <PackageReference Include="OpenTelemetry.Exporter.Console" />
     <PackageReference Include="OpenTelemetry.Instrumentation.Http" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <ProjectReference Include="..\MyBlog.Infrastructure\MyBlog.Infrastructure.csproj" />
   </ItemGroup>
@@ -15958,7 +15958,7 @@ cat << 'EOF' > "$SRC_DIR/MyBlog.Web/Components/Pages/Admin/ChangePassword.razor"
         // Get current user ID
         var context = HttpContextAccessor.HttpContext;
         var userIdClaim = context?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        
+
         if (string.IsNullOrEmpty(userIdClaim) || !Guid.TryParse(userIdClaim, out var userId))
         {
             _errorMessage = "Unable to identify current user. Please log in again.";
@@ -16005,7 +16005,7 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
     runs-on: ${{ matrix.os }}
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -16036,7 +16036,7 @@ jobs:
     needs: build-test
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop'
     runs-on: windows-latest
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -16059,18 +16059,18 @@ jobs:
           DEPLOY_PASSWORD: ${{ secrets.SERVER_PASSWORD }}
         run: |
           $msdeployPath = "C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe"
-          
+
           if (-not (Test-Path $msdeployPath)) {
             Write-Host "Installing Web Deploy..."
             choco install webdeploy -y --no-progress
           }
-          
+
           Write-Host "Deploying to $env:DEPLOY_HOST..."
           Write-Host "Note: Using AppOffline rule to prevent file-in-use errors"
 
           $sourceArg = "-source:contentPath=$env:DEPLOY_SOURCE"
           $destArg = "-dest:contentPath=$env:DEPLOY_SITE,computerName=https://$($env:DEPLOY_HOST):8172/MsDeploy.axd?site=$env:DEPLOY_SITE,userName=$env:DEPLOY_USER,password=$env:DEPLOY_PASSWORD,AuthType='Basic'"
-          
+
           # Key fix: Added -enableRule:AppOffline to stop the app during deployment
           # This creates app_offline.htm, waits for app to stop, deploys, then removes the file
           & $msdeployPath -verb:sync $sourceArg $destArg `
@@ -16079,12 +16079,12 @@ jobs:
             -enableRule:AppOffline `
             -retryAttempts:3 `
             -retryInterval:3000
-          
+
           if ($LASTEXITCODE -ne 0) {
             Write-Error "Deployment failed with exit code $LASTEXITCODE"
             exit 1
           }
-          
+
           Write-Host "Deployment completed successfully!"
 EOF
 
@@ -16145,7 +16145,7 @@ public class PasswordChangeTests : IAsyncDisposable
         var ct = TestContext.Current.CancellationToken;
         var originalPassword = "OriginalPass123!";
         var newPassword = "NewPassword456!";
-        
+
         var user = new User
         {
             Id = Guid.NewGuid(),
@@ -16169,7 +16169,7 @@ public class PasswordChangeTests : IAsyncDisposable
         var ct = TestContext.Current.CancellationToken;
         var originalPassword = "OriginalPass123!";
         var newPassword = "NewPassword456!";
-        
+
         var user = new User
         {
             Id = Guid.NewGuid(),
@@ -16187,7 +16187,7 @@ public class PasswordChangeTests : IAsyncDisposable
         // Should authenticate with new password
         var authenticated = await _sut.AuthenticateAsync("testuser", newPassword, ct);
         Assert.NotNull(authenticated);
-        
+
         // Should NOT authenticate with old password
         var oldAuth = await _sut.AuthenticateAsync("testuser", originalPassword, ct);
         Assert.Null(oldAuth);
@@ -16199,7 +16199,7 @@ public class PasswordChangeTests : IAsyncDisposable
         var ct = TestContext.Current.CancellationToken;
         var correctPassword = "CorrectPass123!";
         var wrongPassword = "WrongPassword!";
-        
+
         var user = new User
         {
             Id = Guid.NewGuid(),
@@ -16222,7 +16222,7 @@ public class PasswordChangeTests : IAsyncDisposable
     {
         var ct = TestContext.Current.CancellationToken;
         var correctPassword = "CorrectPass123!";
-        
+
         var user = new User
         {
             Id = Guid.NewGuid(),
@@ -16256,7 +16256,7 @@ public class PasswordChangeTests : IAsyncDisposable
         var ct = TestContext.Current.CancellationToken;
         var originalPassword = "OriginalPass123!";
         var newPassword = "ResetPassword789!";
-        
+
         var user = new User
         {
             Id = Guid.NewGuid(),
@@ -16710,7 +16710,7 @@ echo "$FILE_LIST" | while IFS= read -r file; do
     if (( CURRENT % 10 == 0 )); then
         printf "\r  Processing: %d/%d files..." "$CURRENT" "$FILE_COUNT"
     fi
-    
+
     {
         echo "================================================================================"
         echo "FILE: $file"
@@ -16803,7 +16803,7 @@ if echo "$PROMPT" | OLLAMA_NOPRUNE=1 ollama run "$MODEL" --nowordwrap 2>/dev/nul
    tr -d '\r' > "$OUTPUT_FILE"; then
     ANALYSIS_TIME=$(($(date +%s) - ANALYSIS_START))
     OUTPUT_SIZE=$(wc -l < "$OUTPUT_FILE")
-    
+
     log "Analysis completed in ${ANALYSIS_TIME}s ($(( ANALYSIS_TIME / 60 ))m $(( ANALYSIS_TIME % 60 ))s)"
     log "Output: ${OUTPUT_SIZE} lines"
 else

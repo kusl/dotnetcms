@@ -219,7 +219,7 @@ public sealed class PostRepository : IPostRepository
             return await _context.Posts
                 .AnyAsync(p => p.Slug == slug && p.Id != excludePostId.Value, cancellationToken);
         }
-        
+
         return await _context.Posts
             .AnyAsync(p => p.Slug == slug, cancellationToken);
     }
@@ -346,7 +346,7 @@ else
         {
             var authState = await AuthStateProvider.GetAuthenticationStateAsync();
             var userIdClaim = authState.User.FindFirst(ClaimTypes.NameIdentifier);
-            
+
             if (userIdClaim is null || !Guid.TryParse(userIdClaim.Value, out var userId))
             {
                 _error = "Unable to identify current user. Please log in again.";
@@ -355,10 +355,10 @@ else
             }
 
             // Generate unique slug
-            var baseSlug = SlugService.GenerateSlug(_title);
+            var baseSlug = SlugService.GenerateSlugOrUuid(_title);
             var finalSlug = baseSlug;
             var counter = 1;
-            
+
             // Loop until we find a slug that isn't taken (excluding current post if editing)
             while (await PostRepository.IsSlugTakenAsync(finalSlug, _isEdit ? Id : null))
             {
