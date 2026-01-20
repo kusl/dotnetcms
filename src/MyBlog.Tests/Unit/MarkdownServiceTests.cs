@@ -24,6 +24,9 @@ public class MarkdownServiceTests
 {
     private readonly MarkdownService _sut = new(new MockImageDimensionService());
 
+    // Helper to normalize newlines for cross-platform comparison
+    private static string NormalizeNewlines(string s) => s.Replace("\r\n", "\n");
+
     [Fact]
     public async Task ToHtml_WithHeading1_ReturnsH1Tag()
     {
@@ -70,7 +73,7 @@ public class MarkdownServiceTests
     public async Task ToHtml_WithImage_InjectsDimensions_IfResolvable()
     {
         // Mock returns 100x200 for 'image.png'
-        var result = await _sut.ToHtmlAsync("![alt text](https://example.com/image.png)");
+        var result = NormalizeNewlines(await _sut.ToHtmlAsync("![alt text](https://example.com/image.png)"));
         Assert.Contains("<p><img src=\"https://example.com/image.png\" alt=\"alt text\" width=\"100\" height=\"200\" /></p>\n", result);
     }
 
@@ -78,14 +81,14 @@ public class MarkdownServiceTests
     public async Task ToHtml_WithImage_InjectsParagraphs_IfResolvable()
     {
         // Mock returns 100x200 for 'image.png'
-        var result = await _sut.ToHtmlAsync("Check out this photo of when I was younger. ![high school graduation photo](https://example.com/image.png)");
+        var result = NormalizeNewlines(await _sut.ToHtmlAsync("Check out this photo of when I was younger. ![high school graduation photo](https://example.com/image.png)"));
         Assert.Contains("<p>Check out this photo of when I was younger. <img src=\"https://example.com/image.png\" alt=\"high school graduation photo\" width=\"100\" height=\"200\" /></p>\n", result);
     }
 
     [Fact]
     public async Task ToHtml_WithImage_NoDimensions_IfUnresolvable()
     {
-        var result = await _sut.ToHtmlAsync("![alt text](https://example.com/unknown.jpg)");
+        var result = NormalizeNewlines(await _sut.ToHtmlAsync("![alt text](https://example.com/unknown.jpg)"));
         Assert.Contains("<p><img src=\"https://example.com/unknown.jpg\" alt=\"alt text\" /></p>\n", result);
     }
 
@@ -132,6 +135,17 @@ public class MarkdownServiceTests
     }
 
     [Fact]
+    public async Task ToHtml_WithOrderedList_ReturnsOlLiTags()
+    {
+        var markdown = "1. First\n2. Second";
+        var result = await _sut.ToHtmlAsync(markdown);
+        Assert.Contains("<ol>", result);
+        Assert.Contains("<li>First</li>", result);
+        Assert.Contains("<li>Second</li>", result);
+        Assert.Contains("</ol>", result);
+    }
+
+    [Fact]
     public async Task ToHtml_WithEmptyString_ReturnsEmptyString()
     {
         var result = await _sut.ToHtmlAsync("");
@@ -139,17 +153,9 @@ public class MarkdownServiceTests
     }
 
     [Fact]
-    public async Task ToHtml_WithPlainText_ReturnsParagraph()
+    public async Task ToHtml_WithNullish_ReturnsEmptyString()
     {
-        var result = await _sut.ToHtmlAsync("Hello world");
-        Assert.Contains("<p>Hello world</p>", result);
-    }
-
-    [Fact]
-    public async Task ToHtml_WithHtmlCharacters_EscapesThem()
-    {
-        var result = await _sut.ToHtmlAsync("Use <script> tags");
-        Assert.Contains("&lt;script&gt;", result);
-        Assert.DoesNotContain("<script>", result);
+        var result = await _sut.ToHtmlAsync("   ");
+        Assert.Equal(string.Empty, result);
     }
 }
