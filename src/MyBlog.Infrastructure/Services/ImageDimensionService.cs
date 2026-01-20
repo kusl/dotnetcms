@@ -33,7 +33,7 @@ public sealed class ImageDimensionService : IImageDimensionService
         {
             using var scope = _scopeFactory.CreateScope();
             var db = scope.ServiceProvider.GetRequiredService<BlogDbContext>();
-            
+
             // Check if table exists before querying
             if (await TableExistsAsync(db, cancellationToken))
             {
@@ -62,7 +62,7 @@ public sealed class ImageDimensionService : IImageDimensionService
                 {
                     using var scope = _scopeFactory.CreateScope();
                     var db = scope.ServiceProvider.GetRequiredService<BlogDbContext>();
-                    
+
                     if (await TableExistsAsync(db, cancellationToken))
                     {
                         // Double check to prevent race conditions
@@ -84,7 +84,7 @@ public sealed class ImageDimensionService : IImageDimensionService
                     // Log but don't fail - caching is optional
                     _logger.LogWarning(ex, "Failed to cache image dimensions for {Url}. Dimensions were resolved but not cached.", url);
                 }
-                
+
                 return dimensions;
             }
         }
@@ -109,7 +109,7 @@ public sealed class ImageDimensionService : IImageDimensionService
             {
                 await connection.OpenAsync(ct);
             }
-            
+
             using var command = connection.CreateCommand();
             command.CommandText = "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='ImageDimensionCache'";
             var result = await command.ExecuteScalarAsync(ct);
@@ -192,15 +192,20 @@ public sealed class ImageDimensionService : IImageDimensionService
     {
         // JPEG parsing - look for SOF0/SOF2 marker
         var buffer = new byte[8];
-        var position = 2; // Skip SOI marker
 
         while (true)
         {
             // Read marker
             var read = await stream.ReadAsync(buffer.AsMemory(0, 2), ct);
-            if (read < 2) return null;
+            if (read < 2)
+            {
+                return null;
+            }
 
-            if (buffer[0] != 0xFF) return null;
+            if (buffer[0] != 0xFF)
+            {
+                return null;
+            }
 
             var marker = buffer[1];
 
@@ -208,7 +213,11 @@ public sealed class ImageDimensionService : IImageDimensionService
             while (marker == 0xFF)
             {
                 read = await stream.ReadAsync(buffer.AsMemory(0, 1), ct);
-                if (read < 1) return null;
+                if (read < 1)
+                {
+                    return null;
+                }
+
                 marker = buffer[0];
             }
 
@@ -217,7 +226,10 @@ public sealed class ImageDimensionService : IImageDimensionService
             {
                 // Read length (2 bytes) + precision (1 byte) + height (2 bytes) + width (2 bytes)
                 read = await stream.ReadAsync(buffer.AsMemory(0, 7), ct);
-                if (read < 7) return null;
+                if (read < 7)
+                {
+                    return null;
+                }
 
                 var height = BinaryPrimitives.ReadInt16BigEndian(buffer.AsSpan(3, 2));
                 var width = BinaryPrimitives.ReadInt16BigEndian(buffer.AsSpan(5, 2));
@@ -225,14 +237,23 @@ public sealed class ImageDimensionService : IImageDimensionService
             }
 
             // EOI marker - end of image
-            if (marker == 0xD9) return null;
+            if (marker == 0xD9)
+            {
+                return null;
+            }
 
             // SOS marker - start of scan, no more metadata
-            if (marker == 0xDA) return null;
+            if (marker == 0xDA)
+            {
+                return null;
+            }
 
             // Read segment length and skip
             read = await stream.ReadAsync(buffer.AsMemory(0, 2), ct);
-            if (read < 2) return null;
+            if (read < 2)
+            {
+                return null;
+            }
 
             var length = BinaryPrimitives.ReadInt16BigEndian(buffer.AsSpan(0, 2)) - 2;
             if (length > 0)
@@ -244,7 +265,11 @@ public sealed class ImageDimensionService : IImageDimensionService
                 {
                     var toRead = Math.Min(remaining, skipBuffer.Length);
                     read = await stream.ReadAsync(skipBuffer.AsMemory(0, toRead), ct);
-                    if (read == 0) return null;
+                    if (read == 0)
+                    {
+                        return null;
+                    }
+
                     remaining -= read;
                 }
             }
@@ -256,11 +281,14 @@ public sealed class ImageDimensionService : IImageDimensionService
         // Need more bytes for WebP parsing
         var buffer = new byte[30];
         Array.Copy(initialBuffer, buffer, initialBytesRead);
-        
+
         if (initialBytesRead < 30)
         {
             var additionalRead = await stream.ReadAsync(buffer.AsMemory(initialBytesRead, 30 - initialBytesRead), ct);
-            if (initialBytesRead + additionalRead < 30) return null;
+            if (initialBytesRead + additionalRead < 30)
+            {
+                return null;
+            }
         }
 
         // Check chunk type at offset 12

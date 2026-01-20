@@ -10,17 +10,11 @@ namespace MyBlog.Core.Services;
 /// Custom Markdown parser that converts Markdown text to HTML.
 /// Supports: headings, bold, italic, links, images, code blocks, blockquotes, lists, horizontal rules.
 /// </summary>
-public sealed partial class MarkdownService : IMarkdownService
+public sealed partial class MarkdownService(
+    IImageDimensionService imageDimensionService,
+    ILogger<MarkdownService>? logger = null)
+    : IMarkdownService
 {
-    private readonly IImageDimensionService _imageDimensionService;
-    private readonly ILogger<MarkdownService>? _logger;
-
-    public MarkdownService(IImageDimensionService imageDimensionService, ILogger<MarkdownService>? logger = null)
-    {
-        _imageDimensionService = imageDimensionService;
-        _logger = logger;
-    }
-
     private enum ListType { None, Unordered, Ordered }
 
     /// <inheritdoc />
@@ -182,7 +176,7 @@ public sealed partial class MarkdownService : IMarkdownService
         if (matches.Count > 0)
         {
             // Process matches in reverse to avoid index drift
-            for (int i = matches.Count - 1; i >= 0; i--)
+            for (var i = matches.Count - 1; i >= 0; i--)
             {
                 var match = matches[i];
                 var alt = match.Groups[1].Value;
@@ -193,22 +187,16 @@ public sealed partial class MarkdownService : IMarkdownService
                 {
                     // Lookup dimensions (Fast DB check or background fetch)
                     // This is wrapped in try-catch to ensure we never fail rendering
-                    var dimensions = await _imageDimensionService.GetDimensionsAsync(url);
+                    var dimensions = await imageDimensionService.GetDimensionsAsync(url);
 
-                    if (dimensions.HasValue)
-                    {
-                        imgTag = $"<img src=\"{url}\" alt=\"{alt}\" width=\"{dimensions.Value.Width}\" height=\"{dimensions.Value.Height}\" />";
-                    }
-                    else
-                    {
+                    imgTag = dimensions.HasValue ? $"<img src=\"{url}\" alt=\"{alt}\" width=\"{dimensions.Value.Width}\" height=\"{dimensions.Value.Height}\" />" :
                         // No dimensions available - render without width/height
-                        imgTag = $"<img src=\"{url}\" alt=\"{alt}\" />";
-                    }
+                        $"<img src=\"{url}\" alt=\"{alt}\" />";
                 }
                 catch (Exception ex)
                 {
                     // If dimension lookup fails for any reason, still render the image
-                    _logger?.LogWarning(ex, "Failed to get dimensions for image {Url}. Rendering without dimensions.", url);
+                    logger?.LogWarning(ex, "Failed to get dimensions for image {Url}. Rendering without dimensions.", url);
                     imgTag = $"<img src=\"{url}\" alt=\"{alt}\" />";
                 }
 
@@ -244,7 +232,7 @@ public sealed partial class MarkdownService : IMarkdownService
     [GeneratedRegex(@"`([^`]+)`")]
     private static partial Regex InlineCodePattern();
 
-    // Standard markdown image pattern: ![alt](url)
+    // Standard Markdown image pattern: ![alt](url)
     [GeneratedRegex(@"!\[([^\]]*)\]\(([^)]+)\)")]
     private static partial Regex ImagePattern();
 
