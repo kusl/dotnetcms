@@ -6,17 +6,32 @@ using Xunit;
 
 namespace MyBlog.Tests.Unit;
 
-// Mock implementation for testing
-class MockImageDimensionService : IImageDimensionService
+/// <summary>
+/// Mock implementation for testing that simulates dimension lookup.
+/// </summary>
+internal sealed class MockImageDimensionService : IImageDimensionService
 {
     public Task<(int Width, int Height)?> GetDimensionsAsync(string url, CancellationToken cancellationToken = default)
     {
+        // Return dimensions for URLs containing "image.png"
         if (url.Contains("image.png"))
         {
             return Task.FromResult<(int, int)?>((100, 200));
         }
 
+        // Return null for unknown images
         return Task.FromResult<(int, int)?>(null);
+    }
+}
+
+/// <summary>
+/// Mock implementation that throws exceptions to test error handling.
+/// </summary>
+internal sealed class ThrowingImageDimensionService : IImageDimensionService
+{
+    public Task<(int Width, int Height)?> GetDimensionsAsync(string url, CancellationToken cancellationToken = default)
+    {
+        throw new InvalidOperationException("Simulated database error");
     }
 }
 
@@ -93,6 +108,18 @@ public class MarkdownServiceTests
     }
 
     [Fact]
+    public async Task ToHtml_WithImage_WhenServiceThrows_StillRendersImage()
+    {
+        // Use the throwing service to test error handling
+        var throwingService = new ThrowingImageDimensionService();
+        var sut = new MarkdownService(throwingService);
+        
+        // Should NOT throw - should gracefully degrade to image without dimensions
+        var result = NormalizeNewlines(await sut.ToHtmlAsync("![alt text](https://example.com/image.png)"));
+        Assert.Contains("<p><img src=\"https://example.com/image.png\" alt=\"alt text\" /></p>\n", result);
+    }
+
+    [Fact]
     public async Task ToHtml_WithInlineCode_ReturnsCodeTag()
     {
         var result = await _sut.ToHtmlAsync("Use `code` here");
@@ -146,16 +173,35 @@ public class MarkdownServiceTests
     }
 
     [Fact]
-    public async Task ToHtml_WithEmptyString_ReturnsEmptyString()
+    public async Task ToHtml_WithEmptyString_ReturnsEmpty()
     {
         var result = await _sut.ToHtmlAsync("");
         Assert.Equal(string.Empty, result);
     }
 
     [Fact]
-    public async Task ToHtml_WithNullish_ReturnsEmptyString()
+    public async Task ToHtml_WithNull_ReturnsEmpty()
+    {
+        var result = await _sut.ToHtmlAsync(null!);
+        Assert.Equal(string.Empty, result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithWhitespace_ReturnsEmpty()
     {
         var result = await _sut.ToHtmlAsync("   ");
         Assert.Equal(string.Empty, result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithMultipleImages_ProcessesAll()
+    {
+        var markdown = "![img1](https://example.com/image.png) and ![img2](https://example.com/other.jpg)";
+        var result = NormalizeNewlines(await _sut.ToHtmlAsync(markdown));
+        
+        // First image should have dimensions (contains 'image.png')
+        Assert.Contains("width=\"100\" height=\"200\"", result);
+        // Second image should not have dimensions (doesn't match mock)
+        Assert.Contains("<img src=\"https://example.com/other.jpg\" alt=\"img2\" />", result);
     }
 }

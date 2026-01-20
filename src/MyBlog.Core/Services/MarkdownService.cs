@@ -1,21 +1,24 @@
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
+using Microsoft.Extensions.Logging;
 using MyBlog.Core.Interfaces;
 
 namespace MyBlog.Core.Services;
 
 /// <summary>
-/// Custom Markdown to HTML renderer.
+/// Custom Markdown parser that converts Markdown text to HTML.
 /// Supports: headings, bold, italic, links, images, code blocks, blockquotes, lists, horizontal rules.
 /// </summary>
 public sealed partial class MarkdownService : IMarkdownService
 {
     private readonly IImageDimensionService _imageDimensionService;
+    private readonly ILogger<MarkdownService>? _logger;
 
-    public MarkdownService(IImageDimensionService imageDimensionService)
+    public MarkdownService(IImageDimensionService imageDimensionService, ILogger<MarkdownService>? logger = null)
     {
         _imageDimensionService = imageDimensionService;
+        _logger = logger;
     }
 
     private enum ListType { None, Unordered, Ordered }
@@ -77,9 +80,8 @@ public sealed partial class MarkdownService : IMarkdownService
             {
                 result.Append(CloseList(ref currentListType));
                 var level = headingMatch.Groups[1].Value.Length;
-                // Await the inline processing
-                var headingText = await ProcessInlineAsync(headingMatch.Groups[2].Value);
-                result.AppendLine($"<h{level}>{headingText}</h{level}>");
+                var text = await ProcessInlineAsync(headingMatch.Groups[2].Value);
+                result.AppendLine($"<h{level}>{text}</h{level}>");
                 continue;
             }
 
@@ -92,7 +94,7 @@ public sealed partial class MarkdownService : IMarkdownService
                 continue;
             }
 
-            // Handle unordered list items
+            // Handle unordered lists
             var unorderedMatch = UnorderedListPattern().Match(line);
             if (unorderedMatch.Success)
             {
@@ -107,7 +109,7 @@ public sealed partial class MarkdownService : IMarkdownService
                 continue;
             }
 
-            // Handle ordered list items
+            // Handle ordered lists
             var orderedMatch = OrderedListPattern().Match(line);
             if (orderedMatch.Success)
             {
@@ -186,16 +188,27 @@ public sealed partial class MarkdownService : IMarkdownService
                 var alt = match.Groups[1].Value;
                 var url = match.Groups[2].Value;
 
-                // Lookup dimensions (Fast DB check or background fetch)
-                var dimensions = await _imageDimensionService.GetDimensionsAsync(url);
-
                 string imgTag;
-                if (dimensions.HasValue)
+                try
                 {
-                    imgTag = $"<img src=\"{url}\" alt=\"{alt}\" width=\"{dimensions.Value.Width}\" height=\"{dimensions.Value.Height}\" />";
+                    // Lookup dimensions (Fast DB check or background fetch)
+                    // This is wrapped in try-catch to ensure we never fail rendering
+                    var dimensions = await _imageDimensionService.GetDimensionsAsync(url);
+
+                    if (dimensions.HasValue)
+                    {
+                        imgTag = $"<img src=\"{url}\" alt=\"{alt}\" width=\"{dimensions.Value.Width}\" height=\"{dimensions.Value.Height}\" />";
+                    }
+                    else
+                    {
+                        // No dimensions available - render without width/height
+                        imgTag = $"<img src=\"{url}\" alt=\"{alt}\" />";
+                    }
                 }
-                else
+                catch (Exception ex)
                 {
+                    // If dimension lookup fails for any reason, still render the image
+                    _logger?.LogWarning(ex, "Failed to get dimensions for image {Url}. Rendering without dimensions.", url);
                     imgTag = $"<img src=\"{url}\" alt=\"{alt}\" />";
                 }
 
