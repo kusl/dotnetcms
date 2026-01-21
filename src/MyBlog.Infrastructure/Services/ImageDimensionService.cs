@@ -22,7 +22,7 @@ public sealed class ImageDimensionService : IImageDimensionService
         _httpClient = httpClient;
         _scopeFactory = scopeFactory;
         _logger = logger;
-        _httpClient.Timeout = TimeSpan.FromSeconds(5);
+        _httpClient.Timeout = TimeSpan.FromSeconds(10);
         _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("MyBlog/1.0");
     }
 
@@ -126,9 +126,13 @@ public sealed class ImageDimensionService : IImageDimensionService
         using var response = await _httpClient.GetAsync(url, HttpCompletionOption.ResponseHeadersRead, ct);
         response.EnsureSuccessStatusCode();
 
-        using var stream = await response.Content.ReadAsStreamAsync(ct);
+        await using var stream = await response.Content.ReadAsStreamAsync(ct);
+
+        // For JPEG, we need to scan through the file looking for SOF markers
+        // For PNG/GIF/WebP, dimensions are at fixed offsets near the start
+        // Read enough bytes to handle all formats' headers
         var buffer = new byte[32];
-        var bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length, ct);
+        var bytesRead = await ReadFullyAsync(stream, buffer, ct);
 
         if (bytesRead < 8)
         {
@@ -137,7 +141,7 @@ public sealed class ImageDimensionService : IImageDimensionService
 
         if (IsPng(buffer))
         {
-            // PNG: Width at bytes 16-19, Height at bytes 20-23 (big-endian)
+            // PNG: IHDR chunk starts at byte 8, width at 16-19, height at 20-23 (big-endian)
             if (bytesRead >= 24)
             {
                 var width = BinaryPrimitives.ReadInt32BigEndian(buffer.AsSpan(16, 4));
@@ -157,16 +161,36 @@ public sealed class ImageDimensionService : IImageDimensionService
         }
         else if (IsJpeg(buffer))
         {
-            // JPEG requires scanning for SOF marker - more complex
-            return await ParseJpegDimensionsAsync(stream, buffer, ct);
+            // JPEG requires scanning for SOF marker
+            // We need to parse from the beginning, so use a buffered approach
+            return await ParseJpegDimensionsAsync(stream, buffer, bytesRead, ct);
         }
         else if (IsWebP(buffer))
         {
-            // WebP: Check for VP8 or VP8L chunk
-            return await ParseWebPDimensionsAsync(stream, buffer, bytesRead, ct);
+            // WebP: Check for VP8, VP8L, or VP8X chunk
+            return ParseWebPDimensions(buffer, bytesRead);
         }
 
         return null;
+    }
+
+    /// <summary>
+    /// Reads exactly the requested number of bytes, or as many as available.
+    /// Handles cases where ReadAsync returns fewer bytes than requested.
+    /// </summary>
+    private static async Task<int> ReadFullyAsync(Stream stream, byte[] buffer, CancellationToken ct)
+    {
+        var totalRead = 0;
+        while (totalRead < buffer.Length)
+        {
+            var read = await stream.ReadAsync(buffer.AsMemory(totalRead, buffer.Length - totalRead), ct);
+            if (read == 0)
+            {
+                break; // End of stream
+            }
+            totalRead += read;
+        }
+        return totalRead;
     }
 
     private static bool IsPng(ReadOnlySpan<byte> buffer) =>
@@ -188,137 +212,245 @@ public sealed class ImageDimensionService : IImageDimensionService
         buffer[0] == 0x52 && buffer[1] == 0x49 && buffer[2] == 0x46 && buffer[3] == 0x46 && // RIFF
         buffer[8] == 0x57 && buffer[9] == 0x45 && buffer[10] == 0x42 && buffer[11] == 0x50; // WEBP
 
-    private async Task<(int Width, int Height)?> ParseJpegDimensionsAsync(Stream stream, byte[] initialBuffer, CancellationToken ct)
+    /// <summary>
+    /// Parses JPEG dimensions by scanning for SOF (Start of Frame) markers.
+    /// JPEG structure: Starts with FFD8, then segments each starting with FF XX (marker).
+    /// SOF markers (FFC0-FFCF, excluding FFC4, FFC8, FFCC) contain dimensions.
+    /// </summary>
+    private async Task<(int Width, int Height)?> ParseJpegDimensionsAsync(
+        Stream stream, byte[] initialBuffer, int initialBytesRead, CancellationToken ct)
     {
-        // JPEG parsing - look for SOF0/SOF2 marker
-        var buffer = new byte[8];
+        // Create a combined stream that first reads from initialBuffer, then continues from network stream
+        // We already have 'initialBytesRead' bytes in 'initialBuffer', stream is positioned after those bytes
 
+        // Start parsing from byte 2 (after FF D8 SOI marker)
+        var position = 2;
+
+        // Helper to read bytes, first from initialBuffer then from stream
+        async Task<int> ReadByteAsync()
+        {
+            if (position < initialBytesRead)
+            {
+                return initialBuffer[position++];
+            }
+
+            var b = new byte[1];
+            var read = await stream.ReadAsync(b, 0, 1, ct);
+            if (read == 0)
+            {
+                return -1; // EOF
+            }
+            position++;
+            return b[0];
+        }
+
+        async Task<byte[]?> ReadBytesAsync(int count)
+        {
+            var result = new byte[count];
+            var resultPos = 0;
+
+            // First, read from initialBuffer
+            while (resultPos < count && position < initialBytesRead)
+            {
+                result[resultPos++] = initialBuffer[position++];
+            }
+
+            // Then read remaining from stream
+            if (resultPos < count)
+            {
+                var remaining = count - resultPos;
+                var read = await ReadFullyAsync(stream, result.AsMemory(resultPos, remaining), ct);
+                if (read < remaining)
+                {
+                    return null; // EOF before we got all bytes
+                }
+                position += read;
+            }
+
+            return result;
+        }
+
+        // Scan for SOF marker
         while (true)
         {
-            // Read marker
-            var read = await stream.ReadAsync(buffer.AsMemory(0, 2), ct);
-            if (read < 2)
+            // Read marker (FF XX)
+            var ff = await ReadByteAsync();
+            if (ff == -1)
             {
-                return null;
+                return null; // EOF
             }
 
-            if (buffer[0] != 0xFF)
+            if (ff != 0xFF)
             {
-                return null;
+                // Not a marker, keep scanning
+                continue;
             }
 
-            var marker = buffer[1];
-
-            // Skip padding bytes
-            while (marker == 0xFF)
+            // Skip any padding FF bytes
+            int marker;
+            do
             {
-                read = await stream.ReadAsync(buffer.AsMemory(0, 1), ct);
-                if (read < 1)
+                marker = await ReadByteAsync();
+                if (marker == -1)
                 {
-                    return null;
+                    return null; // EOF
                 }
+            } while (marker == 0xFF);
 
-                marker = buffer[0];
-            }
-
-            // SOF markers (SOF0, SOF1, SOF2, etc.)
+            // Check for SOF markers (C0-CF except C4, C8, CC)
             if (marker >= 0xC0 && marker <= 0xCF && marker != 0xC4 && marker != 0xC8 && marker != 0xCC)
             {
-                // Read length (2 bytes) + precision (1 byte) + height (2 bytes) + width (2 bytes)
-                read = await stream.ReadAsync(buffer.AsMemory(0, 7), ct);
-                if (read < 7)
+                // Found SOF marker! Read length (2) + precision (1) + height (2) + width (2)
+                var sofData = await ReadBytesAsync(7);
+                if (sofData == null)
                 {
                     return null;
                 }
 
-                var height = BinaryPrimitives.ReadInt16BigEndian(buffer.AsSpan(3, 2));
-                var width = BinaryPrimitives.ReadInt16BigEndian(buffer.AsSpan(5, 2));
+                var height = BinaryPrimitives.ReadInt16BigEndian(sofData.AsSpan(3, 2));
+                var width = BinaryPrimitives.ReadInt16BigEndian(sofData.AsSpan(5, 2));
                 return (width, height);
             }
 
-            // EOI marker - end of image
+            // EOI (End of Image) - no dimensions found
             if (marker == 0xD9)
             {
                 return null;
             }
 
-            // SOS marker - start of scan, no more metadata
+            // SOS (Start of Scan) - image data follows, no more metadata
             if (marker == 0xDA)
             {
                 return null;
             }
 
-            // Read segment length and skip
-            read = await stream.ReadAsync(buffer.AsMemory(0, 2), ct);
-            if (read < 2)
+            // RST markers (D0-D7) and standalone markers - no length field
+            if ((marker >= 0xD0 && marker <= 0xD7) || marker == 0x00 || marker == 0x01)
+            {
+                continue;
+            }
+
+            // Other markers have a length field - skip the segment
+            var lengthBytes = await ReadBytesAsync(2);
+            if (lengthBytes == null)
             {
                 return null;
             }
 
-            var length = BinaryPrimitives.ReadInt16BigEndian(buffer.AsSpan(0, 2)) - 2;
+            var length = BinaryPrimitives.ReadInt16BigEndian(lengthBytes) - 2; // Length includes itself
             if (length > 0)
             {
-                // Skip the segment
-                var skipBuffer = new byte[Math.Min(length, 4096)];
-                var remaining = length;
-                while (remaining > 0)
+                // Skip segment content
+                if (position < initialBytesRead)
                 {
-                    var toRead = Math.Min(remaining, skipBuffer.Length);
-                    read = await stream.ReadAsync(skipBuffer.AsMemory(0, toRead), ct);
-                    if (read == 0)
-                    {
-                        return null;
-                    }
+                    // Skip what we can from initialBuffer
+                    var skipFromBuffer = Math.Min(length, initialBytesRead - position);
+                    position += skipFromBuffer;
+                    length -= skipFromBuffer;
+                }
 
-                    remaining -= read;
+                // Skip remaining from stream
+                if (length > 0)
+                {
+                    var skipBuffer = new byte[Math.Min(length, 8192)];
+                    var remaining = length;
+                    while (remaining > 0)
+                    {
+                        var toRead = Math.Min(remaining, skipBuffer.Length);
+                        var read = await ReadFullyAsync(stream, skipBuffer.AsMemory(0, toRead), ct);
+                        if (read == 0)
+                        {
+                            return null; // EOF
+                        }
+                        remaining -= read;
+                        position += read;
+                    }
                 }
             }
         }
     }
 
-    private async Task<(int Width, int Height)?> ParseWebPDimensionsAsync(Stream stream, byte[] initialBuffer, int initialBytesRead, CancellationToken ct)
+    private static async Task<int> ReadFullyAsync(Stream stream, Memory<byte> buffer, CancellationToken ct)
     {
-        // Need more bytes for WebP parsing
-        var buffer = new byte[30];
-        Array.Copy(initialBuffer, buffer, initialBytesRead);
-
-        if (initialBytesRead < 30)
+        var totalRead = 0;
+        while (totalRead < buffer.Length)
         {
-            var additionalRead = await stream.ReadAsync(buffer.AsMemory(initialBytesRead, 30 - initialBytesRead), ct);
-            if (initialBytesRead + additionalRead < 30)
+            var read = await stream.ReadAsync(buffer[totalRead..], ct);
+            if (read == 0)
             {
-                return null;
+                break;
             }
+            totalRead += read;
+        }
+        return totalRead;
+    }
+
+    /// <summary>
+    /// Parses WebP dimensions from the initial buffer.
+    /// WebP has three formats: VP8 (lossy), VP8L (lossless), VP8X (extended).
+    /// </summary>
+    private static (int Width, int Height)? ParseWebPDimensions(byte[] buffer, int bytesRead)
+    {
+        if (bytesRead < 30)
+        {
+            return null;
         }
 
         // Check chunk type at offset 12
         var chunkType = System.Text.Encoding.ASCII.GetString(buffer, 12, 4);
 
-        if (chunkType == "VP8 ")
+        switch (chunkType)
         {
-            // Lossy WebP - dimensions at offset 26-29
-            var width = BinaryPrimitives.ReadInt16LittleEndian(buffer.AsSpan(26, 2)) & 0x3FFF;
-            var height = BinaryPrimitives.ReadInt16LittleEndian(buffer.AsSpan(28, 2)) & 0x3FFF;
-            return (width, height);
-        }
-        else if (chunkType == "VP8L")
-        {
-            // Lossless WebP - dimensions encoded in first 4 bytes after signature
-            var b0 = buffer[21];
-            var b1 = buffer[22];
-            var b2 = buffer[23];
-            var b3 = buffer[24];
+            case "VP8 ":
+            {
+                // Lossy WebP
+                // VP8 bitstream starts at offset 20
+                // Frame tag at bytes 20-22, then dimensions
+                // Signature bytes: 9D 01 2A
+                if (bytesRead >= 30 && buffer[23] == 0x9D && buffer[24] == 0x01 && buffer[25] == 0x2A)
+                {
+                    // Width at 26-27 (little-endian, 14 bits)
+                    // Height at 28-29 (little-endian, 14 bits)
+                    var width = (buffer[26] | (buffer[27] << 8)) & 0x3FFF;
+                    var height = (buffer[28] | (buffer[29] << 8)) & 0x3FFF;
+                    return (width, height);
+                }
+                break;
+            }
+            case "VP8L":
+            {
+                // Lossless WebP
+                // Signature byte at offset 20: 0x2F
+                if (bytesRead >= 25 && buffer[20] == 0x2F)
+                {
+                    // Dimensions encoded in bytes 21-24
+                    // Width: 14 bits starting at bit 0
+                    // Height: 14 bits starting at bit 14
+                    var b0 = buffer[21];
+                    var b1 = buffer[22];
+                    var b2 = buffer[23];
+                    var b3 = buffer[24];
 
-            var width = (b0 | ((b1 & 0x3F) << 8)) + 1;
-            var height = (((b1 & 0xC0) >> 6) | (b2 << 2) | ((b3 & 0x0F) << 10)) + 1;
-            return (width, height);
-        }
-        else if (chunkType == "VP8X")
-        {
-            // Extended WebP - dimensions at offset 24-29
-            var width = (buffer[24] | (buffer[25] << 8) | (buffer[26] << 16)) + 1;
-            var height = (buffer[27] | (buffer[28] << 8) | (buffer[29] << 16)) + 1;
-            return (width, height);
+                    var width = ((b0 | (b1 << 8)) & 0x3FFF) + 1;
+                    var height = ((((b1 >> 6) | (b2 << 2) | (b3 << 10))) & 0x3FFF) + 1;
+                    return (width, height);
+                }
+                break;
+            }
+            case "VP8X":
+            {
+                // Extended WebP
+                // Canvas size at offset 24-29
+                if (bytesRead >= 30)
+                {
+                    // Width at 24-26 (24-bit little-endian) + 1
+                    // Height at 27-29 (24-bit little-endian) + 1
+                    var width = (buffer[24] | (buffer[25] << 8) | (buffer[26] << 16)) + 1;
+                    var height = (buffer[27] | (buffer[28] << 8) | (buffer[29] << 16)) + 1;
+                    return (width, height);
+                }
+                break;
+            }
         }
 
         return null;
