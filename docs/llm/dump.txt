@@ -1,6 +1,6 @@
 ===============================================================================
 PROJECT EXPORT
-Generated: Tue Jan 20 09:26:58 AM EST 2026
+Generated: Wed Jan 21 11:49:45 AM EST 2026
 Project Path: /home/kushal/src/dotnet/MyBlog
 ===============================================================================
 
@@ -35,7 +35,8 @@ DIRECTORY STRUCTURE:
 │       │   ├── 0020.txt
 │       │   ├── 0021.txt
 │       │   ├── 0022.txt
-│       │   └── 0023.txt
+│       │   ├── 0023.txt
+│       │   └── 0024.txt
 │       ├── claude.md
 │       ├── command.md
 │       ├── dump.txt
@@ -147,6 +148,8 @@ DIRECTORY STRUCTURE:
 │   │   │   └── ReaderHub.cs
 │   │   ├── Middleware
 │   │   │   └── LoginRateLimitMiddleware.cs
+│   │   ├── Properties
+│   │   │   └── launchSettings.json
 │   │   ├── wwwroot
 │   │   │   ├── css
 │   │   │   │   └── site.css
@@ -1542,13 +1545,13 @@ jobs:
 ================================================================================
 FILE: src/global.json
 SIZE: .13 KB
-MODIFIED: 2026-01-01 21:47:36
+MODIFIED: 2026-01-21 11:46:03
 ================================================================================
 
 {
   "sdk": {
     "version": "10.0.100",
-    "rollForward": "latestFeature"
+    "rollForward": "latestPatch"
   },
   "test": {
     "runner": "Microsoft.Testing.Platform"
@@ -7106,6 +7109,26 @@ app.Run();
 
 
 ================================================================================
+FILE: src/MyBlog.Web/Properties/launchSettings.json
+SIZE: .26 KB
+MODIFIED: 2026-01-21 11:47:46
+================================================================================
+
+{
+  "profiles": {
+    "MyBlog.Web": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:51226;http://localhost:51227"
+    }
+  }
+}
+
+
+================================================================================
 FILE: src/MyBlog.Web/wwwroot/css/site.css
 SIZE: 9.13 KB
 MODIFIED: 2026-01-13 21:08:53
@@ -7637,9 +7660,9 @@ a:hover {
 
 
 ===============================================================================
-EXPORT COMPLETED: Tue Jan 20 09:26:59 AM EST 2026
-Total Files Found: 73
-Files Exported: 73
+EXPORT COMPLETED: Wed Jan 21 11:49:46 AM EST 2026
+Total Files Found: 74
+Files Exported: 74
 Files Skipped: 0 (binary or large files)
 Output File: /home/kushal/src/dotnet/MyBlog/docs/llm/dump.txt
 ===============================================================================
