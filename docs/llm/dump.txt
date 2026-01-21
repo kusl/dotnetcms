@@ -1,6 +1,6 @@
 ===============================================================================
 PROJECT EXPORT
-Generated: Wed Jan 21 11:49:45 AM EST 2026
+Generated: Wed Jan 21 11:51:57 AM EST 2026
 Project Path: /home/kushal/src/dotnet/MyBlog
 ===============================================================================
 
@@ -1377,7 +1377,7 @@ MODIFIED: 2026-01-01 22:21:17
 ================================================================================
 FILE: src/Directory.Packages.props
 SIZE: 1.60 KB
-MODIFIED: 2026-01-20 09:10:15
+MODIFIED: 2026-01-21 11:50:23
 ================================================================================
 
 <Project>
@@ -1395,11 +1395,11 @@ MODIFIED: 2026-01-20 09:10:15
     <!-- OpenTelemetry (official packages only) -->
     <PackageVersion Include="Microsoft.Extensions.Http" Version="10.0.2" />
     <PackageVersion Include="Microsoft.Extensions.Logging" Version="10.0.2" />
-    <PackageVersion Include="OpenTelemetry" Version="1.14.0" />
-    <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.14.0" />
-    <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.14.0" />
-    <PackageVersion Include="OpenTelemetry.Exporter.Console" Version="1.14.0" />
-    <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.14.0" />
+    <PackageVersion Include="OpenTelemetry" Version="1.15.0" />
+    <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.15.0" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.15.0" />
+    <PackageVersion Include="OpenTelemetry.Exporter.Console" Version="1.15.0" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.15.0" />
     <!-- Testing (xUnit v3) -->
     <PackageVersion Include="xunit.v3" Version="3.2.2" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
@@ -7660,7 +7660,7 @@ a:hover {
 
 
 ===============================================================================
-EXPORT COMPLETED: Wed Jan 21 11:49:46 AM EST 2026
+EXPORT COMPLETED: Wed Jan 21 11:51:58 AM EST 2026
 Total Files Found: 74
 Files Exported: 74
 Files Skipped: 0 (binary or large files)
