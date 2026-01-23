@@ -113,23 +113,23 @@ else
     {
         if (_post is null) return "";
 
-        var schema = new Dictionary<string, object>
+        var schema = new Dictionary<string, object?>
         {
             { "@context", "https://schema.org" },
             { "@type", "BlogPosting" },
             { "headline", _post.Title },
             { "description", _post.Summary },
-            { "author", new Dictionary<string, object> {
+            { "author", new Dictionary<string, object?> {
                 { "@type", "Person" },
                 { "name", _post.AuthorDisplayName }
             }},
-            { "publisher", new Dictionary<string, object> {
+            { "publisher", new Dictionary<string, object?> {
                 { "@type", "Organization" },
                 { "name", Configuration["Application:Title"] ?? "MyBlog" }
             }},
             { "datePublished", _post.PublishedAtUtc?.ToString("O") },
             { "dateModified", _post.UpdatedAtUtc.ToString("O") },
-            { "mainEntityOfPage", new Dictionary<string, object> {
+            { "mainEntityOfPage", new Dictionary<string, object?> {
                 { "@type", "WebPage" },
                 { "@id", _currentUrl }
             }}
