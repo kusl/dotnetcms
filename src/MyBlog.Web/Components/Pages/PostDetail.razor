@@ -26,6 +26,7 @@ else
     @* --- 2. SEO & Social Metadata (Injected into <head>) --- *@
     <HeadContent>
         @* Standard SEO *@
+        <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
         <meta name="description" content="@_post.Summary" />
         <meta name="author" content="@_post.AuthorDisplayName" />
         <link rel="canonical" href="@_currentUrl" />
@@ -36,6 +37,11 @@ else
         <meta property="og:title" content="@_post.Title" />
         <meta property="og:description" content="@_post.Summary" />
         <meta property="og:url" content="@_currentUrl" />
+        @if (_post.PublishedAtUtc.HasValue)
+        {
+            <meta property="article:published_time" content="@_post.PublishedAtUtc.Value.ToString("O")" />
+        }
+        <meta property="article:modified_time" content="@_post.UpdatedAtUtc.ToString("O")" />
 
         @if (!string.IsNullOrEmpty(_previewImage))
         {
@@ -51,6 +57,11 @@ else
         {
             <meta name="twitter:image" content="@_previewImage" />
         }
+
+        @* JSON-LD Structured Data *@
+        <script type="application/ld+json">
+            @((MarkupString)GetJsonLd())
+        </script>
     </HeadContent>
 
     @* --- 3. Visible Page Content --- *@
@@ -97,6 +108,40 @@ else
     private bool _notFound;
     private string _currentUrl = "";
     private string? _previewImage;
+
+    private string GetJsonLd()
+    {
+        if (_post is null) return "";
+
+        var schema = new Dictionary<string, object>
+        {
+            { "@context", "https://schema.org" },
+            { "@type", "BlogPosting" },
+            { "headline", _post.Title },
+            { "description", _post.Summary },
+            { "author", new Dictionary<string, object> {
+                { "@type", "Person" },
+                { "name", _post.AuthorDisplayName }
+            }},
+            { "publisher", new Dictionary<string, object> {
+                { "@type", "Organization" },
+                { "name", Configuration["Application:Title"] ?? "MyBlog" }
+            }},
+            { "datePublished", _post.PublishedAtUtc?.ToString("O") },
+            { "dateModified", _post.UpdatedAtUtc.ToString("O") },
+            { "mainEntityOfPage", new Dictionary<string, object> {
+                { "@type", "WebPage" },
+                { "@id", _currentUrl }
+            }}
+        };
+
+        if (!string.IsNullOrEmpty(_previewImage))
+        {
+            schema["image"] = _previewImage;
+        }
+
+        return System.Text.Json.JsonSerializer.Serialize(schema);
+    }
 
     protected override async Task OnParametersSetAsync()
     {
