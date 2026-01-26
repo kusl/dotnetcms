@@ -7198,6 +7198,7 @@ Key changes:
 
 
 
+the full logs and the dump.txt are in the project files
 [INFO] Waiting for MyBlog to be ready...
 .
 [INFO] MyBlog is ready!
@@ -7285,7 +7286,6 @@ real	2m40.502s
 user	1m7.135s
 sys	0m36.926s
 kushal@fedora:~/src/dotnet/MyBlog$ 
-
 
 
 
