@@ -1,6 +1,6 @@
 ===============================================================================
 PROJECT EXPORT
-Generated: Mon Jan 26 07:05:10 AM EST 2026
+Generated: Mon Jan 26 07:29:18 AM EST 2026
 Project Path: /home/kushal/src/dotnet/MyBlog
 ===============================================================================
 
@@ -168,7 +168,6 @@ DIRECTORY STRUCTURE:
 │   │   └── Program.cs
 │   ├── Directory.Build.props
 │   ├── Directory.Packages.props
-│   ├── .editorconfig
 │   ├── .gitkeep
 │   ├── global.json
 │   ├── MyBlog.sln.DotSettings.user
@@ -184,8 +183,8 @@ FILE CONTENTS:
 
 ================================================================================
 FILE: .editorconfig
-SIZE: .89 KB
-MODIFIED: 2026-01-11 12:42:44
+SIZE: 1.28 KB
+MODIFIED: 2026-01-26 07:27:49
 ================================================================================
 
 root = true
@@ -193,12 +192,29 @@ root = true
 [*]
 indent_style = space
 indent_size = 4
-insert_final_newline = true
-trim_trailing_whitespace = true
+end_of_line = lf
 charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true
 
-[*.{cs,razor}]
-# Naming conventions
+[*.{cs,csx,razor}]
+# Using directives
+dotnet_sort_system_directives_first = true
+csharp_using_directive_placement = outside_namespace:warning
+
+# Namespace and braces
+csharp_style_namespace_declarations = file_scoped:error
+csharp_prefer_braces = true:warning
+
+# var usage
+csharp_style_var_for_built_in_types = true:suggestion
+csharp_style_var_when_type_is_apparent = true:suggestion
+
+# Expression-bodied members
+csharp_style_expression_bodied_properties = true:suggestion
+csharp_style_expression_bodied_methods = true:suggestion
+
+# Naming conventions - private fields with underscore prefix
 dotnet_naming_rule.private_fields_should_be_underscored.severity = suggestion
 dotnet_naming_rule.private_fields_should_be_underscored.symbols = private_fields
 dotnet_naming_rule.private_fields_should_be_underscored.style = prefix_underscore
@@ -209,11 +225,11 @@ dotnet_naming_symbols.private_fields.applicable_accessibilities = private
 dotnet_naming_style.prefix_underscore.capitalization = camel_case
 dotnet_naming_style.prefix_underscore.required_prefix = _
 
-# Code style rules
-csharp_style_expression_bodied_properties = true:suggestion
-csharp_style_expression_bodied_methods = true:suggestion
-csharp_style_namespace_declarations = file_scoped:error
-csharp_style_var_for_built_in_types = true:suggestion
+[*.{json,yaml,yml}]
+indent_size = 2
+
+[*.md]
+trim_trailing_whitespace = false
 
 
 ================================================================================
@@ -3144,37 +3160,6 @@ MODIFIED: 2026-01-21 11:50:23
     <PackageVersion Include="Microsoft.Testing.Extensions.TrxReport" Version="2.0.2" />
   </ItemGroup>
 </Project>
-
-================================================================================
-FILE: src/.editorconfig
-SIZE: .52 KB
-MODIFIED: 2025-12-28 08:44:06
-================================================================================
-
-root = true
-
-[*]
-indent_style = space
-indent_size = 4
-end_of_line = lf
-charset = utf-8
-trim_trailing_whitespace = true
-insert_final_newline = true
-
-[*.{cs,csx}]
-dotnet_sort_system_directives_first = true
-csharp_using_directive_placement = outside_namespace
-csharp_style_namespace_declarations = file_scoped:warning
-csharp_style_var_for_built_in_types = true:suggestion
-csharp_style_var_when_type_is_apparent = true:suggestion
-csharp_prefer_braces = true:warning
-
-[*.{json,yaml,yml}]
-indent_size = 2
-
-[*.md]
-trim_trailing_whitespace = false
-
 
 ================================================================================
 FILE: src/.github/workflows/build-deploy.yml
@@ -12947,9 +12932,9 @@ window.themeManager = {
 
 
 ===============================================================================
-EXPORT COMPLETED: Mon Jan 26 07:05:11 AM EST 2026
-Total Files Found: 99
-Files Exported: 99
+EXPORT COMPLETED: Mon Jan 26 07:29:19 AM EST 2026
+Total Files Found: 98
+Files Exported: 98
 Files Skipped: 0 (binary or large files)
 Output File: /home/kushal/src/dotnet/MyBlog/docs/llm/dump.txt
 ===============================================================================
