@@ -4678,4 +4678,316 @@ myblog_myblog-network
 real	2m31.303s
 user	0m23.838s
 sys	0m15.149s
+kushal@fedora:~/src/dotnet/MyBlog$ cat run-e2e.sh; time bash run-e2e.sh
+#!/bin/bash
+# =============================================================================
+# Run E2E Tests with Podman Compose
+# =============================================================================
+# This script runs Playwright E2E tests against MyBlog using containers.
+# Designed for Fedora with SELinux and Podman.
+#
+# Usage:
+#   ./run-e2e.sh          # Run all E2E tests
+#   ./run-e2e.sh --build  # Force rebuild containers
+#   ./run-e2e.sh --clean  # Clean up and remove volumes
+# =============================================================================
+
+set -e
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$SCRIPT_DIR"
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
+log_info() {
+    echo -e "${GREEN}[INFO]${NC} $1"
+}
+
+log_warn() {
+    echo -e "${YELLOW}[WARN]${NC} $1"
+}
+
+log_error() {
+    echo -e "${RED}[ERROR]${NC} $1"
+}
+
+# Parse arguments
+BUILD_FLAG=""
+CLEAN_FLAG=""
+
+for arg in "$@"; do
+    case $arg in
+        --build)
+            BUILD_FLAG="--build"
+            ;;
+        --clean)
+            CLEAN_FLAG="true"
+            ;;
+    esac
+done
+
+# Clean up if requested
+if [ "$CLEAN_FLAG" == "true" ]; then
+    log_info "Cleaning up containers and volumes..."
+    podman-compose -f docker-compose.e2e.yml down -v --remove-orphans 2>/dev/null || true
+    podman system prune -f 2>/dev/null || true
+    log_info "Cleanup complete"
+    exit 0
+fi
+
+# Create test results directory
+mkdir -p test-results
+# Set SELinux context if on Fedora with SELinux
+if command -v chcon &> /dev/null && getenforce 2>/dev/null | grep -q "Enforcing"; then
+    log_info "Setting SELinux context for test-results directory..."
+    chcon -Rt svirt_sandbox_file_t test-results 2>/dev/null || true
+fi
+
+log_info "Starting E2E test environment..."
+
+# Build and start services
+log_info "Building containers..."
+podman-compose -f docker-compose.e2e.yml build $BUILD_FLAG
+
+log_info "Starting MyBlog web service..."
+podman-compose -f docker-compose.e2e.yml up -d myblog-web
+
+# Wait for web service to be healthy
+log_info "Waiting for MyBlog to be ready..."
+RETRIES=30
+until podman exec myblog-web curl -sf http://localhost:5000/ > /dev/null 2>&1; do
+    RETRIES=$((RETRIES - 1))
+    if [ $RETRIES -eq 0 ]; then
+        log_error "MyBlog failed to start within timeout"
+        podman-compose -f docker-compose.e2e.yml logs myblog-web
+        podman-compose -f docker-compose.e2e.yml down -v
+        exit 1
+    fi
+    echo -n "."
+    sleep 2
+done
+echo ""
+log_info "MyBlog is ready!"
+
+# Run E2E tests
+log_info "Running E2E tests..."
+podman-compose -f docker-compose.e2e.yml up myblog-e2e
+E2E_EXIT_CODE=$?
+
+# Capture logs
+log_info "Capturing logs..."
+podman-compose -f docker-compose.e2e.yml logs myblog-web > test-results/myblog-web.log 2>&1
+podman-compose -f docker-compose.e2e.yml logs myblog-e2e > test-results/myblog-e2e.log 2>&1
+
+# Clean up
+log_info "Cleaning up..."
+podman-compose -f docker-compose.e2e.yml down -v
+
+if [ $E2E_EXIT_CODE -eq 0 ]; then
+    log_info "E2E tests passed! ✓"
+else
+    log_error "E2E tests failed with exit code $E2E_EXIT_CODE"
+    log_info "Check test-results/ directory for logs"
+fi
+
+exit $E2E_EXIT_CODE
+[INFO] Setting SELinux context for test-results directory...
+[INFO] Starting E2E test environment...
+[INFO] Building containers...
+STEP 1/18: FROM mcr.microsoft.com/dotnet/sdk:10.0-noble
+[1/2] STEP 1/12: FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+STEP 2/18: WORKDIR /src
+--> Using cache 1a780d16107a5473ff68e88b71349c8f166e0a15db185a4d39d77990dcac7ba6
+--> 1a780d16107a
+STEP 3/18: RUN apt-get update &&     apt-get install -y --no-install-recommends     wget     curl     gnupg     ca-certificates     fonts-liberation     libasound2t64     libatk-bridge2.0-0     libatk1.0-0     libatspi2.0-0     libcairo2     libcups2     libdbus-1-3     libdrm2     libgbm1     libglib2.0-0     libgtk-3-0     libnspr4     libnss3     libpango-1.0-0     libx11-6     libxcb1     libxcomposite1     libxdamage1     libxext6     libxfixes3     libxkbcommon0     libxrandr2     xdg-utils     && rm -rf /var/lib/apt/lists/*
+--> Using cache 35dd6a4680b2e84a470a64e7bc1012964c4b139742311026d816ea3cf297c777
+--> 35dd6a4680b2
+STEP 4/18: RUN wget -q https://packages.microsoft.com/config/ubuntu/24.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb &&     dpkg -i packages-microsoft-prod.deb &&     rm packages-microsoft-prod.deb &&     apt-get update &&     apt-get install -y --no-install-recommends powershell &&     rm -rf /var/lib/apt/lists/*
+--> Using cache 9f435cb0092a6e44d88dc2369863fb839a203b7c97f9f70dfc0aad8bd630a111
+--> 9f435cb0092a
+STEP 5/18: COPY Directory.Build.props .
+--> Using cache d2ca33dfcd77dbd49a8a7c64af9d12933c2a10d8c945f0b7f20a464ad989eda8
+--> d2ca33dfcd77
+STEP 6/18: COPY Directory.Packages.props .
+--> Using cache 5410d5936386382118681074c2fee859a37a40abf43236883bc6a99d06caa3d2
+--> 5410d5936386
+STEP 7/18: COPY MyBlog.Core/MyBlog.Core.csproj MyBlog.Core/
+[1/2] STEP 2/12: WORKDIR /src
+--> Using cache 26845e1aa3ed99ae73d4d168fba627686e8b866e186a8f297514f39e2e081a2e
+--> 26845e1aa3ed
+[1/2] STEP 3/12: COPY Directory.Build.props .
+--> Using cache 3e796636dcd44934c1aea2efc8fa3083034df9dacb1437f111809dc86ae58224
+--> 3e796636dcd4
+STEP 8/18: COPY MyBlog.Infrastructure/MyBlog.Infrastructure.csproj MyBlog.Infrastructure/
+--> Using cache 3499179afe87408e2c5f4793197dce2f916cea0dcedabd9807b067098cd66bc8
+--> 3499179afe87
+[1/2] STEP 4/12: COPY Directory.Packages.props .
+--> Using cache afc5f754a25bba925873b74f9a59fc474a26c20e4c55a5d27faa4d7fafe800bc
+--> afc5f754a25b
+STEP 9/18: COPY MyBlog.Web/MyBlog.Web.csproj MyBlog.Web/
+--> Using cache 7091dfb2492e25d6b1db787ff4e3a456c5e07ae205e5d47a4ea51f524f378c1e
+--> 7091dfb2492e
+[1/2] STEP 5/12: COPY MyBlog.Core/MyBlog.Core.csproj MyBlog.Core/
+--> Using cache c127eb96fadfe7700443760448c86dd771911eeb8f026d0ed2f641d04e516ed6
+--> c127eb96fadf
+STEP 10/18: COPY MyBlog.E2E/MyBlog.E2E.csproj MyBlog.E2E/
+--> Using cache bd1e24bd391788192cf21f6dbdd7244e2500d60e1f912145c409844e52487ff6
+--> bd1e24bd3917
+[1/2] STEP 6/12: COPY MyBlog.Infrastructure/MyBlog.Infrastructure.csproj MyBlog.Infrastructure/
+--> Using cache fa8071ffb092e2330b1dce46252ddc3b98d13e027c99b23865952bf67cffae32
+--> fa8071ffb092
+STEP 11/18: RUN dotnet restore MyBlog.Core/MyBlog.Core.csproj &&     dotnet restore MyBlog.Infrastructure/MyBlog.Infrastructure.csproj &&     dotnet restore MyBlog.Web/MyBlog.Web.csproj &&     dotnet restore MyBlog.E2E/MyBlog.E2E.csproj
+--> Using cache 24f5bd25ac8947b04485371a978ee117590869a81dd3c22a2baf665a9c47dcd6
+--> 24f5bd25ac89
+STEP 12/18: COPY . .
+--> Using cache e2c67af7c17801587b03724fba5de0638ae4ca562f3d0731dfb5e6d4f5d5890e
+--> e2c67af7c178
+[1/2] STEP 7/12: COPY MyBlog.Web/MyBlog.Web.csproj MyBlog.Web/
+--> Using cache af1b6996992439ae17b1ce0eba8a21be1afe007bae239e6d8f044f2be71f75d3
+--> af1b69969924
+[1/2] STEP 8/12: RUN dotnet restore MyBlog.Web/MyBlog.Web.csproj
+--> Using cache 72656bdbbe223dcdee0af5f1803efcdd8cf407903af1915edc3c17e980aad072
+--> 72656bdbbe22
+[1/2] STEP 9/12: COPY MyBlog.Core/ MyBlog.Core/
+--> Using cache 486fb7438290e5a038b7042c29293cf9a2722b87e17c138ca7d332565fc0af88
+--> 486fb7438290
+[1/2] STEP 10/12: COPY MyBlog.Infrastructure/ MyBlog.Infrastructure/
+--> Using cache 9699d0ae073e33961c4a6ea93a7dc0366510911072c604222d913e803aebdb6d
+--> 9699d0ae073e
+[1/2] STEP 11/12: COPY MyBlog.Web/ MyBlog.Web/
+--> Using cache 94a745beebe2c4ec4f26d3897a602dc367a13a6b21e9a6de44f6b69f4d4ff879
+--> 94a745beebe2
+[1/2] STEP 12/12: RUN dotnet publish MyBlog.Web/MyBlog.Web.csproj -c Release -o /app/publish
+--> Using cache bc6d1d04d5bcde23a9ef5fc51daadea03a9e6a3a0594008b9fa1b19e53e31b18
+--> bc6d1d04d5bc
+[2/2] STEP 1/12: FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
+--> Using cache 24ca81d024f2211b2ce207dcb1263997e04d2c4205f788f2e2433847f516c56d
+--> 24ca81d024f2
+STEP 13/18: RUN dotnet build MyBlog.E2E/MyBlog.E2E.csproj -c Release
+--> Using cache bf6a9f62269f0a62d724a6e6a249de83dc90e02ab678db36d9c515e1e589f659
+--> bf6a9f62269f
+STEP 14/18: RUN pwsh ./MyBlog.E2E/bin/Release/net10.0/playwright.ps1 install chromium
+--> Using cache d1309d615e8b83027fd2b64299e5fb8e606577553b7f3f9ea01ada09a7ee1efd
+--> d1309d615e8b
+STEP 15/18: WORKDIR /src/MyBlog.E2E
+--> Using cache 40be44b6f214632d89e27dc057cb3a80202962839bc1e5cd0cff19e40b290b9e
+--> 40be44b6f214
+STEP 16/18: ENV MYBLOG_BASE_URL=http://myblog-web:5000
+--> Using cache 49091bfd9b30d4d702326868e71aefa34071cb0a6b90a43bf6f16e1d1477fc79
+--> 49091bfd9b30
+STEP 17/18: ENV PLAYWRIGHT_HEADLESS=true
+--> Using cache 3cc5db29281e10d7f4fb3c8dda1e7156c88d674589823bbc30d37fc3bead2d5a
+--> 3cc5db29281e
+STEP 18/18: ENTRYPOINT ["dotnet", "run", "-c", "Release", "--no-build"]
+--> Using cache 8c683923c17e81004cde32cb7f943adfb736565539c1bd6abf130e88339e3c76
+COMMIT myblog_myblog-e2e
+[2/2] STEP 2/12: WORKDIR /app
+--> 8c683923c17e
+Successfully tagged localhost/myblog_myblog-e2e:latest
+--> Using cache 7ab200e45b1fba59b74177866b30af0761e035beacbc6a5d1607edc1b649f36a
+--> 7ab200e45b1f
+[2/2] STEP 3/12: RUN apt-get update && apt-get install -y --no-install-recommends curl && rm -rf /var/lib/apt/lists/*
+--> Using cache 1e21b972573d10c4ea9d7b8076e58aed09bb9967e8ee6d5a8c3c77e2cddd1001
+--> 1e21b972573d
+[2/2] STEP 4/12: RUN useradd -m -s /bin/bash appuser
+--> Using cache 7b0ba419cc37495396a1969cd185514b97ee464988ce4bddc954893f0ac664d5
+--> 7b0ba419cc37
+[2/2] STEP 5/12: RUN mkdir -p /app/data && chown appuser:appuser /app/data
+--> Using cache 1a52159880ea26e77195a71342eb88df7e9cb2112f4b48a28ce51dfc69734231
+--> 1a52159880ea
+[2/2] STEP 6/12: COPY --from=build /app/publish .
+8c683923c17e81004cde32cb7f943adfb736565539c1bd6abf130e88339e3c76
+--> Using cache 70072c496f46f99c6d4402afad587681ee037031ca8210997730e6e24cb4d831
+--> 70072c496f46
+[2/2] STEP 7/12: ENV ASPNETCORE_URLS=http://+:5000
+--> Using cache e78fd180a805301be0ed23df516876492ece16dff14430c3a53be56f939efb79
+--> e78fd180a805
+[2/2] STEP 8/12: ENV ASPNETCORE_ENVIRONMENT=Production
+--> Using cache fceb863e2f2b51f443fb99288fdb9f51a98fd040b5c16258f54bf8d84a4cda61
+--> fceb863e2f2b
+[2/2] STEP 9/12: ENV ConnectionStrings__DefaultConnection="Data Source=/app/data/myblog.db"
+--> Using cache b3049ad7a33721c89686629e53619063e468242053143d99b8cbe044880f561a
+--> b3049ad7a337
+[2/2] STEP 10/12: USER appuser
+--> Using cache 8c94f7ffb5740e96bdda84b47eeed074fdce1ffeed27ca6c01f54dd3921d1fb2
+--> 8c94f7ffb574
+[2/2] STEP 11/12: EXPOSE 5000
+--> Using cache b581fb153fdc86ef7b6ab99462c5f8801dd68510c7df537bfb68d96d73fcce06
+--> b581fb153fdc
+[2/2] STEP 12/12: ENTRYPOINT ["dotnet", "MyBlog.Web.dll"]
+--> Using cache 08805b87f9e29bb835e7a02fc3f5f349c33f495daf1ee2c4848490539b4ae891
+[2/2] COMMIT myblog_myblog-web
+--> 08805b87f9e2
+Successfully tagged localhost/myblog_myblog-web:latest
+08805b87f9e29bb835e7a02fc3f5f349c33f495daf1ee2c4848490539b4ae891
+[INFO] Starting MyBlog web service...
+b6893b16c969e06c010e0d257d7321bd4d62f5b6d80609918cd2ecc4285f2c1a
+2f097ecad35ebce8ed377052cd9035ce714c3d35df0b9b9b8067f1b6559af035
+myblog-web
+[INFO] Waiting for MyBlog to be ready...
+.
+[INFO] MyBlog is ready!
+[INFO] Running E2E tests...
+76356546d50dea28e0926d8aa18d5381afd2e48b8bd16b66c77aa6fcc3c7e80b
+[myblog-web] | cannot open `/run/user/1000/crun/2f097ecad35ebce8ed377052cd9035ce714c3d35df0b9b9b8067f1b6559af035/exec.fifo`: No such file or directory
+[myblog-web] | Error: unable to start container 2f097ecad35ebce8ed377052cd9035ce714c3d35df0b9b9b8067f1b6559af035: `/usr/bin/crun start 2f097ecad35ebce8ed377052cd9035ce714c3d35df0b9b9b8067f1b6559af035` failed: exit status 1
+[myblog-e2e] | xUnit.net v3 In-Process Runner v3.2.2+728c1dce01 (64-bit .NET 10.0.1)
+[myblog-e2e] |   Discovering: MyBlog.E2E
+[myblog-e2e] |   Discovered:  MyBlog.E2E
+[myblog-e2e] |   Starting:    MyBlog.E2E
+[myblog-e2e] |     MyBlog.E2E.Tests.LoginPageTests.LoginPage_AfterLogin_ShowsLogoutButton [FAIL]
+[myblog-e2e] |       Microsoft.Playwright.PlaywrightException : Locator expected to be visible
+[myblog-e2e] |       Error: element(s) not found 
+[myblog-e2e] |       Call log:
+[myblog-e2e] |         - Expect "ToBeVisibleAsync" with timeout 45000ms
+[myblog-e2e] |         - waiting for Locator("button:has-text('Logout'), form[action='/logout'] button")
+[myblog-e2e] |       Stack Trace:
+[myblog-e2e] |         /_/src/Playwright/Core/AssertionsBase.cs(90,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+[myblog-e2e] |         /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+[myblog-e2e] |         Tests/LoginPageTests.cs(95,0): at MyBlog.E2E.Tests.LoginPageTests.LoginPage_AfterLogin_ShowsLogoutButton()
+[myblog-e2e] |         --- End of stack trace from previous location ---
+[myblog-e2e] |     MyBlog.E2E.Tests.LoginPageTests.LoginPage_WithValidCredentials_RedirectsToAdmin [FAIL]
+[myblog-e2e] |       Microsoft.Playwright.PlaywrightException : Locator expected to be visible
+[myblog-e2e] |       Error: element(s) not found 
+[myblog-e2e] |       Call log:
+[myblog-e2e] |         - Expect "ToBeVisibleAsync" with timeout 45000ms
+[myblog-e2e] |         - waiting for Locator("h1:has-text('Admin Dashboard')")
+[myblog-e2e] |       Stack Trace:
+[myblog-e2e] |         /_/src/Playwright/Core/AssertionsBase.cs(90,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+[myblog-e2e] |         /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+[myblog-e2e] |         Tests/LoginPageTests.cs(77,0): at MyBlog.E2E.Tests.LoginPageTests.LoginPage_WithValidCredentials_RedirectsToAdmin()
+[myblog-e2e] |         --- End of stack trace from previous location ---
+[myblog-e2e] |     MyBlog.E2E.Tests.LoginPageTests.LoginPage_WithInvalidCredentials_ShowsError [FAIL]
+[myblog-e2e] |       Microsoft.Playwright.PlaywrightException : Locator expected to be visible
+[myblog-e2e] |       Error: element(s) not found 
+[myblog-e2e] |       Call log:
+[myblog-e2e] |         - Expect "ToBeVisibleAsync" with timeout 15000ms
+[myblog-e2e] |         - waiting for Locator(".error-message")
+[myblog-e2e] |       Stack Trace:
+[myblog-e2e] |         /_/src/Playwright/Core/AssertionsBase.cs(90,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+[myblog-e2e] |         /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+[myblog-e2e] |         Tests/LoginPageTests.cs(58,0): at MyBlog.E2E.Tests.LoginPageTests.LoginPage_WithInvalidCredentials_ShowsError()
+[myblog-e2e] |         --- End of stack trace from previous location ---
+[myblog-e2e] |   Finished:    MyBlog.E2E (ID = '4d488734a9156ea8719a93bca3e9cb47dfeac4715a7981582060bf185a1e7bf4')
+[myblog-e2e] | === TEST EXECUTION SUMMARY ===
+[myblog-e2e] |    MyBlog.E2E  Total: 18, Errors: 0, Failed: 3, Skipped: 0, Not Run: 0, Time: 111.256s
+[myblog-e2e] | 
+[INFO] Capturing logs...
+[INFO] Cleaning up...
+myblog-e2e
+myblog-web
+myblog-e2e
+myblog-web
+myblog_myblog-data
+b6893b16c969e06c010e0d257d7321bd4d62f5b6d80609918cd2ecc4285f2c1a
+myblog_myblog-network
+[INFO] E2E tests passed! ✓
+
+real	2m2.459s
+user	0m5.213s
+sys	0m4.158s
 kushal@fedora:~/src/dotnet/MyBlog$ 
