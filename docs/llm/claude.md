@@ -5998,3 +5998,403 @@ dotnet build
 
 
 
+kushal@fedora:~/src/dotnet/MyBlog$ cat run-e2e.sh; time bash run-e2e.sh
+#!/bin/bash
+# =============================================================================
+# Run E2E Tests with Podman Compose
+# =============================================================================
+# This script runs Playwright E2E tests against MyBlog using containers.
+# Designed for Fedora with SELinux and Podman.
+#
+# Usage:
+#   ./run-e2e.sh          # Run all E2E tests
+#   ./run-e2e.sh --build  # Force rebuild containers
+#   ./run-e2e.sh --clean  # Clean up and remove volumes
+# =============================================================================
+
+set -e
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$SCRIPT_DIR"
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
+log_info() {
+    echo -e "${GREEN}[INFO]${NC} $1"
+}
+
+log_warn() {
+    echo -e "${YELLOW}[WARN]${NC} $1"
+}
+
+log_error() {
+    echo -e "${RED}[ERROR]${NC} $1"
+}
+
+# Parse arguments
+BUILD_FLAG=""
+CLEAN_FLAG=""
+
+for arg in "$@"; do
+    case $arg in
+        --build)
+            BUILD_FLAG="--build"
+            ;;
+        --clean)
+            CLEAN_FLAG="true"
+            ;;
+    esac
+done
+
+# Clean up if requested
+if [ "$CLEAN_FLAG" == "true" ]; then
+    log_info "Cleaning up containers and volumes..."
+    podman-compose -f docker-compose.e2e.yml down -v --remove-orphans 2>/dev/null || true
+    podman system prune -f 2>/dev/null || true
+    log_info "Cleanup complete"
+    exit 0
+fi
+
+# Create test results directory
+mkdir -p test-results
+# Set SELinux context if on Fedora with SELinux
+if command -v chcon &> /dev/null && getenforce 2>/dev/null | grep -q "Enforcing"; then
+    log_info "Setting SELinux context for test-results directory..."
+    chcon -Rt svirt_sandbox_file_t test-results 2>/dev/null || true
+fi
+
+log_info "Starting E2E test environment..."
+
+# Build and start services
+log_info "Building containers..."
+podman-compose -f docker-compose.e2e.yml build $BUILD_FLAG
+
+log_info "Starting MyBlog web service..."
+podman-compose -f docker-compose.e2e.yml up -d myblog-web
+
+# Wait for web service to be healthy
+log_info "Waiting for MyBlog to be ready..."
+RETRIES=30
+until podman exec myblog-web curl -sf http://localhost:5000/ > /dev/null 2>&1; do
+    RETRIES=$((RETRIES - 1))
+    if [ $RETRIES -eq 0 ]; then
+        log_error "MyBlog failed to start within timeout"
+        podman-compose -f docker-compose.e2e.yml logs myblog-web
+        podman-compose -f docker-compose.e2e.yml down -v
+        exit 1
+    fi
+    echo -n "."
+    sleep 2
+done
+echo ""
+log_info "MyBlog is ready!"
+
+# Run E2E tests
+log_info "Running E2E tests..."
+podman-compose -f docker-compose.e2e.yml up myblog-e2e
+E2E_EXIT_CODE=$?
+
+# Capture logs
+log_info "Capturing logs..."
+podman-compose -f docker-compose.e2e.yml logs myblog-web > test-results/myblog-web.log 2>&1
+podman-compose -f docker-compose.e2e.yml logs myblog-e2e > test-results/myblog-e2e.log 2>&1
+
+# Clean up
+log_info "Cleaning up..."
+podman-compose -f docker-compose.e2e.yml down -v
+
+if [ $E2E_EXIT_CODE -eq 0 ]; then
+    log_info "E2E tests passed! ✓"
+else
+    log_error "E2E tests failed with exit code $E2E_EXIT_CODE"
+    log_info "Check test-results/ directory for logs"
+fi
+
+exit $E2E_EXIT_CODE
+[INFO] Setting SELinux context for test-results directory...
+[INFO] Starting E2E test environment...
+[INFO] Building containers...
+[1/2] STEP 1/12: FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+STEP 1/16: FROM mcr.microsoft.com/playwright/dotnet:v1.49.0-noble
+Trying to pull mcr.microsoft.com/dotnet/sdk:10.0...
+Trying to pull mcr.microsoft.com/playwright/dotnet:v1.49.0-noble...
+Getting image source signatures
+Copying blob 777121d11d5c [============>-------------------------] 3.5MiB / 10.6MiB | 1.6 MiB/s
+Copying blob 777121d11d5c [=============>------------------------] 3.9MiB / 10.6MiB | 2.1 MiB/s
+Copying blob 54609b48ebc1 [===>----------------------------------] 3.2MiB / 29.2MiB | 5.2 MiB/s
+Copying blob 8aff4ad8e9c8 [===>----------------------------------] 3.3MiB / 30.7MiB | 9.6 MiB/s
+Copying blob d259b882808f done   | 
+Copying blob 9cc76bcd9874 [=========>----------------------------] 4.3MiB / 15.9MiB | 11.7 MiB/s
+Copying blob f5650df726de done   | 
+Copying blob 6355fa12df9b [=====>--------------------------------] 3.3MiB / 22.5MiB | 22.8 MiB/s
+Copying blob 8818a8919f13 [--------------------------------------] 638.1KiB / 166.1MiB | 1.9 MiB/s
+Copying blob 46f592c23ae7 [======>-------------------------------] 6.4MiB / 34.9MiB | 1.4 MiB/s
+Copying blob 46f592c23ae7 [========>-----------------------------] 8.4MiB / 34.9MiB | 1.3 MiB/s
+Copying blob 777121d11d5c done   | 
+Copying blob 54609b48ebc1 done   | 
+Copying blob 46f592c23ae7 done   | 
+Copying blob 777121d11d5c done   | 
+Copying blob 54609b48ebc1 done   | 
+Copying blob 777121d11d5c done   | 
+Copying blob 54609b48ebc1 done   | 
+Copying blob 777121d11d5c done   | 
+Copying blob 54609b48ebc1 done   | 
+Copying blob 777121d11d5c done   | 
+Copying blob 54609b48ebc1 done   | 
+Copying blob 777121d11d5c done   | 
+Copying blob 54609b48ebc1 done   | 
+Copying blob 777121d11d5c done   | 
+Copying blob 54609b48ebc1 done   | 
+Copying blob 777121d11d5c done   | 
+Copying blob 777121d11d5c done   | 
+Copying blob 777121d11d5c done   | 
+Copying blob 777121d11d5c done   | 
+Copying blob 777121d11d5c done   | 
+Copying blob 54609b48ebc1 done   | 
+Copying blob 777121d11d5c done   | 
+Copying blob 54609b48ebc1 done   | 
+Copying blob 777121d11d5c done   | 
+Copying blob 54609b48ebc1 done   | 
+Copying blob 777121d11d5c done   | 
+Copying blob 54609b48ebc1 done   | 
+Copying blob 777121d11d5c done   | 
+Copying blob 54609b48ebc1 done   | 
+Copying blob 777121d11d5c done   | 
+Copying blob 777121d11d5c done   | 
+Copying blob 54609b48ebc1 done   | 
+Copying blob 8aff4ad8e9c8 done   | 
+Copying blob d259b882808f done   | 
+Copying blob 9cc76bcd9874 done   | 
+Copying blob f5650df726de done   | 
+Copying blob 6355fa12df9b done   | 
+Copying blob 8818a8919f13 done   | 
+Copying blob a78f6ec8f822 done   | 
+Copying blob a51f73a5fc23 done   | 
+Copying blob bbeb23868a86 done   | 
+Copying blob 051ee80a93a4 done   | 
+Copying config 461f754846 done   | 
+Writing manifest to image destination
+STEP 2/16: WORKDIR /src
+--> a47d8c5b74e9
+STEP 3/16: RUN wget https://dot.net/v1/dotnet-install.sh -O dotnet-install.sh &&     chmod +x dotnet-install.sh &&     ./dotnet-install.sh --channel 10.0 --install-dir /usr/share/dotnet &&     rm dotnet-install.sh
+--2026-01-26 15:32:11--  https://dot.net/v1/dotnet-install.sh
+Resolving dot.net (dot.net)... 20.112.250.133, 20.70.246.20, 20.231.239.246, ...
+Connecting to dot.net (dot.net)|20.112.250.133|:443... connected.
+HTTP request sent, awaiting response... 301 Moved Permanently
+Location: https://builds.dotnet.microsoft.com/dotnet/scripts/v1/dotnet-install.sh [following]
+--2026-01-26 15:32:12--  https://builds.dotnet.microsoft.com/dotnet/scripts/v1/dotnet-install.sh
+Resolving builds.dotnet.microsoft.com (builds.dotnet.microsoft.com)... 23.218.218.75, 23.218.218.78, 2600:1408:ec00:33::1736:7f8a, ...
+Connecting to builds.dotnet.microsoft.com (builds.dotnet.microsoft.com)|23.218.218.75|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: unspecified [application/octet-stream]
+Saving to: 'dotnet-install.sh'
+
+     0K .......... .......... .......... .......... .......... 4.99M
+    50K .......... ..                                          22.4T=0.01s
+
+2026-01-26 15:32:12 (6.18 MB/s) - 'dotnet-install.sh' saved [63488]
+
+dotnet-install: Attempting to download using aka.ms link https://builds.dotnet.microsoft.com/dotnet/Sdk/10.0.102/dotnet-sdk-10.0.102-linux-x64.tar.gz
+dotnet-install: Remote file https://builds.dotnet.microsoft.com/dotnet/Sdk/10.0.102/dotnet-sdk-10.0.102-linux-x64.tar.gz size is 240084834 bytes.
+dotnet-install: Extracting archive from https://builds.dotnet.microsoft.com/dotnet/Sdk/10.0.102/dotnet-sdk-10.0.102-linux-x64.tar.gz
+dotnet-install: Downloaded file size is 240084834 bytes.
+dotnet-install: The remote and local file sizes are equal.
+dotnet-install: Installed version is 10.0.102
+dotnet-install: Adding to current process PATH: `/usr/share/dotnet`. Note: This change will be visible only when sourcing script.
+dotnet-install: Note that the script does not resolve dependencies during installation.
+dotnet-install: To check the list of dependencies, go to https://learn.microsoft.com/dotnet/core/install, select your operating system and check the "Dependencies" section.
+dotnet-install: Installation finished successfully.
+--> acd5a0eecee9
+STEP 4/16: COPY Directory.Build.props .
+--> 364fc260a52d
+STEP 5/16: COPY Directory.Packages.props .
+--> b520f39b806c
+STEP 6/16: COPY MyBlog.Core/MyBlog.Core.csproj MyBlog.Core/
+--> 0c07414d3e6b
+STEP 7/16: COPY MyBlog.Infrastructure/MyBlog.Infrastructure.csproj MyBlog.Infrastructure/
+--> 8ced9f1bc63e
+STEP 8/16: COPY MyBlog.Web/MyBlog.Web.csproj MyBlog.Web/
+--> 0a0db65843f7
+STEP 9/16: COPY MyBlog.E2E/MyBlog.E2E.csproj MyBlog.E2E/
+--> e44ec0c10fc8
+STEP 10/16: RUN dotnet restore MyBlog.E2E/MyBlog.E2E.csproj
+  Determining projects to restore...
+  Restored /src/MyBlog.Core/MyBlog.Core.csproj (in 1.93 sec).
+  Restored /src/MyBlog.Web/MyBlog.Web.csproj (in 5.64 sec).
+  Restored /src/MyBlog.Infrastructure/MyBlog.Infrastructure.csproj (in 7.2 sec).
+  Restored /src/MyBlog.E2E/MyBlog.E2E.csproj (in 12.59 sec).
+--> be83f0c2ba8c
+STEP 11/16: COPY . .
+--> 6072bd7c7711
+STEP 12/16: RUN dotnet build MyBlog.E2E/MyBlog.E2E.csproj -c Release --no-restore
+/usr/share/dotnet/sdk/10.0.102/Sdks/Microsoft.NET.Sdk/targets/Microsoft.PackageDependencyResolution.targets(266,5): error NETSDK1064: Package Microsoft.EntityFrameworkCore.Analyzers, version 10.0.2 was not found. It might have been deleted since NuGet restore. Otherwise, NuGet restore might have only partially completed, which might have been due to maximum path length restrictions. [/src/MyBlog.E2E/MyBlog.E2E.csproj]
+
+Build FAILED.
+
+/usr/share/dotnet/sdk/10.0.102/Sdks/Microsoft.NET.Sdk/targets/Microsoft.PackageDependencyResolution.targets(266,5): error NETSDK1064: Package Microsoft.EntityFrameworkCore.Analyzers, version 10.0.2 was not found. It might have been deleted since NuGet restore. Otherwise, NuGet restore might have only partially completed, which might have been due to maximum path length restrictions. [/src/MyBlog.E2E/MyBlog.E2E.csproj]
+    0 Warning(s)
+    1 Error(s)
+
+Time Elapsed 00:00:00.30
+Error: building at STEP "RUN dotnet build MyBlog.E2E/MyBlog.E2E.csproj -c Release --no-restore": while running runtime: exit status 1
+
+real	2m3.234s
+user	1m23.917s
+sys	0m35.525s
+kushal@fedora:~/src/dotnet/MyBlog$ 
+
+
+The issue is that the E2E Dockerfile is using the Playwright base image which has .NET 8, and when we install .NET 10 SDK on top of it, there's a mismatch in the NuGet package cache. Let me fix the Dockerfile to use a simpler, more reliable approach:Wait, that won't work either because the aspnet runtime image doesn't have the SDK. Let me create a cleaner approach that builds and runs in a single SDK-based image:Now let's also update the docker-compose.e2e.yml to add curl to the web container for health checks:Now clean up and rebuild:
+
+```bash
+# Clean up previous builds
+./run-e2e.sh --clean
+
+# Rebuild and run
+./run-e2e.sh --build
+```
+
+Here are the corrected files:
+
+**`src/MyBlog.E2E/Dockerfile`:**
+```dockerfile
+# E2E Test Runner with Playwright
+# Single stage using .NET 10 SDK for both build and run
+FROM mcr.microsoft.com/dotnet/sdk:10.0-noble
+
+WORKDIR /src
+
+# Install Playwright browser dependencies (Chromium) for Ubuntu Noble
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    wget \
+    curl \
+    gnupg \
+    ca-certificates \
+    fonts-liberation \
+    libasound2t64 \
+    libatk-bridge2.0-0 \
+    libatk1.0-0 \
+    libatspi2.0-0 \
+    libcairo2 \
+    libcups2 \
+    libdbus-1-3 \
+    libdrm2 \
+    libgbm1 \
+    libglib2.0-0 \
+    libgtk-3-0 \
+    libnspr4 \
+    libnss3 \
+    libpango-1.0-0 \
+    libx11-6 \
+    libxcb1 \
+    libxcomposite1 \
+    libxdamage1 \
+    libxext6 \
+    libxfixes3 \
+    libxkbcommon0 \
+    libxrandr2 \
+    xdg-utils \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy project files for restore
+COPY Directory.Build.props .
+COPY Directory.Packages.props .
+COPY MyBlog.Core/MyBlog.Core.csproj MyBlog.Core/
+COPY MyBlog.Infrastructure/MyBlog.Infrastructure.csproj MyBlog.Infrastructure/
+COPY MyBlog.Web/MyBlog.Web.csproj MyBlog.Web/
+COPY MyBlog.E2E/MyBlog.E2E.csproj MyBlog.E2E/
+
+# Restore E2E project and all dependencies
+RUN dotnet restore MyBlog.E2E/MyBlog.E2E.csproj
+
+# Copy all source code
+COPY . .
+
+# Build the E2E project
+RUN dotnet build MyBlog.E2E/MyBlog.E2E.csproj -c Release --no-restore
+
+# Install Playwright CLI and browsers
+RUN dotnet tool install --global Microsoft.Playwright.CLI --version 1.49.0
+ENV PATH="$PATH:/root/.dotnet/tools"
+RUN playwright install chromium
+
+WORKDIR /src/MyBlog.E2E
+
+# Set environment variables
+ENV MYBLOG_BASE_URL=http://myblog-web:5000
+ENV PLAYWRIGHT_HEADLESS=true
+
+# Run tests using dotnet run (xUnit v3 style)
+ENTRYPOINT ["dotnet", "run", "-c", "Release", "--no-build"]
+```
+
+**`src/MyBlog.Web/Dockerfile`:**
+```dockerfile
+# Build stage
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+WORKDIR /src
+
+# Copy project files first for better layer caching
+COPY Directory.Build.props .
+COPY Directory.Packages.props .
+COPY MyBlog.Core/MyBlog.Core.csproj MyBlog.Core/
+COPY MyBlog.Infrastructure/MyBlog.Infrastructure.csproj MyBlog.Infrastructure/
+COPY MyBlog.Web/MyBlog.Web.csproj MyBlog.Web/
+
+# Restore dependencies
+RUN dotnet restore MyBlog.Web/MyBlog.Web.csproj
+
+# Copy source code
+COPY MyBlog.Core/ MyBlog.Core/
+COPY MyBlog.Infrastructure/ MyBlog.Infrastructure/
+COPY MyBlog.Web/ MyBlog.Web/
+
+# Build and publish
+RUN dotnet publish MyBlog.Web/MyBlog.Web.csproj -c Release -o /app/publish --no-restore
+
+# Runtime stage
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
+WORKDIR /app
+
+# Install curl for health checks
+RUN apt-get update && apt-get install -y --no-install-recommends curl && rm -rf /var/lib/apt/lists/*
+
+# Create non-root user for security
+RUN useradd -m -s /bin/bash appuser
+
+# Create data directory for SQLite
+RUN mkdir -p /app/data && chown appuser:appuser /app/data
+
+COPY --from=build /app/publish .
+
+# Set environment variables
+ENV ASPNETCORE_URLS=http://+:5000
+ENV ASPNETCORE_ENVIRONMENT=Production
+ENV ConnectionStrings__DefaultConnection="Data Source=/app/data/myblog.db"
+
+# Switch to non-root user
+USER appuser
+
+EXPOSE 5000
+
+ENTRYPOINT ["dotnet", "MyBlog.Web.dll"]
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

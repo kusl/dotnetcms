@@ -1,14 +1,40 @@
 # E2E Test Runner with Playwright
-# Uses the official Playwright .NET image which includes browsers
-FROM mcr.microsoft.com/playwright/dotnet:v1.49.0-noble
+# Single stage using .NET 10 SDK for both build and run
+FROM mcr.microsoft.com/dotnet/sdk:10.0-noble
 
 WORKDIR /src
 
-# Install .NET 10 SDK (Playwright image has .NET 8)
-RUN wget https://dot.net/v1/dotnet-install.sh -O dotnet-install.sh && \
-    chmod +x dotnet-install.sh && \
-    ./dotnet-install.sh --channel 10.0 --install-dir /usr/share/dotnet && \
-    rm dotnet-install.sh
+# Install Playwright browser dependencies (Chromium) for Ubuntu Noble
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    wget \
+    curl \
+    gnupg \
+    ca-certificates \
+    fonts-liberation \
+    libasound2t64 \
+    libatk-bridge2.0-0 \
+    libatk1.0-0 \
+    libatspi2.0-0 \
+    libcairo2 \
+    libcups2 \
+    libdbus-1-3 \
+    libdrm2 \
+    libgbm1 \
+    libglib2.0-0 \
+    libgtk-3-0 \
+    libnspr4 \
+    libnss3 \
+    libpango-1.0-0 \
+    libx11-6 \
+    libxcb1 \
+    libxcomposite1 \
+    libxdamage1 \
+    libxext6 \
+    libxfixes3 \
+    libxkbcommon0 \
+    libxrandr2 \
+    xdg-utils \
+    && rm -rf /var/lib/apt/lists/*
 
 # Copy project files for restore
 COPY Directory.Build.props .
@@ -26,6 +52,11 @@ COPY . .
 
 # Build the E2E project
 RUN dotnet build MyBlog.E2E/MyBlog.E2E.csproj -c Release --no-restore
+
+# Install Playwright CLI and browsers
+RUN dotnet tool install --global Microsoft.Playwright.CLI --version 1.49.0
+ENV PATH="$PATH:/root/.dotnet/tools"
+RUN playwright install chromium
 
 WORKDIR /src/MyBlog.E2E
 

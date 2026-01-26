@@ -24,6 +24,9 @@ RUN dotnet publish MyBlog.Web/MyBlog.Web.csproj -c Release -o /app/publish --no-
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
 WORKDIR /app
 
+# Install curl for health checks
+RUN apt-get update && apt-get install -y --no-install-recommends curl && rm -rf /var/lib/apt/lists/*
+
 # Create non-root user for security
 RUN useradd -m -s /bin/bash appuser
 

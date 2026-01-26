@@ -1,6 +1,6 @@
 ===============================================================================
 PROJECT EXPORT
-Generated: Mon Jan 26 10:00:46 AM EST 2026
+Generated: Mon Jan 26 10:25:19 AM EST 2026
 Project Path: /home/kushal/src/dotnet/MyBlog
 ===============================================================================
 
@@ -4560,8 +4560,8 @@ ENTRYPOINT ["dotnet", "run", "-c", "Release", "--no-build"]
 
 ================================================================================
 FILE: src/MyBlog.E2E/MyBlog.E2E.csproj
-SIZE: .45 KB
-MODIFIED: 2026-01-26 09:58:30
+SIZE: .44 KB
+MODIFIED: 2026-01-26 10:23:36
 ================================================================================
 
 <Project Sdk="Microsoft.NET.Sdk">
@@ -4573,7 +4573,7 @@ MODIFIED: 2026-01-26 09:58:30
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <PackageReference Include="xunit.v3" />
-    <PackageReference Include="Microsoft.Playwright" Version="1.49.0" />
+    <PackageReference Include="Microsoft.Playwright" />
   </ItemGroup>
 
   <ItemGroup>
@@ -13714,7 +13714,7 @@ window.themeManager = {
 
 
 ===============================================================================
-EXPORT COMPLETED: Mon Jan 26 10:00:47 AM EST 2026
+EXPORT COMPLETED: Mon Jan 26 10:25:20 AM EST 2026
 Total Files Found: 115
 Files Exported: 115
 Files Skipped: 0 (binary or large files)
