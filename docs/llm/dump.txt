@@ -1,6 +1,6 @@
 ===============================================================================
 PROJECT EXPORT
-Generated: Mon Jan 26 05:52:14 AM EST 2026
+Generated: Mon Jan 26 06:38:30 AM EST 2026
 Project Path: /home/kushal/src/dotnet/MyBlog
 ===============================================================================
 
@@ -6034,8 +6034,8 @@ MODIFIED: 2026-01-26 05:44:07
 
 ================================================================================
 FILE: src/MyBlog.Web/Components/_Imports.razor
-SIZE: .63 KB
-MODIFIED: 2026-01-26 05:44:34
+SIZE: .73 KB
+MODIFIED: 2026-01-26 06:29:50
 ================================================================================
 
 @using System.Net.Http
@@ -6056,7 +6056,8 @@ MODIFIED: 2026-01-26 05:44:34
 @using MyBlog.Core.Constants
 @using MyBlog.Core.Interfaces
 @using MyBlog.Core.Models
-
+@using static Microsoft.AspNetCore.Components.Web.RenderMode
+@using Microsoft.AspNetCore.SignalR.Client
 
 ================================================================================
 FILE: src/MyBlog.Web/Components/Layout/MainLayout.razor
@@ -6107,8 +6108,8 @@ MODIFIED: 2026-01-26 05:44:15
 
 ================================================================================
 FILE: src/MyBlog.Web/Components/Pages/About.razor
-SIZE: 31.10 KB
-MODIFIED: 2026-01-16 19:45:55
+SIZE: 31.12 KB
+MODIFIED: 2026-01-26 06:25:44
 ================================================================================
 
 @page "/about"
@@ -6234,7 +6235,7 @@ MODIFIED: 2026-01-16 19:45:55
             <div class="tech-category">
                 <h3>Backend Framework</h3>
                 <ul>
-                    <li><strong>.NET 10</strong> — Latest LTS runtime with performance improvements</li>
+                    <li><strong>.NET 10</strong> — Current runtime with latest features and performance improvements</li>
                     <li><strong>Blazor Server</strong> — Component-based UI with real-time SignalR connectivity</li>
                     <li><strong>ASP.NET Core</strong> — Web framework with middleware pipeline</li>
                     <li><strong>Entity Framework Core</strong> — ORM with code-first migrations</li>
@@ -8845,8 +8846,8 @@ article {
 
 ================================================================================
 FILE: src/MyBlog.Web/Components/Routes.razor
-SIZE: .62 KB
-MODIFIED: 2026-01-26 05:45:27
+SIZE: .83 KB
+MODIFIED: 2026-01-26 06:25:15
 ================================================================================
 
 <Router AppAssembly="typeof(Program).Assembly">
@@ -8865,6 +8866,12 @@ MODIFIED: 2026-01-26 05:45:27
         </AuthorizeRouteView>
         <FocusOnNavigate RouteData="routeData" Selector="h1" />
     </Found>
+    <NotFound>
+        <LayoutView Layout="typeof(Layout.MainLayout)">
+            <h1>Page Not Found</h1>
+            <p>Sorry, the page you requested could not be found.</p>
+        </LayoutView>
+    </NotFound>
 </Router>
 
 
@@ -9166,12 +9173,13 @@ MODIFIED: 2025-12-28 08:44:06
 
 ================================================================================
 FILE: src/MyBlog.Web/Components/Shared/ThemeSwitcher.razor
-SIZE: 4.09 KB
-MODIFIED: 2026-01-26 05:43:55
+SIZE: 4.11 KB
+MODIFIED: 2026-01-26 06:37:10
 ================================================================================
 
 @implements IDisposable
 @inject IJSRuntime JS
+@inject ILogger<ThemeSwitcher> Logger
 
 <div class="theme-switcher">
     <button class="theme-switcher-btn"
@@ -9256,7 +9264,7 @@ MODIFIED: 2026-01-26 05:43:55
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Theme initialization error: {ex.Message}");
+                Logger.LogWarning(ex, "Theme initialization error");
             }
         }
     }
@@ -11214,7 +11222,7 @@ window.themeManager = {
 
 
 ===============================================================================
-EXPORT COMPLETED: Mon Jan 26 05:52:15 AM EST 2026
+EXPORT COMPLETED: Mon Jan 26 06:38:31 AM EST 2026
 Total Files Found: 99
 Files Exported: 99
 Files Skipped: 0 (binary or large files)
