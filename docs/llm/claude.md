@@ -6798,3 +6798,103 @@ The key fix is removing `--no-restore` from the build command and letting `dotne
 
 
 
+I updated to 1.57 and got this error 
+STEP 13/19: RUN dotnet tool install --global Microsoft.Playwright.CLI --version 1.57.0
+Version 1.57.0 of package microsoft.playwright.cli is not found in NuGet feeds https://api.nuget.org/v3/index.json.
+Error: building at STEP "RUN dotnet tool install --global Microsoft.Playwright.CLI --version 1.57.0": while running runtime: exit status 1
+real	1m1.990s
+user	0m46.023s
+sys	0m26.062s
+kushal@fedora:~/src/dotnet/MyBlog$ 
+the code in the dump.txt is up to date
+
+The Playwright CLI tool has a different versioning scheme than the NuGet package. Let me check what versions are available and fix this.
+
+The `Microsoft.Playwright.CLI` tool doesn't match 1:1 with the `Microsoft.Playwright` NuGet package version. The CLI is used to install browsers, and we should use the `pwsh` or direct Playwright installation method instead.
+
+Let me fix the Dockerfile to use the correct approach:Wait, the SDK image might not have PowerShell. Let me use a different approach - we can use the bash script or run the Playwright install through dotnet:Also update the `Directory.Packages.props` to use 1.57.0:The key change is:
+1. Install `powershell` package in the container
+2. Use the `playwright.ps1` script that gets generated when you build a project that references `Microsoft.Playwright` - this script is placed in the output directory and knows the correct browser versions to install for that specific Playwright version
+
+Run:
+```bash
+./run-e2e.sh --clean
+./run-e2e.sh
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
