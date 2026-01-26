@@ -1921,4 +1921,259 @@ File types included:
 real	0m1.164s
 user	0m0.669s
 sys	0m0.716s
-kushal@fedora:~/src/dotnet/MyBlog$ 
+kushal@fedora:~/src/dotnet/MyBlog$ cd ~/src/dotnet/MyBlog/ && export DOTNET_CLI_TELEMETRY_OPTOUT=1 && (cd src && time dotnet format; time dotnet restore; time dotnet clean; time dotnet build; time dotnet run --project MyBlog.Tests/MyBlog.Tests.csproj; time dotnet list package; time dotnet list package --outdated); cd ~/src/dotnet/MyBlog/ && time bash export.sh
+
+real	0m7.937s
+user	0m15.118s
+sys	0m0.808s
+Restore complete (0.4s)
+
+Build succeeded in 0.5s
+
+real	0m0.703s
+user	0m0.763s
+sys	0m0.150s
+
+Build succeeded in 0.5s
+
+real	0m0.633s
+user	0m0.655s
+sys	0m0.146s
+Restore complete (0.5s)
+  MyBlog.Core net10.0 succeeded (2.7s) → MyBlog.Core/bin/Debug/net10.0/MyBlog.Core.dll
+  MyBlog.Infrastructure net10.0 succeeded (0.3s) → MyBlog.Infrastructure/bin/Debug/net10.0/MyBlog.Infrastructure.dll
+  MyBlog.Web net10.0 succeeded (2.1s) → MyBlog.Web/bin/Debug/net10.0/MyBlog.Web.dll
+  MyBlog.Tests net10.0 succeeded (0.3s) → MyBlog.Tests/bin/Debug/net10.0/MyBlog.Tests.dll
+  MyBlog.E2E net10.0 succeeded (0.4s) → MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll
+
+Build succeeded in 6.2s
+
+real	0m6.316s
+user	0m2.245s
+sys	0m0.361s
+xUnit.net v3 In-Process Runner v3.2.2+728c1dce01 (64-bit .NET 10.0.1)
+  Discovering: MyBlog.Tests
+  Discovered:  MyBlog.Tests
+  Starting:    MyBlog.Tests
+  Finished:    MyBlog.Tests (ID = '24cedafe73dab5684218bb3cf04cfd49ae8ce3b87ae799399cb2e301cbc1e755')
+=== TEST EXECUTION SUMMARY ===
+   MyBlog.Tests  Total: 77, Errors: 0, Failed: 0, Skipped: 0, Not Run: 0, Time: 41.216s
+
+real	0m42.844s
+user	0m45.652s
+sys	0m0.558s
+Restore complete (0.4s)
+
+Build succeeded in 0.5s
+Project 'MyBlog.Core' has the following package references
+   [net10.0]: 
+   Top-level Package                   Requested   Resolved
+   > Microsoft.Extensions.Logging      10.0.2      10.0.2  
+
+Project 'MyBlog.E2E' has the following package references
+   [net10.0]: 
+   Top-level Package             Requested   Resolved
+   > Microsoft.NET.Test.Sdk      18.0.1      18.0.1  
+   > Microsoft.Playwright        1.57.0      1.57.0  
+   > xunit.v3                    3.2.2       3.2.2   
+
+Project 'MyBlog.Infrastructure' has the following package references
+   [net10.0]: 
+   Top-level Package                           Requested   Resolved
+   > Microsoft.AspNetCore.Identity             2.3.9       2.3.9   
+   > Microsoft.EntityFrameworkCore.Sqlite      10.0.2      10.0.2  
+   > Microsoft.Extensions.Http                 10.0.2      10.0.2  
+   > OpenTelemetry                             1.15.0      1.15.0  
+
+Project 'MyBlog.Tests' has the following package references
+   [net10.0]: 
+   Top-level Package                             Requested   Resolved
+   > Microsoft.EntityFrameworkCore.Sqlite        10.0.2      10.0.2  
+   > Microsoft.NET.Test.Sdk                      18.0.1      18.0.1  
+   > Microsoft.Testing.Extensions.TrxReport      2.0.2       2.0.2   
+   > xunit.v3                                    3.2.2       3.2.2   
+
+Project 'MyBlog.Web' has the following package references
+   [net10.0]: 
+   Top-level Package                                  Requested    Resolved
+   > Microsoft.AspNetCore.App.Internal.Assets   (A)   [10.0.1, )   10.0.1  
+   > Microsoft.AspNetCore.SignalR.Client              10.0.2       10.0.2  
+   > OpenTelemetry.Exporter.Console                   1.15.0       1.15.0  
+   > OpenTelemetry.Extensions.Hosting                 1.15.0       1.15.0  
+   > OpenTelemetry.Instrumentation.AspNetCore         1.15.0       1.15.0  
+   > OpenTelemetry.Instrumentation.Http               1.15.0       1.15.0  
+
+(A) : Auto-referenced package.
+
+real	0m1.508s
+user	0m1.564s
+sys	0m0.314s
+Restore complete (0.4s)
+
+Build succeeded in 0.5s
+
+The following sources were used:
+   https://api.nuget.org/v3/index.json
+
+The given project `MyBlog.Core` has no updates given the current sources.
+The given project `MyBlog.E2E` has no updates given the current sources.
+The given project `MyBlog.Infrastructure` has no updates given the current sources.
+The given project `MyBlog.Tests` has no updates given the current sources.
+The given project `MyBlog.Web` has no updates given the current sources.
+
+real	0m1.659s
+user	0m1.689s
+sys	0m0.347s
+==============================================
+  Project Export for LLM Analysis
+==============================================
+
+Project Path: /home/kushal/src/dotnet/MyBlog
+Output File:  docs/llm/dump.txt
+
+Generating directory structure...
+Collecting files...
+Found 115 files to export
+
+Processing (1/115): docker-compose.e2e.yml
+Processing (2/115): docker-compose.yml
+Processing (3/115): .editorconfig
+Processing (4/115): export.sh
+Processing (5/115): .github/workflows/build-deploy.yml
+Processing (6/115): .gitignore
+Processing (7/115): README.md
+Processing (8/115): run-e2e.sh
+Processing (9/115): src/Directory.Build.props
+Processing (10/115): src/Directory.Packages.props
+Processing (11/115): src/.github/workflows/build-deploy.yml
+Processing (12/115): src/global.json
+Processing (13/115): src/MyBlog.Core/Constants/AppConstants.cs
+Processing (14/115): src/MyBlog.Core/Interfaces/IAuthService.cs
+Processing (15/115): src/MyBlog.Core/Interfaces/IImageDimensionService.cs
+Processing (16/115): src/MyBlog.Core/Interfaces/IImageRepository.cs
+Processing (17/115): src/MyBlog.Core/Interfaces/IMarkdownService.cs
+Processing (18/115): src/MyBlog.Core/Interfaces/IPasswordService.cs
+Processing (19/115): src/MyBlog.Core/Interfaces/IPostRepository.cs
+Processing (20/115): src/MyBlog.Core/Interfaces/IReaderTrackingService.cs
+Processing (21/115): src/MyBlog.Core/Interfaces/ISlugService.cs
+Processing (22/115): src/MyBlog.Core/Interfaces/ITelemetryLogRepository.cs
+Processing (23/115): src/MyBlog.Core/Interfaces/IUserRepository.cs
+Processing (24/115): src/MyBlog.Core/Models/Image.cs
+Processing (25/115): src/MyBlog.Core/Models/ImageDimensionCache.cs
+Processing (26/115): src/MyBlog.Core/Models/Post.cs
+Processing (27/115): src/MyBlog.Core/Models/PostDto.cs
+Processing (28/115): src/MyBlog.Core/Models/TelemetryLog.cs
+Processing (29/115): src/MyBlog.Core/Models/User.cs
+Processing (30/115): src/MyBlog.Core/MyBlog.Core.csproj
+Processing (31/115): src/MyBlog.Core/Services/MarkdownService.cs
+Processing (32/115): src/MyBlog.Core/Services/SlugService.cs
+Processing (33/115): src/MyBlog.E2E/Dockerfile
+Processing (34/115): src/MyBlog.E2E/MyBlog.E2E.csproj
+Processing (35/115): src/MyBlog.E2E/PlaywrightCollection.cs
+Processing (36/115): src/MyBlog.E2E/PlaywrightFixture.cs
+Processing (37/115): src/MyBlog.E2E/Tests/AboutPageTests.cs
+Processing (38/115): src/MyBlog.E2E/Tests/HomePageTests.cs
+Processing (39/115): src/MyBlog.E2E/Tests/LoginPageTests.cs
+Processing (40/115): src/MyBlog.E2E/Tests/ThemeSwitcherTests.cs
+Processing (41/115): src/MyBlog.Infrastructure/Data/BlogDbContext.cs
+Processing (42/115): src/MyBlog.Infrastructure/Data/DatabasePathResolver.cs
+Processing (43/115): src/MyBlog.Infrastructure/Data/DatabaseSchemaUpdater.cs
+Processing (44/115): src/MyBlog.Infrastructure/MyBlog.Infrastructure.csproj
+Processing (45/115): src/MyBlog.Infrastructure/Repositories/ImageRepository.cs
+Processing (46/115): src/MyBlog.Infrastructure/Repositories/PostRepository.cs
+Processing (47/115): src/MyBlog.Infrastructure/Repositories/TelemetryLogRepository.cs
+Processing (48/115): src/MyBlog.Infrastructure/Repositories/UserRepository.cs
+Processing (49/115): src/MyBlog.Infrastructure/ServiceCollectionExtensions.cs
+Processing (50/115): src/MyBlog.Infrastructure/Services/AuthService.cs
+Processing (51/115): src/MyBlog.Infrastructure/Services/ImageCacheWarmerService.cs
+Processing (52/115): src/MyBlog.Infrastructure/Services/ImageDimensionService.cs
+Processing (53/115): src/MyBlog.Infrastructure/Services/PasswordService.cs
+Processing (54/115): src/MyBlog.Infrastructure/Services/ReaderTrackingService.cs
+Processing (55/115): src/MyBlog.Infrastructure/Services/TelemetryCleanupService.cs
+Processing (56/115): src/MyBlog.Infrastructure/Telemetry/DatabaseLogExporter.cs
+Processing (57/115): src/MyBlog.Infrastructure/Telemetry/FileLogExporter.cs
+Processing (58/115): src/MyBlog.Infrastructure/Telemetry/TelemetryPathResolver.cs
+Processing (59/115): src/MyBlog.slnx
+Processing (60/115): src/MyBlog.Tests/Integration/AuthServiceLongPasswordTests.cs
+Processing (61/115): src/MyBlog.Tests/Integration/AuthServiceTests.cs
+Processing (62/115): src/MyBlog.Tests/Integration/PasswordChangeTests.cs
+Processing (63/115): src/MyBlog.Tests/Integration/PostRepositoryTests.cs
+Processing (64/115): src/MyBlog.Tests/Integration/TelemetryCleanupTests.cs
+Processing (65/115): src/MyBlog.Tests/MyBlog.Tests.csproj
+Processing (66/115): src/MyBlog.Tests/Unit/LoginRateLimitMiddlewareTests.cs
+Processing (67/115): src/MyBlog.Tests/Unit/MarkdownServiceTests.cs
+Processing (68/115): src/MyBlog.Tests/Unit/PasswordServiceTests.cs
+Processing (69/115): src/MyBlog.Tests/Unit/SlugServiceTests.cs
+Processing (70/115): src/MyBlog.Web/appsettings.Development.json
+Processing (71/115): src/MyBlog.Web/appsettings.json
+Processing (72/115): src/MyBlog.Web/Components/App.razor
+Processing (73/115): src/MyBlog.Web/Components/_Imports.razor
+Processing (74/115): src/MyBlog.Web/Components/Layout/MainLayout.razor
+Processing (75/115): src/MyBlog.Web/Components/Pages/About.razor
+Processing (76/115): src/MyBlog.Web/Components/Pages/About.razor.css
+Processing (77/115): src/MyBlog.Web/Components/Pages/AccessDenied.razor
+Processing (78/115): src/MyBlog.Web/Components/Pages/Admin/ChangePassword.razor
+Processing (79/115): src/MyBlog.Web/Components/Pages/Admin/ChangePassword.razor.css
+Processing (80/115): src/MyBlog.Web/Components/Pages/Admin/Dashboard.razor
+Processing (81/115): src/MyBlog.Web/Components/Pages/Admin/Dashboard.razor.css
+Processing (82/115): src/MyBlog.Web/Components/Pages/Admin/ImageManager.razor
+Processing (83/115): src/MyBlog.Web/Components/Pages/Admin/ImageManager.razor.css
+Processing (84/115): src/MyBlog.Web/Components/Pages/Admin/PostEditor.razor
+Processing (85/115): src/MyBlog.Web/Components/Pages/Admin/PostEditor.razor.css
+Processing (86/115): src/MyBlog.Web/Components/Pages/Admin/PostList.razor
+Processing (87/115): src/MyBlog.Web/Components/Pages/Admin/UserEditor.razor
+Processing (88/115): src/MyBlog.Web/Components/Pages/Admin/UserEditor.razor.css
+Processing (89/115): src/MyBlog.Web/Components/Pages/Admin/UserList.razor
+Processing (90/115): src/MyBlog.Web/Components/Pages/Admin/UserList.razor.css
+Processing (91/115): src/MyBlog.Web/Components/Pages/Home.razor
+Processing (92/115): src/MyBlog.Web/Components/Pages/Login.razor
+Processing (93/115): src/MyBlog.Web/Components/Pages/Login.razor.css
+Processing (94/115): src/MyBlog.Web/Components/Pages/PostDetail.razor
+Processing (95/115): src/MyBlog.Web/Components/Pages/PostDetail.razor.css
+Processing (96/115): src/MyBlog.Web/Components/Routes.razor
+Processing (97/115): src/MyBlog.Web/Components/Shared/Footer.razor
+Processing (98/115): src/MyBlog.Web/Components/Shared/Footer.razor.css
+Processing (99/115): src/MyBlog.Web/Components/Shared/MarkdownRenderer.razor
+Processing (100/115): src/MyBlog.Web/Components/Shared/Pagination.razor
+Processing (101/115): src/MyBlog.Web/Components/Shared/PostCard.razor
+Processing (102/115): src/MyBlog.Web/Components/Shared/PostCard.razor.css
+Processing (103/115): src/MyBlog.Web/Components/Shared/ReaderBadge.razor
+Processing (104/115): src/MyBlog.Web/Components/Shared/ReaderBadge.razor.css
+Processing (105/115): src/MyBlog.Web/Components/Shared/RedirectToLogin.razor
+Processing (106/115): src/MyBlog.Web/Components/Shared/ThemeSwitcher.razor
+Processing (107/115): src/MyBlog.Web/Components/Shared/ThemeSwitcher.razor.css
+Processing (108/115): src/MyBlog.Web/Dockerfile
+Processing (109/115): src/MyBlog.Web/Hubs/ReaderHub.cs
+Processing (110/115): src/MyBlog.Web/Middleware/LoginRateLimitMiddleware.cs
+Processing (111/115): src/MyBlog.Web/MyBlog.Web.csproj
+Processing (112/115): src/MyBlog.Web/Program.cs
+Processing (113/115): src/MyBlog.Web/Properties/launchSettings.json
+Processing (114/115): src/MyBlog.Web/wwwroot/css/site.css
+Processing (115/115): src/MyBlog.Web/wwwroot/js/site.js
+
+==============================================
+  Export Complete!
+==============================================
+
+Output file:    docs/llm/dump.txt
+Files exported: 115
+Files skipped:  0
+Output size:    424.06 KB
+
+File types included:
+  • Source code: .cs, .fs, .vb
+  • Blazor/Razor: .razor
+  • UI/XAML: .axaml, .xaml, .paml
+  • Projects: .csproj, .slnx, .sln, .props, .targets
+  • Config: .json, .yaml, .yml, .xml, .config
+  • Docs: .md, .txt
+  • Scripts: .sh, .ps1, .cmd, .bat
+  • Web: .css, .scss, .js, .ts
+  • Other: .sql, .resx, Dockerfile, etc.
+
+
+real	0m1.171s
+user	0m0.712s
+sys	0m0.691s
+kushal@fedora:~/src/dotnet/MyBlog$ cat run-e2e.sh; time bash run-e2e.sh
+

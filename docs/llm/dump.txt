@@ -1,6 +1,6 @@
 ===============================================================================
 PROJECT EXPORT
-Generated: Mon Jan 26 12:39:48 PM EST 2026
+Generated: Mon Jan 26 12:51:11 PM EST 2026
 Project Path: /home/kushal/src/dotnet/MyBlog
 ===============================================================================
 
@@ -4897,8 +4897,8 @@ public sealed class HomePageTests(PlaywrightFixture fixture)
 
 ================================================================================
 FILE: src/MyBlog.E2E/Tests/LoginPageTests.cs
-SIZE: 4.08 KB
-MODIFIED: 2026-01-26 11:44:49
+SIZE: 4.50 KB
+MODIFIED: 2026-01-26 12:49:21
 ================================================================================
 
 using Microsoft.Playwright;
@@ -4908,7 +4908,7 @@ namespace MyBlog.E2E.Tests;
 
 /// <summary>
 /// E2E tests for authentication (Epic 1: Authentication).
-/// The login page uses a Blazor interactive form that handles login server-side.
+/// The login page uses a standard HTML form that posts to /login minimal API endpoint.
 /// </summary>
 [Collection(PlaywrightCollection.Name)]
 public sealed class LoginPageTests(PlaywrightFixture fixture)
@@ -4949,17 +4949,25 @@ public sealed class LoginPageTests(PlaywrightFixture fixture)
 
         await page.GotoAsync("/login");
 
-        // Wait for Blazor to be ready (SignalR connection established)
-        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
-        await page.WaitForTimeoutAsync(500);
+        // Wait for page to be fully loaded
+        await page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
 
+        // Fill in invalid credentials
         await page.FillAsync("input#username, input[name='username']", "invalid");
         await page.FillAsync("input#password, input[name='password']", "invalid");
-        await page.ClickAsync("button[type='submit']");
 
-        // Wait for error message to appear (Blazor interactive update)
+        // Start waiting for navigation BEFORE clicking (modern Playwright pattern)
+        var waitForUrlTask = page.WaitForURLAsync("**/login**", new PageWaitForURLOptions { Timeout = 15000 });
+        await page.ClickAsync("button[type='submit']");
+        await waitForUrlTask;
+
+        // Wait for page to render
+        await page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
+
+        // Verify error message is displayed
         var errorMessage = page.Locator(".error-message");
-        await Assertions.Expect(errorMessage).ToBeVisibleAsync(new LocatorAssertionsToBeVisibleOptions { Timeout = 10000 });
+        await Assertions.Expect(errorMessage).ToBeVisibleAsync(new LocatorAssertionsToBeVisibleOptions { Timeout = 5000 });
+        await Assertions.Expect(errorMessage).ToContainTextAsync("Invalid username or password");
     }
 
     [Fact]
@@ -4969,19 +4977,17 @@ public sealed class LoginPageTests(PlaywrightFixture fixture)
 
         await page.GotoAsync("/login");
 
-        // Wait for Blazor to be ready (SignalR connection established)
-        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
-        await page.WaitForTimeoutAsync(500);
+        // Wait for page to be fully loaded
+        await page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
 
-        // Use default credentials
+        // Fill in valid credentials
         await page.FillAsync("input#username, input[name='username']", "admin");
         await page.FillAsync("input#password, input[name='password']", "ChangeMe123!");
 
-        // Click and wait for navigation (forceLoad: true causes full page navigation)
+        // Start waiting for navigation BEFORE clicking (modern Playwright pattern)
+        var waitForUrlTask = page.WaitForURLAsync("**/admin**", new PageWaitForURLOptions { Timeout = 15000 });
         await page.ClickAsync("button[type='submit']");
-
-        // Wait for navigation to complete - the form submission will redirect with forceLoad
-        await page.WaitForURLAsync("**/admin**", new PageWaitForURLOptions { Timeout = 15000 });
+        await waitForUrlTask;
 
         // Verify we're on an admin page
         var url = page.Url;
@@ -4995,16 +5001,20 @@ public sealed class LoginPageTests(PlaywrightFixture fixture)
 
         await page.GotoAsync("/login");
 
-        // Wait for Blazor to be ready (SignalR connection established)
-        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
-        await page.WaitForTimeoutAsync(500);
+        // Wait for page to be fully loaded
+        await page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
 
+        // Fill in valid credentials
         await page.FillAsync("input#username, input[name='username']", "admin");
         await page.FillAsync("input#password, input[name='password']", "ChangeMe123!");
-        await page.ClickAsync("button[type='submit']");
 
-        // Wait for navigation to admin
-        await page.WaitForURLAsync("**/admin**", new PageWaitForURLOptions { Timeout = 15000 });
+        // Start waiting for navigation BEFORE clicking (modern Playwright pattern)
+        var waitForUrlTask = page.WaitForURLAsync("**/admin**", new PageWaitForURLOptions { Timeout = 15000 });
+        await page.ClickAsync("button[type='submit']");
+        await waitForUrlTask;
+
+        // Wait for page to fully render
+        await page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
 
         // Logout button should now be visible
         var logoutButton = page.Locator("button:has-text('Logout'), form[action='/logout'] button");
@@ -13788,7 +13798,7 @@ window.themeManager = {
 
 
 ===============================================================================
-EXPORT COMPLETED: Mon Jan 26 12:39:49 PM EST 2026
+EXPORT COMPLETED: Mon Jan 26 12:51:13 PM EST 2026
 Total Files Found: 115
 Files Exported: 115
 Files Skipped: 0 (binary or large files)
