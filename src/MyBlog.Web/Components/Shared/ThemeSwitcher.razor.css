@@ -1,8 +1,5 @@
 /* ThemeSwitcher.razor.css - Component-scoped styles */
 
-/* These styles are already in site.css, but included here for component isolation */
-/* You can remove the duplicate definitions from site.css if you prefer component-scoped */
-
 .theme-switcher {
     position: relative;
     display: inline-block;

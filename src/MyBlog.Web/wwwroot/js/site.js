@@ -28,11 +28,11 @@ window.themeManager = {
         this.dotNetRef = dotNetRef;
 
         // Check for saved preference
-        let savedTheme = localStorage.getItem(this.storageKey);
+        var savedTheme = localStorage.getItem(this.storageKey);
 
         // If no saved preference, check system preference
         if (!savedTheme) {
-            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
             savedTheme = prefersDark ? 'dark' : 'light';
         }
 
@@ -45,11 +45,12 @@ window.themeManager = {
         this.applyTheme(savedTheme);
 
         // Listen for system preference changes
-        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+        var self = this;
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
             // Only auto-switch if user hasn't explicitly chosen a theme
-            if (!localStorage.getItem(this.storageKey)) {
-                const newTheme = e.matches ? 'dark' : 'light';
-                this.setTheme(newTheme);
+            if (!localStorage.getItem(self.storageKey)) {
+                var newTheme = e.matches ? 'dark' : 'light';
+                self.setTheme(newTheme);
             }
         });
 
@@ -64,7 +65,7 @@ window.themeManager = {
         document.documentElement.setAttribute('data-theme', themeId);
 
         // Update meta theme-color for mobile browsers
-        const isDark = this.themes[themeId]?.isDark ?? false;
+        var isDark = this.themes[themeId] ? this.themes[themeId].isDark : false;
         this.updateMetaThemeColor(isDark);
     },
 
@@ -74,7 +75,7 @@ window.themeManager = {
      */
     setTheme: function(themeId) {
         if (!this.themes[themeId]) {
-            console.warn(`Theme "${themeId}" not found, using default`);
+            console.warn('Theme "' + themeId + '" not found, using default');
             themeId = this.defaultTheme;
         }
 
@@ -93,7 +94,7 @@ window.themeManager = {
      * @param {boolean} isDark - Whether the theme is dark
      */
     updateMetaThemeColor: function(isDark) {
-        let metaThemeColor = document.querySelector('meta[name="theme-color"]');
+        var metaThemeColor = document.querySelector('meta[name="theme-color"]');
 
         if (!metaThemeColor) {
             metaThemeColor = document.createElement('meta');
@@ -110,12 +111,12 @@ window.themeManager = {
      * @param {string} themeId - The theme identifier
      */
     announceThemeChange: function(themeId) {
-        const themeName = themeId.split('-').map(w =>
-            w.charAt(0).toUpperCase() + w.slice(1)
-        ).join(' ');
+        var themeName = themeId.split('-').map(function(w) {
+            return w.charAt(0).toUpperCase() + w.slice(1);
+        }).join(' ');
 
         // Create or reuse announcement element
-        let announcer = document.getElementById('theme-announcer');
+        var announcer = document.getElementById('theme-announcer');
         if (!announcer) {
             announcer = document.createElement('div');
             announcer.id = 'theme-announcer';
@@ -127,7 +128,7 @@ window.themeManager = {
         }
 
         // Announce the change
-        announcer.textContent = `Theme changed to ${themeName}`;
+        announcer.textContent = 'Theme changed to ' + themeName;
     },
 
     /**
@@ -135,17 +136,20 @@ window.themeManager = {
      * @param {object} dotNetRef - Reference to the Blazor component
      */
     registerClickOutside: function(dotNetRef) {
-        document.addEventListener('click', (e) => {
-            const themeSwitcher = e.target.closest('.theme-switcher');
-            if (!themeSwitcher && dotNetRef) {
-                dotNetRef.invokeMethodAsync('CloseMenu');
+        this.dotNetRef = dotNetRef;
+        var self = this;
+
+        document.addEventListener('click', function(e) {
+            var themeSwitcher = e.target.closest('.theme-switcher');
+            if (!themeSwitcher && self.dotNetRef) {
+                self.dotNetRef.invokeMethodAsync('CloseMenu');
             }
         });
 
         // Also close on escape key
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && dotNetRef) {
-                dotNetRef.invokeMethodAsync('CloseMenu');
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && self.dotNetRef) {
+                self.dotNetRef.invokeMethodAsync('CloseMenu');
             }
         });
     },
@@ -163,8 +167,8 @@ window.themeManager = {
      * @returns {boolean}
      */
     isDarkMode: function() {
-        const current = this.getCurrentTheme();
-        return this.themes[current]?.isDark ?? false;
+        var current = this.getCurrentTheme();
+        return this.themes[current] ? this.themes[current].isDark : false;
     }
 };
 
@@ -173,13 +177,13 @@ window.themeManager = {
  * This runs before Blazor initializes
  */
 (function() {
-    const storageKey = 'myblog-theme';
-    const defaultTheme = 'light';
+    var storageKey = 'myblog-theme';
+    var defaultTheme = 'light';
 
-    let theme = localStorage.getItem(storageKey);
+    var theme = localStorage.getItem(storageKey);
 
     if (!theme) {
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
         theme = prefersDark ? 'dark' : 'light';
     }
 

@@ -1,12 +1,12 @@
 @inherits LayoutComponentBase
-@inject NavigationManager Navigation
+@inject IConfiguration Configuration
 
 <div class="layout">
     <a href="#main-content" class="skip-link">Skip to main content</a>
 
     <header class="header">
         <div class="container">
-            <a href="/" class="logo">MyBlog</a>
+            <a href="/" class="logo">@(Configuration["Application:Title"] ?? "MyBlog")</a>
             <nav class="nav" aria-label="Main navigation">
                 <a href="/">Home</a>
                 <a href="/about">About</a>

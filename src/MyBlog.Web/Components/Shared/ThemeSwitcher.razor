@@ -1,3 +1,4 @@
+@implements IDisposable
 @inject IJSRuntime JS
 
 <div class="theme-switcher">
@@ -32,10 +33,10 @@
     </button>
 
     <div class="theme-menu @(_isOpen ? "open" : "")" role="menu" aria-label="Theme options">
-        @foreach (var theme in _themes)
+        @foreach (var theme in Themes)
         {
             <button class="theme-option @(theme.Id == _currentTheme ? "active" : "")"
-                    @onclick="() => SelectTheme(theme.Id)"
+                    @onclick="() => SelectThemeAsync(theme.Id)"
                     @onclick:stopPropagation="true"
                     role="menuitem"
                     aria-current="@(theme.Id == _currentTheme ? "true" : null)">
@@ -50,10 +51,11 @@
     private bool _isOpen;
     private string _currentTheme = "light";
     private DotNetObjectReference<ThemeSwitcher>? _objRef;
+    private bool _initialized;
 
-    private readonly record struct ThemeOption(string Id, string Name, bool IsDark);
+    private record ThemeOption(string Id, string Name, bool IsDark);
 
-    private static readonly ThemeOption[] _themes =
+    private static readonly ThemeOption[] Themes =
     [
         new("light", "Light", false),
         new("dark", "Dark", true),
@@ -65,16 +67,25 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender)
+        if (firstRender && !_initialized)
         {
+            _initialized = true;
             _objRef = DotNetObjectReference.Create(this);
 
-            // Initialize theme from localStorage or system preference
-            _currentTheme = await JS.InvokeAsync<string>("themeManager.init", _objRef);
-            StateHasChanged();
+            try
+            {
+                // Initialize theme from localStorage or system preference
+                _currentTheme = await JS.InvokeAsync<string>("themeManager.init", _objRef);
 
-            // Register click outside handler
-            await JS.InvokeVoidAsync("themeManager.registerClickOutside", _objRef);
+                // Register click outside handler
+                await JS.InvokeVoidAsync("themeManager.registerClickOutside", _objRef);
+
+                StateHasChanged();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Theme initialization error: {ex.Message}");
+            }
         }
     }
 
@@ -93,11 +104,19 @@
         }
     }
 
-    private async Task SelectTheme(string themeId)
+    private async Task SelectThemeAsync(string themeId)
     {
         _currentTheme = themeId;
         _isOpen = false;
-        await JS.InvokeVoidAsync("themeManager.setTheme", themeId);
+
+        try
+        {
+            await JS.InvokeVoidAsync("themeManager.setTheme", themeId);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Theme selection error: {ex.Message}");
+        }
     }
 
     private static bool IsDarkTheme(string themeId)
