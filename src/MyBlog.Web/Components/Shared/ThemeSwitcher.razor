@@ -1,0 +1,112 @@
+@inject IJSRuntime JS
+
+<div class="theme-switcher">
+    <button class="theme-switcher-btn"
+            @onclick="ToggleMenu"
+            @onclick:stopPropagation="true"
+            aria-label="Change theme"
+            aria-expanded="@_isOpen"
+            aria-haspopup="true"
+            title="Change theme">
+        @* Sun/Moon icon that adapts to current theme *@
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            @if (IsDarkTheme(_currentTheme))
+            {
+                @* Moon icon for dark themes *@
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            }
+            else
+            {
+                @* Sun icon for light themes *@
+                <circle cx="12" cy="12" r="5"></circle>
+                <line x1="12" y1="1" x2="12" y2="3"></line>
+                <line x1="12" y1="21" x2="12" y2="23"></line>
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                <line x1="1" y1="12" x2="3" y2="12"></line>
+                <line x1="21" y1="12" x2="23" y2="12"></line>
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            }
+        </svg>
+    </button>
+
+    <div class="theme-menu @(_isOpen ? "open" : "")" role="menu" aria-label="Theme options">
+        @foreach (var theme in _themes)
+        {
+            <button class="theme-option @(theme.Id == _currentTheme ? "active" : "")"
+                    @onclick="() => SelectTheme(theme.Id)"
+                    @onclick:stopPropagation="true"
+                    role="menuitem"
+                    aria-current="@(theme.Id == _currentTheme ? "true" : null)">
+                <span class="theme-preview theme-preview-@theme.Id" aria-hidden="true"></span>
+                <span>@theme.Name</span>
+            </button>
+        }
+    </div>
+</div>
+
+@code {
+    private bool _isOpen;
+    private string _currentTheme = "light";
+    private DotNetObjectReference<ThemeSwitcher>? _objRef;
+
+    private readonly record struct ThemeOption(string Id, string Name, bool IsDark);
+
+    private static readonly ThemeOption[] _themes =
+    [
+        new("light", "Light", false),
+        new("dark", "Dark", true),
+        new("sepia", "Sepia", false),
+        new("nord", "Nord", true),
+        new("solarized-light", "Solarized Light", false),
+        new("dracula", "Dracula", true)
+    ];
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _objRef = DotNetObjectReference.Create(this);
+
+            // Initialize theme from localStorage or system preference
+            _currentTheme = await JS.InvokeAsync<string>("themeManager.init", _objRef);
+            StateHasChanged();
+
+            // Register click outside handler
+            await JS.InvokeVoidAsync("themeManager.registerClickOutside", _objRef);
+        }
+    }
+
+    private void ToggleMenu()
+    {
+        _isOpen = !_isOpen;
+    }
+
+    [JSInvokable]
+    public void CloseMenu()
+    {
+        if (_isOpen)
+        {
+            _isOpen = false;
+            StateHasChanged();
+        }
+    }
+
+    private async Task SelectTheme(string themeId)
+    {
+        _currentTheme = themeId;
+        _isOpen = false;
+        await JS.InvokeVoidAsync("themeManager.setTheme", themeId);
+    }
+
+    private static bool IsDarkTheme(string themeId)
+    {
+        return themeId is "dark" or "nord" or "dracula";
+    }
+
+    public void Dispose()
+    {
+        _objRef?.Dispose();
+    }
+}
