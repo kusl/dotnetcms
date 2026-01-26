@@ -5,7 +5,7 @@ namespace MyBlog.E2E.Tests;
 
 /// <summary>
 /// E2E tests for authentication (Epic 1: Authentication).
-/// The login page uses a Blazor form that handles login server-side.
+/// The login page uses a Blazor interactive form that handles login server-side.
 /// </summary>
 [Collection(PlaywrightCollection.Name)]
 public sealed class LoginPageTests(PlaywrightFixture fixture)
@@ -45,17 +45,16 @@ public sealed class LoginPageTests(PlaywrightFixture fixture)
         var page = await _fixture.CreatePageAsync();
 
         await page.GotoAsync("/login");
+        
+        // Wait for Blazor to be ready (SignalR connection established)
         await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+        await page.WaitForTimeoutAsync(500);
 
         await page.FillAsync("input#username, input[name='username']", "invalid");
         await page.FillAsync("input#password, input[name='password']", "invalid");
         await page.ClickAsync("button[type='submit']");
 
-        // Wait for the form to be processed and page to update
-        // The Blazor form with data-enhance="false" does a full page reload
-        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
-
-        // Wait for error message to appear
+        // Wait for error message to appear (Blazor interactive update)
         var errorMessage = page.Locator(".error-message");
         await Assertions.Expect(errorMessage).ToBeVisibleAsync(new LocatorAssertionsToBeVisibleOptions { Timeout = 10000 });
     }
@@ -66,14 +65,19 @@ public sealed class LoginPageTests(PlaywrightFixture fixture)
         var page = await _fixture.CreatePageAsync();
 
         await page.GotoAsync("/login");
+        
+        // Wait for Blazor to be ready (SignalR connection established)
         await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+        await page.WaitForTimeoutAsync(500);
 
         // Use default credentials
         await page.FillAsync("input#username, input[name='username']", "admin");
         await page.FillAsync("input#password, input[name='password']", "ChangeMe123!");
+        
+        // Click and wait for navigation (forceLoad: true causes full page navigation)
         await page.ClickAsync("button[type='submit']");
 
-        // Wait for navigation to complete - the form submission will redirect
+        // Wait for navigation to complete - the form submission will redirect with forceLoad
         await page.WaitForURLAsync("**/admin**", new PageWaitForURLOptions { Timeout = 15000 });
 
         // Verify we're on an admin page
@@ -87,7 +91,10 @@ public sealed class LoginPageTests(PlaywrightFixture fixture)
         var page = await _fixture.CreatePageAsync();
 
         await page.GotoAsync("/login");
+        
+        // Wait for Blazor to be ready (SignalR connection established)
         await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+        await page.WaitForTimeoutAsync(500);
 
         await page.FillAsync("input#username, input[name='username']", "admin");
         await page.FillAsync("input#password, input[name='password']", "ChangeMe123!");

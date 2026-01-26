@@ -30,12 +30,16 @@ public sealed class ThemeSwitcherTests(PlaywrightFixture fixture)
         var page = await _fixture.CreatePageAsync();
 
         await page.GotoAsync("/");
+        
+        // Wait for Blazor to be fully ready (SignalR connection and JS interop initialized)
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+        await page.WaitForTimeoutAsync(1000);
 
         // Click the theme switcher button to open the menu
         var themeSwitcherBtn = page.Locator(".theme-switcher-btn");
         await themeSwitcherBtn.ClickAsync();
 
-        // Wait for the menu to be visible
+        // Wait for the menu to be visible (CSS transition)
         var themeMenu = page.Locator(".theme-menu.open");
         await Assertions.Expect(themeMenu).ToBeVisibleAsync(new LocatorAssertionsToBeVisibleOptions { Timeout = 5000 });
 
@@ -57,12 +61,16 @@ public sealed class ThemeSwitcherTests(PlaywrightFixture fixture)
         var page = await _fixture.CreatePageAsync();
 
         await page.GotoAsync("/");
+        
+        // Wait for Blazor to be fully ready (SignalR connection and JS interop initialized)
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+        await page.WaitForTimeoutAsync(1000);
 
         // Click the theme switcher button to open the menu
         var themeSwitcherBtn = page.Locator(".theme-switcher-btn");
         await themeSwitcherBtn.ClickAsync();
 
-        // Wait for the menu to be visible
+        // Wait for the menu to be visible (CSS transition)
         var themeMenu = page.Locator(".theme-menu.open");
         await Assertions.Expect(themeMenu).ToBeVisibleAsync(new LocatorAssertionsToBeVisibleOptions { Timeout = 5000 });
 

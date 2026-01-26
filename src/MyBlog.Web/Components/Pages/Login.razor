@@ -1,4 +1,5 @@
 @page "/login"
+@rendermode InteractiveServer
 @inject IAuthService AuthService
 @inject NavigationManager Navigation
 @inject IHttpContextAccessor HttpContextAccessor
@@ -16,9 +17,7 @@
         <div class="error-message">@_error</div>
     }
 
-    <form method="post" @onsubmit="HandleLogin" @formname="login" data-enhance="false">
-        <AntiforgeryToken />
-        
+    <form @onsubmit="HandleLogin">
         <div class="form-group">
             <label for="username">Username</label>
             <input type="text" id="username" name="username" @bind="_username" required />
@@ -41,24 +40,15 @@
     [SupplyParameterFromQuery]
     public string? ReturnUrl { get; set; }
 
-    [SupplyParameterFromForm(Name = "username")]
-    public string? FormUsername { get; set; }
-
-    [SupplyParameterFromForm(Name = "password")]
-    public string? FormPassword { get; set; }
-
     private async Task HandleLogin()
     {
-        var username = FormUsername ?? _username;
-        var password = FormPassword ?? _password;
-
-        if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+        if (string.IsNullOrWhiteSpace(_username) || string.IsNullOrWhiteSpace(_password))
         {
             _error = "Username and password are required";
             return;
         }
 
-        var user = await AuthService.AuthenticateAsync(username, password);
+        var user = await AuthService.AuthenticateAsync(_username, _password);
         if (user is null)
         {
             _error = "Invalid username or password";
