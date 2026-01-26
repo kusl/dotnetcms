@@ -5,7 +5,7 @@ namespace MyBlog.E2E.Tests;
 
 /// <summary>
 /// E2E tests for authentication (Epic 1: Authentication).
-/// The login page uses a Blazor interactive form that handles login server-side.
+/// The login page uses a standard HTML form that posts to /login minimal API endpoint.
 /// </summary>
 [Collection(PlaywrightCollection.Name)]
 public sealed class LoginPageTests(PlaywrightFixture fixture)
@@ -46,17 +46,31 @@ public sealed class LoginPageTests(PlaywrightFixture fixture)
 
         await page.GotoAsync("/login");
 
-        // Wait for Blazor to be ready (SignalR connection established)
-        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
-        await page.WaitForTimeoutAsync(500);
+        // Wait for page to be fully loaded
+        await page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
 
+        // Fill in invalid credentials
         await page.FillAsync("input#username, input[name='username']", "invalid");
         await page.FillAsync("input#password, input[name='password']", "invalid");
-        await page.ClickAsync("button[type='submit']");
 
-        // Wait for error message to appear (Blazor interactive update)
+        // Submit form and wait for navigation (POST redirects to /login?error=invalid)
+        await page.RunAndWaitForNavigationAsync(async () =>
+        {
+            await page.ClickAsync("button[type='submit']");
+        }, new PageRunAndWaitForNavigationOptions
+        {
+            UrlString = "**/login**",
+            WaitUntil = WaitUntilState.Load,
+            Timeout = 15000
+        });
+
+        // Wait for page to render
+        await page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
+
+        // Verify error message is displayed
         var errorMessage = page.Locator(".error-message");
-        await Assertions.Expect(errorMessage).ToBeVisibleAsync(new LocatorAssertionsToBeVisibleOptions { Timeout = 10000 });
+        await Assertions.Expect(errorMessage).ToBeVisibleAsync(new LocatorAssertionsToBeVisibleOptions { Timeout = 5000 });
+        await Assertions.Expect(errorMessage).ToContainTextAsync("Invalid username or password");
     }
 
     [Fact]
@@ -66,19 +80,23 @@ public sealed class LoginPageTests(PlaywrightFixture fixture)
 
         await page.GotoAsync("/login");
 
-        // Wait for Blazor to be ready (SignalR connection established)
-        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
-        await page.WaitForTimeoutAsync(500);
+        // Wait for page to be fully loaded
+        await page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
 
-        // Use default credentials
+        // Fill in valid credentials
         await page.FillAsync("input#username, input[name='username']", "admin");
         await page.FillAsync("input#password, input[name='password']", "ChangeMe123!");
 
-        // Click and wait for navigation (forceLoad: true causes full page navigation)
-        await page.ClickAsync("button[type='submit']");
-
-        // Wait for navigation to complete - the form submission will redirect with forceLoad
-        await page.WaitForURLAsync("**/admin**", new PageWaitForURLOptions { Timeout = 15000 });
+        // Submit form and wait for navigation to admin
+        await page.RunAndWaitForNavigationAsync(async () =>
+        {
+            await page.ClickAsync("button[type='submit']");
+        }, new PageRunAndWaitForNavigationOptions
+        {
+            UrlString = "**/admin**",
+            WaitUntil = WaitUntilState.Load,
+            Timeout = 15000
+        });
 
         // Verify we're on an admin page
         var url = page.Url;
@@ -92,16 +110,26 @@ public sealed class LoginPageTests(PlaywrightFixture fixture)
 
         await page.GotoAsync("/login");
 
-        // Wait for Blazor to be ready (SignalR connection established)
-        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
-        await page.WaitForTimeoutAsync(500);
+        // Wait for page to be fully loaded
+        await page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
 
+        // Fill in valid credentials
         await page.FillAsync("input#username, input[name='username']", "admin");
         await page.FillAsync("input#password, input[name='password']", "ChangeMe123!");
-        await page.ClickAsync("button[type='submit']");
 
-        // Wait for navigation to admin
-        await page.WaitForURLAsync("**/admin**", new PageWaitForURLOptions { Timeout = 15000 });
+        // Submit form and wait for navigation to admin
+        await page.RunAndWaitForNavigationAsync(async () =>
+        {
+            await page.ClickAsync("button[type='submit']");
+        }, new PageRunAndWaitForNavigationOptions
+        {
+            UrlString = "**/admin**",
+            WaitUntil = WaitUntilState.Load,
+            Timeout = 15000
+        });
+
+        // Wait for page to fully render
+        await page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
 
         // Logout button should now be visible
         var logoutButton = page.Locator("button:has-text('Logout'), form[action='/logout'] button");
