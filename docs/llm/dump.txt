@@ -1,6 +1,6 @@
 ===============================================================================
 PROJECT EXPORT
-Generated: Mon Jan 26 08:51:42 AM EST 2026
+Generated: Mon Jan 26 08:55:32 AM EST 2026
 Project Path: /home/kushal/src/dotnet/MyBlog
 ===============================================================================
 
@@ -10392,8 +10392,8 @@ else
 
 ================================================================================
 FILE: src/MyBlog.Web/Components/Pages/Login.razor
-SIZE: 2.61 KB
-MODIFIED: 2025-12-30 21:50:38
+SIZE: 2.63 KB
+MODIFIED: 2026-01-26 08:54:09
 ================================================================================
 
 @page "/login"
@@ -10414,7 +10414,7 @@ MODIFIED: 2025-12-30 21:50:38
         <div class="error-message">@_error</div>
     }
 
-    <form method="post" @onsubmit="HandleLogin" @formname="login">
+    <form method="post" @onsubmit="HandleLogin" @formname="login" data-enhance="false">
         <AntiforgeryToken />
         
         <div class="form-group">
@@ -12846,7 +12846,7 @@ window.themeManager = {
 
 
 ===============================================================================
-EXPORT COMPLETED: Mon Jan 26 08:51:43 AM EST 2026
+EXPORT COMPLETED: Mon Jan 26 08:55:33 AM EST 2026
 Total Files Found: 103
 Files Exported: 103
 Files Skipped: 0 (binary or large files)

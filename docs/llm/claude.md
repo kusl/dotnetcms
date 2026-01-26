@@ -4998,3 +4998,4 @@ This is especially common on mobile because:
 
 
 
+it is interesting though, isn't it that this is essentially a blind spot for our xunit unit tests. even with the latest version of xunit tests, we still can't catch ui related stuff, only c sharp code 
