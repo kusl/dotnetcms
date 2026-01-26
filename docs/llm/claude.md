@@ -6718,3 +6718,83 @@ user	0m41.774s
 sys	0m22.800s
 kushal@fedora:~/src/dotnet/MyBlog$ 
 
+The issue is that `--no-restore` flag is being used but the restore only restored the E2E project's direct dependencies, not all the transitive dependencies from the referenced projects. The `Microsoft.EntityFrameworkCore.Analyzers` package comes from the `MyBlog.Infrastructure` project through `MyBlog.Web`.
+
+Let me fix the Dockerfile by removing the `--no-restore` flag and letting the build do its own restore, or better yet, restore all projects properly:Also, let me update the packages to use the latest Playwright version (1.49.0 → 1.57.0):I kept Playwright at 1.49.0 for now because the Playwright CLI version needs to match the NuGet package version. If you want to upgrade to 1.57.0, you'd need to update both the `Directory.Packages.props` AND the Dockerfile's `dotnet tool install` command. Let me know if you want to upgrade.
+
+Now run:
+
+```bash
+./run-e2e.sh --clean
+./run-e2e.sh
+```
+
+The key fix is removing `--no-restore` from the build command and letting `dotnet build` handle the restore properly. This ensures all transitive dependencies (like `Microsoft.EntityFrameworkCore.Analyzers`) are available.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -36,7 +36,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     xdg-utils \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy project files for restore
+# Copy all project files first for restore
 COPY Directory.Build.props .
 COPY Directory.Packages.props .
 COPY MyBlog.Core/MyBlog.Core.csproj MyBlog.Core/
@@ -44,14 +44,17 @@ COPY MyBlog.Infrastructure/MyBlog.Infrastructure.csproj MyBlog.Infrastructure/
 COPY MyBlog.Web/MyBlog.Web.csproj MyBlog.Web/
 COPY MyBlog.E2E/MyBlog.E2E.csproj MyBlog.E2E/
 
-# Restore E2E project and all dependencies
-RUN dotnet restore MyBlog.E2E/MyBlog.E2E.csproj
+# Restore ALL projects to ensure transitive dependencies are available
+RUN dotnet restore MyBlog.Core/MyBlog.Core.csproj && \
+    dotnet restore MyBlog.Infrastructure/MyBlog.Infrastructure.csproj && \
+    dotnet restore MyBlog.Web/MyBlog.Web.csproj && \
+    dotnet restore MyBlog.E2E/MyBlog.E2E.csproj
 
 # Copy all source code
 COPY . .
 
-# Build the E2E project
-RUN dotnet build MyBlog.E2E/MyBlog.E2E.csproj -c Release --no-restore
+# Build the E2E project (with restore to be safe)
+RUN dotnet build MyBlog.E2E/MyBlog.E2E.csproj -c Release
 
 # Install Playwright CLI and browsers
 RUN dotnet tool install --global Microsoft.Playwright.CLI --version 1.49.0
