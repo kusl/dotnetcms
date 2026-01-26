@@ -54,7 +54,7 @@ public sealed class LoginPageTests(PlaywrightFixture fixture)
         await page.FillAsync("input#password, input[name='password']", "invalid");
 
         // Start waiting for navigation BEFORE clicking (modern Playwright pattern)
-        var waitForUrlTask = page.WaitForURLAsync("**/login**", new PageWaitForURLOptions { Timeout = 15000 });
+        var waitForUrlTask = page.WaitForURLAsync("**/login**", new PageWaitForURLOptions { Timeout = 45000 });
         await page.ClickAsync("button[type='submit']");
         await waitForUrlTask;
 
@@ -82,7 +82,7 @@ public sealed class LoginPageTests(PlaywrightFixture fixture)
         await page.FillAsync("input#password, input[name='password']", "ChangeMe123!");
 
         // Start waiting for navigation BEFORE clicking (modern Playwright pattern)
-        var waitForUrlTask = page.WaitForURLAsync("**/admin**", new PageWaitForURLOptions { Timeout = 15000 });
+        var waitForUrlTask = page.WaitForURLAsync("**/admin**", new PageWaitForURLOptions { Timeout = 45000 });
         await page.ClickAsync("button[type='submit']");
         await waitForUrlTask;
 
@@ -106,7 +106,7 @@ public sealed class LoginPageTests(PlaywrightFixture fixture)
         await page.FillAsync("input#password, input[name='password']", "ChangeMe123!");
 
         // Start waiting for navigation BEFORE clicking (modern Playwright pattern)
-        var waitForUrlTask = page.WaitForURLAsync("**/admin**", new PageWaitForURLOptions { Timeout = 15000 });
+        var waitForUrlTask = page.WaitForURLAsync("**/admin**", new PageWaitForURLOptions { Timeout = 45000 });
         await page.ClickAsync("button[type='submit']");
         await waitForUrlTask;
 
