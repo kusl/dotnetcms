@@ -4598,3 +4598,253 @@ The Razor components themselves don't need any changes - Blazor automatically pi
 
 
 
+I don't know why this happens but sometimes log in fails 
+on mobile, I don't have a way to debug this but on desktop I can share some details 
+This page isn’t working
+If the problem continues, contact the site owner.
+HTTP ERROR 400
+https://kush.runasp.net/login
+Request URL
+https://kush.runasp.net/login
+Request Method
+POST
+Status Code
+400 Bad Request
+Remote Address
+178.63.129.218:443
+Referrer Policy
+strict-origin-when-cross-origin
+blazor-enhanced-nav
+allow
+cache-control
+no-cache, no-store
+content-security-policy
+frame-ancestors 'self'
+content-type
+text/plain
+date
+Mon, 26 Jan 2026 13:45:18 GMT
+pragma
+no-cache
+server
+Microsoft-IIS/10.0
+x-powered-by
+ASP.NET
+:authority
+kush.runasp.net
+:method
+POST
+:path
+/login
+:scheme
+https
+accept
+text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7
+accept-encoding
+gzip, deflate, br, zstd
+accept-language
+en-US,en;q=0.9
+cache-control
+max-age=0
+content-length
+268
+content-type
+application/x-www-form-urlencoded
+cookie
+.AspNetCore.Antiforgery.DpeKsvaCx8Q=CfDJ8OcPVJSvRMtDoi27F-i_AOgN4IpDcovTTYEMBHM4WSrJWCe0dj3NdcnAQ-k0R-P7I3-2-hQdEAbPd8qsmh6do8VwZ2WSVRu-Dh4ziqSa2YNY-vN8qgmrR7x6rIS7815AkwFNFROq3InVZF2LmN2fhe4
+origin
+https://kush.runasp.net
+priority
+u=0, i
+referer
+https://kush.runasp.net/login
+sec-ch-ua
+"Not(A:Brand";v="8", "Chromium";v="144"
+sec-ch-ua-mobile
+?0
+sec-ch-ua-platform
+"Linux"
+sec-fetch-dest
+document
+sec-fetch-mode
+navigate
+sec-fetch-site
+same-origin
+sec-fetch-user
+?1
+upgrade-insecure-requests
+1
+user-agent
+Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/144.0.0.0 Safari/537.36
+__RequestVerificationToken=CfDJ8OcPVJSvRMtDoi27F-i_AOhqavIp_Dlb9iQDbcFgdhymEoCXaKCu39TilBP0UgUaxnsLoBLglIAy9x5W9eZ38ZVzaRFGY00NXb9PJGA8CNYBigHB7nragV-dkv2aNWnDBIi0e6p3iYhiD5a8pAOBmVs&username=kus&password=ZZtliitpBBPZFxchrRwLXB3UScdY60ZBMT5JJOzYdEzt6g9HtozFqh5PkuBHTav
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Looking at this 400 Bad Request error, let me search your project knowledge to understand how your login endpoint handles requests and what might be causing the intermittent failures.I found the issue. Looking at your `Login.razor`, it's **missing the `@rendermode` directive**, which means it defaults to **Static SSR** (Server-Side Rendering). This is the root cause of your intermittent 400 errors.
+
+## The Problem
+
+Your `Login.razor` page:
+1. Uses a form with `@onsubmit="HandleLogin"` — this is a Blazor event handler
+2. Uses `@bind="_username"` and `@bind="_password"` — these are interactive bindings  
+3. Has **no `@rendermode` directive** — defaults to Static SSR
+
+In Static SSR mode, Blazor renders the page as plain HTML and processes the form as a traditional POST request. The issue is that:
+
+1. The antiforgery token in the cookie (`.AspNetCore.Antiforgery.DpeKsvaCx8Q`) and the token in the form (`__RequestVerificationToken`) need to match and be from the same session
+2. On mobile browsers especially, aggressive caching, session storage behavior, or cookie handling differences can cause **token mismatches**
+3. When tokens don't match, ASP.NET Core returns a **400 Bad Request**
+
+I can see in your request data that you have:
+- Cookie token: `CfDJ8OcPVJSvRMtDoi27F-i_AOgN4IpDcovTTYEMBHM4WSrJWCe0dj3NdcnAQ-k0R-P7...`
+- Form token: `CfDJ8OcPVJSvRMtDoi27F-i_AOhqavIp_Dlb9iQDbcFgdhymEoCXaKCu39TilBP0...`
+
+Notice they start the same (`CfDJ8OcPVJSvRMtDoi27F-i_AO`) but diverge — these are from **different sessions/requests**.
+
+## The Fix
+
+Add the `@rendermode InteractiveServer` directive to your Login page so that form handling happens via SignalR rather than traditional POST:
+
+```razor
+@page "/login"
+@rendermode InteractiveServer
+@inject IAuthService AuthService
+...
+```
+
+With Interactive Server mode, the form submission is handled client-side via the Blazor circuit, and the antiforgery validation happens differently (the connection is already authenticated).
+
+Alternatively, if you specifically want to keep it as Static SSR for performance reasons (faster initial load), you need to ensure the form is purely a standard HTML form without the `@onsubmit` handler and rely entirely on `[SupplyParameterFromForm]`. But given your current implementation that mixes both approaches, switching to `InteractiveServer` is the cleanest fix.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+However, in app.razor we already have interactive server 
+```/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/Components/App.razor
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f8f9fa" />
+    <base href="/" />
+    <link rel="stylesheet" href="css/site.css" />
+    <link rel="stylesheet" href="MyBlog.Web.styles.css" />
+    <HeadOutlet @rendermode="InteractiveServer" />
+    <script>
+        // Inline script to prevent flash of wrong theme - runs immediately
+        (function() {
+            var storageKey = 'myblog-theme';
+            var theme = localStorage.getItem(storageKey);
+            if (!theme) {
+                theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            document.documentElement.setAttribute('data-theme', theme);
+            // Update theme-color meta immediately
+            var isDark = ['dark', 'nord', 'dracula'].indexOf(theme) !== -1;
+            var metaTheme = document.querySelector('meta[name="theme-color"]');
+            if (metaTheme) metaTheme.content = isDark ? '#0f172a' : '#f8f9fa';
+        })();
+    </script>
+</head>
+<body>
+    <Routes @rendermode="InteractiveServer" />
+    <script src="_framework/blazor.web.js"></script>
+    <script src="js/site.js"></script>
+</body>
+</html>
+```
+I have included the latest dump in `dump.txt`
+please read each and every line of the code 
+don't skim it 
+don't try to change the coding style 
+don't remove braces around the if 
+don't change the primary constructor back to whatever you did 
+don't make unnecessary changes 
+do make the code build, 
+do make the tests pass 
+and do make everything work properly 
+and follow engineering best practices 
+and please do not hallucinate 
+give me full files for all files that changed 
+
+
