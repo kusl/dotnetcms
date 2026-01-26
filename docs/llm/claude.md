@@ -8966,3 +8966,35 @@ Please do not hallucinate
 'IPage.RunAndWaitForNavigationAsync(Func<Task>, PageRunAndWaitForNavigationOptions?)' is obsolete
 'IPage.RunAndWaitForNavigationAsync(Func<Task>, PageRunAndWaitForNavigationOptions?)' is obsolete
 'IPage.RunAndWaitForNavigationAsync(Func<Task>, PageRunAndWaitForNavigationOptions?)' is obsolete
+
+
+You're right, `RunAndWaitForNavigationAsync` is deprecated in newer Playwright versions. The modern approach is to start waiting for the URL before clicking. Let me fix this:The fix uses the modern Playwright pattern where you start waiting for the URL change **before** clicking the button, then click, then await the wait task. This ensures you don't miss the navigation event.
+
+The pattern is:
+```csharp
+var waitForUrlTask = page.WaitForURLAsync("**/admin**", options);
+await page.ClickAsync("button[type='submit']");
+await waitForUrlTask;
+```
+
+This replaces the deprecated `RunAndWaitForNavigationAsync` approach and is the current recommended way to handle navigations triggered by user actions in Playwright.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

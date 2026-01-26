@@ -53,16 +53,10 @@ public sealed class LoginPageTests(PlaywrightFixture fixture)
         await page.FillAsync("input#username, input[name='username']", "invalid");
         await page.FillAsync("input#password, input[name='password']", "invalid");
 
-        // Submit form and wait for navigation (POST redirects to /login?error=invalid)
-        await page.RunAndWaitForNavigationAsync(async () =>
-        {
-            await page.ClickAsync("button[type='submit']");
-        }, new PageRunAndWaitForNavigationOptions
-        {
-            UrlString = "**/login**",
-            WaitUntil = WaitUntilState.Load,
-            Timeout = 15000
-        });
+        // Start waiting for navigation BEFORE clicking (modern Playwright pattern)
+        var waitForUrlTask = page.WaitForURLAsync("**/login**", new PageWaitForURLOptions { Timeout = 15000 });
+        await page.ClickAsync("button[type='submit']");
+        await waitForUrlTask;
 
         // Wait for page to render
         await page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
@@ -87,16 +81,10 @@ public sealed class LoginPageTests(PlaywrightFixture fixture)
         await page.FillAsync("input#username, input[name='username']", "admin");
         await page.FillAsync("input#password, input[name='password']", "ChangeMe123!");
 
-        // Submit form and wait for navigation to admin
-        await page.RunAndWaitForNavigationAsync(async () =>
-        {
-            await page.ClickAsync("button[type='submit']");
-        }, new PageRunAndWaitForNavigationOptions
-        {
-            UrlString = "**/admin**",
-            WaitUntil = WaitUntilState.Load,
-            Timeout = 15000
-        });
+        // Start waiting for navigation BEFORE clicking (modern Playwright pattern)
+        var waitForUrlTask = page.WaitForURLAsync("**/admin**", new PageWaitForURLOptions { Timeout = 15000 });
+        await page.ClickAsync("button[type='submit']");
+        await waitForUrlTask;
 
         // Verify we're on an admin page
         var url = page.Url;
@@ -117,16 +105,10 @@ public sealed class LoginPageTests(PlaywrightFixture fixture)
         await page.FillAsync("input#username, input[name='username']", "admin");
         await page.FillAsync("input#password, input[name='password']", "ChangeMe123!");
 
-        // Submit form and wait for navigation to admin
-        await page.RunAndWaitForNavigationAsync(async () =>
-        {
-            await page.ClickAsync("button[type='submit']");
-        }, new PageRunAndWaitForNavigationOptions
-        {
-            UrlString = "**/admin**",
-            WaitUntil = WaitUntilState.Load,
-            Timeout = 15000
-        });
+        // Start waiting for navigation BEFORE clicking (modern Playwright pattern)
+        var waitForUrlTask = page.WaitForURLAsync("**/admin**", new PageWaitForURLOptions { Timeout = 15000 });
+        await page.ClickAsync("button[type='submit']");
+        await waitForUrlTask;
 
         // Wait for page to fully render
         await page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
