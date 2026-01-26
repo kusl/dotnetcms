@@ -1,6 +1,6 @@
 ===============================================================================
 PROJECT EXPORT
-Generated: Mon Jan 26 12:51:11 PM EST 2026
+Generated: Mon Jan 26 12:58:28 PM EST 2026
 Project Path: /home/kushal/src/dotnet/MyBlog
 ===============================================================================
 
@@ -4898,7 +4898,7 @@ public sealed class HomePageTests(PlaywrightFixture fixture)
 ================================================================================
 FILE: src/MyBlog.E2E/Tests/LoginPageTests.cs
 SIZE: 4.50 KB
-MODIFIED: 2026-01-26 12:49:21
+MODIFIED: 2026-01-26 12:54:19
 ================================================================================
 
 using Microsoft.Playwright;
@@ -4957,7 +4957,7 @@ public sealed class LoginPageTests(PlaywrightFixture fixture)
         await page.FillAsync("input#password, input[name='password']", "invalid");
 
         // Start waiting for navigation BEFORE clicking (modern Playwright pattern)
-        var waitForUrlTask = page.WaitForURLAsync("**/login**", new PageWaitForURLOptions { Timeout = 15000 });
+        var waitForUrlTask = page.WaitForURLAsync("**/login**", new PageWaitForURLOptions { Timeout = 45000 });
         await page.ClickAsync("button[type='submit']");
         await waitForUrlTask;
 
@@ -4985,7 +4985,7 @@ public sealed class LoginPageTests(PlaywrightFixture fixture)
         await page.FillAsync("input#password, input[name='password']", "ChangeMe123!");
 
         // Start waiting for navigation BEFORE clicking (modern Playwright pattern)
-        var waitForUrlTask = page.WaitForURLAsync("**/admin**", new PageWaitForURLOptions { Timeout = 15000 });
+        var waitForUrlTask = page.WaitForURLAsync("**/admin**", new PageWaitForURLOptions { Timeout = 45000 });
         await page.ClickAsync("button[type='submit']");
         await waitForUrlTask;
 
@@ -5009,7 +5009,7 @@ public sealed class LoginPageTests(PlaywrightFixture fixture)
         await page.FillAsync("input#password, input[name='password']", "ChangeMe123!");
 
         // Start waiting for navigation BEFORE clicking (modern Playwright pattern)
-        var waitForUrlTask = page.WaitForURLAsync("**/admin**", new PageWaitForURLOptions { Timeout = 15000 });
+        var waitForUrlTask = page.WaitForURLAsync("**/admin**", new PageWaitForURLOptions { Timeout = 45000 });
         await page.ClickAsync("button[type='submit']");
         await waitForUrlTask;
 
@@ -13798,7 +13798,7 @@ window.themeManager = {
 
 
 ===============================================================================
-EXPORT COMPLETED: Mon Jan 26 12:51:13 PM EST 2026
+EXPORT COMPLETED: Mon Jan 26 12:58:29 PM EST 2026
 Total Files Found: 115
 Files Exported: 115
 Files Skipped: 0 (binary or large files)
