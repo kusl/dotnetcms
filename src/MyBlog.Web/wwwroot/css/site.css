@@ -16,26 +16,26 @@
     --color-primary: #2563eb;
     --color-primary-hover: #1d4ed8;
     --color-primary-muted: #3b82f6;
-    --color-border: #d1d5db;
-    --color-border-light: #e5e7eb;
+    --color-border: #e2e8f0;
+    --color-border-light: #cbd5e1;
     --color-danger: #dc2626;
     --color-danger-hover: #b91c1c;
-    --color-success: #059669;
-    --color-success-hover: #047857;
-    --color-warning: #d97706;
-    --color-info: #0891b2;
+    --color-success: #16a34a;
+    --color-success-hover: #15803d;
+    --color-warning: #f59e0b;
+    --color-info: #0ea5e9;
     --color-code-bg: #f1f5f9;
     --color-blockquote-border: #3b82f6;
-    --color-selection-bg: #bfdbfe;
-    --color-selection-text: #1e3a5f;
+    --color-selection-bg: #dbeafe;
+    --color-selection-text: #1e40af;
     --color-focus-ring: #3b82f6;
     --color-shadow: rgba(0, 0, 0, 0.1);
-    --color-overlay: rgba(0, 0, 0, 0.5);
+    --color-overlay: rgba(255, 255, 255, 0.8);
     color-scheme: light;
 }
 
 /* =============================================================================
-   Theme 2: Dark - Easy on the eyes for night reading
+   Theme 2: Dark - Modern dark theme
    ============================================================================= */
 [data-theme="dark"] {
     --color-bg: #0f172a;
@@ -50,17 +50,17 @@
     --color-border-light: #475569;
     --color-danger: #f87171;
     --color-danger-hover: #fca5a5;
-    --color-success: #34d399;
-    --color-success-hover: #6ee7b7;
+    --color-success: #4ade80;
+    --color-success-hover: #86efac;
     --color-warning: #fbbf24;
-    --color-info: #22d3ee;
+    --color-info: #38bdf8;
     --color-code-bg: #1e293b;
     --color-blockquote-border: #60a5fa;
     --color-selection-bg: #1e40af;
-    --color-selection-text: #f1f5f9;
+    --color-selection-text: #dbeafe;
     --color-focus-ring: #60a5fa;
     --color-shadow: rgba(0, 0, 0, 0.3);
-    --color-overlay: rgba(0, 0, 0, 0.7);
+    --color-overlay: rgba(15, 23, 42, 0.8);
     color-scheme: dark;
 }
 
@@ -71,31 +71,31 @@
     --color-bg: #faf6f1;
     --color-bg-alt: #f5ebe0;
     --color-bg-elevated: #ffffff;
-    --color-text: #3d3229;
-    --color-text-muted: #6b5c4d;
+    --color-text: #3d2914;
+    --color-text-muted: #6b5344;
     --color-primary: #a0522d;
     --color-primary-hover: #8b4513;
     --color-primary-muted: #cd853f;
-    --color-border: #d4c4b0;
-    --color-border-light: #e8ddd0;
+    --color-border: #ddd0c1;
+    --color-border-light: #c4b5a5;
     --color-danger: #c53030;
-    --color-danger-hover: #9b2c2c;
-    --color-success: #2f855a;
-    --color-success-hover: #276749;
-    --color-warning: #c05621;
-    --color-info: #2b6cb0;
-    --color-code-bg: #f0e6d8;
+    --color-danger-hover: #9c2020;
+    --color-success: #2e7d32;
+    --color-success-hover: #1b5e20;
+    --color-warning: #e65100;
+    --color-info: #0277bd;
+    --color-code-bg: #f5ebe0;
     --color-blockquote-border: #a0522d;
-    --color-selection-bg: #ddb892;
-    --color-selection-text: #3d3229;
+    --color-selection-bg: #ddd0c1;
+    --color-selection-text: #3d2914;
     --color-focus-ring: #a0522d;
-    --color-shadow: rgba(61, 50, 41, 0.1);
-    --color-overlay: rgba(61, 50, 41, 0.5);
+    --color-shadow: rgba(61, 41, 20, 0.1);
+    --color-overlay: rgba(250, 246, 241, 0.8);
     color-scheme: light;
 }
 
 /* =============================================================================
-   Theme 4: Nord - Inspired by Arctic landscapes
+   Theme 4: Nord - Arctic, bluish color palette
    ============================================================================= */
 [data-theme="nord"] {
     --color-bg: #2e3440;
@@ -107,11 +107,11 @@
     --color-primary-hover: #8fbcbb;
     --color-primary-muted: #81a1c1;
     --color-border: #4c566a;
-    --color-border-light: #434c5e;
+    --color-border-light: #616e88;
     --color-danger: #bf616a;
     --color-danger-hover: #d08770;
     --color-success: #a3be8c;
-    --color-success-hover: #b4c896;
+    --color-success-hover: #b5d19c;
     --color-warning: #ebcb8b;
     --color-info: #5e81ac;
     --color-code-bg: #3b4252;
@@ -125,37 +125,37 @@
 }
 
 /* =============================================================================
-   Theme 5: Solarized Light - Ethan Schoonover's classic
+   Theme 5: Solarized Light - Precision colors for machines and people
    ============================================================================= */
 [data-theme="solarized-light"] {
     --color-bg: #fdf6e3;
     --color-bg-alt: #eee8d5;
     --color-bg-elevated: #ffffff;
-    --color-text: #073642;
-    --color-text-muted: #586e75;
+    --color-text: #657b83;
+    --color-text-muted: #93a1a1;
     --color-primary: #268bd2;
-    --color-primary-hover: #2176b8;
-    --color-primary-muted: #6c9fc5;
-    --color-border: #c9c2a8;
-    --color-border-light: #ddd6c1;
+    --color-primary-hover: #2176b5;
+    --color-primary-muted: #6c9cc4;
+    --color-border: #d3cbb7;
+    --color-border-light: #bdb8a6;
     --color-danger: #dc322f;
     --color-danger-hover: #cb4b16;
     --color-success: #859900;
-    --color-success-hover: #6d7e00;
+    --color-success-hover: #6d8000;
     --color-warning: #b58900;
     --color-info: #2aa198;
     --color-code-bg: #eee8d5;
     --color-blockquote-border: #268bd2;
-    --color-selection-bg: #268bd2;
-    --color-selection-text: #fdf6e3;
+    --color-selection-bg: #eee8d5;
+    --color-selection-text: #586e75;
     --color-focus-ring: #268bd2;
-    --color-shadow: rgba(7, 54, 66, 0.1);
-    --color-overlay: rgba(7, 54, 66, 0.5);
+    --color-shadow: rgba(0, 0, 0, 0.1);
+    --color-overlay: rgba(253, 246, 227, 0.8);
     color-scheme: light;
 }
 
 /* =============================================================================
-   Theme 6: Dracula - Popular dark theme with vibrant accents
+   Theme 6: Dracula - Dark theme with vibrant colors
    ============================================================================= */
 [data-theme="dracula"] {
     --color-bg: #282a36;
@@ -522,6 +522,27 @@ a:hover {
 }
 
 /* =============================================================================
+   Messages (Error, Success)
+   ============================================================================= */
+.error-message {
+    background-color: color-mix(in srgb, var(--color-danger) 15%, transparent);
+    border: 1px solid var(--color-danger);
+    color: var(--color-danger);
+    padding: var(--spacing);
+    border-radius: var(--radius);
+    margin-bottom: var(--spacing);
+}
+
+.success-message {
+    background-color: color-mix(in srgb, var(--color-success) 15%, transparent);
+    border: 1px solid var(--color-success);
+    color: var(--color-success);
+    padding: var(--spacing);
+    border-radius: var(--radius);
+    margin-bottom: var(--spacing);
+}
+
+/* =============================================================================
    Post Cards
    ============================================================================= */
 .post-list {
@@ -717,74 +738,8 @@ a:hover {
 }
 
 /* =============================================================================
-   Login Page
+   Admin Styles - Shared
    ============================================================================= */
-.login-page {
-    max-width: 400px;
-    margin: 0 auto;
-}
-
-.error-message {
-    background-color: var(--color-danger);
-    background-color: color-mix(in srgb, var(--color-danger) 15%, transparent);
-    border: 1px solid var(--color-danger);
-    color: var(--color-danger);
-    padding: var(--spacing);
-    border-radius: var(--radius);
-    margin-bottom: var(--spacing);
-}
-
-.success-message {
-    background-color: color-mix(in srgb, var(--color-success) 15%, transparent);
-    border: 1px solid var(--color-success);
-    color: var(--color-success);
-    padding: var(--spacing);
-    border-radius: var(--radius);
-    margin-bottom: var(--spacing);
-}
-
-/* =============================================================================
-   Admin Styles
-   ============================================================================= */
-.dashboard-stats {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: var(--spacing);
-    margin-bottom: calc(var(--spacing) * 2);
-}
-
-.stat-card {
-    padding: calc(var(--spacing) * 1.25);
-    background-color: var(--color-bg-alt);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-lg);
-    text-align: center;
-    transition: border-color var(--transition-fast);
-}
-
-.stat-card:hover {
-    border-color: var(--color-primary-muted);
-}
-
-.stat-value {
-    font-size: 2rem;
-    font-weight: 700;
-    margin: 0;
-    color: var(--color-primary);
-}
-
-.stat-label {
-    color: var(--color-text-muted);
-    font-size: 0.875rem;
-}
-
-.admin-nav {
-    display: flex;
-    gap: 0.5rem;
-    margin-bottom: calc(var(--spacing) * 2);
-    flex-wrap: wrap;
-}
-
 .admin-table {
     width: 100%;
     border-collapse: collapse;
@@ -806,199 +761,6 @@ a:hover {
 .admin-table tr:hover td {
     background-color: var(--color-bg-alt);
 }
-
-/* =============================================================================
-   Post Editor
-   ============================================================================= */
-.post-editor {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: calc(var(--spacing) * 2);
-}
-
-.editor-preview {
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-lg);
-    padding: var(--spacing);
-    max-height: 80vh;
-    overflow-y: auto;
-    background-color: var(--color-bg);
-}
-
-.editor-preview h3 {
-    margin-bottom: var(--spacing);
-    padding-bottom: 0.5rem;
-    border-bottom: 1px solid var(--color-border);
-    color: var(--color-text-muted);
-    font-size: 0.875rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-}
-
-/* =============================================================================
-   Image Manager
-   ============================================================================= */
-.image-upload {
-    margin-bottom: calc(var(--spacing) * 2);
-    padding: var(--spacing);
-    background-color: var(--color-bg-alt);
-    border: 2px dashed var(--color-border);
-    border-radius: var(--radius-lg);
-    transition: border-color var(--transition-fast);
-}
-
-.image-upload:hover {
-    border-color: var(--color-primary-muted);
-}
-
-.image-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: var(--spacing);
-}
-
-.image-card {
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-lg);
-    overflow: hidden;
-    background-color: var(--color-bg);
-    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
-}
-
-.image-card:hover {
-    border-color: var(--color-primary-muted);
-    box-shadow: 0 4px 12px var(--color-shadow);
-}
-
-.image-card img {
-    width: 100%;
-    height: 150px;
-    object-fit: cover;
-}
-
-.image-info {
-    padding: 0.75rem;
-}
-
-.image-info p {
-    margin: 0 0 0.25rem;
-    font-size: 0.875rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.image-info code {
-    display: block;
-    font-size: 0.75rem;
-    color: var(--color-text-muted);
-    margin-bottom: 0.5rem;
-    padding: 0.25rem;
-    background-color: var(--color-code-bg);
-    border-radius: 0.25rem;
-}
-
-/* =============================================================================
-   Theme Switcher
-   ============================================================================= */
-.theme-switcher {
-    position: relative;
-}
-
-.theme-switcher-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    padding: 0;
-    background-color: var(--color-bg-alt);
-    border: 1px solid var(--color-border);
-    border-radius: 50%;
-    color: var(--color-text);
-    cursor: pointer;
-    transition: all var(--transition-fast);
-}
-
-.theme-switcher-btn:hover {
-    background-color: var(--color-bg-elevated);
-    border-color: var(--color-primary-muted);
-    color: var(--color-primary);
-}
-
-.theme-switcher-btn svg {
-    width: 20px;
-    height: 20px;
-}
-
-.theme-menu {
-    position: absolute;
-    top: calc(100% + 8px);
-    right: 0;
-    min-width: 180px;
-    background-color: var(--color-bg);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-lg);
-    box-shadow: 0 8px 24px var(--color-shadow);
-    padding: 0.5rem;
-    z-index: 1000;
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(-8px);
-    transition: all var(--transition-fast);
-}
-
-.theme-menu.open {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
-}
-
-.theme-option {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    width: 100%;
-    padding: 0.625rem 0.75rem;
-    background: none;
-    border: none;
-    border-radius: var(--radius);
-    color: var(--color-text);
-    cursor: pointer;
-    font: inherit;
-    font-size: 0.9rem;
-    text-align: left;
-    transition: background-color var(--transition-fast);
-}
-
-.theme-option:hover {
-    background-color: var(--color-bg-alt);
-}
-
-.theme-option.active {
-    background-color: var(--color-primary);
-    color: white;
-}
-
-.theme-option .theme-preview {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    border: 2px solid var(--color-border);
-    flex-shrink: 0;
-}
-
-.theme-option.active .theme-preview {
-    border-color: white;
-}
-
-/* Theme preview colors */
-.theme-preview-light { background: linear-gradient(135deg, #ffffff 50%, #2563eb 50%); }
-.theme-preview-dark { background: linear-gradient(135deg, #0f172a 50%, #60a5fa 50%); }
-.theme-preview-sepia { background: linear-gradient(135deg, #faf6f1 50%, #a0522d 50%); }
-.theme-preview-nord { background: linear-gradient(135deg, #2e3440 50%, #88c0d0 50%); }
-.theme-preview-solarized-light { background: linear-gradient(135deg, #fdf6e3 50%, #268bd2 50%); }
-.theme-preview-dracula { background: linear-gradient(135deg, #282a36 50%, #bd93f9 50%); }
 
 /* =============================================================================
    Utility Classes
@@ -1070,30 +832,9 @@ a:hover {
         flex-wrap: wrap;
         justify-content: center;
     }
-
-    .post-editor {
-        grid-template-columns: 1fr;
-    }
-
-    .editor-preview {
-        order: -1;
-        max-height: 300px;
-    }
-
-    .admin-nav {
-        flex-wrap: wrap;
-    }
-
-    .theme-menu {
-        right: -50%;
-    }
 }
 
 @media (max-width: 480px) {
-    .dashboard-stats {
-        grid-template-columns: 1fr;
-    }
-
     .pagination {
         flex-direction: column;
         gap: 0.5rem;

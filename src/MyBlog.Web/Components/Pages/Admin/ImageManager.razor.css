@@ -1,0 +1,61 @@
+/* ImageManager.razor.css - Component-scoped styles */
+
+.image-upload {
+    margin-bottom: calc(var(--spacing) * 2);
+    padding: var(--spacing);
+    background-color: var(--color-bg-alt);
+    border: 2px dashed var(--color-border);
+    border-radius: var(--radius-lg);
+    transition: border-color var(--transition-fast);
+}
+
+.image-upload:hover {
+    border-color: var(--color-primary-muted);
+}
+
+.image-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: var(--spacing);
+}
+
+.image-card {
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background-color: var(--color-bg);
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.image-card:hover {
+    border-color: var(--color-primary-muted);
+    box-shadow: 0 4px 12px var(--color-shadow);
+}
+
+.image-card img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+}
+
+.image-info {
+    padding: 0.75rem;
+}
+
+.image-info p {
+    margin: 0 0 0.25rem;
+    font-size: 0.875rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.image-info code {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+    margin-bottom: 0.5rem;
+    padding: 0.25rem;
+    background-color: var(--color-code-bg);
+    border-radius: 0.25rem;
+}

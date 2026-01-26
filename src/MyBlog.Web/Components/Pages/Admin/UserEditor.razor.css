@@ -1,61 +1,26 @@
+/* UserEditor.razor.css - Component-scoped styles */
+
 /* Container styling */
 .user-editor {
     width: 100%;
-    /* margin: 0 auto; if you want it centered */
     padding: 1rem;
-    box-sizing: border-box; /* Ensures padding doesn't add to width */
-}
-
-/* Form group layout */
-.form-group {
-    display: flex;
-    flex-direction: column; /* Stack label above input by default (mobile first) */
-    margin-bottom: 1.25rem;
-}
-
-.form-group label {
-    font-weight: bold;
-    margin-bottom: 0.5rem;
-}
-
-.form-group input {
-    width: 100%; /* Forces input to stay within container bounds */
-    padding: 0.75rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box; 
-}
-
-/* Error Message */
-.error-message {
-    background-color: #fee2e2;
-    color: #dc2626;
-    padding: 1rem;
-    border-radius: 4px;
-    margin-bottom: 1.5rem;
-    border: 1px solid #fca5a5;
-}
-
-/* Actions area */
-.form-actions {
-    display: flex;
-    gap: 1rem;
-    align-items: center;
+    box-sizing: border-box;
 }
 
 /* Desktop optimization: Switch to side-by-side if screen is wide enough */
 @media (min-width: 768px) {
-    .form-group {
-        flex-direction: row; /* Label and Input side-by-side */
+    .user-editor .form-group {
+        flex-direction: row;
         align-items: center;
+        display: flex;
     }
 
-    .form-group label {
-        flex: 0 0 150px; /* Label takes fixed width on desktop */
+    .user-editor .form-group label {
+        flex: 0 0 150px;
         margin-bottom: 0;
     }
 
-    .form-group input {
-        flex: 1; /* Input fills remaining space */
+    .user-editor .form-group input {
+        flex: 1;
     }
 }
