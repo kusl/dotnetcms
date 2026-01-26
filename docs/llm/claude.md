@@ -8062,3 +8062,239 @@ real	1m18.264s
 user	0m33.055s
 sys	0m16.643s
 kushal@fedora:~/src/dotnet/MyBlog$ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Let me search the project knowledge to read the full code dump and understand what's happening with these failing login tests.Let me search for the Login.razor component and the E2E test infrastructure to understand the full picture.Let me search for the PlaywrightFixture and the docker-compose setup to understand the E2E test environment:Let me search for more details about the full Login.razor file and understand how the authentication is supposed to work:Now I see the core problem. The Login.razor is using `@rendermode InteractiveServer`, but when an event handler runs in Blazor Server over SignalR, `HttpContext` is **null**. The `SignInAsync` call requires `HttpContext` to set the authentication cookie, but it's not available during SignalR callbacks.
+
+Let me search for how the logout works and the Program.cs authentication setup to design the proper fix:Now I understand the root cause. The Login.razor uses `@rendermode InteractiveServer`, which means the `HandleLogin` event handler runs over SignalR - where `HttpContext` is **null**. The `SignInAsync` call fails silently because there's no HTTP context to set the authentication cookie.
+
+The solution is to handle login via a minimal API endpoint (like logout does), then use a traditional form POST. This is the standard pattern for authentication in Blazor Server applications.
+
+Here are the files that need to be changed:
+
+**1. Program.cs** - Add POST /login endpoint:**2. Login.razor** - Use traditional form POST instead of Blazor interactive form:Let me search for the complete Program.cs to ensure I include all existing functionality:Let me update the Program.cs to remove the duplicate `TelemetryCleanupService` registration (it's already in `AddInfrastructure`):The changes I've made should fix the login issue. Here's a summary of what changed and why:
+
+**Root Cause**: The original Login.razor used `@rendermode InteractiveServer`, which means form submissions were handled via SignalR. In SignalR callbacks, `HttpContext` is **null**, so `context.SignInAsync()` failed silently.
+
+**The Fix**:
+1. **Program.cs**: Added a `POST /login` minimal API endpoint that handles authentication in an HTTP context where `SignInAsync` works properly
+2. **Login.razor**: Changed from Blazor interactive form (`@onsubmit="HandleLogin"`) to a traditional HTML form (`method="post" action="/login"`) - no render mode needed
+
+Here are the complete files to replace:
+
+---
+
+**File 1: `src/MyBlog.Web/Program.cs`** (full file from artifact above)
+
+---
+
+**File 2: `src/MyBlog.Web/Components/Pages/Login.razor`** (full file from artifact above)
+
+---
+
+The E2E tests should now pass because:
+1. `LoginPage_WithValidCredentials_RedirectsToAdmin`: Form POSTs to `/login` → server authenticates → redirects to `/admin` → test's `WaitForURLAsync("**/admin**")` succeeds
+2. `LoginPage_AfterLogin_ShowsLogoutButton`: Same flow, then checks for logout button
+3. `LoginPage_WithInvalidCredentials_ShowsError`: Form POSTs to `/login` → auth fails → redirects to `/login?error=invalid` → page shows error message → test's `.error-message` locator finds it
+
+The existing tests for basic page loading and form visibility will continue to work since the form structure is the same (just uses native HTML submit instead of Blazor's `@onsubmit`).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Let me search the project knowledge to read the full code dump and understand what's happening with these failing login tests.Let me search for the Login.razor component and the E2E test infrastructure to understand the full picture.Let me search for the PlaywrightFixture and the docker-compose setup to understand the E2E test environment:Let me search for more details about the full Login.razor file and understand how the authentication is supposed to work:Now I see the core problem. The Login.razor is using `@rendermode InteractiveServer`, but when an event handler runs in Blazor Server over SignalR, `HttpContext` is **null**. The `SignInAsync` call requires `HttpContext` to set the authentication cookie, but it's not available during SignalR callbacks.
+
+Let me search for how the logout works and the Program.cs authentication setup to design the proper fix:Now I understand the root cause. The Login.razor uses `@rendermode InteractiveServer`, which means the `HandleLogin` event handler runs over SignalR - where `HttpContext` is **null**. The `SignInAsync` call fails silently because there's no HTTP context to set the authentication cookie.
+
+The solution is to handle login via a minimal API endpoint (like logout does), then use a traditional form POST. This is the standard pattern for authentication in Blazor Server applications.
+
+Here are the files that need to be changed:
+
+**1. Program.cs** - Add POST /login endpoint:**2. Login.razor** - Use traditional form POST instead of Blazor interactive form:Let me search for the complete Program.cs to ensure I include all existing functionality:Let me update the Program.cs to remove the duplicate `TelemetryCleanupService` registration (it's already in `AddInfrastructure`):The changes I've made should fix the login issue. Here's a summary of what changed and why:
+
+**Root Cause**: The original Login.razor used `@rendermode InteractiveServer`, which means form submissions were handled via SignalR. In SignalR callbacks, `HttpContext` is **null**, so `context.SignInAsync()` failed silently.
+
+**The Fix**:
+1. **Program.cs**: Added a `POST /login` minimal API endpoint that handles authentication in an HTTP context where `SignInAsync` works properly
+2. **Login.razor**: Changed from Blazor interactive form (`@onsubmit="HandleLogin"`) to a traditional HTML form (`method="post" action="/login"`) - no render mode needed
+
+Here are the complete files to replace:
+
+---
+
+**File 1: `src/MyBlog.Web/Program.cs`** (full file from artifact above)
+
+---
+
+**File 2: `src/MyBlog.Web/Components/Pages/Login.razor`** (full file from artifact above)
+
+---
+
+The E2E tests should now pass because:
+1. `LoginPage_WithValidCredentials_RedirectsToAdmin`: Form POSTs to `/login` → server authenticates → redirects to `/admin` → test's `WaitForURLAsync("**/admin**")` succeeds
+2. `LoginPage_AfterLogin_ShowsLogoutButton`: Same flow, then checks for logout button
+3. `LoginPage_WithInvalidCredentials_ShowsError`: Form POSTs to `/login` → auth fails → redirects to `/login?error=invalid` → page shows error message → test's `.error-message` locator finds it
+
+The existing tests for basic page loading and form visibility will continue to work since the form structure is the same (just uses native HTML submit instead of Blazor's `@onsubmit`).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

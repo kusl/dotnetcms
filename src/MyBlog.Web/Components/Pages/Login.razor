@@ -1,11 +1,5 @@
 @page "/login"
-@rendermode InteractiveServer
-@inject IAuthService AuthService
 @inject NavigationManager Navigation
-@inject IHttpContextAccessor HttpContextAccessor
-@using System.Security.Claims
-@using Microsoft.AspNetCore.Authentication
-@using Microsoft.AspNetCore.Authentication.Cookies
 
 <PageTitle>Login</PageTitle>
 
@@ -17,15 +11,18 @@
         <div class="error-message">@_error</div>
     }
 
-    <form @onsubmit="HandleLogin">
+    <form method="post" action="/login">
+        <AntiforgeryToken />
+        <input type="hidden" name="returnUrl" value="@ReturnUrl" />
+
         <div class="form-group">
             <label for="username">Username</label>
-            <input type="text" id="username" name="username" @bind="_username" required />
+            <input type="text" id="username" name="username" required />
         </div>
 
         <div class="form-group">
             <label for="password">Password</label>
-            <input type="password" id="password" name="password" @bind="_password" required />
+            <input type="password" id="password" name="password" required />
         </div>
 
         <button type="submit" class="btn btn-primary">Login</button>
@@ -33,43 +30,21 @@
 </div>
 
 @code {
-    private string _username = "";
-    private string _password = "";
     private string? _error;
 
     [SupplyParameterFromQuery]
     public string? ReturnUrl { get; set; }
 
-    private async Task HandleLogin()
+    [SupplyParameterFromQuery(Name = "error")]
+    public string? Error { get; set; }
+
+    protected override void OnInitialized()
     {
-        if (string.IsNullOrWhiteSpace(_username) || string.IsNullOrWhiteSpace(_password))
+        _error = Error switch
         {
-            _error = "Username and password are required";
-            return;
-        }
-
-        var user = await AuthService.AuthenticateAsync(_username, _password);
-        if (user is null)
-        {
-            _error = "Invalid username or password";
-            return;
-        }
-
-        // FIX: Added the Role claim here so [Authorize(Roles="Admin")] works
-        var claims = new List<Claim>
-        {
-            new(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new(ClaimTypes.Name, user.Username),
-            new("DisplayName", user.DisplayName),
-            new(ClaimTypes.Role, AppConstants.AdminRole) 
+            "required" => "Username and password are required",
+            "invalid" => "Invalid username or password",
+            _ => null
         };
-
-        var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-        var principal = new ClaimsPrincipal(identity);
-
-        var context = HttpContextAccessor.HttpContext!;
-        await context.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
-        
-        Navigation.NavigateTo(ReturnUrl ?? "/admin", forceLoad: true);
     }
 }

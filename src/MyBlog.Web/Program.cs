@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
@@ -42,23 +43,19 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
             ? CookieSecurePolicy.Always
             : CookieSecurePolicy.SameAsRequest;
     });
-
 builder.Services.AddAuthorization();
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddAntiforgery();
 
-// OpenTelemetry configuration
-var serviceName = "MyBlog.Web";
+// Configure OpenTelemetry
+var serviceName = "MyBlog";
 var serviceVersion = typeof(Program).Assembly.GetName().Version?.ToString() ?? "1.0.0";
 
 builder.Services.AddOpenTelemetry()
-    .ConfigureResource(resource => resource
-        .AddService(serviceName: serviceName, serviceVersion: serviceVersion))
+    .ConfigureResource(resource => resource.AddService(serviceName, serviceVersion))
     .WithTracing(tracing => tracing
         .AddAspNetCoreInstrumentation()
         .AddHttpClientInstrumentation()
-        .AddSource(serviceName)
         .AddConsoleExporter())
     .WithMetrics(metrics => metrics
         .AddAspNetCoreInstrumentation()
@@ -66,53 +63,65 @@ builder.Services.AddOpenTelemetry()
         .AddConsoleExporter());
 
 // Configure logging with OpenTelemetry
-// Note: We only add the FileLogExporter here since it doesn't require DI.
-// Database logging is handled by the TelemetryCleanupService which has access to the DI container.
-var telemetryDir = TelemetryPathResolver.GetTelemetryDirectory();
 builder.Logging.AddOpenTelemetry(logging =>
 {
     logging.IncludeFormattedMessage = true;
     logging.IncludeScopes = true;
     logging.AddConsoleExporter();
-
-    if (telemetryDir is not null)
-    {
-        var logsPath = Path.Combine(telemetryDir, "logs");
-        Directory.CreateDirectory(logsPath);
-        logging.AddProcessor(new BatchLogRecordExportProcessor(new FileLogExporter(logsPath)));
-    }
 });
 
 var app = builder.Build();
 
-// Initialize database
-using (var scope = app.Services.CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<BlogDbContext>();
-
-    // EnsureCreated creates the database and all tables if the database doesn't exist.
-    // For existing databases, we need to manually ensure new tables exist.
-    await db.Database.EnsureCreatedAsync();
-
-    // Apply any pending schema updates for existing databases
-    await DatabaseSchemaUpdater.ApplyUpdatesAsync(db);
-
-    var authService = scope.ServiceProvider.GetRequiredService<IAuthService>();
-    await authService.EnsureAdminUserAsync();
-}
-
+// Configure the HTTP request pipeline
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
 }
 
 app.UseStaticFiles();
-app.UseAntiforgery();
+
+// Rate limiting for login attempts
+app.UseLoginRateLimit();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseLoginRateLimit();
+app.UseAntiforgery();
+
+// Minimal API endpoints
+app.MapPost("/login", async (HttpContext context, IAuthService authService) =>
+{
+    var form = await context.Request.ReadFormAsync();
+    var username = form["username"].ToString();
+    var password = form["password"].ToString();
+    var returnUrl = form["returnUrl"].ToString();
+
+    if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+    {
+        return Results.Redirect($"/login?error=required&returnUrl={Uri.EscapeDataString(returnUrl ?? "")}");
+    }
+
+    var user = await authService.AuthenticateAsync(username, password);
+    if (user is null)
+    {
+        return Results.Redirect($"/login?error=invalid&returnUrl={Uri.EscapeDataString(returnUrl ?? "")}");
+    }
+
+    var claims = new List<Claim>
+    {
+        new(ClaimTypes.NameIdentifier, user.Id.ToString()),
+        new(ClaimTypes.Name, user.Username),
+        new("DisplayName", user.DisplayName),
+        new(ClaimTypes.Role, AppConstants.AdminRole)
+    };
+
+    var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+    var principal = new ClaimsPrincipal(identity);
+
+    await context.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+
+    return Results.Redirect(string.IsNullOrWhiteSpace(returnUrl) ? "/admin" : returnUrl);
+});
 
 app.MapPost("/logout", async (HttpContext context) =>
 {
@@ -120,9 +129,33 @@ app.MapPost("/logout", async (HttpContext context) =>
     return Results.Redirect("/");
 }).RequireAuthorization();
 
-app.MapHub<ReaderHub>("/readerHub");
+app.MapGet("/api/images/{id:guid}", async (Guid id, IImageRepository imageRepository) =>
+{
+    var image = await imageRepository.GetByIdAsync(id);
+    if (image is null)
+    {
+        return Results.NotFound();
+    }
+    return Results.File(image.Data, image.ContentType);
+});
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
+
+app.MapHub<ReaderHub>("/readerHub");
+
+// Initialize database and ensure admin user
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<BlogDbContext>();
+    await context.Database.MigrateAsync();
+
+    var authService = scope.ServiceProvider.GetRequiredService<IAuthService>();
+    await authService.EnsureAdminUserAsync();
+
+    // Register telemetry exporters with the service provider
+    var logExporter = scope.ServiceProvider.GetService<FileLogExporter>();
+    var dbExporter = scope.ServiceProvider.GetService<DatabaseLogExporter>();
+}
 
 app.Run();

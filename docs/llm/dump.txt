@@ -1,6 +1,6 @@
 ===============================================================================
 PROJECT EXPORT
-Generated: Mon Jan 26 11:45:42 AM EST 2026
+Generated: Mon Jan 26 11:55:21 AM EST 2026
 Project Path: /home/kushal/src/dotnet/MyBlog
 ===============================================================================
 
@@ -46,7 +46,8 @@ DIRECTORY STRUCTURE:
 │   │   │   ├── 0033.md
 │   │   │   ├── 0034.txt
 │   │   │   ├── 0035.md
-│   │   │   └── 0037.txt
+│   │   │   ├── 0037.txt
+│   │   │   └── 0038.txt
 │   │   ├── claude.md
 │   │   ├── command.md
 │   │   ├── dump.txt
@@ -11273,18 +11274,12 @@ else
 
 ================================================================================
 FILE: src/MyBlog.Web/Components/Pages/Login.razor
-SIZE: 2.29 KB
-MODIFIED: 2026-01-26 11:43:35
+SIZE: 1.22 KB
+MODIFIED: 2026-01-26 11:53:55
 ================================================================================
 
 @page "/login"
-@rendermode InteractiveServer
-@inject IAuthService AuthService
 @inject NavigationManager Navigation
-@inject IHttpContextAccessor HttpContextAccessor
-@using System.Security.Claims
-@using Microsoft.AspNetCore.Authentication
-@using Microsoft.AspNetCore.Authentication.Cookies
 
 <PageTitle>Login</PageTitle>
 
@@ -11296,15 +11291,18 @@ MODIFIED: 2026-01-26 11:43:35
         <div class="error-message">@_error</div>
     }
 
-    <form @onsubmit="HandleLogin">
+    <form method="post" action="/login">
+        <AntiforgeryToken />
+        <input type="hidden" name="returnUrl" value="@ReturnUrl" />
+
         <div class="form-group">
             <label for="username">Username</label>
-            <input type="text" id="username" name="username" @bind="_username" required />
+            <input type="text" id="username" name="username" required />
         </div>
 
         <div class="form-group">
             <label for="password">Password</label>
-            <input type="password" id="password" name="password" @bind="_password" required />
+            <input type="password" id="password" name="password" required />
         </div>
 
         <button type="submit" class="btn btn-primary">Login</button>
@@ -11312,44 +11310,22 @@ MODIFIED: 2026-01-26 11:43:35
 </div>
 
 @code {
-    private string _username = "";
-    private string _password = "";
     private string? _error;
 
     [SupplyParameterFromQuery]
     public string? ReturnUrl { get; set; }
 
-    private async Task HandleLogin()
+    [SupplyParameterFromQuery(Name = "error")]
+    public string? Error { get; set; }
+
+    protected override void OnInitialized()
     {
-        if (string.IsNullOrWhiteSpace(_username) || string.IsNullOrWhiteSpace(_password))
+        _error = Error switch
         {
-            _error = "Username and password are required";
-            return;
-        }
-
-        var user = await AuthService.AuthenticateAsync(_username, _password);
-        if (user is null)
-        {
-            _error = "Invalid username or password";
-            return;
-        }
-
-        // FIX: Added the Role claim here so [Authorize(Roles="Admin")] works
-        var claims = new List<Claim>
-        {
-            new(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new(ClaimTypes.Name, user.Username),
-            new("DisplayName", user.DisplayName),
-            new(ClaimTypes.Role, AppConstants.AdminRole) 
+            "required" => "Username and password are required",
+            "invalid" => "Invalid username or password",
+            _ => null
         };
-
-        var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-        var principal = new ClaimsPrincipal(identity);
-
-        var context = HttpContextAccessor.HttpContext!;
-        await context.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
-        
-        Navigation.NavigateTo(ReturnUrl ?? "/admin", forceLoad: true);
     }
 }
 
@@ -12568,10 +12544,11 @@ MODIFIED: 2026-01-16 20:29:40
 
 ================================================================================
 FILE: src/MyBlog.Web/Program.cs
-SIZE: 4.10 KB
-MODIFIED: 2026-01-20 09:25:14
+SIZE: 5.13 KB
+MODIFIED: 2026-01-26 11:54:31
 ================================================================================
 
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
@@ -12616,23 +12593,19 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
             ? CookieSecurePolicy.Always
             : CookieSecurePolicy.SameAsRequest;
     });
-
 builder.Services.AddAuthorization();
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddAntiforgery();
 
-// OpenTelemetry configuration
-var serviceName = "MyBlog.Web";
+// Configure OpenTelemetry
+var serviceName = "MyBlog";
 var serviceVersion = typeof(Program).Assembly.GetName().Version?.ToString() ?? "1.0.0";
 
 builder.Services.AddOpenTelemetry()
-    .ConfigureResource(resource => resource
-        .AddService(serviceName: serviceName, serviceVersion: serviceVersion))
+    .ConfigureResource(resource => resource.AddService(serviceName, serviceVersion))
     .WithTracing(tracing => tracing
         .AddAspNetCoreInstrumentation()
         .AddHttpClientInstrumentation()
-        .AddSource(serviceName)
         .AddConsoleExporter())
     .WithMetrics(metrics => metrics
         .AddAspNetCoreInstrumentation()
@@ -12640,53 +12613,65 @@ builder.Services.AddOpenTelemetry()
         .AddConsoleExporter());
 
 // Configure logging with OpenTelemetry
-// Note: We only add the FileLogExporter here since it doesn't require DI.
-// Database logging is handled by the TelemetryCleanupService which has access to the DI container.
-var telemetryDir = TelemetryPathResolver.GetTelemetryDirectory();
 builder.Logging.AddOpenTelemetry(logging =>
 {
     logging.IncludeFormattedMessage = true;
     logging.IncludeScopes = true;
     logging.AddConsoleExporter();
-
-    if (telemetryDir is not null)
-    {
-        var logsPath = Path.Combine(telemetryDir, "logs");
-        Directory.CreateDirectory(logsPath);
-        logging.AddProcessor(new BatchLogRecordExportProcessor(new FileLogExporter(logsPath)));
-    }
 });
 
 var app = builder.Build();
 
-// Initialize database
-using (var scope = app.Services.CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<BlogDbContext>();
-
-    // EnsureCreated creates the database and all tables if the database doesn't exist.
-    // For existing databases, we need to manually ensure new tables exist.
-    await db.Database.EnsureCreatedAsync();
-
-    // Apply any pending schema updates for existing databases
-    await DatabaseSchemaUpdater.ApplyUpdatesAsync(db);
-
-    var authService = scope.ServiceProvider.GetRequiredService<IAuthService>();
-    await authService.EnsureAdminUserAsync();
-}
-
+// Configure the HTTP request pipeline
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
 }
 
 app.UseStaticFiles();
-app.UseAntiforgery();
+
+// Rate limiting for login attempts
+app.UseLoginRateLimit();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseLoginRateLimit();
+app.UseAntiforgery();
+
+// Minimal API endpoints
+app.MapPost("/login", async (HttpContext context, IAuthService authService) =>
+{
+    var form = await context.Request.ReadFormAsync();
+    var username = form["username"].ToString();
+    var password = form["password"].ToString();
+    var returnUrl = form["returnUrl"].ToString();
+
+    if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+    {
+        return Results.Redirect($"/login?error=required&returnUrl={Uri.EscapeDataString(returnUrl ?? "")}");
+    }
+
+    var user = await authService.AuthenticateAsync(username, password);
+    if (user is null)
+    {
+        return Results.Redirect($"/login?error=invalid&returnUrl={Uri.EscapeDataString(returnUrl ?? "")}");
+    }
+
+    var claims = new List<Claim>
+    {
+        new(ClaimTypes.NameIdentifier, user.Id.ToString()),
+        new(ClaimTypes.Name, user.Username),
+        new("DisplayName", user.DisplayName),
+        new(ClaimTypes.Role, AppConstants.AdminRole)
+    };
+
+    var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+    var principal = new ClaimsPrincipal(identity);
+
+    await context.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+
+    return Results.Redirect(string.IsNullOrWhiteSpace(returnUrl) ? "/admin" : returnUrl);
+});
 
 app.MapPost("/logout", async (HttpContext context) =>
 {
@@ -12694,10 +12679,34 @@ app.MapPost("/logout", async (HttpContext context) =>
     return Results.Redirect("/");
 }).RequireAuthorization();
 
-app.MapHub<ReaderHub>("/readerHub");
+app.MapGet("/api/images/{id:guid}", async (Guid id, IImageRepository imageRepository) =>
+{
+    var image = await imageRepository.GetByIdAsync(id);
+    if (image is null)
+    {
+        return Results.NotFound();
+    }
+    return Results.File(image.Data, image.ContentType);
+});
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
+
+app.MapHub<ReaderHub>("/readerHub");
+
+// Initialize database and ensure admin user
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<BlogDbContext>();
+    await context.Database.MigrateAsync();
+
+    var authService = scope.ServiceProvider.GetRequiredService<IAuthService>();
+    await authService.EnsureAdminUserAsync();
+
+    // Register telemetry exporters with the service provider
+    var logExporter = scope.ServiceProvider.GetService<FileLogExporter>();
+    var dbExporter = scope.ServiceProvider.GetService<DatabaseLogExporter>();
+}
 
 app.Run();
 
@@ -13773,7 +13782,7 @@ window.themeManager = {
 
 
 ===============================================================================
-EXPORT COMPLETED: Mon Jan 26 11:45:43 AM EST 2026
+EXPORT COMPLETED: Mon Jan 26 11:55:22 AM EST 2026
 Total Files Found: 115
 Files Exported: 115
 Files Skipped: 0 (binary or large files)
