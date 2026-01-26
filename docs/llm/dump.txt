@@ -1,6 +1,6 @@
 ===============================================================================
 PROJECT EXPORT
-Generated: Fri Jan 23 09:35:11 AM EST 2026
+Generated: Sun Jan 25 09:45:08 PM EST 2026
 Project Path: /home/kushal/src/dotnet/MyBlog
 ===============================================================================
 
@@ -41,7 +41,8 @@ DIRECTORY STRUCTURE:
 │       ├── claude.md
 │       ├── command.md
 │       ├── dump.txt
-│       └── kush.runasp.net-WebDeploy.publishSettings
+│       ├── kush.runasp.net-WebDeploy.publishSettings
+│       └── test.html
 ├── .github
 │   └── workflows
 │       └── build-deploy.yml
@@ -7793,7 +7794,7 @@ a:hover {
 
 
 ===============================================================================
-EXPORT COMPLETED: Fri Jan 23 09:35:12 AM EST 2026
+EXPORT COMPLETED: Sun Jan 25 09:45:08 PM EST 2026
 Total Files Found: 74
 Files Exported: 74
 Files Skipped: 0 (binary or large files)
