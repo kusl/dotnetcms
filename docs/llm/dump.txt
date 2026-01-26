@@ -1,6 +1,6 @@
 ===============================================================================
 PROJECT EXPORT
-Generated: Mon Jan 26 02:00:51 PM EST 2026
+Generated: Mon Jan 26 02:11:13 PM EST 2026
 Project Path: /home/kushal/src/dotnet/MyBlog
 ===============================================================================
 
@@ -12549,8 +12549,8 @@ MODIFIED: 2026-01-16 20:29:40
 
 ================================================================================
 FILE: src/MyBlog.Web/Program.cs
-SIZE: 5.44 KB
-MODIFIED: 2026-01-26 13:59:10
+SIZE: 5.38 KB
+MODIFIED: 2026-01-26 14:10:18
 ================================================================================
 
 using System.Security.Claims;
@@ -12598,6 +12598,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
             ? CookieSecurePolicy.Always
             : CookieSecurePolicy.SameAsRequest;
     });
+
 builder.Services.AddAuthorization();
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddHttpContextAccessor();
@@ -12676,13 +12677,13 @@ app.MapPost("/login", async (HttpContext context, IAuthService authService) =>
     await context.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
 
     return Results.Redirect(string.IsNullOrWhiteSpace(returnUrl) ? "/admin" : returnUrl);
-});
+}).DisableAntiforgery();
 
 app.MapPost("/logout", async (HttpContext context) =>
 {
     await context.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
     return Results.Redirect("/");
-}).RequireAuthorization();
+}).RequireAuthorization().DisableAntiforgery();
 
 app.MapGet("/api/images/{id:guid}", async (Guid id, IImageRepository imageRepository) =>
 {
@@ -12705,7 +12706,6 @@ using (var scope = app.Services.CreateScope())
     var context = scope.ServiceProvider.GetRequiredService<BlogDbContext>();
 
     // EnsureCreated creates the database and all tables if they don't exist
-    // This project doesn't use EF Core migrations, so we use EnsureCreated instead of MigrateAsync
     await context.Database.EnsureCreatedAsync();
 
     // Apply any incremental schema updates for existing databases
@@ -13793,7 +13793,7 @@ window.themeManager = {
 
 
 ===============================================================================
-EXPORT COMPLETED: Mon Jan 26 02:00:52 PM EST 2026
+EXPORT COMPLETED: Mon Jan 26 02:11:14 PM EST 2026
 Total Files Found: 115
 Files Exported: 115
 Files Skipped: 0 (binary or large files)

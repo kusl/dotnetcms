@@ -149,16 +149,16 @@ app.MapHub<ReaderHub>("/readerHub");
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<BlogDbContext>();
-    
+
     // EnsureCreated creates the database and all tables if they don't exist
     await context.Database.EnsureCreatedAsync();
-    
+
     // Apply any incremental schema updates for existing databases
     await DatabaseSchemaUpdater.ApplyUpdatesAsync(context);
 
     var authService = scope.ServiceProvider.GetRequiredService<IAuthService>();
     await authService.EnsureAdminUserAsync();
-    
+
     // Register telemetry exporters with the service provider
     var logExporter = scope.ServiceProvider.GetService<FileLogExporter>();
     var dbExporter = scope.ServiceProvider.GetService<DatabaseLogExporter>();
