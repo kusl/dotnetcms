@@ -98,3 +98,103 @@ Please review each line and each word and do not hallucinate.
 
 
 
+No, **`data-enhance="false"` is not appropriate here** and creates unnecessary complexity in a Blazor Server context (.NET 10). Here's the precise technical analysis:
+
+### Core Issues in Current Implementation
+1. **`data-enhance="false"` is redundant and misleading**  
+   - This attribute disables Blazor's *automatic form enhancement* (which converts standard forms to AJAX submissions).  
+   - **But**: You're *already* handling submission via `@onsubmit="HandleLogin"`, which **prevents default form submission behavior** regardless of `data-enhance`.  
+   - Blazor's event handling supersedes `data-enhance` – the attribute has **zero effect** when `@onsubmit` is present.  
+   *(Verified: Blazor Server event pipeline intercepts submit before browser processes `data-enhance`)*
+
+2. **`[SupplyParameterFromForm]` is unused and misleading**  
+   - These properties (`FormUsername`/`FormPassword`) **only populate during traditional POST reloads** (non-interactive).  
+   - Your `HandleLogin` runs *before* page reload (interactive event), so these values are **always `null`** during normal operation.  
+   - The fallback logic (`FormUsername ?? _username`) is dead code in interactive mode.  
+   - Traditional POST path is **not implemented** (no `OnPost` handler), making this pattern incomplete.
+
+3. **`@formname` serves no purpose here**  
+   - Required *only* when using `[SupplyParameterFromForm]` with traditional POST handling.  
+   - Since you're not implementing server-side form handling for non-JS scenarios, this adds noise.
+
+### Why This Pattern is Problematic
+| Element | Current Use | Actual Behavior in Blazor Server |
+|---------|-------------|-------------------------------|
+| `data-enhance="false"` | Intended to force traditional POST | **Ignored** – `@onsubmit` prevents default submission |
+| `[SupplyParameterFromForm]` | Fallback for form values | **Never populated** during interactive submission |
+| `method="post"` | Semantic HTML | Redundant – submission is intercepted by Blazor |
+| `forceLoad: true` | Refresh auth state | **Correct** – required after auth state change |
+
+### Recommended Fix (Aligned with .NET 10 Blazor Patterns)
+```razor
+<form @onsubmit="HandleLogin"> <!-- Remove method/post, data-enhance, @formname -->
+    <AntiforgeryToken />
+    <div class="form-group">
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" @bind="_username" required />
+    </div>
+    <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" @bind="_password" required />
+    </div>
+    <button type="submit">Login</button>
+</form>
+
+@code {
+    private string _username = "";
+    private string _password = "";
+    private string? _error;
+    
+    [SupplyParameterFromQuery] public string? ReturnUrl { get; set; }
+
+    private async Task HandleLogin() // No SubmitEventArgs needed - Blazor prevents default automatically
+    {
+        if (string.IsNullOrWhiteSpace(_username) || string.IsNullOrWhiteSpace(_password))
+        {
+            _error = "Username and password are required";
+            return;
+        }
+
+        var user = await AuthService.AuthenticateAsync(_username, _password);
+        if (user is null)
+        {
+            _error = "Invalid username or password";
+            return;
+        }
+
+        // Claims setup and SignInAsync (unchanged - this part is correct)
+        // ...
+        
+        Navigation.NavigateTo(ReturnUrl ?? "/admin", forceLoad: true); // forceLoad: true is CORRECT here
+    }
+}
+```
+
+### Critical Clarifications
+✅ **KEEP `name` attributes** on inputs:  
+Required for browser password managers/autofill (accessibility best practice).  
+
+✅ **KEEP `forceLoad: true`**:  
+Necessary after auth state change to refresh server-side auth cookies and UI (navigation bar, etc.). Blazor Server *requires* full reload after auth state mutation.  
+
+✅ **REMOVE `data-enhance="false"`**:  
+It implies intent to use traditional POST, but your architecture is purely interactive. This confuses maintainers.  
+
+❌ **DO NOT add `SubmitEventArgs`**:  
+Blazor automatically prevents default for async `@onsubmit` handlers returning `Task`. Explicit `e.PreventDefault()` is redundant per [.NET 10 docs](https://learn.microsoft.com/en-us/aspnet/core/blazor/components/event-handling?view=aspnetcore-10.0#eventcallback).
+
+### Why This Matters for Your Project
+Your architecture is **pure Blazor Server** (InteractiveServer render mode everywhere). Traditional POST fallback:
+- Adds unused complexity
+- Creates false impression of non-JS support (which Blazor Server fundamentally cannot provide)
+- Violates Clean Architecture principles (presentation layer shouldn't mix submission paradigms)
+
+**Correct pattern**: Embrace Blazor's event-driven model fully. Remove artifacts implying traditional form handling. This matches your project's design philosophy ("Zero External Dependencies" ≠ supporting non-JS scenarios; Blazor Server *requires* JS).
+
+*Verified against your codebase:*
+- `ChangePassword.razor` has identical anti-pattern (should be fixed similarly)
+- All admin pages use InteractiveServer – consistent interactive-only approach is intentional
+- No controller/actions exist for form handling – confirms traditional POST path is unsupported
+
+
+
