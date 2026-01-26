@@ -151,7 +151,6 @@ using (var scope = app.Services.CreateScope())
     var context = scope.ServiceProvider.GetRequiredService<BlogDbContext>();
     
     // EnsureCreated creates the database and all tables if they don't exist
-    // This project doesn't use EF Core migrations, so we use EnsureCreated instead of MigrateAsync
     await context.Database.EnsureCreatedAsync();
     
     // Apply any incremental schema updates for existing databases
