@@ -148,7 +148,13 @@ app.MapHub<ReaderHub>("/readerHub");
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<BlogDbContext>();
-    await context.Database.MigrateAsync();
+    
+    // EnsureCreated creates the database and all tables if they don't exist
+    // This project doesn't use EF Core migrations, so we use EnsureCreated instead of MigrateAsync
+    await context.Database.EnsureCreatedAsync();
+    
+    // Apply any incremental schema updates for existing databases
+    await DatabaseSchemaUpdater.ApplyUpdatesAsync(context);
 
     var authService = scope.ServiceProvider.GetRequiredService<IAuthService>();
     await authService.EnsureAdminUserAsync();
