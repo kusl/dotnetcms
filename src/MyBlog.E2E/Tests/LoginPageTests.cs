@@ -50,19 +50,19 @@ public sealed class LoginPageTests(PlaywrightFixture fixture)
         // Fill in invalid credentials
         await page.FillAsync("input[name='username'], input#username", "invalid");
         await page.FillAsync("input[name='password'], input#password", "invalid");
-        
+
         // Click submit and wait for page to reload (form POST)
         await page.ClickAsync("button[type='submit'], input[type='submit']");
-        
+
         // Wait for page to reload with error
         await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
-        
+
         // Check for ANY visible error indicator
         var hasError = await page.Locator(
             ".error, .error-message, .alert, .alert-danger, .validation-summary, " +
             "[class*='error'], [class*='invalid'], .text-danger, .danger"
         ).CountAsync();
-        
+
         Assert.True(hasError > 0, "Expected error message to be displayed after invalid login");
     }
 
@@ -76,13 +76,13 @@ public sealed class LoginPageTests(PlaywrightFixture fixture)
         // Fill in valid credentials
         await page.FillAsync("input[name='username'], input#username", "admin");
         await page.FillAsync("input[name='password'], input#password", "ChangeMe123!");
-        
+
         // Submit form
         await page.ClickAsync("button[type='submit'], input[type='submit']");
-        
+
         // Wait for navigation to complete
         await page.WaitForURLAsync("**/admin**", new PageWaitForURLOptions { Timeout = 60000 });
-        
+
         // Verify we're on admin page
         Assert.Contains("admin", page.Url, StringComparison.OrdinalIgnoreCase);
     }
@@ -102,13 +102,13 @@ public sealed class LoginPageTests(PlaywrightFixture fixture)
 
         // Wait for page to be fully loaded
         await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
-        
+
         // Check for logout element
         var hasLogout = await page.Locator(
             "text=/logout/i, text=/sign out/i, button:has-text('Logout'), " +
             "[href='/logout'], form[action*='logout']"
         ).CountAsync();
-        
+
         Assert.True(hasLogout > 0, "Expected logout button/link to be visible after login");
     }
 }
