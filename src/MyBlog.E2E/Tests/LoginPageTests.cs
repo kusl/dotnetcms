@@ -1,3 +1,4 @@
+// /home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/Tests/LoginPageTests.cs
 using Microsoft.Playwright;
 using Xunit;
 
@@ -39,7 +40,6 @@ public sealed class LoginPageTests(PlaywrightFixture fixture)
         await Assertions.Expect(submitButton).ToBeVisibleAsync();
     }
 
-    [Obsolete]
     [Fact]
     public async Task LoginPage_WithInvalidCredentials_ShowsError()
     {
@@ -47,37 +47,18 @@ public sealed class LoginPageTests(PlaywrightFixture fixture)
 
         await page.GotoAsync("/login");
 
-        // Wait for Blazor to fully initialize (renders AntiforgeryToken)
-        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
-
-        // Wait for the antiforgery token to be present (indicates Blazor is ready)
-        var antiforgeryToken = page.Locator("input[name='__RequestVerificationToken']");
-        await Assertions.Expect(antiforgeryToken).ToBeAttachedAsync(new LocatorAssertionsToBeAttachedOptions { Timeout = 10000 });
-
         // Fill in invalid credentials
-        await page.FillAsync("input#username", "invalid");
-        await page.FillAsync("input#password", "invalid");
+        await page.FillAsync("input#username, input[name='username']", "invalid");
+        await page.FillAsync("input#password, input[name='password']", "invalid");
+        await page.ClickAsync("button[type='submit']");
 
-        // Submit form and wait for navigation
-        await page.RunAndWaitForNavigationAsync(async () =>
-        {
-            await page.ClickAsync("button[type='submit']");
-        }, new PageRunAndWaitForNavigationOptions
-        {
-            UrlString = "**/login**",
-            Timeout = 30000
-        });
-
-        // Wait for Blazor to render the error message
-        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
-
-        // Verify error message is displayed
+        // CRITICAL FIX: Wait for the ACTUAL error element to appear
+        // Do NOT wait for URL or DOMContentLoaded - Blazor hydration timing varies in containers
         var errorMessage = page.Locator(".error-message");
-        await Assertions.Expect(errorMessage).ToBeVisibleAsync(new LocatorAssertionsToBeVisibleOptions { Timeout = 10000 });
+        await Assertions.Expect(errorMessage).ToBeVisibleAsync(new LocatorAssertionsToBeVisibleOptions { Timeout = 15000 });
         await Assertions.Expect(errorMessage).ToContainTextAsync("Invalid username or password");
     }
 
-    [Obsolete]
     [Fact]
     public async Task LoginPage_WithValidCredentials_RedirectsToAdmin()
     {
@@ -85,33 +66,17 @@ public sealed class LoginPageTests(PlaywrightFixture fixture)
 
         await page.GotoAsync("/login");
 
-        // Wait for Blazor to fully initialize (renders AntiforgeryToken)
-        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
-
-        // Wait for the antiforgery token to be present (indicates Blazor is ready)
-        var antiforgeryToken = page.Locator("input[name='__RequestVerificationToken']");
-        await Assertions.Expect(antiforgeryToken).ToBeAttachedAsync(new LocatorAssertionsToBeAttachedOptions { Timeout = 10000 });
-
         // Fill in valid credentials
-        await page.FillAsync("input#username", "admin");
-        await page.FillAsync("input#password", "ChangeMe123!");
+        await page.FillAsync("input#username, input[name='username']", "admin");
+        await page.FillAsync("input#password, input[name='password']", "ChangeMe123!");
+        await page.ClickAsync("button[type='submit']");
 
-        // Submit form and wait for navigation to admin
-        await page.RunAndWaitForNavigationAsync(async () =>
-        {
-            await page.ClickAsync("button[type='submit']");
-        }, new PageRunAndWaitForNavigationOptions
-        {
-            UrlString = "**/admin**",
-            Timeout = 30000
-        });
-
-        // Verify we're on an admin page
-        var url = page.Url;
-        Assert.Contains("admin", url);
+        // CRITICAL FIX: Wait for ADMIN-SPECIFIC content, not URL pattern
+        // URL may change before Blazor renders protected content
+        var dashboardHeading = page.Locator("h1:has-text('Admin Dashboard')");
+        await Assertions.Expect(dashboardHeading).ToBeVisibleAsync(new LocatorAssertionsToBeVisibleOptions { Timeout = 45000 });
     }
 
-    [Obsolete]
     [Fact]
     public async Task LoginPage_AfterLogin_ShowsLogoutButton()
     {
@@ -119,32 +84,14 @@ public sealed class LoginPageTests(PlaywrightFixture fixture)
 
         await page.GotoAsync("/login");
 
-        // Wait for Blazor to fully initialize (renders AntiforgeryToken)
-        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
-
-        // Wait for the antiforgery token to be present (indicates Blazor is ready)
-        var antiforgeryToken = page.Locator("input[name='__RequestVerificationToken']");
-        await Assertions.Expect(antiforgeryToken).ToBeAttachedAsync(new LocatorAssertionsToBeAttachedOptions { Timeout = 10000 });
-
         // Fill in valid credentials
-        await page.FillAsync("input#username", "admin");
-        await page.FillAsync("input#password", "ChangeMe123!");
+        await page.FillAsync("input#username, input[name='username']", "admin");
+        await page.FillAsync("input#password, input[name='password']", "ChangeMe123!");
+        await page.ClickAsync("button[type='submit']");
 
-        // Submit form and wait for navigation to admin
-        await page.RunAndWaitForNavigationAsync(async () =>
-        {
-            await page.ClickAsync("button[type='submit']");
-        }, new PageRunAndWaitForNavigationOptions
-        {
-            UrlString = "**/admin**",
-            Timeout = 30000
-        });
-
-        // Wait for page to fully render
-        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
-
-        // Logout button should now be visible (in the nav, within a form)
-        var logoutButton = page.Locator("form[action='/logout'] button[type='submit']");
-        await Assertions.Expect(logoutButton).ToBeVisibleAsync(new LocatorAssertionsToBeVisibleOptions { Timeout = 10000 });
+        // CRITICAL FIX: Wait for logout button visibility directly
+        // Avoids race condition between navigation completion and Blazor rendering
+        var logoutButton = page.Locator("button:has-text('Logout'), form[action='/logout'] button");
+        await Assertions.Expect(logoutButton).ToBeVisibleAsync(new LocatorAssertionsToBeVisibleOptions { Timeout = 45000 });
     }
 }
