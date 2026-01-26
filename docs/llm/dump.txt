@@ -1,6 +1,6 @@
 ===============================================================================
 PROJECT EXPORT
-Generated: Mon Jan 26 09:14:58 AM EST 2026
+Generated: Mon Jan 26 10:00:46 AM EST 2026
 Project Path: /home/kushal/src/dotnet/MyBlog
 ===============================================================================
 
@@ -11,44 +11,47 @@ DIRECTORY STRUCTURE:
 ├── .continue
 │   └── agents
 ├── docs
-│   └── llm
-│       ├── output
-│       │   ├── 0001.txt
-│       │   ├── 0002.txt
-│       │   ├── 0003.txt
-│       │   ├── 0004.txt
-│       │   ├── 0005.txt
-│       │   ├── 0006.txt
-│       │   ├── 0007.txt
-│       │   ├── 0008.txt
-│       │   ├── 0009.txt
-│       │   ├── 0010.txt
-│       │   ├── 0011.txt
-│       │   ├── 0012.txt
-│       │   ├── 0013.txt
-│       │   ├── 0014.txt
-│       │   ├── 0015.txt
-│       │   ├── 0016.txt
-│       │   ├── 0017.txt
-│       │   ├── 0018.txt
-│       │   ├── 0019.txt
-│       │   ├── 0020.txt
-│       │   ├── 0021.txt
-│       │   ├── 0022.txt
-│       │   ├── 0023.txt
-│       │   ├── 0024.txt
-│       │   ├── 0025.md
-│       │   ├── 0026.txt
-│       │   ├── 0029.txt
-│       │   ├── 0030.txt
-│       │   ├── 0031.txt
-│       │   └── 0032.txt
-│       ├── claude.md
-│       ├── command.md
-│       ├── dump.txt
-│       ├── kush.runasp.net-WebDeploy.publishSettings
-│       ├── playwright.md
-│       └── test.html
+│   ├── llm
+│   │   ├── output
+│   │   │   ├── 0001.txt
+│   │   │   ├── 0002.txt
+│   │   │   ├── 0003.txt
+│   │   │   ├── 0004.txt
+│   │   │   ├── 0005.txt
+│   │   │   ├── 0006.txt
+│   │   │   ├── 0007.txt
+│   │   │   ├── 0008.txt
+│   │   │   ├── 0009.txt
+│   │   │   ├── 0010.txt
+│   │   │   ├── 0011.txt
+│   │   │   ├── 0012.txt
+│   │   │   ├── 0013.txt
+│   │   │   ├── 0014.txt
+│   │   │   ├── 0015.txt
+│   │   │   ├── 0016.txt
+│   │   │   ├── 0017.txt
+│   │   │   ├── 0018.txt
+│   │   │   ├── 0019.txt
+│   │   │   ├── 0020.txt
+│   │   │   ├── 0021.txt
+│   │   │   ├── 0022.txt
+│   │   │   ├── 0023.txt
+│   │   │   ├── 0024.txt
+│   │   │   ├── 0025.md
+│   │   │   ├── 0026.txt
+│   │   │   ├── 0029.txt
+│   │   │   ├── 0030.txt
+│   │   │   ├── 0031.txt
+│   │   │   ├── 0032.txt
+│   │   │   └── 0033.md
+│   │   ├── claude.md
+│   │   ├── command.md
+│   │   ├── dump.txt
+│   │   ├── instructions.md
+│   │   ├── kush.runasp.net-WebDeploy.publishSettings
+│   │   ├── playwright.md
+│   │   └── test.html
+│   └── E2E-TESTING.md
 ├── .github
 │   └── workflows
 │       └── build-deploy.yml
@@ -81,6 +84,16 @@ DIRECTORY STRUCTURE:
 │   │   │   ├── MarkdownService.cs
 │   │   │   └── SlugService.cs
 │   │   └── MyBlog.Core.csproj
+│   ├── MyBlog.E2E
+│   │   ├── Tests
+│   │   │   ├── AboutPageTests.cs
+│   │   │   ├── HomePageTests.cs
+│   │   │   ├── LoginPageTests.cs
+│   │   │   └── ThemeSwitcherTests.cs
+│   │   ├── Dockerfile
+│   │   ├── MyBlog.E2E.csproj
+│   │   ├── PlaywrightCollection.cs
+│   │   └── PlaywrightFixture.cs
 │   ├── MyBlog.Infrastructure
 │   │   ├── Data
 │   │   │   ├── BlogDbContext.cs
@@ -172,6 +185,7 @@ DIRECTORY STRUCTURE:
 │   │   │       └── site.js
 │   │   ├── appsettings.Development.json
 │   │   ├── appsettings.json
+│   │   ├── Dockerfile
 │   │   ├── MyBlog.Web.csproj
 │   │   └── Program.cs
 │   ├── Directory.Build.props
@@ -180,14 +194,115 @@ DIRECTORY STRUCTURE:
 │   ├── global.json
 │   ├── MyBlog.sln.DotSettings.user
 │   └── MyBlog.slnx
+├── docker-compose.e2e.yml
+├── docker-compose.yml
 ├── .editorconfig
 ├── export.sh
 ├── .gitignore
-└── README.md
+├── README.md
+└── run-e2e.sh
 
 
 FILE CONTENTS:
 ==============
+
+================================================================================
+FILE: docker-compose.e2e.yml
+SIZE: 1.40 KB
+MODIFIED: 2026-01-26 09:55:18
+================================================================================
+
+# Docker Compose for E2E testing with Playwright
+# Works with both Docker and Podman Compose on Fedora (with SELinux)
+#
+# Usage:
+#   podman-compose -f docker-compose.e2e.yml up --build
+#   podman-compose -f docker-compose.e2e.yml down -v
+
+services:
+  myblog-web:
+    build:
+      context: ./src
+      dockerfile: MyBlog.Web/Dockerfile
+    container_name: myblog-web
+    ports:
+      - "5000:5000"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:5000
+      - ConnectionStrings__DefaultConnection=Data Source=/app/data/myblog.db
+      - Authentication__DefaultAdminPassword=ChangeMe123!
+    volumes:
+      # :Z suffix for SELinux on Fedora - creates private unshared label
+      - myblog-data:/app/data:Z
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/"]
+      interval: 5s
+      timeout: 10s
+      retries: 10
+      start_period: 30s
+    networks:
+      - myblog-network
+
+  myblog-e2e:
+    build:
+      context: ./src
+      dockerfile: MyBlog.E2E/Dockerfile
+    container_name: myblog-e2e
+    depends_on:
+      myblog-web:
+        condition: service_healthy
+    environment:
+      - MYBLOG_BASE_URL=http://myblog-web:5000
+      - PLAYWRIGHT_HEADLESS=true
+    volumes:
+      # Test results output with SELinux label
+      - ./test-results:/tests/TestResults:Z
+    networks:
+      - myblog-network
+
+networks:
+  myblog-network:
+    driver: bridge
+
+volumes:
+  myblog-data:
+  
+
+================================================================================
+FILE: docker-compose.yml
+SIZE: .67 KB
+MODIFIED: 2026-01-26 09:55:33
+================================================================================
+
+# Simple Docker Compose for running MyBlog locally
+# Works with both Docker and Podman Compose
+#
+# Usage:
+#   podman-compose up --build
+#   podman-compose down -v
+
+services:
+  myblog:
+    build:
+      context: ./src
+      dockerfile: MyBlog.Web/Dockerfile
+    container_name: myblog
+    ports:
+      - "5000:5000"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:5000
+      - ConnectionStrings__DefaultConnection=Data Source=/app/data/myblog.db
+      - Authentication__DefaultAdminPassword=ChangeMe123!
+    volumes:
+      # :Z suffix for SELinux on Fedora
+      - myblog-data:/app/data:Z
+    restart: unless-stopped
+
+volumes:
+  myblog-data:
+  
 
 ================================================================================
 FILE: .editorconfig
@@ -515,8 +630,8 @@ echo ""
 
 ================================================================================
 FILE: .github/workflows/build-deploy.yml
-SIZE: 2.87 KB
-MODIFIED: 2026-01-01 21:59:50
+SIZE: 4.50 KB
+MODIFIED: 2026-01-26 09:57:33
 ================================================================================
 
 name: Build, Test, and Deploy
@@ -549,12 +664,72 @@ jobs:
       - name: Build solution
         run: dotnet build src/MyBlog.slnx -c Release --no-restore
 
-      - name: Run tests
-        run: 
-          dotnet run --project src/MyBlog.Tests/MyBlog.Tests.csproj
+      - name: Run unit tests
+        run: dotnet run --project src/MyBlog.Tests/MyBlog.Tests.csproj
+
+  e2e-tests:
+    runs-on: ubuntu-latest
+    needs: build-test
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Restore E2E dependencies
+        run: dotnet restore src/MyBlog.E2E/MyBlog.E2E.csproj
+
+      - name: Build E2E project
+        run: dotnet build src/MyBlog.E2E/MyBlog.E2E.csproj -c Release --no-restore
+
+      - name: Install Playwright browsers
+        run: |
+          dotnet tool install --global Microsoft.Playwright.CLI
+          playwright install chromium --with-deps
+
+      - name: Build and run MyBlog
+        run: |
+          dotnet build src/MyBlog.Web/MyBlog.Web.csproj -c Release
+          dotnet run --project src/MyBlog.Web/MyBlog.Web.csproj -c Release --no-build &
+          sleep 15
+        env:
+          ASPNETCORE_URLS: http://localhost:5000
+          ASPNETCORE_ENVIRONMENT: Development
+          Authentication__DefaultAdminPassword: ChangeMe123!
+
+      - name: Wait for application to start
+        run: |
+          for i in {1..30}; do
+            if curl -sf http://localhost:5000/ > /dev/null 2>&1; then
+              echo "Application is ready"
+              break
+            fi
+            echo "Waiting for application... ($i/30)"
+            sleep 2
+          done
+
+      - name: Run E2E tests
+        run: dotnet run --project src/MyBlog.E2E/MyBlog.E2E.csproj -c Release --no-build
+        env:
+          MYBLOG_BASE_URL: http://localhost:5000
+          PLAYWRIGHT_HEADLESS: true
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: e2e-test-results
+          path: |
+            src/MyBlog.E2E/TestResults/
+            test-results/
+          retention-days: 7
 
   deploy:
-    needs: build-test
+    needs: [build-test, e2e-tests]
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop'
     runs-on: windows-latest
     
@@ -592,8 +767,6 @@ jobs:
           $sourceArg = "-source:contentPath=$env:DEPLOY_SOURCE"
           $destArg = "-dest:contentPath=$env:DEPLOY_SITE,computerName=https://$($env:DEPLOY_HOST):8172/MsDeploy.axd?site=$env:DEPLOY_SITE,userName=$env:DEPLOY_USER,password=$env:DEPLOY_PASSWORD,AuthType='Basic'"
           
-          # Key fix: Added -enableRule:AppOffline to stop the app during deployment
-          # This creates app_offline.htm, waits for app to stop, deploys, then removes the file
           & $msdeployPath -verb:sync $sourceArg $destArg `
             -allowUntrusted `
             -enableRule:DoNotDeleteRule `
@@ -611,8 +784,8 @@ jobs:
 
 ================================================================================
 FILE: .gitignore
-SIZE: 7.84 KB
-MODIFIED: 2025-12-28 08:05:03
+SIZE: 7.94 KB
+MODIFIED: 2026-01-26 09:57:52
 ================================================================================
 
 ## Ignore Visual Studio temporary files, build results, and
@@ -1100,6 +1273,14 @@ $RECYCLE.BIN/
 
 
 *.publishSettings
+
+# Playwright
+playwright-report/
+playwright/.cache/
+test-results/
+
+# Docker/Podman volumes
+myblog-data/
 
 
 ================================================================================
@@ -3111,6 +3292,130 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 
 ================================================================================
+FILE: run-e2e.sh
+SIZE: 3.12 KB
+MODIFIED: 2026-01-26 09:56:37
+================================================================================
+
+#!/bin/bash
+# =============================================================================
+# Run E2E Tests with Podman Compose
+# =============================================================================
+# This script runs Playwright E2E tests against MyBlog using containers.
+# Designed for Fedora with SELinux and Podman.
+#
+# Usage:
+#   ./run-e2e.sh          # Run all E2E tests
+#   ./run-e2e.sh --build  # Force rebuild containers
+#   ./run-e2e.sh --clean  # Clean up and remove volumes
+# =============================================================================
+
+set -e
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$SCRIPT_DIR"
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
+log_info() {
+    echo -e "${GREEN}[INFO]${NC} $1"
+}
+
+log_warn() {
+    echo -e "${YELLOW}[WARN]${NC} $1"
+}
+
+log_error() {
+    echo -e "${RED}[ERROR]${NC} $1"
+}
+
+# Parse arguments
+BUILD_FLAG=""
+CLEAN_FLAG=""
+
+for arg in "$@"; do
+    case $arg in
+        --build)
+            BUILD_FLAG="--build"
+            ;;
+        --clean)
+            CLEAN_FLAG="true"
+            ;;
+    esac
+done
+
+# Clean up if requested
+if [ "$CLEAN_FLAG" == "true" ]; then
+    log_info "Cleaning up containers and volumes..."
+    podman-compose -f docker-compose.e2e.yml down -v --remove-orphans 2>/dev/null || true
+    podman system prune -f 2>/dev/null || true
+    log_info "Cleanup complete"
+    exit 0
+fi
+
+# Create test results directory
+mkdir -p test-results
+# Set SELinux context if on Fedora with SELinux
+if command -v chcon &> /dev/null && getenforce 2>/dev/null | grep -q "Enforcing"; then
+    log_info "Setting SELinux context for test-results directory..."
+    chcon -Rt svirt_sandbox_file_t test-results 2>/dev/null || true
+fi
+
+log_info "Starting E2E test environment..."
+
+# Build and start services
+log_info "Building containers..."
+podman-compose -f docker-compose.e2e.yml build $BUILD_FLAG
+
+log_info "Starting MyBlog web service..."
+podman-compose -f docker-compose.e2e.yml up -d myblog-web
+
+# Wait for web service to be healthy
+log_info "Waiting for MyBlog to be ready..."
+RETRIES=30
+until podman exec myblog-web curl -sf http://localhost:5000/ > /dev/null 2>&1; do
+    RETRIES=$((RETRIES - 1))
+    if [ $RETRIES -eq 0 ]; then
+        log_error "MyBlog failed to start within timeout"
+        podman-compose -f docker-compose.e2e.yml logs myblog-web
+        podman-compose -f docker-compose.e2e.yml down -v
+        exit 1
+    fi
+    echo -n "."
+    sleep 2
+done
+echo ""
+log_info "MyBlog is ready!"
+
+# Run E2E tests
+log_info "Running E2E tests..."
+podman-compose -f docker-compose.e2e.yml up myblog-e2e
+E2E_EXIT_CODE=$?
+
+# Capture logs
+log_info "Capturing logs..."
+podman-compose -f docker-compose.e2e.yml logs myblog-web > test-results/myblog-web.log 2>&1
+podman-compose -f docker-compose.e2e.yml logs myblog-e2e > test-results/myblog-e2e.log 2>&1
+
+# Clean up
+log_info "Cleaning up..."
+podman-compose -f docker-compose.e2e.yml down -v
+
+if [ $E2E_EXIT_CODE -eq 0 ]; then
+    log_info "E2E tests passed! ✓"
+else
+    log_error "E2E tests failed with exit code $E2E_EXIT_CODE"
+    log_info "Check test-results/ directory for logs"
+fi
+
+exit $E2E_EXIT_CODE
+
+
+================================================================================
 FILE: src/Directory.Build.props
 SIZE: .56 KB
 MODIFIED: 2026-01-01 22:21:17
@@ -3137,8 +3442,8 @@ MODIFIED: 2026-01-01 22:21:17
 
 ================================================================================
 FILE: src/Directory.Packages.props
-SIZE: 1.60 KB
-MODIFIED: 2026-01-21 11:50:23
+SIZE: 1.71 KB
+MODIFIED: 2026-01-26 09:57:10
 ================================================================================
 
 <Project>
@@ -3166,8 +3471,11 @@ MODIFIED: 2026-01-21 11:50:23
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
     <PackageVersion Include="Microsoft.Testing.Extensions.TrxReport" Version="2.0.2" />
+    <!-- E2E Testing (Playwright) -->
+    <PackageVersion Include="Microsoft.Playwright" Version="1.49.0" />
   </ItemGroup>
 </Project>
+
 
 ================================================================================
 FILE: src/.github/workflows/build-deploy.yml
@@ -4202,6 +4510,510 @@ public sealed partial class SlugService : ISlugService
 
     [GeneratedRegex(@"-+")]
     private static partial Regex MultipleHyphenPattern();
+}
+
+
+================================================================================
+FILE: src/MyBlog.E2E/Dockerfile
+SIZE: 1.17 KB
+MODIFIED: 2026-01-26 09:55:56
+================================================================================
+
+# E2E Test Runner with Playwright
+# Uses the official Playwright .NET image which includes browsers
+FROM mcr.microsoft.com/playwright/dotnet:v1.49.0-noble
+
+WORKDIR /src
+
+# Install .NET 10 SDK (Playwright image has .NET 8)
+RUN wget https://dot.net/v1/dotnet-install.sh -O dotnet-install.sh && \
+    chmod +x dotnet-install.sh && \
+    ./dotnet-install.sh --channel 10.0 --install-dir /usr/share/dotnet && \
+    rm dotnet-install.sh
+
+# Copy project files for restore
+COPY Directory.Build.props .
+COPY Directory.Packages.props .
+COPY MyBlog.Core/MyBlog.Core.csproj MyBlog.Core/
+COPY MyBlog.Infrastructure/MyBlog.Infrastructure.csproj MyBlog.Infrastructure/
+COPY MyBlog.Web/MyBlog.Web.csproj MyBlog.Web/
+COPY MyBlog.E2E/MyBlog.E2E.csproj MyBlog.E2E/
+
+# Restore E2E project and all dependencies
+RUN dotnet restore MyBlog.E2E/MyBlog.E2E.csproj
+
+# Copy all source code
+COPY . .
+
+# Build the E2E project
+RUN dotnet build MyBlog.E2E/MyBlog.E2E.csproj -c Release --no-restore
+
+WORKDIR /src/MyBlog.E2E
+
+# Set environment variables
+ENV MYBLOG_BASE_URL=http://myblog-web:5000
+ENV PLAYWRIGHT_HEADLESS=true
+
+# Run tests using dotnet run (xUnit v3 style)
+ENTRYPOINT ["dotnet", "run", "-c", "Release", "--no-build"]
+
+
+================================================================================
+FILE: src/MyBlog.E2E/MyBlog.E2E.csproj
+SIZE: .45 KB
+MODIFIED: 2026-01-26 09:58:30
+================================================================================
+
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>MyBlog.E2E</RootNamespace>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit.v3" />
+    <PackageReference Include="Microsoft.Playwright" Version="1.49.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MyBlog.Web\MyBlog.Web.csproj" />
+  </ItemGroup>
+</Project>
+
+
+================================================================================
+FILE: src/MyBlog.E2E/PlaywrightCollection.cs
+SIZE: .35 KB
+MODIFIED: 2026-01-26 09:53:31
+================================================================================
+
+using Xunit;
+
+namespace MyBlog.E2E;
+
+/// <summary>
+/// Collection definition for sharing PlaywrightFixture across tests.
+/// All tests using this collection share a single browser instance.
+/// </summary>
+[CollectionDefinition(Name)]
+public sealed class PlaywrightCollection : ICollectionFixture<PlaywrightFixture>
+{
+    public const string Name = "Playwright";
+}
+
+
+================================================================================
+FILE: src/MyBlog.E2E/PlaywrightFixture.cs
+SIZE: 2.07 KB
+MODIFIED: 2026-01-26 09:53:17
+================================================================================
+
+using Microsoft.Playwright;
+using Xunit;
+
+namespace MyBlog.E2E;
+
+/// <summary>
+/// Shared Playwright fixture for E2E tests.
+/// Provides browser and context instances reused across tests.
+/// </summary>
+public sealed class PlaywrightFixture : IAsyncLifetime
+{
+    private IPlaywright? _playwright;
+    private IBrowser? _browser;
+
+    public IBrowser Browser => _browser ?? throw new InvalidOperationException("Browser not initialized");
+    public IPlaywright Playwright => _playwright ?? throw new InvalidOperationException("Playwright not initialized");
+
+    /// <summary>
+    /// Base URL for the application under test.
+    /// Can be overridden via environment variable for container testing.
+    /// </summary>
+    public string BaseUrl => Environment.GetEnvironmentVariable("MYBLOG_BASE_URL") ?? "http://localhost:5000";
+
+    public async ValueTask InitializeAsync()
+    {
+        _playwright = await Microsoft.Playwright.Playwright.CreateAsync();
+
+        var headless = Environment.GetEnvironmentVariable("PLAYWRIGHT_HEADLESS") != "false";
+
+        _browser = await _playwright.Chromium.LaunchAsync(new BrowserTypeLaunchOptions
+        {
+            Headless = headless,
+            SlowMo = headless ? 0 : 100 // Slow down for debugging when not headless
+        });
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_browser is not null)
+        {
+            await _browser.CloseAsync();
+        }
+
+        _playwright?.Dispose();
+    }
+
+    /// <summary>
+    /// Creates a new browser context with default settings.
+    /// </summary>
+    public async Task<IBrowserContext> CreateContextAsync()
+    {
+        return await Browser.NewContextAsync(new BrowserNewContextOptions
+        {
+            BaseURL = BaseUrl,
+            IgnoreHTTPSErrors = true,
+            ViewportSize = new ViewportSize { Width = 1280, Height = 720 }
+        });
+    }
+
+    /// <summary>
+    /// Creates a new page with a fresh context.
+    /// </summary>
+    public async Task<IPage> CreatePageAsync()
+    {
+        var context = await CreateContextAsync();
+        return await context.NewPageAsync();
+    }
+}
+
+
+================================================================================
+FILE: src/MyBlog.E2E/Tests/AboutPageTests.cs
+SIZE: 2.02 KB
+MODIFIED: 2026-01-26 09:54:00
+================================================================================
+
+using Microsoft.Playwright;
+using Xunit;
+
+namespace MyBlog.E2E.Tests;
+
+/// <summary>
+/// E2E tests for the about page (Epic 1: Public Content Viewing).
+/// </summary>
+[Collection(PlaywrightCollection.Name)]
+public sealed class AboutPageTests(PlaywrightFixture fixture)
+{
+    private readonly PlaywrightFixture _fixture = fixture;
+
+    [Fact]
+    public async Task AboutPage_LoadsSuccessfully()
+    {
+        var page = await _fixture.CreatePageAsync();
+
+        var response = await page.GotoAsync("/about");
+
+        Assert.NotNull(response);
+        Assert.True(response.Ok, $"Expected OK response, got {response.Status}");
+    }
+
+    [Fact]
+    public async Task AboutPage_DisplaysAboutHeading()
+    {
+        var page = await _fixture.CreatePageAsync();
+
+        await page.GotoAsync("/about");
+
+        var heading = page.Locator("h1");
+        await Assertions.Expect(heading).ToBeVisibleAsync();
+        await Assertions.Expect(heading).ToContainTextAsync("About");
+    }
+
+    [Fact]
+    public async Task AboutPage_DisplaysArchitectureSection()
+    {
+        var page = await _fixture.CreatePageAsync();
+
+        await page.GotoAsync("/about");
+
+        var architectureSection = page.Locator("text=Architecture");
+        await Assertions.Expect(architectureSection.First).ToBeVisibleAsync();
+    }
+
+    [Fact]
+    public async Task AboutPage_DisplaysTechnologyStack()
+    {
+        var page = await _fixture.CreatePageAsync();
+
+        await page.GotoAsync("/about");
+
+        // The about page should mention .NET and Blazor
+        var content = await page.ContentAsync();
+        Assert.Contains(".NET", content);
+        Assert.Contains("Blazor", content);
+    }
+
+    [Fact]
+    public async Task AboutPage_HasReaderBadge()
+    {
+        var page = await _fixture.CreatePageAsync();
+
+        await page.GotoAsync("/about");
+
+        // Wait for SignalR connection and reader badge
+        var readerBadge = page.Locator(".reader-badge, .reader-info");
+        await Assertions.Expect(readerBadge.First).ToBeVisibleAsync(new() { Timeout = 10000 });
+    }
+}
+
+
+================================================================================
+FILE: src/MyBlog.E2E/Tests/HomePageTests.cs
+SIZE: 2.15 KB
+MODIFIED: 2026-01-26 09:53:45
+================================================================================
+
+using Microsoft.Playwright;
+using Xunit;
+
+namespace MyBlog.E2E.Tests;
+
+/// <summary>
+/// E2E tests for the homepage (Epic 1: Public Content Viewing).
+/// </summary>
+[Collection(PlaywrightCollection.Name)]
+public sealed class HomePageTests(PlaywrightFixture fixture)
+{
+    private readonly PlaywrightFixture _fixture = fixture;
+
+    [Fact]
+    public async Task HomePage_LoadsSuccessfully()
+    {
+        var page = await _fixture.CreatePageAsync();
+
+        var response = await page.GotoAsync("/");
+
+        Assert.NotNull(response);
+        Assert.True(response.Ok, $"Expected OK response, got {response.Status}");
+    }
+
+    [Fact]
+    public async Task HomePage_DisplaysWelcomeHeading()
+    {
+        var page = await _fixture.CreatePageAsync();
+
+        await page.GotoAsync("/");
+
+        var heading = page.Locator("h1");
+        await Assertions.Expect(heading).ToBeVisibleAsync();
+        await Assertions.Expect(heading).ToContainTextAsync("Welcome");
+    }
+
+    [Fact]
+    public async Task HomePage_HasNavigationLinks()
+    {
+        var page = await _fixture.CreatePageAsync();
+
+        await page.GotoAsync("/");
+
+        // Check for essential navigation links
+        var homeLink = page.Locator("nav a[href='/']");
+        var aboutLink = page.Locator("nav a[href='/about']");
+        var loginLink = page.Locator("nav a[href='/login']");
+
+        await Assertions.Expect(homeLink).ToBeVisibleAsync();
+        await Assertions.Expect(aboutLink).ToBeVisibleAsync();
+        await Assertions.Expect(loginLink).ToBeVisibleAsync();
+    }
+
+    [Fact]
+    public async Task HomePage_HasFooter()
+    {
+        var page = await _fixture.CreatePageAsync();
+
+        await page.GotoAsync("/");
+
+        var footer = page.Locator("footer");
+        await Assertions.Expect(footer).ToBeVisibleAsync();
+    }
+
+    [Fact]
+    public async Task HomePage_NavigationToAbout_Works()
+    {
+        var page = await _fixture.CreatePageAsync();
+
+        await page.GotoAsync("/");
+
+        await page.ClickAsync("nav a[href='/about']");
+
+        await page.WaitForURLAsync("**/about");
+        var heading = page.Locator("h1");
+        await Assertions.Expect(heading).ToContainTextAsync("About");
+    }
+}
+
+
+================================================================================
+FILE: src/MyBlog.E2E/Tests/LoginPageTests.cs
+SIZE: 3.21 KB
+MODIFIED: 2026-01-26 09:54:11
+================================================================================
+
+using Microsoft.Playwright;
+using Xunit;
+
+namespace MyBlog.E2E.Tests;
+
+/// <summary>
+/// E2E tests for authentication (Epic 1: Authentication).
+/// </summary>
+[Collection(PlaywrightCollection.Name)]
+public sealed class LoginPageTests(PlaywrightFixture fixture)
+{
+    private readonly PlaywrightFixture _fixture = fixture;
+
+    [Fact]
+    public async Task LoginPage_LoadsSuccessfully()
+    {
+        var page = await _fixture.CreatePageAsync();
+
+        var response = await page.GotoAsync("/login");
+
+        Assert.NotNull(response);
+        Assert.True(response.Ok, $"Expected OK response, got {response.Status}");
+    }
+
+    [Fact]
+    public async Task LoginPage_DisplaysLoginForm()
+    {
+        var page = await _fixture.CreatePageAsync();
+
+        await page.GotoAsync("/login");
+
+        var usernameInput = page.Locator("input#username, input[name='username']");
+        var passwordInput = page.Locator("input#password, input[name='password']");
+        var submitButton = page.Locator("button[type='submit']");
+
+        await Assertions.Expect(usernameInput).ToBeVisibleAsync();
+        await Assertions.Expect(passwordInput).ToBeVisibleAsync();
+        await Assertions.Expect(submitButton).ToBeVisibleAsync();
+    }
+
+    [Fact]
+    public async Task LoginPage_WithInvalidCredentials_ShowsError()
+    {
+        var page = await _fixture.CreatePageAsync();
+
+        await page.GotoAsync("/login");
+
+        await page.FillAsync("input#username, input[name='username']", "invalid");
+        await page.FillAsync("input#password, input[name='password']", "invalid");
+        await page.ClickAsync("button[type='submit']");
+
+        // Wait for error message to appear
+        await page.WaitForSelectorAsync(".error-message, .error", new() { Timeout = 5000 });
+
+        var errorMessage = page.Locator(".error-message, .error");
+        await Assertions.Expect(errorMessage).ToBeVisibleAsync();
+    }
+
+    [Fact]
+    public async Task LoginPage_WithValidCredentials_RedirectsToAdmin()
+    {
+        var page = await _fixture.CreatePageAsync();
+
+        await page.GotoAsync("/login");
+
+        // Use default credentials
+        await page.FillAsync("input#username, input[name='username']", "admin");
+        await page.FillAsync("input#password, input[name='password']", "ChangeMe123!");
+        await page.ClickAsync("button[type='submit']");
+
+        // Wait for redirect to admin
+        await page.WaitForURLAsync("**/admin**", new() { Timeout = 10000 });
+
+        // Verify we're on an admin page
+        var url = page.Url;
+        Assert.Contains("admin", url);
+    }
+
+    [Fact]
+    public async Task LoginPage_AfterLogin_ShowsLogoutButton()
+    {
+        var page = await _fixture.CreatePageAsync();
+
+        await page.GotoAsync("/login");
+
+        await page.FillAsync("input#username, input[name='username']", "admin");
+        await page.FillAsync("input#password, input[name='password']", "ChangeMe123!");
+        await page.ClickAsync("button[type='submit']");
+
+        await page.WaitForURLAsync("**/admin**", new() { Timeout = 10000 });
+
+        // Logout button should now be visible
+        var logoutButton = page.Locator("button:has-text('Logout'), form[action='/logout'] button");
+        await Assertions.Expect(logoutButton).ToBeVisibleAsync();
+    }
+}
+
+
+================================================================================
+FILE: src/MyBlog.E2E/Tests/ThemeSwitcherTests.cs
+SIZE: 1.91 KB
+MODIFIED: 2026-01-26 09:54:24
+================================================================================
+
+using Microsoft.Playwright;
+using Xunit;
+
+namespace MyBlog.E2E.Tests;
+
+/// <summary>
+/// E2E tests for the theme switcher (Epic 1: UI/UX).
+/// </summary>
+[Collection(PlaywrightCollection.Name)]
+public sealed class ThemeSwitcherTests(PlaywrightFixture fixture)
+{
+    private readonly PlaywrightFixture _fixture = fixture;
+
+    [Fact]
+    public async Task ThemeSwitcher_IsVisibleOnPage()
+    {
+        var page = await _fixture.CreatePageAsync();
+
+        await page.GotoAsync("/");
+
+        var themeSwitcher = page.Locator(".theme-switcher, select[aria-label*='theme' i], select:has(option[value='dark'])");
+        await Assertions.Expect(themeSwitcher.First).ToBeVisibleAsync();
+    }
+
+    [Fact]
+    public async Task ThemeSwitcher_ChangesTheme()
+    {
+        var page = await _fixture.CreatePageAsync();
+
+        await page.GotoAsync("/");
+
+        // Get initial theme
+        var initialTheme = await page.EvaluateAsync<string>("document.documentElement.getAttribute('data-theme')");
+
+        // Find and click the theme switcher
+        var themeSwitcher = page.Locator(".theme-switcher select, select:has(option[value='dark'])");
+        await themeSwitcher.First.SelectOptionAsync("dark");
+
+        // Wait a moment for the theme to apply
+        await page.WaitForTimeoutAsync(500);
+
+        // Check that theme changed
+        var newTheme = await page.EvaluateAsync<string>("document.documentElement.getAttribute('data-theme')");
+        Assert.Equal("dark", newTheme);
+    }
+
+    [Fact]
+    public async Task ThemeSwitcher_HasMultipleOptions()
+    {
+        var page = await _fixture.CreatePageAsync();
+
+        await page.GotoAsync("/");
+
+        var themeSwitcher = page.Locator(".theme-switcher select, select:has(option[value='dark'])");
+        var options = themeSwitcher.First.Locator("option");
+
+        var count = await options.CountAsync();
+        Assert.True(count >= 2, $"Expected at least 2 theme options, got {count}");
+    }
 }
 
 
@@ -6106,8 +6918,8 @@ public static class TelemetryPathResolver
 
 ================================================================================
 FILE: src/MyBlog.slnx
-SIZE: .24 KB
-MODIFIED: 2025-12-28 08:44:06
+SIZE: .29 KB
+MODIFIED: 2026-01-26 09:56:51
 ================================================================================
 
 <Solution>
@@ -6115,6 +6927,7 @@ MODIFIED: 2025-12-28 08:44:06
   <Project Path="MyBlog.Infrastructure/MyBlog.Infrastructure.csproj" />
   <Project Path="MyBlog.Web/MyBlog.Web.csproj" />
   <Project Path="MyBlog.Tests/MyBlog.Tests.csproj" />
+  <Project Path="MyBlog.E2E/MyBlog.E2E.csproj" />
 </Solution>
 
 
@@ -11363,6 +12176,59 @@ MODIFIED: 2026-01-26 05:45:13
 
 
 ================================================================================
+FILE: src/MyBlog.Web/Dockerfile
+SIZE: 1.20 KB
+MODIFIED: 2026-01-26 09:54:39
+================================================================================
+
+# Build stage
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+WORKDIR /src
+
+# Copy project files first for better layer caching
+COPY Directory.Build.props .
+COPY Directory.Packages.props .
+COPY MyBlog.Core/MyBlog.Core.csproj MyBlog.Core/
+COPY MyBlog.Infrastructure/MyBlog.Infrastructure.csproj MyBlog.Infrastructure/
+COPY MyBlog.Web/MyBlog.Web.csproj MyBlog.Web/
+
+# Restore dependencies
+RUN dotnet restore MyBlog.Web/MyBlog.Web.csproj
+
+# Copy source code
+COPY MyBlog.Core/ MyBlog.Core/
+COPY MyBlog.Infrastructure/ MyBlog.Infrastructure/
+COPY MyBlog.Web/ MyBlog.Web/
+
+# Build and publish
+RUN dotnet publish MyBlog.Web/MyBlog.Web.csproj -c Release -o /app/publish --no-restore
+
+# Runtime stage
+FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
+WORKDIR /app
+
+# Create non-root user for security
+RUN useradd -m -s /bin/bash appuser
+
+# Create data directory for SQLite
+RUN mkdir -p /app/data && chown appuser:appuser /app/data
+
+COPY --from=build /app/publish .
+
+# Set environment variables
+ENV ASPNETCORE_URLS=http://+:5000
+ENV ASPNETCORE_ENVIRONMENT=Production
+ENV ConnectionStrings__DefaultConnection="Data Source=/app/data/myblog.db"
+
+# Switch to non-root user
+USER appuser
+
+EXPOSE 5000
+
+ENTRYPOINT ["dotnet", "MyBlog.Web.dll"]
+
+
+================================================================================
 FILE: src/MyBlog.Web/Hubs/ReaderHub.cs
 SIZE: 1.39 KB
 MODIFIED: 2026-01-16 20:30:48
@@ -12848,9 +13714,9 @@ window.themeManager = {
 
 
 ===============================================================================
-EXPORT COMPLETED: Mon Jan 26 09:14:59 AM EST 2026
-Total Files Found: 103
-Files Exported: 103
+EXPORT COMPLETED: Mon Jan 26 10:00:47 AM EST 2026
+Total Files Found: 115
+Files Exported: 115
 Files Skipped: 0 (binary or large files)
 Output File: /home/kushal/src/dotnet/MyBlog/docs/llm/dump.txt
 ===============================================================================
