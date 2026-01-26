@@ -4848,3 +4848,153 @@ and please do not hallucinate
 give me full files for all files that changed 
 
 
+You're right, I apologize for the hasty analysis. Let me carefully read the actual Login.razor code from your dump.txt.Now I have the complete Login.razor. Let me also search for how Program.cs configures antiforgery and authentication to understand the full picture.Let me search for the complete Program.cs to see the full middleware pipeline:Now I have a complete picture. Looking at the middleware pipeline in Program.cs:
+
+```csharp
+app.UseStaticFiles();
+app.UseAntiforgery();
+app.UseAuthentication();
+app.UseAuthorization();
+app.UseLoginRateLimit();
+```
+
+And the App.razor has `<Routes @rendermode="InteractiveServer" />`, which means all pages inherit InteractiveServer mode.
+
+However, looking carefully at the Login.razor code and the error you're experiencing, I now understand the issue better. The problem is that the **form POST to `/login` is being processed before the Blazor circuit can establish on certain conditions** (especially on mobile with spotty connections).
+
+Looking at your HTTP request details:
+- `content-type: application/x-www-form-urlencoded` — this is a traditional form POST, not a Blazor SignalR submission
+- The `blazor-enhanced-nav: allow` header indicates enhanced navigation is being used
+
+The issue is that in .NET 8+ Blazor, **enhanced navigation** can intercept form submissions and try to handle them as streaming SSR even when the page is configured for InteractiveServer. When the SignalR circuit isn't ready or drops momentarily, the form falls back to a traditional POST, and the antiforgery validation can fail due to token mismatch.
+
+Let me search for more context on how to properly handle this:Now I have a complete understanding. The issue is clear:
+
+**The Problem:**
+In Blazor .NET 8+, when you have `<Routes @rendermode="InteractiveServer" />` in App.razor, pages are rendered interactively via SignalR. However, when you use `<form method="post">` with `@onsubmit`, Blazor's **enhanced navigation** can attempt to handle the form as a streaming SSR request, especially when:
+1. The SignalR circuit hasn't fully established yet
+2. The connection drops momentarily (common on mobile)
+3. The page is accessed directly without navigating through the app
+
+When this happens, the form POSTs as a traditional HTTP request, and the antiforgery token validation can fail because:
+- The token in the form was generated for one circuit/request
+- The validation happens in a different context
+
+**The Solution:**
+Add `data-enhance="false"` to the form to **disable enhanced navigation for this specific form**, ensuring it's always handled by the Blazor interactive handler OR convert to a purely interactive form without `method="post"`.
+
+However, the cleaner solution for a login form that needs to work with `HttpContext.SignInAsync` is to use the EditForm approach or ensure the form works correctly in both SSR and interactive modes.
+
+Let me provide you with the fixed Login.razor file:## Summary of the Fix
+
+The only change is adding `data-enhance="false"` to the form tag:
+
+```diff
+- <form method="post" @onsubmit="HandleLogin" @formname="login">
++ <form method="post" @onsubmit="HandleLogin" @formname="login" data-enhance="false">
+```
+
+## Why This Works
+
+The `data-enhance="false"` attribute tells Blazor's enhanced navigation system to **not intercept this form submission**. This means:
+
+1. The form will always be handled by the interactive Blazor circuit via the `@onsubmit="HandleLogin"` handler
+2. The form won't fall back to streaming SSR when the circuit has a momentary hiccup
+3. The antiforgery token validation won't be affected by the race condition between SSR and interactive modes
+
+## Why the 400 Error Was Happening
+
+Looking at your request details:
+- `blazor-enhanced-nav: allow` header was present
+- The request was a traditional `application/x-www-form-urlencoded` POST
+- The antiforgery cookie token and form token were different (generated in different contexts)
+
+This indicates that Blazor's enhanced navigation intercepted the form submission and tried to process it as streaming SSR, but the antiforgery validation failed because the tokens were generated for the interactive circuit, not the SSR context.
+
+This is especially common on mobile because:
+- Mobile connections are less stable, causing circuit disconnects
+- Mobile browsers may handle SignalR WebSocket connections differently
+- The timing between page load and circuit establishment can vary more
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
