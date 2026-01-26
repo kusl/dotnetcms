@@ -5951,3 +5951,50 @@ sys	0m0.146s
     /home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/MyBlog.E2E.csproj : error NU1008: The following PackageReference items cannot define a value for Version: Microsoft.Playwright. Projects using Central Package Management must define a Version value on a PackageVersion item. For more information, visit https://aka.ms/nuget/cpm/gettingstarted
 
 Restore failed with 1 error(s) in 0.6s
+
+
+I see the issue. The `MyBlog.E2E.csproj` file has a version specified directly on the `PackageReference` for `Microsoft.Playwright`, but your project uses Central Package Management (CPM). With CPM, versions must be defined in `Directory.Packages.props`, not in individual project files.
+
+Let me fix the E2E project file:The fix is simple - remove the `Version="1.49.0"` from the `PackageReference` in `MyBlog.E2E.csproj`. The version is already defined in `Directory.Packages.props` which I provided earlier.
+
+Here's the corrected file content for **`src/MyBlog.E2E/MyBlog.E2E.csproj`**:
+
+```xml
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>MyBlog.E2E</RootNamespace>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit.v3" />
+    <PackageReference Include="Microsoft.Playwright" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MyBlog.Web\MyBlog.Web.csproj" />
+  </ItemGroup>
+</Project>
+```
+
+The version `1.49.0` for `Microsoft.Playwright` is already in `Directory.Packages.props`:
+
+```xml
+<!-- E2E Testing (Playwright) -->
+<PackageVersion Include="Microsoft.Playwright" Version="1.49.0" />
+```
+
+Now run:
+
+```bash
+cd ~/src/dotnet/MyBlog/src
+dotnet restore
+dotnet build
+```
+
+
+
+
+
+
