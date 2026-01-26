@@ -3798,3 +3798,303 @@ After you update `export.sh` and re-run it, your `dump.txt` will include the ful
 
 
 
+I'll search for the updated dump.txt in the project knowledge and do a thorough, methodical review.Good, I can see the site.js is now included. Let me search for more sections to do a comprehensive review.Let me search for tests, services, and other critical parts:Let me search for more critical parts - Program.cs, services, and configuration:Let me search for more critical areas:Let me search for a few more critical areas:Now I have a comprehensive view of the codebase. Let me provide you with a thorough, methodical review.
+
+---
+
+# Comprehensive Code Review
+
+## ✅ Overall Assessment: The codebase is well-structured with clean architecture. The theme system is now properly implemented. I found several issues across different categories.
+
+---
+
+## 🔴 CRITICAL ISSUES
+
+### 1. **README.md Contains Broken Citation Markup**
+**File:** `README.md`
+
+The README contains strange `[cite_start]` and `[cite: ...]` markup that appears to be leftover from AI generation:
+```markdown
+- [cite_start]**Markdown-based content**: Write posts in Markdown with live preview and support for ordered/unordered lists[cite: 1406, 1409].
+```
+
+**Impact:** Makes the README look unprofessional and confusing to readers.
+
+**Fix:** Remove all `[cite_start]` and `[cite: ...]` markers from README.md.
+
+---
+
+### 2. **About.razor Contains Incorrectly Encoded Emoji Characters**
+**File:** `src/MyBlog.Web/Components/Pages/About.razor`
+
+Throughout the About page, I see garbled Unicode characters that should be emojis:
+- `âš ï¸` should be `⚠️`
+- `â†` should be `←`
+- `ðŸ§ª` should be `🧪`
+- `â€"` should be `—` (em dash)
+
+**Impact:** The About page displays garbled text instead of proper Unicode characters.
+
+**Fix:** Re-encode the file as UTF-8 with proper Unicode characters, or replace emojis with HTML entities/text alternatives.
+
+---
+
+### 3. **Routes.razor Missing `<NotFound>` Handler**
+**File:** `src/MyBlog.Web/Components/Routes.razor`
+
+```razor
+<Router AppAssembly="typeof(Program).Assembly">
+    <Found Context="routeData">
+        ...
+    </Found>
+    <!-- Missing <NotFound> section! -->
+</Router>
+```
+
+**Impact:** When users navigate to a non-existent URL, they get no proper 404 handling at the router level.
+
+**Fix:** Add a `<NotFound>` section:
+```razor
+<NotFound>
+    <LayoutView Layout="typeof(Layout.MainLayout)">
+        <h1>Page Not Found</h1>
+        <p>Sorry, the page you requested could not be found.</p>
+    </LayoutView>
+</NotFound>
+```
+
+---
+
+## 🟠 MEDIUM ISSUES
+
+### 4. **About.razor Claims ".NET 10 Latest LTS" - Incorrect**
+**File:** `src/MyBlog.Web/Components/Pages/About.razor`
+
+```html
+<li><strong>.NET 10</strong> — Latest LTS runtime with performance improvements</li>
+```
+
+**Issue:** .NET 10 is **not** an LTS release. LTS releases are even-numbered (.NET 6, .NET 8). .NET 10 is a Standard Term Support (STS) release.
+
+**Fix:** Change to:
+```html
+<li><strong>.NET 10</strong> — Current runtime with latest features and performance improvements</li>
+```
+
+---
+
+### 5. **ThemeSwitcher.razor Uses `Console.WriteLine` for Error Logging**
+**File:** `src/MyBlog.Web/Components/Shared/ThemeSwitcher.razor`
+
+```csharp
+catch (Exception ex)
+{
+    Console.WriteLine($"Theme initialization error: {ex.Message}");
+}
+```
+
+**Impact:** Errors are written to console instead of proper logging, inconsistent with the rest of the codebase that uses `ILogger`.
+
+**Fix:** Inject `ILogger<ThemeSwitcher>` and use proper logging:
+```csharp
+@inject ILogger<ThemeSwitcher> Logger
+// ...
+catch (Exception ex)
+{
+    Logger.LogWarning(ex, "Theme initialization error");
+}
+```
+
+---
+
+### 6. **Duplicate CSS Definitions Between `site.css` and `ThemeSwitcher.razor.css`**
+**Files:** `src/MyBlog.Web/wwwroot/css/site.css` and `src/MyBlog.Web/Components/Shared/ThemeSwitcher.razor.css`
+
+The theme switcher styles are defined in **both** files. This creates maintenance overhead and potential inconsistencies.
+
+**Fix:** Remove the theme switcher styles from `site.css` since the component-scoped CSS file handles it, OR remove `ThemeSwitcher.razor.css` entirely and keep only `site.css`. Choose one location.
+
+---
+
+### 7. **site.css Has Duplicate `.theme-menu` Responsive Rules**
+**File:** `src/MyBlog.Web/wwwroot/css/site.css`
+
+The responsive styles at `@media (max-width: 768px)` reference `.theme-menu` with `right: -50%`, but there's also a reference with `right: -20px` in `ThemeSwitcher.razor.css`. These conflict.
+
+---
+
+### 8. **global.json Has Both `test` and `sdk` Sections**
+**File:** `src/global.json`
+
+```json
+{
+  "sdk": {
+    "version": "10.0.100",
+    "rollForward": "major"
+  },
+  "test": {
+    "runner": "Microsoft.Testing.Platform"
+  }
+}
+```
+
+**Note:** This is actually correct for xUnit v3 with Microsoft.Testing.Platform. Just flagging for awareness that the `test` section is a newer feature.
+
+---
+
+## 🟡 MINOR ISSUES / SUGGESTIONS
+
+### 9. **MarkdownServiceTests Creates `new MarkdownService(throwingService)` Without Logger**
+**File:** `src/MyBlog.Tests/Unit/MarkdownServiceTests.cs`
+
+```csharp
+var sut = new MarkdownService(throwingService);
+```
+
+The `MarkdownService` constructor accepts an optional `ILogger<MarkdownService>?`. This is fine since it's nullable, but for consistency you might want to pass `NullLogger<MarkdownService>.Instance`.
+
+---
+
+### 10. **PostCard.razor.css and PostDetail.razor.css Duplicate `article { word-break: break-word; }`**
+**Files:** Multiple `.razor.css` files
+
+Both files define the same style. Consider moving to `site.css` if it applies globally.
+
+---
+
+### 11. **ThemeSwitcher Uses Static Array Instead of Static Readonly**
+**File:** `src/MyBlog.Web/Components/Shared/ThemeSwitcher.razor`
+
+```csharp
+private static readonly ThemeOption[] Themes =
+[
+    new("light", "Light", false),
+    ...
+];
+```
+
+This is actually correct (using collection expressions). Just noting it's good practice.
+
+---
+
+### 12. **Footer.razor Copyright Year Is Dynamic Server-Side**
+**File:** `src/MyBlog.Web/Components/Shared/Footer.razor`
+
+```csharp
+<p>&copy; @DateTime.Now.Year @(Configuration["Application:Title"] ?? "MyBlog")</p>
+```
+
+This is fine for Blazor Server, but note that the year is calculated server-side on each render. Not a bug, just an observation.
+
+---
+
+### 13. **LoginRateLimitMiddleware Uses Static Dictionary**
+**File:** `src/MyBlog.Web/Middleware/LoginRateLimitMiddleware.cs`
+
+```csharp
+private static readonly ConcurrentDictionary<string, (int Count, DateTime WindowStart)> Attempts = new();
+```
+
+**Observation:** This is intentional (shared across instances), but in a multi-server environment, rate limiting would be per-server. This is documented behavior ("never blocks"), so it's acceptable for the current use case.
+
+---
+
+### 14. **Missing `favicon.ico` Reference in App.razor**
+**File:** `src/MyBlog.Web/Components/App.razor`
+
+The `<head>` section doesn't include a favicon link:
+```html
+<link rel="icon" href="/favicon.ico" type="image/x-icon" />
+```
+
+**Note:** Check if `favicon.ico` exists in `wwwroot`.
+
+---
+
+## 🔵 TEST REVIEW
+
+### 15. **Test Assertions Are Correct**
+After reviewing all test files:
+- `MarkdownServiceTests` - Correctly tests HTML output
+- `SlugServiceTests` - Correctly tests slug generation
+- `PasswordServiceTests` - Correctly tests hashing
+- `LoginRateLimitMiddlewareTests` - Correctly uses injectable delay function
+- `AuthServiceTests` - Correctly tests authentication
+- `PostRepositoryTests` - Correctly tests CRUD operations
+- `TelemetryCleanupTests` - Correctly tests log deletion
+
+All test assertions appear **correct** and match expected behavior.
+
+---
+
+### 16. **Tests Use `TestContext.Current.CancellationToken` Correctly**
+This is the correct xUnit v3 pattern for cancellation tokens. Good!
+
+---
+
+## 🟢 THINGS DONE WELL
+
+1. **Clean Architecture** - Proper separation of Core, Infrastructure, Web, and Tests
+2. **Dependency Injection** - All services use interfaces properly
+3. **Async/Await** - Consistent use throughout
+4. **XUnit v3** - Modern testing with proper patterns
+5. **Theme System** - Well-implemented with accessibility in mind
+6. **Rate Limiting** - Progressive delays without blocking (defense-in-depth)
+7. **Error Handling** - Graceful degradation (e.g., `ImageDimensionService` failures don't break markdown rendering)
+8. **Cross-Platform** - XDG-compliant paths, UTF-8 handling in tests
+
+---
+
+## Summary Action Items
+
+| Priority | Issue | File | Action |
+|----------|-------|------|--------|
+| 🔴 Critical | Broken citation markup | `README.md` | Remove `[cite_start]` and `[cite:]` markers |
+| 🔴 Critical | Garbled Unicode | `About.razor` | Fix encoding or use text alternatives |
+| 🔴 Critical | Missing `<NotFound>` | `Routes.razor` | Add 404 handler |
+| 🟠 Medium | Wrong LTS claim | `About.razor` | Correct ".NET 10 LTS" to "current" |
+| 🟠 Medium | Console.WriteLine | `ThemeSwitcher.razor` | Use `ILogger` instead |
+| 🟠 Medium | Duplicate CSS | `site.css` + `ThemeSwitcher.razor.css` | Consolidate to one location |
+| 🟡 Minor | Missing favicon link | `App.razor` | Add if favicon exists |
+
+Would you like me to provide the corrected code for any of these issues?
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

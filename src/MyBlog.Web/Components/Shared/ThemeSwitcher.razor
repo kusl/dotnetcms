@@ -84,7 +84,7 @@
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Theme initialization error: {ex.Message}");
+                Logger.LogWarning(ex, "Theme initialization error");
             }
         }
     }
