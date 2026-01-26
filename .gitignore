@@ -483,3 +483,11 @@ $RECYCLE.BIN/
 
 
 *.publishSettings
+
+# Playwright
+playwright-report/
+playwright/.cache/
+test-results/
+
+# Docker/Podman volumes
+myblog-data/

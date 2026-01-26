@@ -28,12 +28,72 @@ jobs:
       - name: Build solution
         run: dotnet build src/MyBlog.slnx -c Release --no-restore
 
-      - name: Run tests
-        run: 
-          dotnet run --project src/MyBlog.Tests/MyBlog.Tests.csproj
+      - name: Run unit tests
+        run: dotnet run --project src/MyBlog.Tests/MyBlog.Tests.csproj
+
+  e2e-tests:
+    runs-on: ubuntu-latest
+    needs: build-test
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Restore E2E dependencies
+        run: dotnet restore src/MyBlog.E2E/MyBlog.E2E.csproj
+
+      - name: Build E2E project
+        run: dotnet build src/MyBlog.E2E/MyBlog.E2E.csproj -c Release --no-restore
+
+      - name: Install Playwright browsers
+        run: |
+          dotnet tool install --global Microsoft.Playwright.CLI
+          playwright install chromium --with-deps
+
+      - name: Build and run MyBlog
+        run: |
+          dotnet build src/MyBlog.Web/MyBlog.Web.csproj -c Release
+          dotnet run --project src/MyBlog.Web/MyBlog.Web.csproj -c Release --no-build &
+          sleep 15
+        env:
+          ASPNETCORE_URLS: http://localhost:5000
+          ASPNETCORE_ENVIRONMENT: Development
+          Authentication__DefaultAdminPassword: ChangeMe123!
+
+      - name: Wait for application to start
+        run: |
+          for i in {1..30}; do
+            if curl -sf http://localhost:5000/ > /dev/null 2>&1; then
+              echo "Application is ready"
+              break
+            fi
+            echo "Waiting for application... ($i/30)"
+            sleep 2
+          done
+
+      - name: Run E2E tests
+        run: dotnet run --project src/MyBlog.E2E/MyBlog.E2E.csproj -c Release --no-build
+        env:
+          MYBLOG_BASE_URL: http://localhost:5000
+          PLAYWRIGHT_HEADLESS: true
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: e2e-test-results
+          path: |
+            src/MyBlog.E2E/TestResults/
+            test-results/
+          retention-days: 7
 
   deploy:
-    needs: build-test
+    needs: [build-test, e2e-tests]
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop'
     runs-on: windows-latest
     
@@ -71,8 +131,6 @@ jobs:
           $sourceArg = "-source:contentPath=$env:DEPLOY_SOURCE"
           $destArg = "-dest:contentPath=$env:DEPLOY_SITE,computerName=https://$($env:DEPLOY_HOST):8172/MsDeploy.axd?site=$env:DEPLOY_SITE,userName=$env:DEPLOY_USER,password=$env:DEPLOY_PASSWORD,AuthType='Basic'"
           
-          # Key fix: Added -enableRule:AppOffline to stop the app during deployment
-          # This creates app_offline.htm, waits for app to stop, deploys, then removes the file
           & $msdeployPath -verb:sync $sourceArg $destArg `
             -allowUntrusted `
             -enableRule:DoNotDeleteRule `

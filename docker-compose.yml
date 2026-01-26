@@ -1,0 +1,28 @@
+# Simple Docker Compose for running MyBlog locally
+# Works with both Docker and Podman Compose
+#
+# Usage:
+#   podman-compose up --build
+#   podman-compose down -v
+
+services:
+  myblog:
+    build:
+      context: ./src
+      dockerfile: MyBlog.Web/Dockerfile
+    container_name: myblog
+    ports:
+      - "5000:5000"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:5000
+      - ConnectionStrings__DefaultConnection=Data Source=/app/data/myblog.db
+      - Authentication__DefaultAdminPassword=ChangeMe123!
+    volumes:
+      # :Z suffix for SELinux on Fedora
+      - myblog-data:/app/data:Z
+    restart: unless-stopped
+
+volumes:
+  myblog-data:
+  

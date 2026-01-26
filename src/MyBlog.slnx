@@ -3,4 +3,5 @@
   <Project Path="MyBlog.Infrastructure/MyBlog.Infrastructure.csproj" />
   <Project Path="MyBlog.Web/MyBlog.Web.csproj" />
   <Project Path="MyBlog.Tests/MyBlog.Tests.csproj" />
+  <Project Path="MyBlog.E2E/MyBlog.E2E.csproj" />
 </Solution>
