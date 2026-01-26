@@ -89,8 +89,8 @@ MyBlog follows **Clean Architecture** (also known as Onion Architecture), ensuri
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                        MyBlog.Web                                │
-│                   (Presentation Layer)                           │
+│                        MyBlog.Web                               │
+│                   (Presentation Layer)                          │
 │  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐ ┌───────────┐  │
 │  │   Pages/    │ │   Shared/   │ │ Middleware/ │ │   Hubs/   │  │
 │  │  Components │ │  Components │ │Rate Limiting│ │  SignalR  │  │
@@ -99,8 +99,8 @@ MyBlog follows **Clean Architecture** (also known as Onion Architecture), ensuri
                               │
                               ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│                    MyBlog.Infrastructure                         │
-│                     (Data Access Layer)                          │
+│                    MyBlog.Infrastructure                        │
+│                     (Data Access Layer)                         │
 │  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐ ┌───────────┐  │
 │  │Repositories │ │  Services   │ │  Telemetry  │ │   Data/   │  │
 │  │   (EF Core) │ │Auth,Password│ │  Exporters  │ │ DbContext │  │
@@ -109,11 +109,11 @@ MyBlog follows **Clean Architecture** (also known as Onion Architecture), ensuri
                               │
                               ▼
 ┌─────────────────────────────────────────────────────────────────┐
-│                       MyBlog.Core                                │
-│                      (Domain Layer)                              │
+│                       MyBlog.Core                               │
+│                      (Domain Layer)                             │
 │  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐ ┌───────────┐  │
 │  │   Models    │ │ Interfaces  │ │  Services   │ │ Constants │  │
-│  │Post,User,..│ │IPostRepo,.. │ │Markdown,Slug│ │ AppConsts │  │
+│  │Post,User,.. │ │IPostRepo,.. │ │Markdown,Slug│ │ AppConsts │  │
 │  └─────────────┘ └─────────────┘ └─────────────┘ └───────────┘  │
 └─────────────────────────────────────────────────────────────────┘
 ```
@@ -598,7 +598,7 @@ This approach is idempotent—safe to run multiple times without side effects.
 
 ```
 ┌─────────┐     ┌─────────────────┐     ┌─────────────┐
-│  User   │────▶│ Rate Limiting   │────▶│   Login     │
+│  User   │───▶│ Rate Limiting   │───▶│   Login     │
 │         │     │   Middleware    │     │    Page     │
 └─────────┘     └─────────────────┘     └─────────────┘
                        │                       │
@@ -606,7 +606,7 @@ This approach is idempotent—safe to run multiple times without side effects.
                        ▼                       ▼
               ┌─────────────────┐     ┌─────────────┐
               │  Track Attempt  │     │ AuthService │
-              │  (per IP)       │     │ .Authenticate│
+              │  (per IP)       │     │.Authenticate│
               └─────────────────┘     └─────────────┘
                                               │
                                               ▼
@@ -723,7 +723,7 @@ When a user logs in, the following claims are created:
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                        Post Creation                             │
+│                        Post Creation                            │
 └─────────────────────────────────────────────────────────────────┘
                                │
                                ▼
@@ -1061,13 +1061,13 @@ This prevents XSS attacks while allowing Markdown syntax.
 
 ```
 ┌─────────────┐     ┌─────────────────┐     ┌─────────────┐
-│ InputFile   │────▶│ Validate Size   │────▶│ Validate    │
+│ InputFile   │───▶│ Validate Size   │───▶│ Validate    │
 │ Component   │     │ (< 5MB)         │     │ Content Type│
 └─────────────┘     └─────────────────┘     └─────────────┘
                                                    │
                                                    ▼
                     ┌─────────────────┐     ┌─────────────┐
-                    │ Save to         │◀────│ Read to     │
+                    │ Save to         │◀───│ Read to     │
                     │ Database        │     │ MemoryStream│
                     └─────────────────┘     └─────────────┘
 ```
@@ -1108,23 +1108,23 @@ MyBlog tracks how many users are currently reading each post using SignalR.
 #### Architecture
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
+┌──────────────────────────────────────────────────────────────────┐
 │                        Browser                                   │
-│  ┌─────────────┐                                                │
+│  ┌─────────────┐                                                 │
 │  │ ReaderBadge │◀──────SignalR Connection──────────────────────┐│
 │  │ Component   │                                                ││
 │  └─────────────┘                                                ││
 └─────────────────────────────────────────────────────────────────┘│
                                                                    │
 ┌─────────────────────────────────────────────────────────────────┐│
-│                        Server                                    ││
-│  ┌─────────────┐     ┌─────────────┐     ┌─────────────┐       ││
-│  │ ReaderHub   │────▶│ Tracking    │────▶│ Concurrent  │       ││
-│  │ (SignalR)   │     │ Service     │     │ Dictionary  │       ││
-│  └─────────────┘     └─────────────┘     └─────────────┘       ││
-│         │                                       │                ││
-│         └──────────Broadcast Count──────────────┘◀───────────────┘│
-└─────────────────────────────────────────────────────────────────┘
+│                        Server                                   ││
+│  ┌─────────────┐     ┌─────────────┐     ┌─────────────┐        ││
+│  │ ReaderHub   │───▶│ Tracking    │───▶│ Concurrent  │        ││
+│  │ (SignalR)   │     │ Service     │     │ Dictionary  │        ││
+│  └─────────────┘     └─────────────┘     └─────────────┘        ││
+│         │                                       │               ││
+│         └──────────Broadcast Count──────────────┘◀─────────────┘│
+└──────────────────────────────────────────────────────────────────┘
 ```
 
 #### SignalR Hub Methods
