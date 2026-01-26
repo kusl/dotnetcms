@@ -1966,7 +1966,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 - Built with [.NET](https://dotnet.microsoft.com/) and [Blazor](https://dotnet.microsoft.com/apps/aspnet/web-apps/blazor)
 - Observability powered by [OpenTelemetry](https://opentelemetry.io/)
 - Inspired by the simplicity of static site generators with the power of dynamic applications
-- AI assistance provided by [Claude](https://www.anthropic.com/claude) (Anthropic) and [Gemini](https://deepmind.google/technologies/gemini/) (Google)
+- AI assistance provided by [Claude](https://www.anthropic.com/claude) (Anthropic) and [Gemini](https://deepmind.google/technologies/gemini/) (Google) among others
 
 ---
 
