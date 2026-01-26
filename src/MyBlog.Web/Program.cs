@@ -124,13 +124,13 @@ app.MapPost("/login", async (HttpContext context, IAuthService authService) =>
     await context.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
 
     return Results.Redirect(string.IsNullOrWhiteSpace(returnUrl) ? "/admin" : returnUrl);
-}).DisableAntiforgery();
+});
 
 app.MapPost("/logout", async (HttpContext context) =>
 {
     await context.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
     return Results.Redirect("/");
-}).RequireAuthorization().DisableAntiforgery();
+}).RequireAuthorization();
 
 app.MapGet("/api/images/{id:guid}", async (Guid id, IImageRepository imageRepository) =>
 {
