@@ -6898,3 +6898,303 @@ Run:
 
 
 
+kushal@fedora:~/src/dotnet/MyBlog$ cat run-e2e.sh; time bash run-e2e.sh
+#!/bin/bash
+# =============================================================================
+# Run E2E Tests with Podman Compose
+# =============================================================================
+# This script runs Playwright E2E tests against MyBlog using containers.
+# Designed for Fedora with SELinux and Podman.
+#
+# Usage:
+#   ./run-e2e.sh          # Run all E2E tests
+#   ./run-e2e.sh --build  # Force rebuild containers
+#   ./run-e2e.sh --clean  # Clean up and remove volumes
+# =============================================================================
+
+set -e
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$SCRIPT_DIR"
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
+log_info() {
+    echo -e "${GREEN}[INFO]${NC} $1"
+}
+
+log_warn() {
+    echo -e "${YELLOW}[WARN]${NC} $1"
+}
+
+log_error() {
+    echo -e "${RED}[ERROR]${NC} $1"
+}
+
+# Parse arguments
+BUILD_FLAG=""
+CLEAN_FLAG=""
+
+for arg in "$@"; do
+    case $arg in
+        --build)
+            BUILD_FLAG="--build"
+            ;;
+        --clean)
+            CLEAN_FLAG="true"
+            ;;
+    esac
+done
+
+# Clean up if requested
+if [ "$CLEAN_FLAG" == "true" ]; then
+    log_info "Cleaning up containers and volumes..."
+    podman-compose -f docker-compose.e2e.yml down -v --remove-orphans 2>/dev/null || true
+    podman system prune -f 2>/dev/null || true
+    log_info "Cleanup complete"
+    exit 0
+fi
+
+# Create test results directory
+mkdir -p test-results
+# Set SELinux context if on Fedora with SELinux
+if command -v chcon &> /dev/null && getenforce 2>/dev/null | grep -q "Enforcing"; then
+    log_info "Setting SELinux context for test-results directory..."
+    chcon -Rt svirt_sandbox_file_t test-results 2>/dev/null || true
+fi
+
+log_info "Starting E2E test environment..."
+
+# Build and start services
+log_info "Building containers..."
+podman-compose -f docker-compose.e2e.yml build $BUILD_FLAG
+
+log_info "Starting MyBlog web service..."
+podman-compose -f docker-compose.e2e.yml up -d myblog-web
+
+# Wait for web service to be healthy
+log_info "Waiting for MyBlog to be ready..."
+RETRIES=30
+until podman exec myblog-web curl -sf http://localhost:5000/ > /dev/null 2>&1; do
+    RETRIES=$((RETRIES - 1))
+    if [ $RETRIES -eq 0 ]; then
+        log_error "MyBlog failed to start within timeout"
+        podman-compose -f docker-compose.e2e.yml logs myblog-web
+        podman-compose -f docker-compose.e2e.yml down -v
+        exit 1
+    fi
+    echo -n "."
+    sleep 2
+done
+echo ""
+log_info "MyBlog is ready!"
+
+# Run E2E tests
+log_info "Running E2E tests..."
+podman-compose -f docker-compose.e2e.yml up myblog-e2e
+E2E_EXIT_CODE=$?
+
+# Capture logs
+log_info "Capturing logs..."
+podman-compose -f docker-compose.e2e.yml logs myblog-web > test-results/myblog-web.log 2>&1
+podman-compose -f docker-compose.e2e.yml logs myblog-e2e > test-results/myblog-e2e.log 2>&1
+
+# Clean up
+log_info "Cleaning up..."
+podman-compose -f docker-compose.e2e.yml down -v
+
+if [ $E2E_EXIT_CODE -eq 0 ]; then
+    log_info "E2E tests passed! ✓"
+else
+    log_error "E2E tests failed with exit code $E2E_EXIT_CODE"
+    log_info "Check test-results/ directory for logs"
+fi
+
+exit $E2E_EXIT_CODE
+[INFO] Setting SELinux context for test-results directory...
+[INFO] Starting E2E test environment...
+[INFO] Building containers...
+[1/2] STEP 1/12: FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+STEP 1/17: FROM mcr.microsoft.com/dotnet/sdk:10.0-noble
+STEP 2/17: WORKDIR /src
+--> Using cache bc7bc5a066d4c5fb76f9e5757acd267a03aa3cbad8988ce9d51dbeb00d7f6495
+--> bc7bc5a066d4
+STEP 3/17: RUN apt-get update && apt-get install -y --no-install-recommends     wget     curl     gnupg     ca-certificates     fonts-liberation     libasound2t64     libatk-bridge2.0-0     libatk1.0-0     libatspi2.0-0     libcairo2     libcups2     libdbus-1-3     libdrm2     libgbm1     libglib2.0-0     libgtk-3-0     libnspr4     libnss3     libpango-1.0-0     libx11-6     libxcb1     libxcomposite1     libxdamage1     libxext6     libxfixes3     libxkbcommon0     libxrandr2     xdg-utils     powershell     && rm -rf /var/lib/apt/lists/*
+Get:1 http://security.ubuntu.com/ubuntu noble-security InRelease [126 kB]
+[1/2] STEP 2/12: WORKDIR /src
+--> Using cache ede9da007b58e41916610f757346ba581feb944eed32fc46cb1efbc18b34ea13
+--> ede9da007b58
+[1/2] STEP 3/12: COPY Directory.Build.props .
+Get:2 http://archive.ubuntu.com/ubuntu noble InRelease [256 kB]
+--> Using cache 78b08ee493ff66c65993dfc8d0dbf8c8f76b45f68e8386dbe9e87a3c9ab63e20
+--> 78b08ee493ff
+[1/2] STEP 4/12: COPY Directory.Packages.props .
+--> Using cache 5e5688e9efb9598a319a40ab80483f287ceebd46bb1643c1d64d377bfa2f7ed8
+--> 5e5688e9efb9
+[1/2] STEP 5/12: COPY MyBlog.Core/MyBlog.Core.csproj MyBlog.Core/
+--> Using cache 9e4ce6a815db909479a2e99c86f32fd9c16e854b66293681fc43a50a97f0766b
+--> 9e4ce6a815db
+[1/2] STEP 6/12: COPY MyBlog.Infrastructure/MyBlog.Infrastructure.csproj MyBlog.Infrastructure/
+--> Using cache ed1de3f91423de4a11227ef100f7f753db9f60b30d867d4abf09c548a0fd6b2b
+--> ed1de3f91423
+[1/2] STEP 7/12: COPY MyBlog.Web/MyBlog.Web.csproj MyBlog.Web/
+--> Using cache 18df18d775620dc482e5ca7338e6b2663a3f1d907131102bbf70046d1f3e31ba
+--> 18df18d77562
+[1/2] STEP 8/12: RUN dotnet restore MyBlog.Web/MyBlog.Web.csproj
+--> Using cache 8327e71a5ac81a5520d216a9ca0d7ce172d9bb317fcc44c5ded4b7bfff5ccda6
+--> 8327e71a5ac8
+[1/2] STEP 9/12: COPY MyBlog.Core/ MyBlog.Core/
+Get:3 http://security.ubuntu.com/ubuntu noble-security/main amd64 Packages [1776 kB]
+--> Using cache 781f2ec571dfbe6daf0b1bd36ddd88f51d146ff45bf408b189fab69565217169
+--> 781f2ec571df
+[1/2] STEP 10/12: COPY MyBlog.Infrastructure/ MyBlog.Infrastructure/
+--> Using cache 2d4512c9d8920cc55c62bd6b9cb276f313150f197a159f87a773064a9144f96b
+--> 2d4512c9d892
+[1/2] STEP 11/12: COPY MyBlog.Web/ MyBlog.Web/
+--> Using cache fca53dcdc8470886c81e4c7b39cedfd8c63d5b37e42906518ce8e0eac3f94dd8
+--> fca53dcdc847
+[1/2] STEP 12/12: RUN dotnet publish MyBlog.Web/MyBlog.Web.csproj -c Release -o /app/publish --no-restore
+/usr/share/dotnet/sdk/10.0.102/Sdks/Microsoft.NET.Sdk/targets/Microsoft.PackageDependencyResolution.targets(266,5): error NETSDK1064: Package Microsoft.EntityFrameworkCore.Analyzers, version 10.0.2 was not found. It might have been deleted since NuGet restore. Otherwise, NuGet restore might have only partially completed, which might have been due to maximum path length restrictions. [/src/MyBlog.Web/MyBlog.Web.csproj]
+Error: building at STEP "RUN dotnet publish MyBlog.Web/MyBlog.Web.csproj -c Release -o /app/publish --no-restore": while running runtime: exit status 1
+Get:4 http://archive.ubuntu.com/ubuntu noble-updates InRelease [126 kB]
+Get:5 http://archive.ubuntu.com/ubuntu noble-backports InRelease [126 kB]
+Get:6 http://archive.ubuntu.com/ubuntu noble/universe amd64 Packages [19.3 MB]
+Get:7 http://security.ubuntu.com/ubuntu noble-security/restricted amd64 Packages [2919 kB]
+Get:8 http://security.ubuntu.com/ubuntu noble-security/multiverse amd64 Packages [33.8 kB]
+Get:9 http://security.ubuntu.com/ubuntu noble-security/universe amd64 Packages [1193 kB]
+Get:10 http://archive.ubuntu.com/ubuntu noble/main amd64 Packages [1808 kB]
+Get:11 http://archive.ubuntu.com/ubuntu noble/multiverse amd64 Packages [331 kB]
+Get:12 http://archive.ubuntu.com/ubuntu noble/restricted amd64 Packages [117 kB]
+Get:13 http://archive.ubuntu.com/ubuntu noble-updates/restricted amd64 Packages [3169 kB]
+Get:14 http://archive.ubuntu.com/ubuntu noble-updates/multiverse amd64 Packages [53.5 kB]
+Get:15 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 Packages [2149 kB]
+Get:16 http://archive.ubuntu.com/ubuntu noble-updates/universe amd64 Packages [1966 kB]
+Get:17 http://archive.ubuntu.com/ubuntu noble-backports/main amd64 Packages [49.5 kB]
+Get:18 http://archive.ubuntu.com/ubuntu noble-backports/universe amd64 Packages [34.6 kB]
+Fetched 35.6 MB in 17s (2073 kB/s)
+Reading package lists...
+Reading package lists...
+Building dependency tree...
+Reading state information...
+E: Unable to locate package powershell
+Error: building at STEP "RUN apt-get update && apt-get install -y --no-install-recommends     wget     curl     gnupg     ca-certificates     fonts-liberation     libasound2t64     libatk-bridge2.0-0     libatk1.0-0     libatspi2.0-0     libcairo2     libcups2     libdbus-1-3     libdrm2     libgbm1     libglib2.0-0     libgtk-3-0     libnspr4     libnss3     libpango-1.0-0     libx11-6     libxcb1     libxcomposite1     libxdamage1     libxext6     libxfixes3     libxkbcommon0     libxrandr2     xdg-utils     powershell     && rm -rf /var/lib/apt/lists/*": while running runtime: exit status 100
+
+real	0m18.773s
+user	0m3.955s
+sys	0m2.057s
+kushal@fedora:~/src/dotnet/MyBlog$ 
+
+
+
+
+
+
+
+
+
+
+
+Two issues here:
+
+1. The Web Dockerfile also has the `--no-restore` issue (cached from before)
+2. PowerShell isn't available in the default Ubuntu repos
+
+Let me fix both Dockerfiles properly:Now clean up and rebuild:
+
+```bash
+./run-e2e.sh --clean
+./run-e2e.sh
+```
+
+Key changes:
+1. **Web Dockerfile**: Removed `--no-restore` from the publish command
+2. **E2E Dockerfile**: Install PowerShell from Microsoft's official Ubuntu 24.04 (Noble) repository instead of trying to use the non-existent apt package
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -4,8 +4,10 @@ FROM mcr.microsoft.com/dotnet/sdk:10.0-noble
 
 WORKDIR /src
 
-# Install PowerShell and Playwright browser dependencies (Chromium) for Ubuntu Noble
-RUN apt-get update && apt-get install -y --no-install-recommends \
+# Install Playwright browser dependencies (Chromium) for Ubuntu Noble
+# PowerShell needs to be installed from Microsoft's repo
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
     wget \
     curl \
     gnupg \
@@ -34,8 +36,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libxkbcommon0 \
     libxrandr2 \
     xdg-utils \
-    powershell \
     && rm -rf /var/lib/apt/lists/*
+
+# Install PowerShell from Microsoft repo
+RUN wget -q https://packages.microsoft.com/config/ubuntu/24.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb && \
+    dpkg -i packages-microsoft-prod.deb && \
+    rm packages-microsoft-prod.deb && \
+    apt-get update && \
+    apt-get install -y --no-install-recommends powershell && \
+    rm -rf /var/lib/apt/lists/*
 
 # Copy all project files first for restore
 COPY Directory.Build.props .

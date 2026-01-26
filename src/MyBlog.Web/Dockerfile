@@ -17,8 +17,8 @@ COPY MyBlog.Core/ MyBlog.Core/
 COPY MyBlog.Infrastructure/ MyBlog.Infrastructure/
 COPY MyBlog.Web/ MyBlog.Web/
 
-# Build and publish
-RUN dotnet publish MyBlog.Web/MyBlog.Web.csproj -c Release -o /app/publish --no-restore
+# Build and publish (without --no-restore to ensure all deps are available)
+RUN dotnet publish MyBlog.Web/MyBlog.Web.csproj -c Release -o /app/publish
 
 # Runtime stage
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
