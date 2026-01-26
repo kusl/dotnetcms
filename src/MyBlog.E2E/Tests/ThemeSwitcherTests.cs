@@ -30,7 +30,7 @@ public sealed class ThemeSwitcherTests(PlaywrightFixture fixture)
         var page = await _fixture.CreatePageAsync();
 
         await page.GotoAsync("/");
-        
+
         // Wait for Blazor to be fully ready (SignalR connection and JS interop initialized)
         await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
         await page.WaitForTimeoutAsync(1000);
@@ -61,7 +61,7 @@ public sealed class ThemeSwitcherTests(PlaywrightFixture fixture)
         var page = await _fixture.CreatePageAsync();
 
         await page.GotoAsync("/");
-        
+
         // Wait for Blazor to be fully ready (SignalR connection and JS interop initialized)
         await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
         await page.WaitForTimeoutAsync(1000);

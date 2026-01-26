@@ -1,6 +1,6 @@
 ===============================================================================
 PROJECT EXPORT
-Generated: Mon Jan 26 11:30:29 AM EST 2026
+Generated: Mon Jan 26 11:45:42 AM EST 2026
 Project Path: /home/kushal/src/dotnet/MyBlog
 ===============================================================================
 
@@ -45,7 +45,8 @@ DIRECTORY STRUCTURE:
 │   │   │   ├── 0032.txt
 │   │   │   ├── 0033.md
 │   │   │   ├── 0034.txt
-│   │   │   └── 0035.md
+│   │   │   ├── 0035.md
+│   │   │   └── 0037.txt
 │   │   ├── claude.md
 │   │   ├── command.md
 │   │   ├── dump.txt
@@ -4895,8 +4896,8 @@ public sealed class HomePageTests(PlaywrightFixture fixture)
 
 ================================================================================
 FILE: src/MyBlog.E2E/Tests/LoginPageTests.cs
-SIZE: 3.80 KB
-MODIFIED: 2026-01-26 11:22:40
+SIZE: 4.08 KB
+MODIFIED: 2026-01-26 11:44:49
 ================================================================================
 
 using Microsoft.Playwright;
@@ -4906,7 +4907,7 @@ namespace MyBlog.E2E.Tests;
 
 /// <summary>
 /// E2E tests for authentication (Epic 1: Authentication).
-/// The login page uses a Blazor form that handles login server-side.
+/// The login page uses a Blazor interactive form that handles login server-side.
 /// </summary>
 [Collection(PlaywrightCollection.Name)]
 public sealed class LoginPageTests(PlaywrightFixture fixture)
@@ -4946,17 +4947,16 @@ public sealed class LoginPageTests(PlaywrightFixture fixture)
         var page = await _fixture.CreatePageAsync();
 
         await page.GotoAsync("/login");
+
+        // Wait for Blazor to be ready (SignalR connection established)
         await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+        await page.WaitForTimeoutAsync(500);
 
         await page.FillAsync("input#username, input[name='username']", "invalid");
         await page.FillAsync("input#password, input[name='password']", "invalid");
         await page.ClickAsync("button[type='submit']");
 
-        // Wait for the form to be processed and page to update
-        // The Blazor form with data-enhance="false" does a full page reload
-        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
-
-        // Wait for error message to appear
+        // Wait for error message to appear (Blazor interactive update)
         var errorMessage = page.Locator(".error-message");
         await Assertions.Expect(errorMessage).ToBeVisibleAsync(new LocatorAssertionsToBeVisibleOptions { Timeout = 10000 });
     }
@@ -4967,14 +4967,19 @@ public sealed class LoginPageTests(PlaywrightFixture fixture)
         var page = await _fixture.CreatePageAsync();
 
         await page.GotoAsync("/login");
+
+        // Wait for Blazor to be ready (SignalR connection established)
         await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+        await page.WaitForTimeoutAsync(500);
 
         // Use default credentials
         await page.FillAsync("input#username, input[name='username']", "admin");
         await page.FillAsync("input#password, input[name='password']", "ChangeMe123!");
+
+        // Click and wait for navigation (forceLoad: true causes full page navigation)
         await page.ClickAsync("button[type='submit']");
 
-        // Wait for navigation to complete - the form submission will redirect
+        // Wait for navigation to complete - the form submission will redirect with forceLoad
         await page.WaitForURLAsync("**/admin**", new PageWaitForURLOptions { Timeout = 15000 });
 
         // Verify we're on an admin page
@@ -4988,7 +4993,10 @@ public sealed class LoginPageTests(PlaywrightFixture fixture)
         var page = await _fixture.CreatePageAsync();
 
         await page.GotoAsync("/login");
+
+        // Wait for Blazor to be ready (SignalR connection established)
         await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+        await page.WaitForTimeoutAsync(500);
 
         await page.FillAsync("input#username, input[name='username']", "admin");
         await page.FillAsync("input#password, input[name='password']", "ChangeMe123!");
@@ -5006,8 +5014,8 @@ public sealed class LoginPageTests(PlaywrightFixture fixture)
 
 ================================================================================
 FILE: src/MyBlog.E2E/Tests/ThemeSwitcherTests.cs
-SIZE: 2.55 KB
-MODIFIED: 2026-01-26 11:22:26
+SIZE: 2.98 KB
+MODIFIED: 2026-01-26 11:44:49
 ================================================================================
 
 using Microsoft.Playwright;
@@ -5043,11 +5051,15 @@ public sealed class ThemeSwitcherTests(PlaywrightFixture fixture)
 
         await page.GotoAsync("/");
 
+        // Wait for Blazor to be fully ready (SignalR connection and JS interop initialized)
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+        await page.WaitForTimeoutAsync(1000);
+
         // Click the theme switcher button to open the menu
         var themeSwitcherBtn = page.Locator(".theme-switcher-btn");
         await themeSwitcherBtn.ClickAsync();
 
-        // Wait for the menu to be visible
+        // Wait for the menu to be visible (CSS transition)
         var themeMenu = page.Locator(".theme-menu.open");
         await Assertions.Expect(themeMenu).ToBeVisibleAsync(new LocatorAssertionsToBeVisibleOptions { Timeout = 5000 });
 
@@ -5070,11 +5082,15 @@ public sealed class ThemeSwitcherTests(PlaywrightFixture fixture)
 
         await page.GotoAsync("/");
 
+        // Wait for Blazor to be fully ready (SignalR connection and JS interop initialized)
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+        await page.WaitForTimeoutAsync(1000);
+
         // Click the theme switcher button to open the menu
         var themeSwitcherBtn = page.Locator(".theme-switcher-btn");
         await themeSwitcherBtn.ClickAsync();
 
-        // Wait for the menu to be visible
+        // Wait for the menu to be visible (CSS transition)
         var themeMenu = page.Locator(".theme-menu.open");
         await Assertions.Expect(themeMenu).ToBeVisibleAsync(new LocatorAssertionsToBeVisibleOptions { Timeout = 5000 });
 
@@ -10033,8 +10049,8 @@ MODIFIED: 2026-01-01 16:53:04
 
 ================================================================================
 FILE: src/MyBlog.Web/Components/Pages/Admin/ChangePassword.razor
-SIZE: 4.00 KB
-MODIFIED: 2026-01-13 09:34:22
+SIZE: 3.19 KB
+MODIFIED: 2026-01-26 11:43:49
 ================================================================================
 
 @page "/admin/change-password"
@@ -10060,9 +10076,7 @@ MODIFIED: 2026-01-13 09:34:22
         <div class="error-message">@_errorMessage</div>
     }
 
-    <form method="post" @onsubmit="HandleSubmit" @formname="changepassword">
-        <AntiforgeryToken />
-
+    <form @onsubmit="HandleSubmit">
         <div class="form-group">
             <label for="currentPassword">Current Password</label>
             <input type="password" id="currentPassword" name="currentPassword" @bind="_currentPassword" required />
@@ -10093,39 +10107,25 @@ MODIFIED: 2026-01-13 09:34:22
     private string? _successMessage;
     private string? _errorMessage;
 
-    [SupplyParameterFromForm(Name = "currentPassword")]
-    public string? FormCurrentPassword { get; set; }
-
-    [SupplyParameterFromForm(Name = "newPassword")]
-    public string? FormNewPassword { get; set; }
-
-    [SupplyParameterFromForm(Name = "confirmPassword")]
-    public string? FormConfirmPassword { get; set; }
-
     private async Task HandleSubmit()
     {
         _successMessage = null;
         _errorMessage = null;
 
-        // Use form values if available (SSR form post), otherwise use bound values
-        var currentPassword = FormCurrentPassword ?? _currentPassword;
-        var newPassword = FormNewPassword ?? _newPassword;
-        var confirmPassword = FormConfirmPassword ?? _confirmPassword;
-
         // Validation
-        if (string.IsNullOrWhiteSpace(newPassword) || newPassword.Length < 8)
+        if (string.IsNullOrWhiteSpace(_newPassword) || _newPassword.Length < 8)
         {
             _errorMessage = "New password must be at least 8 characters.";
             return;
         }
 
-        if (newPassword != confirmPassword)
+        if (_newPassword != _confirmPassword)
         {
             _errorMessage = "New password and confirmation do not match.";
             return;
         }
 
-        if (currentPassword == newPassword)
+        if (_currentPassword == _newPassword)
         {
             _errorMessage = "New password must be different from current password.";
             return;
@@ -10142,7 +10142,7 @@ MODIFIED: 2026-01-13 09:34:22
         }
 
         // Attempt password change
-        var success = await AuthService.ChangePasswordAsync(userId, currentPassword, newPassword);
+        var success = await AuthService.ChangePasswordAsync(userId, _currentPassword, _newPassword);
 
         if (success)
         {
@@ -10150,10 +10150,6 @@ MODIFIED: 2026-01-13 09:34:22
             _currentPassword = "";
             _newPassword = "";
             _confirmPassword = "";
-            // Clear form values as well
-            FormCurrentPassword = null;
-            FormNewPassword = null;
-            FormConfirmPassword = null;
         }
         else
         {
@@ -11277,11 +11273,12 @@ else
 
 ================================================================================
 FILE: src/MyBlog.Web/Components/Pages/Login.razor
-SIZE: 2.63 KB
-MODIFIED: 2026-01-26 11:24:26
+SIZE: 2.29 KB
+MODIFIED: 2026-01-26 11:43:35
 ================================================================================
 
 @page "/login"
+@rendermode InteractiveServer
 @inject IAuthService AuthService
 @inject NavigationManager Navigation
 @inject IHttpContextAccessor HttpContextAccessor
@@ -11299,9 +11296,7 @@ MODIFIED: 2026-01-26 11:24:26
         <div class="error-message">@_error</div>
     }
 
-    <form method="post" @onsubmit="HandleLogin" @formname="login" data-enhance="false">
-        <AntiforgeryToken />
-        
+    <form @onsubmit="HandleLogin">
         <div class="form-group">
             <label for="username">Username</label>
             <input type="text" id="username" name="username" @bind="_username" required />
@@ -11324,24 +11319,15 @@ MODIFIED: 2026-01-26 11:24:26
     [SupplyParameterFromQuery]
     public string? ReturnUrl { get; set; }
 
-    [SupplyParameterFromForm(Name = "username")]
-    public string? FormUsername { get; set; }
-
-    [SupplyParameterFromForm(Name = "password")]
-    public string? FormPassword { get; set; }
-
     private async Task HandleLogin()
     {
-        var username = FormUsername ?? _username;
-        var password = FormPassword ?? _password;
-
-        if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+        if (string.IsNullOrWhiteSpace(_username) || string.IsNullOrWhiteSpace(_password))
         {
             _error = "Username and password are required";
             return;
         }
 
-        var user = await AuthService.AuthenticateAsync(username, password);
+        var user = await AuthService.AuthenticateAsync(_username, _password);
         if (user is null)
         {
             _error = "Invalid username or password";
@@ -13787,7 +13773,7 @@ window.themeManager = {
 
 
 ===============================================================================
-EXPORT COMPLETED: Mon Jan 26 11:30:30 AM EST 2026
+EXPORT COMPLETED: Mon Jan 26 11:45:43 AM EST 2026
 Total Files Found: 115
 Files Exported: 115
 Files Skipped: 0 (binary or large files)

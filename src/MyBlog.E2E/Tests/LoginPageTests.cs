@@ -45,7 +45,7 @@ public sealed class LoginPageTests(PlaywrightFixture fixture)
         var page = await _fixture.CreatePageAsync();
 
         await page.GotoAsync("/login");
-        
+
         // Wait for Blazor to be ready (SignalR connection established)
         await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
         await page.WaitForTimeoutAsync(500);
@@ -65,7 +65,7 @@ public sealed class LoginPageTests(PlaywrightFixture fixture)
         var page = await _fixture.CreatePageAsync();
 
         await page.GotoAsync("/login");
-        
+
         // Wait for Blazor to be ready (SignalR connection established)
         await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
         await page.WaitForTimeoutAsync(500);
@@ -73,7 +73,7 @@ public sealed class LoginPageTests(PlaywrightFixture fixture)
         // Use default credentials
         await page.FillAsync("input#username, input[name='username']", "admin");
         await page.FillAsync("input#password, input[name='password']", "ChangeMe123!");
-        
+
         // Click and wait for navigation (forceLoad: true causes full page navigation)
         await page.ClickAsync("button[type='submit']");
 
@@ -91,7 +91,7 @@ public sealed class LoginPageTests(PlaywrightFixture fixture)
         var page = await _fixture.CreatePageAsync();
 
         await page.GotoAsync("/login");
-        
+
         // Wait for Blazor to be ready (SignalR connection established)
         await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
         await page.WaitForTimeoutAsync(500);
