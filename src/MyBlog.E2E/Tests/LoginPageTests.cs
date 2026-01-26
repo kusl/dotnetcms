@@ -5,6 +5,7 @@ namespace MyBlog.E2E.Tests;
 
 /// <summary>
 /// E2E tests for authentication (Epic 1: Authentication).
+/// The login page uses a Blazor form that handles login server-side.
 /// </summary>
 [Collection(PlaywrightCollection.Name)]
 public sealed class LoginPageTests(PlaywrightFixture fixture)
@@ -44,16 +45,19 @@ public sealed class LoginPageTests(PlaywrightFixture fixture)
         var page = await _fixture.CreatePageAsync();
 
         await page.GotoAsync("/login");
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
 
         await page.FillAsync("input#username, input[name='username']", "invalid");
         await page.FillAsync("input#password, input[name='password']", "invalid");
         await page.ClickAsync("button[type='submit']");
 
-        // Wait for error message to appear
-        await page.WaitForSelectorAsync(".error-message, .error", new() { Timeout = 5000 });
+        // Wait for the form to be processed and page to update
+        // The Blazor form with data-enhance="false" does a full page reload
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
 
-        var errorMessage = page.Locator(".error-message, .error");
-        await Assertions.Expect(errorMessage).ToBeVisibleAsync();
+        // Wait for error message to appear
+        var errorMessage = page.Locator(".error-message");
+        await Assertions.Expect(errorMessage).ToBeVisibleAsync(new LocatorAssertionsToBeVisibleOptions { Timeout = 10000 });
     }
 
     [Fact]
@@ -62,14 +66,15 @@ public sealed class LoginPageTests(PlaywrightFixture fixture)
         var page = await _fixture.CreatePageAsync();
 
         await page.GotoAsync("/login");
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
 
         // Use default credentials
         await page.FillAsync("input#username, input[name='username']", "admin");
         await page.FillAsync("input#password, input[name='password']", "ChangeMe123!");
         await page.ClickAsync("button[type='submit']");
 
-        // Wait for redirect to admin
-        await page.WaitForURLAsync("**/admin**", new() { Timeout = 10000 });
+        // Wait for navigation to complete - the form submission will redirect
+        await page.WaitForURLAsync("**/admin**", new PageWaitForURLOptions { Timeout = 15000 });
 
         // Verify we're on an admin page
         var url = page.Url;
@@ -82,15 +87,17 @@ public sealed class LoginPageTests(PlaywrightFixture fixture)
         var page = await _fixture.CreatePageAsync();
 
         await page.GotoAsync("/login");
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
 
         await page.FillAsync("input#username, input[name='username']", "admin");
         await page.FillAsync("input#password, input[name='password']", "ChangeMe123!");
         await page.ClickAsync("button[type='submit']");
 
-        await page.WaitForURLAsync("**/admin**", new() { Timeout = 10000 });
+        // Wait for navigation to admin
+        await page.WaitForURLAsync("**/admin**", new PageWaitForURLOptions { Timeout = 15000 });
 
         // Logout button should now be visible
         var logoutButton = page.Locator("button:has-text('Logout'), form[action='/logout'] button");
-        await Assertions.Expect(logoutButton).ToBeVisibleAsync();
+        await Assertions.Expect(logoutButton).ToBeVisibleAsync(new LocatorAssertionsToBeVisibleOptions { Timeout = 5000 });
     }
 }

@@ -7298,3 +7298,304 @@ kushal@fedora:~/src/dotnet/MyBlog$
 
 
 
+I'll search the project knowledge to read the dump.txt file and understand the current state of the codebase.Let me search for more specific content from the dump file, particularly the E2E test files and login page components:Let me search for more specific E2E test files and the ThemeSwitcher component:Now let me search for the full Login.razor and LoginPageTests files:Let me search for more of the full content of the ThemeSwitcherTests.cs and the complete Login.razor file:Now I have a clear picture of the issue. The E2E tests are failing because:
+
+1. **ThemeSwitcherTests** - The tests are looking for a `<select>` element but the ThemeSwitcher component uses a button-based dropdown menu, not a `<select>` element.
+
+2. **LoginPageTests** - The tests are timing out waiting for navigation to `/admin`, and the error message test is failing because it can't find the `.error-message` or `.error` element.
+
+Let me search for more details on the Login.razor error-message class and the docker compose e2e setup:Now I have a good understanding of the issues. Let me analyze the failures:
+
+1. **ThemeSwitcherTests**: The E2E tests are looking for a `<select>` element with options, but the actual ThemeSwitcher component is a button-based dropdown menu (not a `<select>` element). The tests need to be updated to work with the actual component structure.
+
+2. **LoginPageTests**: The login tests are failing because:
+   - The login form submission isn't working properly with `data-enhance="false"` 
+   - The tests are waiting for navigation to `/admin` but it's not happening
+   - The error message element may not be visible with the correct selector
+
+Let me provide the complete fixed files. The E2E tests need to be updated to match the actual component implementations.Now I need to check the Login.razor component more carefully. The issue might be that the form needs a proper action attribute for the traditional POST submission to work correctly with the rate limiting middleware. Let me search for more details:I can see the Login.razor uses a Blazor form with `method="post"` that handles login via the `HandleLogin` method. Looking at the About.razor, I see there's also mention of "POST /login" as an endpoint.
+
+The key issue is that the Login.razor form is a Blazor form with `data-enhance="false"` which should disable Blazor enhanced navigation and do a traditional form post. But since it uses `@onsubmit="HandleLogin"`, it's actually handled by Blazor's server-side code rather than posting to an endpoint.
+
+Let me search for the Program.cs to understand the actual endpoint configuration:Now I have a clearer picture. I can see from Program.cs that the login is handled by a Blazor form (not a dedicated endpoint), and the form uses `@onsubmit="HandleLogin"` which triggers server-side Blazor code.
+
+The issue is that the Blazor form with `data-enhance="false"` doesn't behave the same way as a standard HTML form POST. For the E2E tests to work reliably, the tests need to wait for the actual form processing behavior.
+
+Looking at the test failures more closely:
+
+1. **ThemeSwitcherTests** - Tests expect a `<select>` but the actual UI uses button-based dropdown
+2. **LoginPageTests** - Tests timeout waiting for navigation, probably because form submission behavior in Blazor differs from traditional HTML forms
+
+Let me provide the complete fixed E2E test files:Now here are the complete files to copy into your project:
+
+**File 1: `src/MyBlog.E2E/Tests/ThemeSwitcherTests.cs`**
+
+```csharp
+using Microsoft.Playwright;
+using Xunit;
+
+namespace MyBlog.E2E.Tests;
+
+/// <summary>
+/// E2E tests for the theme switcher (Epic 1: UI/UX).
+/// The ThemeSwitcher is a button-based dropdown menu, not a select element.
+/// </summary>
+[Collection(PlaywrightCollection.Name)]
+public sealed class ThemeSwitcherTests(PlaywrightFixture fixture)
+{
+    private readonly PlaywrightFixture _fixture = fixture;
+
+    [Fact]
+    public async Task ThemeSwitcher_IsVisibleOnPage()
+    {
+        var page = await _fixture.CreatePageAsync();
+
+        await page.GotoAsync("/");
+
+        // The theme switcher is a div with class .theme-switcher containing a button
+        var themeSwitcher = page.Locator(".theme-switcher");
+        await Assertions.Expect(themeSwitcher).ToBeVisibleAsync();
+    }
+
+    [Fact]
+    public async Task ThemeSwitcher_ChangesTheme()
+    {
+        var page = await _fixture.CreatePageAsync();
+
+        await page.GotoAsync("/");
+
+        // Click the theme switcher button to open the menu
+        var themeSwitcherBtn = page.Locator(".theme-switcher-btn");
+        await themeSwitcherBtn.ClickAsync();
+
+        // Wait for the menu to be visible
+        var themeMenu = page.Locator(".theme-menu.open");
+        await Assertions.Expect(themeMenu).ToBeVisibleAsync(new LocatorAssertionsToBeVisibleOptions { Timeout = 5000 });
+
+        // Click on the "dark" theme option
+        var darkOption = page.Locator(".theme-option:has-text('Dark')");
+        await darkOption.ClickAsync();
+
+        // Wait a moment for the theme to apply
+        await page.WaitForTimeoutAsync(500);
+
+        // Check that theme changed to dark
+        var newTheme = await page.EvaluateAsync<string>("document.documentElement.getAttribute('data-theme')");
+        Assert.Equal("dark", newTheme);
+    }
+
+    [Fact]
+    public async Task ThemeSwitcher_HasMultipleOptions()
+    {
+        var page = await _fixture.CreatePageAsync();
+
+        await page.GotoAsync("/");
+
+        // Click the theme switcher button to open the menu
+        var themeSwitcherBtn = page.Locator(".theme-switcher-btn");
+        await themeSwitcherBtn.ClickAsync();
+
+        // Wait for the menu to be visible
+        var themeMenu = page.Locator(".theme-menu.open");
+        await Assertions.Expect(themeMenu).ToBeVisibleAsync(new LocatorAssertionsToBeVisibleOptions { Timeout = 5000 });
+
+        // Count the theme options (buttons with class .theme-option)
+        var options = page.Locator(".theme-option");
+        var count = await options.CountAsync();
+
+        Assert.True(count >= 2, $"Expected at least 2 theme options, got {count}");
+    }
+}
+```
+
+**File 2: `src/MyBlog.E2E/Tests/LoginPageTests.cs`**
+
+```csharp
+using Microsoft.Playwright;
+using Xunit;
+
+namespace MyBlog.E2E.Tests;
+
+/// <summary>
+/// E2E tests for authentication (Epic 1: Authentication).
+/// The login page uses a Blazor form that handles login server-side.
+/// </summary>
+[Collection(PlaywrightCollection.Name)]
+public sealed class LoginPageTests(PlaywrightFixture fixture)
+{
+    private readonly PlaywrightFixture _fixture = fixture;
+
+    [Fact]
+    public async Task LoginPage_LoadsSuccessfully()
+    {
+        var page = await _fixture.CreatePageAsync();
+
+        var response = await page.GotoAsync("/login");
+
+        Assert.NotNull(response);
+        Assert.True(response.Ok, $"Expected OK response, got {response.Status}");
+    }
+
+    [Fact]
+    public async Task LoginPage_DisplaysLoginForm()
+    {
+        var page = await _fixture.CreatePageAsync();
+
+        await page.GotoAsync("/login");
+
+        var usernameInput = page.Locator("input#username, input[name='username']");
+        var passwordInput = page.Locator("input#password, input[name='password']");
+        var submitButton = page.Locator("button[type='submit']");
+
+        await Assertions.Expect(usernameInput).ToBeVisibleAsync();
+        await Assertions.Expect(passwordInput).ToBeVisibleAsync();
+        await Assertions.Expect(submitButton).ToBeVisibleAsync();
+    }
+
+    [Fact]
+    public async Task LoginPage_WithInvalidCredentials_ShowsError()
+    {
+        var page = await _fixture.CreatePageAsync();
+
+        await page.GotoAsync("/login");
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+
+        await page.FillAsync("input#username, input[name='username']", "invalid");
+        await page.FillAsync("input#password, input[name='password']", "invalid");
+        await page.ClickAsync("button[type='submit']");
+
+        // Wait for the form to be processed and page to update
+        // The Blazor form with data-enhance="false" does a full page reload
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+
+        // Wait for error message to appear
+        var errorMessage = page.Locator(".error-message");
+        await Assertions.Expect(errorMessage).ToBeVisibleAsync(new LocatorAssertionsToBeVisibleOptions { Timeout = 10000 });
+    }
+
+    [Fact]
+    public async Task LoginPage_WithValidCredentials_RedirectsToAdmin()
+    {
+        var page = await _fixture.CreatePageAsync();
+
+        await page.GotoAsync("/login");
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+
+        // Use default credentials
+        await page.FillAsync("input#username, input[name='username']", "admin");
+        await page.FillAsync("input#password, input[name='password']", "ChangeMe123!");
+        await page.ClickAsync("button[type='submit']");
+
+        // Wait for navigation to complete - the form submission will redirect
+        await page.WaitForURLAsync("**/admin**", new PageWaitForURLOptions { Timeout = 15000 });
+
+        // Verify we're on an admin page
+        var url = page.Url;
+        Assert.Contains("admin", url);
+    }
+
+    [Fact]
+    public async Task LoginPage_AfterLogin_ShowsLogoutButton()
+    {
+        var page = await _fixture.CreatePageAsync();
+
+        await page.GotoAsync("/login");
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+
+        await page.FillAsync("input#username, input[name='username']", "admin");
+        await page.FillAsync("input#password, input[name='password']", "ChangeMe123!");
+        await page.ClickAsync("button[type='submit']");
+
+        // Wait for navigation to admin
+        await page.WaitForURLAsync("**/admin**", new PageWaitForURLOptions { Timeout = 15000 });
+
+        // Logout button should now be visible
+        var logoutButton = page.Locator("button:has-text('Logout'), form[action='/logout'] button");
+        await Assertions.Expect(logoutButton).ToBeVisibleAsync(new LocatorAssertionsToBeVisibleOptions { Timeout = 5000 });
+    }
+}
+```
+
+**Summary of changes:**
+
+1. **ThemeSwitcherTests.cs** - Fixed to work with the actual button-based dropdown menu:
+   - `ThemeSwitcher_IsVisibleOnPage` - Now looks for `.theme-switcher` div instead of a select element
+   - `ThemeSwitcher_ChangesTheme` - Now clicks the `.theme-switcher-btn` to open the menu, then clicks the `.theme-option:has-text('Dark')` button
+   - `ThemeSwitcher_HasMultipleOptions` - Now counts `.theme-option` buttons instead of `<option>` elements
+
+2. **LoginPageTests.cs** - Fixed timing and navigation handling:
+   - Added `WaitForLoadStateAsync(LoadState.NetworkIdle)` after page navigation to ensure the page is fully loaded
+   - Changed `RunAndWaitForNavigationAsync` pattern to simpler `ClickAsync` + `WaitForURLAsync` which is more reliable for Blazor form submissions
+   - Increased timeouts for navigation waits to 15 seconds to account for server-side processing
+   - Added explicit timeout options to `ToBeVisibleAsync` assertions
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   

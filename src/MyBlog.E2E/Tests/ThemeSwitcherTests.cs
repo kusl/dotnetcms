@@ -5,6 +5,7 @@ namespace MyBlog.E2E.Tests;
 
 /// <summary>
 /// E2E tests for the theme switcher (Epic 1: UI/UX).
+/// The ThemeSwitcher is a button-based dropdown menu, not a select element.
 /// </summary>
 [Collection(PlaywrightCollection.Name)]
 public sealed class ThemeSwitcherTests(PlaywrightFixture fixture)
@@ -18,8 +19,9 @@ public sealed class ThemeSwitcherTests(PlaywrightFixture fixture)
 
         await page.GotoAsync("/");
 
-        var themeSwitcher = page.Locator(".theme-switcher, select[aria-label*='theme' i], select:has(option[value='dark'])");
-        await Assertions.Expect(themeSwitcher.First).ToBeVisibleAsync();
+        // The theme switcher is a div with class .theme-switcher containing a button
+        var themeSwitcher = page.Locator(".theme-switcher");
+        await Assertions.Expect(themeSwitcher).ToBeVisibleAsync();
     }
 
     [Fact]
@@ -29,17 +31,22 @@ public sealed class ThemeSwitcherTests(PlaywrightFixture fixture)
 
         await page.GotoAsync("/");
 
-        // Get initial theme
-        var initialTheme = await page.EvaluateAsync<string>("document.documentElement.getAttribute('data-theme')");
+        // Click the theme switcher button to open the menu
+        var themeSwitcherBtn = page.Locator(".theme-switcher-btn");
+        await themeSwitcherBtn.ClickAsync();
 
-        // Find and click the theme switcher
-        var themeSwitcher = page.Locator(".theme-switcher select, select:has(option[value='dark'])");
-        await themeSwitcher.First.SelectOptionAsync("dark");
+        // Wait for the menu to be visible
+        var themeMenu = page.Locator(".theme-menu.open");
+        await Assertions.Expect(themeMenu).ToBeVisibleAsync(new LocatorAssertionsToBeVisibleOptions { Timeout = 5000 });
+
+        // Click on the "dark" theme option
+        var darkOption = page.Locator(".theme-option:has-text('Dark')");
+        await darkOption.ClickAsync();
 
         // Wait a moment for the theme to apply
         await page.WaitForTimeoutAsync(500);
 
-        // Check that theme changed
+        // Check that theme changed to dark
         var newTheme = await page.EvaluateAsync<string>("document.documentElement.getAttribute('data-theme')");
         Assert.Equal("dark", newTheme);
     }
@@ -51,10 +58,18 @@ public sealed class ThemeSwitcherTests(PlaywrightFixture fixture)
 
         await page.GotoAsync("/");
 
-        var themeSwitcher = page.Locator(".theme-switcher select, select:has(option[value='dark'])");
-        var options = themeSwitcher.First.Locator("option");
+        // Click the theme switcher button to open the menu
+        var themeSwitcherBtn = page.Locator(".theme-switcher-btn");
+        await themeSwitcherBtn.ClickAsync();
 
+        // Wait for the menu to be visible
+        var themeMenu = page.Locator(".theme-menu.open");
+        await Assertions.Expect(themeMenu).ToBeVisibleAsync(new LocatorAssertionsToBeVisibleOptions { Timeout = 5000 });
+
+        // Count the theme options (buttons with class .theme-option)
+        var options = page.Locator(".theme-option");
         var count = await options.CountAsync();
+
         Assert.True(count >= 2, $"Expected at least 2 theme options, got {count}");
     }
 }
