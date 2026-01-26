@@ -1,244 +1,42 @@
-kushal@fedora:~/Videos/dl$ cd ~/src/dotnet/MyBlog/ && export DOTNET_CLI_TELEMETRY_OPTOUT=1 && (cd src && time dotnet format; time dotnet restore; time dotnet clean; time dotnet build; time dotnet run --project MyBlog.Tests/MyBlog.Tests.csproj; time dotnet list package; time dotnet list package --outdated); cd ~/src/dotnet/MyBlog/ && time bash export.sh
-
-real	0m8.562s
-user	0m13.386s
-sys	0m1.061s
-Restore complete (0.5s)
-
-Build succeeded in 0.6s
-
-real	0m0.800s
-user	0m0.847s
-sys	0m0.161s
-
-Build succeeded in 0.6s
-
-real	0m0.735s
-user	0m0.754s
-sys	0m0.142s
-Restore complete (0.5s)
-  MyBlog.Core net10.0 succeeded (3.1s) → MyBlog.Core/bin/Debug/net10.0/MyBlog.Core.dll
-  MyBlog.Infrastructure net10.0 succeeded (0.5s) → MyBlog.Infrastructure/bin/Debug/net10.0/MyBlog.Infrastructure.dll
-  MyBlog.Web net10.0 succeeded (2.5s) → MyBlog.Web/bin/Debug/net10.0/MyBlog.Web.dll
-  MyBlog.Tests net10.0 succeeded (0.6s) → MyBlog.Tests/bin/Debug/net10.0/MyBlog.Tests.dll
-
-Build succeeded in 7.3s
-
-real	0m7.525s
-user	0m2.577s
-sys	0m0.365s
-xUnit.net v3 In-Process Runner v3.2.2+728c1dce01 (64-bit .NET 10.0.1)
-  Discovering: MyBlog.Tests
-  Discovered:  MyBlog.Tests
-  Starting:    MyBlog.Tests
-  Finished:    MyBlog.Tests (ID = '24cedafe73dab5684218bb3cf04cfd49ae8ce3b87ae799399cb2e301cbc1e755')
-=== TEST EXECUTION SUMMARY ===
-   MyBlog.Tests  Total: 77, Errors: 0, Failed: 0, Skipped: 0, Not Run: 0, Time: 40.822s
-
-real	0m42.757s
-user	0m45.395s
-sys	0m0.664s
-Restore complete (0.5s)
-
-Build succeeded in 0.6s
-Project 'MyBlog.Core' has the following package references
-   [net10.0]: 
-   Top-level Package                   Requested   Resolved
-   > Microsoft.Extensions.Logging      10.0.2      10.0.2  
-
-Project 'MyBlog.Infrastructure' has the following package references
-   [net10.0]: 
-   Top-level Package                           Requested   Resolved
-   > Microsoft.AspNetCore.Identity             2.3.9       2.3.9   
-   > Microsoft.EntityFrameworkCore.Sqlite      10.0.2      10.0.2  
-   > Microsoft.Extensions.Http                 10.0.2      10.0.2  
-   > OpenTelemetry                             1.15.0      1.15.0  
-
-Project 'MyBlog.Tests' has the following package references
-   [net10.0]: 
-   Top-level Package                             Requested   Resolved
-   > Microsoft.EntityFrameworkCore.Sqlite        10.0.2      10.0.2  
-   > Microsoft.NET.Test.Sdk                      18.0.1      18.0.1  
-   > Microsoft.Testing.Extensions.TrxReport      2.0.2       2.0.2   
-   > xunit.v3                                    3.2.2       3.2.2   
-
-Project 'MyBlog.Web' has the following package references
-   [net10.0]: 
-   Top-level Package                                  Requested    Resolved
-   > Microsoft.AspNetCore.App.Internal.Assets   (A)   [10.0.1, )   10.0.1  
-   > Microsoft.AspNetCore.SignalR.Client              10.0.2       10.0.2  
-   > OpenTelemetry.Exporter.Console                   1.15.0       1.15.0  
-   > OpenTelemetry.Extensions.Hosting                 1.15.0       1.15.0  
-   > OpenTelemetry.Instrumentation.AspNetCore         1.15.0       1.15.0  
-   > OpenTelemetry.Instrumentation.Http               1.15.0       1.15.0  
-
-(A) : Auto-referenced package.
-
-real	0m1.640s
-user	0m1.649s
-sys	0m0.348s
-Restore complete (0.5s)
-
-Build succeeded in 0.6s
-
-The following sources were used:
-   https://api.nuget.org/v3/index.json
-
-The given project `MyBlog.Core` has no updates given the current sources.
-The given project `MyBlog.Infrastructure` has no updates given the current sources.
-The given project `MyBlog.Tests` has no updates given the current sources.
-The given project `MyBlog.Web` has no updates given the current sources.
-
-real	0m3.138s
-user	0m2.081s
-sys	0m0.440s
-==============================================
-  Project Export for LLM Analysis
-==============================================
-
-Project Path: /home/kushal/src/dotnet/MyBlog
-Output File:  docs/llm/dump.txt
-
-Generating directory structure...
-Collecting files...
-Found 74 files to export
-
-Processing (1/74): .editorconfig
-Processing (2/74): export.sh
-Processing (3/74): .github/workflows/build-deploy.yml
-Processing (4/74): .gitignore
-Processing (5/74): README.md
-Processing (6/74): src/Directory.Build.props
-Processing (7/74): src/Directory.Packages.props
-Processing (8/74): src/.editorconfig
-Processing (9/74): src/.github/workflows/build-deploy.yml
-Processing (10/74): src/global.json
-Processing (11/74): src/MyBlog.Core/Constants/AppConstants.cs
-Processing (12/74): src/MyBlog.Core/Interfaces/IAuthService.cs
-Processing (13/74): src/MyBlog.Core/Interfaces/IImageDimensionService.cs
-Processing (14/74): src/MyBlog.Core/Interfaces/IImageRepository.cs
-Processing (15/74): src/MyBlog.Core/Interfaces/IMarkdownService.cs
-Processing (16/74): src/MyBlog.Core/Interfaces/IPasswordService.cs
-Processing (17/74): src/MyBlog.Core/Interfaces/IPostRepository.cs
-Processing (18/74): src/MyBlog.Core/Interfaces/IReaderTrackingService.cs
-Processing (19/74): src/MyBlog.Core/Interfaces/ISlugService.cs
-Processing (20/74): src/MyBlog.Core/Interfaces/ITelemetryLogRepository.cs
-Processing (21/74): src/MyBlog.Core/Interfaces/IUserRepository.cs
-Processing (22/74): src/MyBlog.Core/Models/Image.cs
-Processing (23/74): src/MyBlog.Core/Models/ImageDimensionCache.cs
-Processing (24/74): src/MyBlog.Core/Models/Post.cs
-Processing (25/74): src/MyBlog.Core/Models/PostDto.cs
-Processing (26/74): src/MyBlog.Core/Models/TelemetryLog.cs
-Processing (27/74): src/MyBlog.Core/Models/User.cs
-Processing (28/74): src/MyBlog.Core/MyBlog.Core.csproj
-Processing (29/74): src/MyBlog.Core/Services/MarkdownService.cs
-Processing (30/74): src/MyBlog.Core/Services/SlugService.cs
-Processing (31/74): src/MyBlog.Infrastructure/Data/BlogDbContext.cs
-Processing (32/74): src/MyBlog.Infrastructure/Data/DatabasePathResolver.cs
-Processing (33/74): src/MyBlog.Infrastructure/Data/DatabaseSchemaUpdater.cs
-Processing (34/74): src/MyBlog.Infrastructure/MyBlog.Infrastructure.csproj
-Processing (35/74): src/MyBlog.Infrastructure/Repositories/ImageRepository.cs
-Processing (36/74): src/MyBlog.Infrastructure/Repositories/PostRepository.cs
-Processing (37/74): src/MyBlog.Infrastructure/Repositories/TelemetryLogRepository.cs
-Processing (38/74): src/MyBlog.Infrastructure/Repositories/UserRepository.cs
-Processing (39/74): src/MyBlog.Infrastructure/ServiceCollectionExtensions.cs
-Processing (40/74): src/MyBlog.Infrastructure/Services/AuthService.cs
-Processing (41/74): src/MyBlog.Infrastructure/Services/ImageCacheWarmerService.cs
-Processing (42/74): src/MyBlog.Infrastructure/Services/ImageDimensionService.cs
-Processing (43/74): src/MyBlog.Infrastructure/Services/PasswordService.cs
-Processing (44/74): src/MyBlog.Infrastructure/Services/ReaderTrackingService.cs
-Processing (45/74): src/MyBlog.Infrastructure/Services/TelemetryCleanupService.cs
-Processing (46/74): src/MyBlog.Infrastructure/Telemetry/DatabaseLogExporter.cs
-Processing (47/74): src/MyBlog.Infrastructure/Telemetry/FileLogExporter.cs
-Processing (48/74): src/MyBlog.Infrastructure/Telemetry/TelemetryPathResolver.cs
-Processing (49/74): src/MyBlog.slnx
-Processing (50/74): src/MyBlog.Tests/Integration/AuthServiceLongPasswordTests.cs
-Processing (51/74): src/MyBlog.Tests/Integration/AuthServiceTests.cs
-Processing (52/74): src/MyBlog.Tests/Integration/PasswordChangeTests.cs
-Processing (53/74): src/MyBlog.Tests/Integration/PostRepositoryTests.cs
-Processing (54/74): src/MyBlog.Tests/Integration/TelemetryCleanupTests.cs
-Processing (55/74): src/MyBlog.Tests/MyBlog.Tests.csproj
-Processing (56/74): src/MyBlog.Tests/Unit/LoginRateLimitMiddlewareTests.cs
-Processing (57/74): src/MyBlog.Tests/Unit/MarkdownServiceTests.cs
-Processing (58/74): src/MyBlog.Tests/Unit/PasswordServiceTests.cs
-Processing (59/74): src/MyBlog.Tests/Unit/SlugServiceTests.cs
-Processing (60/74): src/MyBlog.Web/appsettings.Development.json
-Processing (61/74): src/MyBlog.Web/appsettings.json
-Processing (62/74): src/MyBlog.Web/Components/Pages/About.razor.css
-Processing (63/74): src/MyBlog.Web/Components/Pages/Admin/UserEditor.razor.css
-Processing (64/74): src/MyBlog.Web/Components/Pages/Admin/UserList.razor.css
-Processing (65/74): src/MyBlog.Web/Components/Pages/PostDetail.razor.css
-Processing (66/74): src/MyBlog.Web/Components/Shared/Footer.razor.css
-Processing (67/74): src/MyBlog.Web/Components/Shared/PostCard.razor.css
-Processing (68/74): src/MyBlog.Web/Components/Shared/ReaderBadge.razor.css
-Processing (69/74): src/MyBlog.Web/Hubs/ReaderHub.cs
-Processing (70/74): src/MyBlog.Web/Middleware/LoginRateLimitMiddleware.cs
-Processing (71/74): src/MyBlog.Web/MyBlog.Web.csproj
-Processing (72/74): src/MyBlog.Web/Program.cs
-Processing (73/74): src/MyBlog.Web/Properties/launchSettings.json
-Processing (74/74): src/MyBlog.Web/wwwroot/css/site.css
-
-==============================================
-  Export Complete!
-==============================================
-
-Output file:    docs/llm/dump.txt
-Files exported: 74
-Files skipped:  0
-Output size:    228.40 KB
-
-File types included:
-  • Source code: .cs, .fs, .vb
-  • UI/XAML: .axaml, .xaml, .paml
-  • Projects: .csproj, .slnx, .sln, .props, .targets
-  • Config: .json, .yaml, .yml, .xml, .config
-  • Docs: .md, .txt
-  • Scripts: .sh, .ps1, .cmd, .bat
-  • Other: .sql, .resx, .css, .scss, Dockerfile, etc.
-
-
-real	0m0.821s
-user	0m0.455s
-sys	0m0.509s
 kushal@fedora:~/src/dotnet/MyBlog$ cd ~/src/dotnet/MyBlog/ && export DOTNET_CLI_TELEMETRY_OPTOUT=1 && (cd src && time dotnet format; time dotnet restore; time dotnet clean; time dotnet build; time dotnet run --project MyBlog.Tests/MyBlog.Tests.csproj; time dotnet list package; time dotnet list package --outdated); cd ~/src/dotnet/MyBlog/ && time bash export.sh
 
-real	0m7.592s
-user	0m12.949s
-sys	0m0.913s
-Restore complete (0.5s)
-
-Build succeeded in 0.6s
-
-real	0m0.718s
-user	0m0.764s
-sys	0m0.142s
+real	0m8.228s
+user	0m13.193s
+sys	0m0.871s
+Restore complete (0.4s)
 
 Build succeeded in 0.5s
 
-real	0m0.652s
-user	0m0.660s
-sys	0m0.125s
-Restore complete (0.5s)
-  MyBlog.Core net10.0 succeeded (2.8s) → MyBlog.Core/bin/Debug/net10.0/MyBlog.Core.dll
-  MyBlog.Infrastructure net10.0 succeeded (0.3s) → MyBlog.Infrastructure/bin/Debug/net10.0/MyBlog.Infrastructure.dll
-  MyBlog.Web net10.0 succeeded (2.1s) → MyBlog.Web/bin/Debug/net10.0/MyBlog.Web.dll
-  MyBlog.Tests net10.0 succeeded (0.4s) → MyBlog.Tests/bin/Debug/net10.0/MyBlog.Tests.dll
+real	0m0.655s
+user	0m0.702s
+sys	0m0.131s
 
-Build succeeded in 6.2s
+Build succeeded in 0.6s
 
-real	0m6.359s
-user	0m2.200s
-sys	0m0.317s
+real	0m0.709s
+user	0m0.720s
+sys	0m0.131s
+Restore complete (0.4s)
+  MyBlog.Core net10.0 succeeded (2.7s) → MyBlog.Core/bin/Debug/net10.0/MyBlog.Core.dll
+  MyBlog.Infrastructure net10.0 succeeded (0.4s) → MyBlog.Infrastructure/bin/Debug/net10.0/MyBlog.Infrastructure.dll
+  MyBlog.Web net10.0 succeeded (2.3s) → MyBlog.Web/bin/Debug/net10.0/MyBlog.Web.dll
+  MyBlog.Tests net10.0 succeeded (0.5s) → MyBlog.Tests/bin/Debug/net10.0/MyBlog.Tests.dll
+
+Build succeeded in 6.5s
+
+real	0m6.618s
+user	0m2.294s
+sys	0m0.335s
 xUnit.net v3 In-Process Runner v3.2.2+728c1dce01 (64-bit .NET 10.0.1)
   Discovering: MyBlog.Tests
   Discovered:  MyBlog.Tests
   Starting:    MyBlog.Tests
   Finished:    MyBlog.Tests (ID = '24cedafe73dab5684218bb3cf04cfd49ae8ce3b87ae799399cb2e301cbc1e755')
 === TEST EXECUTION SUMMARY ===
-   MyBlog.Tests  Total: 77, Errors: 0, Failed: 0, Skipped: 0, Not Run: 0, Time: 40.533s
+   MyBlog.Tests  Total: 77, Errors: 0, Failed: 0, Skipped: 0, Not Run: 0, Time: 40.577s
 
-real	0m42.207s
-user	0m45.015s
+real	0m42.257s
+user	0m44.889s
 sys	0m0.553s
 Restore complete (0.4s)
 
@@ -276,9 +74,9 @@ Project 'MyBlog.Web' has the following package references
 
 (A) : Auto-referenced package.
 
-real	0m1.438s
-user	0m1.430s
-sys	0m0.324s
+real	0m1.536s
+user	0m1.545s
+sys	0m0.312s
 Restore complete (0.4s)
 
 Build succeeded in 0.5s
@@ -291,9 +89,9 @@ The given project `MyBlog.Infrastructure` has no updates given the current sourc
 The given project `MyBlog.Tests` has no updates given the current sources.
 The given project `MyBlog.Web` has no updates given the current sources.
 
-real	0m1.600s
-user	0m1.597s
-sys	0m0.337s
+real	0m2.919s
+user	0m1.952s
+sys	0m0.360s
 ==============================================
   Project Export for LLM Analysis
 ==============================================
@@ -400,7 +198,7 @@ File types included:
   • Other: .sql, .resx, .css, .scss, Dockerfile, etc.
 
 
-real	0m0.813s
-user	0m0.449s
-sys	0m0.519s
+real	0m0.811s
+user	0m0.471s
+sys	0m0.486s
 kushal@fedora:~/src/dotnet/MyBlog$ 
