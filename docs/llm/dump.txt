@@ -1,6 +1,6 @@
 ===============================================================================
 PROJECT EXPORT
-Generated: Mon Jan 26 10:37:38 AM EST 2026
+Generated: Mon Jan 26 10:56:45 AM EST 2026
 Project Path: /home/kushal/src/dotnet/MyBlog
 ===============================================================================
 
@@ -43,7 +43,9 @@ DIRECTORY STRUCTURE:
 │   │   │   ├── 0030.txt
 │   │   │   ├── 0031.txt
 │   │   │   ├── 0032.txt
-│   │   │   └── 0033.md
+│   │   │   ├── 0033.md
+│   │   │   ├── 0034.txt
+│   │   │   └── 0035.md
 │   │   ├── claude.md
 │   │   ├── command.md
 │   │   ├── dump.txt
@@ -3444,7 +3446,7 @@ MODIFIED: 2026-01-01 22:21:17
 ================================================================================
 FILE: src/Directory.Packages.props
 SIZE: 1.71 KB
-MODIFIED: 2026-01-26 09:57:10
+MODIFIED: 2026-01-26 10:54:48
 ================================================================================
 
 <Project>
@@ -3473,7 +3475,7 @@ MODIFIED: 2026-01-26 09:57:10
     <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
     <PackageVersion Include="Microsoft.Testing.Extensions.TrxReport" Version="2.0.2" />
     <!-- E2E Testing (Playwright) -->
-    <PackageVersion Include="Microsoft.Playwright" Version="1.49.0" />
+    <PackageVersion Include="Microsoft.Playwright" Version="1.57.0" />
   </ItemGroup>
 </Project>
 
@@ -4516,8 +4518,8 @@ public sealed partial class SlugService : ISlugService
 
 ================================================================================
 FILE: src/MyBlog.E2E/Dockerfile
-SIZE: 1.70 KB
-MODIFIED: 2026-01-26 10:35:25
+SIZE: 1.93 KB
+MODIFIED: 2026-01-26 10:54:57
 ================================================================================
 
 # E2E Test Runner with Playwright
@@ -4558,7 +4560,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     xdg-utils \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy project files for restore
+# Copy all project files first for restore
 COPY Directory.Build.props .
 COPY Directory.Packages.props .
 COPY MyBlog.Core/MyBlog.Core.csproj MyBlog.Core/
@@ -4566,17 +4568,20 @@ COPY MyBlog.Infrastructure/MyBlog.Infrastructure.csproj MyBlog.Infrastructure/
 COPY MyBlog.Web/MyBlog.Web.csproj MyBlog.Web/
 COPY MyBlog.E2E/MyBlog.E2E.csproj MyBlog.E2E/
 
-# Restore E2E project and all dependencies
-RUN dotnet restore MyBlog.E2E/MyBlog.E2E.csproj
+# Restore ALL projects to ensure transitive dependencies are available
+RUN dotnet restore MyBlog.Core/MyBlog.Core.csproj && \
+    dotnet restore MyBlog.Infrastructure/MyBlog.Infrastructure.csproj && \
+    dotnet restore MyBlog.Web/MyBlog.Web.csproj && \
+    dotnet restore MyBlog.E2E/MyBlog.E2E.csproj
 
 # Copy all source code
 COPY . .
 
-# Build the E2E project
-RUN dotnet build MyBlog.E2E/MyBlog.E2E.csproj -c Release --no-restore
+# Build the E2E project (with restore to be safe)
+RUN dotnet build MyBlog.E2E/MyBlog.E2E.csproj -c Release
 
 # Install Playwright CLI and browsers
-RUN dotnet tool install --global Microsoft.Playwright.CLI --version 1.49.0
+RUN dotnet tool install --global Microsoft.Playwright.CLI --version 1.57.0
 ENV PATH="$PATH:/root/.dotnet/tools"
 RUN playwright install chromium
 
@@ -13749,7 +13754,7 @@ window.themeManager = {
 
 
 ===============================================================================
-EXPORT COMPLETED: Mon Jan 26 10:37:39 AM EST 2026
+EXPORT COMPLETED: Mon Jan 26 10:56:46 AM EST 2026
 Total Files Found: 115
 Files Exported: 115
 Files Skipped: 0 (binary or large files)
