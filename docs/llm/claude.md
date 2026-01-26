@@ -7198,3 +7198,103 @@ Key changes:
 
 
 
+[INFO] Waiting for MyBlog to be ready...
+.
+[INFO] MyBlog is ready!
+[INFO] Running E2E tests...
+fc86cdc68286549c9c882db453dcc6b4811db766971048f3ec3b1121a275cc62
+[myblog-web] | cannot open `/run/user/1000/crun/b51e163f8971a131b1242905c1431a965264b257d515f4d2961ca5a66aa485a9/exec.fifo`: No such file or directory
+[myblog-web] | Error: unable to start container b51e163f8971a131b1242905c1431a965264b257d515f4d2961ca5a66aa485a9: `/usr/bin/crun start b51e163f8971a131b1242905c1431a965264b257d515f4d2961ca5a66aa485a9` failed: exit status 1
+[myblog-e2e] | xUnit.net v3 In-Process Runner v3.2.2+728c1dce01 (64-bit .NET 10.0.1)
+[myblog-e2e] |   Discovering: MyBlog.E2E
+[myblog-e2e] |   Discovered:  MyBlog.E2E
+[myblog-e2e] |   Starting:    MyBlog.E2E
+[myblog-e2e] |     MyBlog.E2E.Tests.ThemeSwitcherTests.ThemeSwitcher_ChangesTheme [FAIL]
+[myblog-e2e] |       System.TimeoutException : Timeout 30000ms exceeded.
+[myblog-e2e] |       Call log:
+[myblog-e2e] |         - waiting for Locator(".theme-switcher select, select:has(option[value='dark'])").First
+[myblog-e2e] |       Stack Trace:
+[myblog-e2e] |         /_/src/Playwright/Transport/Connection.cs(201,0): at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls)
+[myblog-e2e] |         /_/src/Playwright/Transport/Connection.cs(499,0): at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title)
+[myblog-e2e] |         /_/src/Playwright/Core/Frame.cs(208,0): at Microsoft.Playwright.Core.Frame.SelectOptionAsync(String selector, IEnumerable`1 values, FrameSelectOptionOptions options)
+[myblog-e2e] |         Tests/ThemeSwitcherTests.cs(37,0): at MyBlog.E2E.Tests.ThemeSwitcherTests.ThemeSwitcher_ChangesTheme()
+[myblog-e2e] |         --- End of stack trace from previous location ---
+[myblog-e2e] |     MyBlog.E2E.Tests.ThemeSwitcherTests.ThemeSwitcher_HasMultipleOptions [FAIL]
+[myblog-e2e] |       Expected at least 2 theme options, got 0
+[myblog-e2e] |       Stack Trace:
+[myblog-e2e] |         Tests/ThemeSwitcherTests.cs(58,0): at MyBlog.E2E.Tests.ThemeSwitcherTests.ThemeSwitcher_HasMultipleOptions()
+[myblog-e2e] |         --- End of stack trace from previous location ---
+[myblog-e2e] |     MyBlog.E2E.Tests.LoginPageTests.LoginPage_AfterLogin_ShowsLogoutButton [FAIL]
+[myblog-e2e] |       System.TimeoutException : Timeout 10000ms exceeded.
+[myblog-e2e] |       =========================== logs ===========================
+[myblog-e2e] |       waiting for navigation to "**/admin**" until "Load"
+[myblog-e2e] |       ============================================================
+[myblog-e2e] |       ---- System.TimeoutException : Timeout 10000ms exceeded.
+[myblog-e2e] |       Stack Trace:
+[myblog-e2e] |         /_/src/Playwright/Core/Waiter.cs(226,0): at Microsoft.Playwright.Core.Waiter.WaitForPromiseAsync[T](Task`1 task, Action dispose)
+[myblog-e2e] |         /_/src/Playwright/Core/Frame.cs(321,0): at Microsoft.Playwright.Core.Frame.WaitForNavigationInternalAsync(Waiter waiter, String urlString, Func`2 urlFunc, Regex urlRegex, Nullable`1 waitUntil)
+[myblog-e2e] |         /_/src/Playwright/Core/Frame.cs(285,0): at Microsoft.Playwright.Core.Frame.RunAndWaitForNavigationAsync(Func`1 action, FrameRunAndWaitForNavigationOptions options)
+[myblog-e2e] |         Tests/LoginPageTests.cs(90,0): at MyBlog.E2E.Tests.LoginPageTests.LoginPage_AfterLogin_ShowsLogoutButton()
+[myblog-e2e] |         --- End of stack trace from previous location ---
+[myblog-e2e] |         ----- Inner Stack Trace -----
+[myblog-e2e] |         /_/src/Playwright/Helpers/TaskHelper.cs(72,0): at Microsoft.Playwright.Helpers.TaskHelper.<>c__DisplayClass2_0.<WithTimeout>b__0()
+[myblog-e2e] |         /_/src/Playwright/Helpers/TaskHelper.cs(108,0): at Microsoft.Playwright.Helpers.TaskHelper.WithTimeout(Task task, Func`1 timeoutAction, TimeSpan timeout, CancellationToken cancellationToken)
+[myblog-e2e] |         /_/src/Playwright/Core/Waiter.cs(218,0): at Microsoft.Playwright.Core.Waiter.WaitForPromiseAsync[T](Task`1 task, Action dispose)
+[myblog-e2e] |     MyBlog.E2E.Tests.LoginPageTests.LoginPage_WithValidCredentials_RedirectsToAdmin [FAIL]
+[myblog-e2e] |       System.TimeoutException : Timeout 10000ms exceeded.
+[myblog-e2e] |       =========================== logs ===========================
+[myblog-e2e] |       waiting for navigation to "**/admin**" until "Load"
+[myblog-e2e] |       ============================================================
+[myblog-e2e] |       ---- System.TimeoutException : Timeout 10000ms exceeded.
+[myblog-e2e] |       Stack Trace:
+[myblog-e2e] |         /_/src/Playwright/Core/Waiter.cs(226,0): at Microsoft.Playwright.Core.Waiter.WaitForPromiseAsync[T](Task`1 task, Action dispose)
+[myblog-e2e] |         /_/src/Playwright/Core/Frame.cs(321,0): at Microsoft.Playwright.Core.Frame.WaitForNavigationInternalAsync(Waiter waiter, String urlString, Func`2 urlFunc, Regex urlRegex, Nullable`1 waitUntil)
+[myblog-e2e] |         /_/src/Playwright/Core/Frame.cs(285,0): at Microsoft.Playwright.Core.Frame.RunAndWaitForNavigationAsync(Func`1 action, FrameRunAndWaitForNavigationOptions options)
+[myblog-e2e] |         Tests/LoginPageTests.cs(72,0): at MyBlog.E2E.Tests.LoginPageTests.LoginPage_WithValidCredentials_RedirectsToAdmin()
+[myblog-e2e] |         --- End of stack trace from previous location ---
+[myblog-e2e] |         ----- Inner Stack Trace -----
+[myblog-e2e] |         /_/src/Playwright/Helpers/TaskHelper.cs(72,0): at Microsoft.Playwright.Helpers.TaskHelper.<>c__DisplayClass2_0.<WithTimeout>b__0()
+[myblog-e2e] |         /_/src/Playwright/Helpers/TaskHelper.cs(108,0): at Microsoft.Playwright.Helpers.TaskHelper.WithTimeout(Task task, Func`1 timeoutAction, TimeSpan timeout, CancellationToken cancellationToken)
+[myblog-e2e] |         /_/src/Playwright/Core/Waiter.cs(218,0): at Microsoft.Playwright.Core.Waiter.WaitForPromiseAsync[T](Task`1 task, Action dispose)
+[myblog-e2e] |     MyBlog.E2E.Tests.LoginPageTests.LoginPage_WithInvalidCredentials_ShowsError [FAIL]
+[myblog-e2e] |       System.TimeoutException : Timeout 5000ms exceeded.
+[myblog-e2e] |       Call log:
+[myblog-e2e] |         - waiting for Locator(".error-message, .error") to be visible
+[myblog-e2e] |       Stack Trace:
+[myblog-e2e] |         /_/src/Playwright/Transport/Connection.cs(201,0): at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls)
+[myblog-e2e] |            at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title)
+[myblog-e2e] |         /_/src/Playwright/Core/Frame.cs(689,0): at Microsoft.Playwright.Core.Frame.WaitForSelectorAsync(String selector, FrameWaitForSelectorOptions options)
+[myblog-e2e] |         Tests/LoginPageTests.cs(53,0): at MyBlog.E2E.Tests.LoginPageTests.LoginPage_WithInvalidCredentials_ShowsError()
+[myblog-e2e] |         --- End of stack trace from previous location ---
+[myblog-e2e] |   Finished:    MyBlog.E2E (ID = '4d488734a9156ea8719a93bca3e9cb47dfeac4715a7981582060bf185a1e7bf4')
+[myblog-e2e] | === TEST EXECUTION SUMMARY ===
+[myblog-e2e] |    MyBlog.E2E  Total: 18, Errors: 0, Failed: 5, Skipped: 0, Not Run: 0, Time: 57.400s
+[myblog-e2e] | 
+[INFO] Capturing logs...
+[INFO] Cleaning up...
+myblog-e2e
+myblog-web
+myblog-e2e
+myblog-web
+myblog_myblog-data
+a9e984e1a777ffca409fe09d219e3ab2b2115451bb8ba65cfb57b4997dbdb5cd
+myblog_myblog-network
+[INFO] E2E tests passed! ✓
+
+real	2m40.502s
+user	1m7.135s
+sys	0m36.926s
+kushal@fedora:~/src/dotnet/MyBlog$ 
+
+
+
+
+
+
+
+
+
+
+
+
+
