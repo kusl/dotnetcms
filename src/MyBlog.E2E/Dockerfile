@@ -57,7 +57,7 @@ COPY . .
 RUN dotnet build MyBlog.E2E/MyBlog.E2E.csproj -c Release
 
 # Install Playwright CLI and browsers
-RUN dotnet tool install --global Microsoft.Playwright.CLI --version 1.49.0
+RUN dotnet tool install --global Microsoft.Playwright.CLI --version 1.57.0
 ENV PATH="$PATH:/root/.dotnet/tools"
 RUN playwright install chromium
 
