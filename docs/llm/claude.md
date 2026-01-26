@@ -5698,3 +5698,23 @@ public async Task CrossBrowser_LoginWorks(string browserType)
 
 
 
+yes, I would love to get started with MyBlog.E2E.csproj sooner rather than later even if we only start with Epic 1 and not everything at once but my concern is I want to be able to run all playwright stuff from within podman compose on my fedora machine but also somehow run them all on github actions 
+kushal@fedora:~/src/dotnet/MyBlog$ podman-compose --version
+podman-compose version 1.5.0
+podman version 5.7.1
+kushal@fedora:~/src/dotnet/MyBlog$ 
+if this is possible, lets get started. give me everything I need to do on my machine to run playwright. don't forget this is fedora so if you attach any volumes to podman you will likely need to :z or :Z or something for SE Linux. 
+I have included the latest dump in `dump.txt`
+please read each and every line of the code 
+don't skim it 
+don't try to change the coding style 
+don't remove braces around the if 
+don't change the primary constructor back to whatever you did 
+don't make unnecessary changes 
+do make the code build, 
+do make the tests pass 
+and do make everything work properly 
+and follow engineering best practices 
+and please do not hallucinate 
+give me full files for all files that changed 
+
