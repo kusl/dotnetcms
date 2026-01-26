@@ -37,7 +37,7 @@ public sealed class LoginPageTests(PlaywrightFixture fixture)
 
         await Assertions.Expect(usernameInput).ToBeVisibleAsync();
         await Assertions.Expect(passwordInput).ToBeVisibleAsync();
-        await Assertions.Expect(submitButton).ToBeVisibleAsync();
+        await Assertions.Expect(submitButton).To/*  */BeVisibleAsync();
     }
 
     [Fact]
