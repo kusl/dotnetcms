@@ -84,6 +84,8 @@ app.UseStaticFiles();
 // Rate limiting for login attempts
 app.UseLoginRateLimit();
 
+app.UseRouting();
+
 app.UseAuthentication();
 app.UseAuthorization();
 

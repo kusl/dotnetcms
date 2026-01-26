@@ -11,7 +11,7 @@
         <div class="error-message">@_error</div>
     }
 
-    <form method="post" action="/login">
+    <form method="post" action="/login" data-enhance="false">
         <AntiforgeryToken />
         <input type="hidden" name="returnUrl" value="@ReturnUrl" />
 
