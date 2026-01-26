@@ -57,7 +57,7 @@ public sealed class LoginPageTests(PlaywrightFixture fixture)
             ".error, .error-message, .alert, .alert-danger, .validation-error, " +
             "[class*='error' i], [class*='invalid' i], .text-danger"
         );
-        
+
         await Assertions.Expect(errorElement.First).ToBeVisibleAsync(new LocatorAssertionsToBeVisibleOptions { Timeout = 30000 });
     }
 
@@ -82,7 +82,7 @@ public sealed class LoginPageTests(PlaywrightFixture fixture)
             "[href='/admin'], [href='/admin/posts'], " +
             "h1, h2:has-text('Admin'), nav >> text=/admin/i"
         );
-        
+
         await Assertions.Expect(adminContent.First).ToBeVisibleAsync(new LocatorAssertionsToBeVisibleOptions { Timeout = 30000 });
     }
 
@@ -108,7 +108,7 @@ public sealed class LoginPageTests(PlaywrightFixture fixture)
             "[href='/logout'], form[action*='logout'] button, " +
             "button[name='logout'], form button:has-text('Sign Out')"
         );
-        
+
         await Assertions.Expect(logoutElement.First).ToBeVisibleAsync(new LocatorAssertionsToBeVisibleOptions { Timeout = 30000 });
     }
 }
