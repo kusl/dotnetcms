@@ -1,6 +1,6 @@
 ===============================================================================
 PROJECT EXPORT
-Generated: Mon Jan 26 02:11:13 PM EST 2026
+Generated: Mon Jan 26 02:27:48 PM EST 2026
 Project Path: /home/kushal/src/dotnet/MyBlog
 ===============================================================================
 
@@ -48,6 +48,7 @@ DIRECTORY STRUCTURE:
 │   │   │   ├── 0035.md
 │   │   │   ├── 0037.txt
 │   │   │   └── 0038.txt
+│   │   ├── chatgpt.md
 │   │   ├── claude.md
 │   │   ├── command.md
 │   │   ├── dump.txt
@@ -11279,8 +11280,8 @@ else
 
 ================================================================================
 FILE: src/MyBlog.Web/Components/Pages/Login.razor
-SIZE: 1.22 KB
-MODIFIED: 2026-01-26 11:53:55
+SIZE: 1.25 KB
+MODIFIED: 2026-01-26 14:26:02
 ================================================================================
 
 @page "/login"
@@ -11296,7 +11297,7 @@ MODIFIED: 2026-01-26 11:53:55
         <div class="error-message">@_error</div>
     }
 
-    <form method="post" action="/login">
+    <form method="post" action="/login" data-enhance="false">
         <AntiforgeryToken />
         <input type="hidden" name="returnUrl" value="@ReturnUrl" />
 
@@ -12549,8 +12550,8 @@ MODIFIED: 2026-01-16 20:29:40
 
 ================================================================================
 FILE: src/MyBlog.Web/Program.cs
-SIZE: 5.38 KB
-MODIFIED: 2026-01-26 14:10:18
+SIZE: 5.40 KB
+MODIFIED: 2026-01-26 14:26:27
 ================================================================================
 
 using System.Security.Claims;
@@ -12638,6 +12639,8 @@ app.UseStaticFiles();
 
 // Rate limiting for login attempts
 app.UseLoginRateLimit();
+
+app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
@@ -13793,7 +13796,7 @@ window.themeManager = {
 
 
 ===============================================================================
-EXPORT COMPLETED: Mon Jan 26 02:11:14 PM EST 2026
+EXPORT COMPLETED: Mon Jan 26 02:27:49 PM EST 2026
 Total Files Found: 115
 Files Exported: 115
 Files Skipped: 0 (binary or large files)
