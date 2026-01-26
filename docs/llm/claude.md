@@ -3698,3 +3698,103 @@ The key issue is that the JavaScript file was empty, so when the Blazor componen
 
 
 
+Looking at the `export.sh` script, I can see the issue - `*.js` files are not included in the find command! The script captures `.css` and `.scss` but forgot to add `.js` files.
+
+Here's the fix:The key changes I made:
+
+1. **Added `*.js` files** - This was the missing piece!
+2. **Added `*.ts` files** - For TypeScript support
+3. **Added `*.razor` files** - Important for Blazor components (though they may have been captured differently before)
+4. **Added `wwwroot/lib/*` exclusion** - To skip any third-party JS libraries you might add later
+5. **Updated the summary output** - Now shows "Web: .css, .scss, .js, .ts"
+
+The critical missing line was:
+```bash
+-iname "*.js" -o \
+```
+
+After you update `export.sh` and re-run it, your `dump.txt` will include the full contents of `site.js` and any other JavaScript files.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

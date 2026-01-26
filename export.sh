@@ -12,11 +12,13 @@ OUTPUT_DIR="docs/llm"
 OUTPUT_FILE="$OUTPUT_DIR/dump.txt"
 PROJECT_PATH="$(pwd)"
 
-# File extensions to include (comprehensive list for .NET/Avalonia projects)
+# File extensions to include (comprehensive list for .NET/Blazor projects)
 # Source code
 SOURCE_EXTS="cs|fs|vb"
 # XAML/Avalonia UI
 XAML_EXTS="axaml|xaml|paml"
+# Blazor/Razor
+RAZOR_EXTS="razor"
 # Project/Build files
 PROJECT_EXTS="csproj|fsproj|vbproj|slnx|sln|props|targets|tasks"
 # Config files
@@ -25,15 +27,12 @@ CONFIG_EXTS="json|yaml|yml|xml|config|settings"
 DOC_EXTS="md|txt|rst|adoc"
 # Scripts
 SCRIPT_EXTS="sh|ps1|psm1|cmd|bat"
-# Web/Style (in case of Avalonia web or styling)
-STYLE_EXTS="css|scss|sass|less"
+# Web/Style/Scripts
+WEB_EXTS="css|scss|sass|less|js|ts"
 # Data/Templates
 DATA_EXTS="sql|csv|resx|resources"
 # Docker/CI
 DEVOPS_EXTS="dockerfile|dockerignore|editorconfig|gitignore|gitattributes"
-
-# Combine all extensions
-ALL_EXTS="$SOURCE_EXTS|$XAML_EXTS|$PROJECT_EXTS|$CONFIG_EXTS|$DOC_EXTS|$SCRIPT_EXTS|$STYLE_EXTS|$DATA_EXTS"
 
 # Directories to exclude
 EXCLUDE_DIRS="bin|obj|.git|.vs|.idea|.vscode|node_modules|packages|TestResults|coverage|publish|artifacts|.nuget|wwwroot/lib"
@@ -88,6 +87,7 @@ find . -type f \( \
     -iname "*.cs" -o \
     -iname "*.fs" -o \
     -iname "*.vb" -o \
+    -iname "*.razor" -o \
     -iname "*.axaml" -o \
     -iname "*.xaml" -o \
     -iname "*.paml" -o \
@@ -113,6 +113,8 @@ find . -type f \( \
     -iname "*.resx" -o \
     -iname "*.css" -o \
     -iname "*.scss" -o \
+    -iname "*.js" -o \
+    -iname "*.ts" -o \
     -iname "*.manifest" -o \
     -iname "*.ico" -o \
     -iname "Dockerfile" -o \
@@ -140,6 +142,7 @@ find . -type f \( \
     ! -path "*/publish/*" \
     ! -path "*/artifacts/*" \
     ! -path "*/.nuget/*" \
+    ! -path "*/wwwroot/lib/*" \
     ! -name "*.Designer.cs" \
     ! -name "*.g.cs" \
     ! -name "*.g.i.cs" \
@@ -250,10 +253,13 @@ echo "Output size:    $(echo "scale=2; $OUTPUT_SIZE/1024" | bc 2>/dev/null || ec
 echo ""
 echo "File types included:"
 echo "  • Source code: .cs, .fs, .vb"
+echo "  • Blazor/Razor: .razor"
 echo "  • UI/XAML: .axaml, .xaml, .paml"
 echo "  • Projects: .csproj, .slnx, .sln, .props, .targets"
 echo "  • Config: .json, .yaml, .yml, .xml, .config"
 echo "  • Docs: .md, .txt"
 echo "  • Scripts: .sh, .ps1, .cmd, .bat"
-echo "  • Other: .sql, .resx, .css, .scss, Dockerfile, etc."
+echo "  • Web: .css, .scss, .js, .ts"
+echo "  • Other: .sql, .resx, Dockerfile, etc."
 echo ""
+
