@@ -40,8 +40,6 @@ public sealed class AuthService : IAuthService
     /// <inheritdoc />
     public async Task EnsureAdminUserAsync(CancellationToken cancellationToken = default)
     {
-        // SAFETY FIX: Do NOT modify the user if they already exist. 
-        // Only create the user if the database is empty or the admin is missing.
         if (await _userRepository.AnyUsersExistAsync(cancellationToken))
         {
             return;

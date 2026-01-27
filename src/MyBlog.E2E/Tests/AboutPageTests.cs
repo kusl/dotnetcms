@@ -67,6 +67,6 @@ public sealed class AboutPageTests(PlaywrightFixture fixture)
 
         // Wait for SignalR connection and reader badge
         var readerBadge = page.Locator(".reader-badge, .reader-info");
-        await Assertions.Expect(readerBadge.First).ToBeVisibleAsync(new LocatorAssertionsToBeVisibleOptions { Timeout = 10000 });
+        await Assertions.Expect(readerBadge.First).ToBeVisibleAsync(new() { Timeout = 10000 });
     }
 }

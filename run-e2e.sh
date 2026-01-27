@@ -49,7 +49,7 @@ for arg in "$@"; do
     esac
 done
 
-# Clean up if requested (manual clean only)
+# Clean up if requested
 if [ "$CLEAN_FLAG" == "true" ]; then
     log_info "Cleaning up containers and volumes..."
     podman-compose -f docker-compose.e2e.yml down -v --remove-orphans 2>/dev/null || true
@@ -67,13 +67,6 @@ if command -v chcon &> /dev/null && getenforce 2>/dev/null | grep -q "Enforcing"
 fi
 
 log_info "Starting E2E test environment..."
-
-# FORCE CLEANUP: Ensure we start with a fresh database
-# This prevents test failures due to stale data/passwords from previous runs
-log_info "Ensuring clean environment..."
-podman-compose -f docker-compose.e2e.yml down -v --remove-orphans 2>/dev/null || true
-# Explicitly remove the volume to be safe
-podman volume rm myblog_myblog-data 2>/dev/null || true
 
 # Build and start services
 log_info "Building containers..."
@@ -95,11 +88,6 @@ until podman exec myblog-web curl -sf http://localhost:5000/ > /dev/null 2>&1; d
     fi
     echo -n "."
     sleep 2
-done
-# Add to run-e2e.sh after healthcheck loop
-echo "Verifying admin user exists..."
-until curl -sf http://localhost:5000/login | grep -q "username"; do
-    sleep 1
 done
 echo ""
 log_info "MyBlog is ready!"
