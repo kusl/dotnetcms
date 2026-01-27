@@ -40,41 +40,41 @@ public sealed class LoginPageTests(PlaywrightFixture fixture)
         await Assertions.Expect(submitButton).ToBeVisibleAsync();
     }
 
-[Fact]
-public async Task LoginPage_WithInvalidCredentials_ShowsError()
-{
-    var page = await _fixture.CreatePageAsync();
-    await page.GotoAsync("/login");
-
-    await page.FillAsync("input[name='username']", "invalid");
-    await page.FillAsync("input[name='password']", "invalid");
-
-    // Submit and wait for the error message to appear
-    await page.ClickAsync("button[type='submit']");
-    
-    // Target the actual class used in Login.razor
-    var errorLocator = page.Locator(".error-message");
-    await Assertions.Expect(errorLocator).ToBeVisibleAsync();
-}
-
-[Obsolete]
-[Fact]
-public async Task LoginPage_WithValidCredentials_RedirectsToAdmin()
-{
-    var page = await _fixture.CreatePageAsync();
-    await page.GotoAsync("/login");
-
-    await page.FillAsync("input[name='username']", "admin");
-    await page.FillAsync("input[name='password']", "ChangeMe123!");
-
-    // Use RunAndWaitForNavigationAsync to capture the redirect to /admin
-    await page.RunAndWaitForNavigationAsync(async () =>
+    [Fact]
+    public async Task LoginPage_WithInvalidCredentials_ShowsError()
     {
-        await page.ClickAsync("button[type='submit']");
-    }, new() { UrlString = "**/admin", WaitUntil = WaitUntilState.DOMContentLoaded });
+        var page = await _fixture.CreatePageAsync();
+        await page.GotoAsync("/login");
 
-    Assert.Contains("/admin", page.Url);
-}
+        await page.FillAsync("input[name='username']", "invalid");
+        await page.FillAsync("input[name='password']", "invalid");
+
+        // Submit and wait for the error message to appear
+        await page.ClickAsync("button[type='submit']");
+
+        // Target the actual class used in Login.razor
+        var errorLocator = page.Locator(".error-message");
+        await Assertions.Expect(errorLocator).ToBeVisibleAsync();
+    }
+
+    [Obsolete]
+    [Fact]
+    public async Task LoginPage_WithValidCredentials_RedirectsToAdmin()
+    {
+        var page = await _fixture.CreatePageAsync();
+        await page.GotoAsync("/login");
+
+        await page.FillAsync("input[name='username']", "admin");
+        await page.FillAsync("input[name='password']", "ChangeMe123!");
+
+        // Use RunAndWaitForNavigationAsync to capture the redirect to /admin
+        await page.RunAndWaitForNavigationAsync(async () =>
+        {
+            await page.ClickAsync("button[type='submit']");
+        }, new() { UrlString = "**/admin", WaitUntil = WaitUntilState.DOMContentLoaded });
+
+        Assert.Contains("/admin", page.Url);
+    }
 
     [Fact]
     public async Task LoginPage_AfterLogin_ShowsLogoutButton()
@@ -87,7 +87,7 @@ public async Task LoginPage_WithValidCredentials_RedirectsToAdmin()
         await page.FillAsync("input[name='username'], input#username", "admin");
         await page.FillAsync("input[name='password'], input#password", "ChangeMe123!");
         await page.ClickAsync("button[type='submit'], input[type='submit']");
-        
+
         await page.WaitForURLAsync("**/admin**", new PageWaitForURLOptions { Timeout = 60000 });
 
         // Wait for DOM content to be ready (avoiding NetworkIdle due to SignalR)

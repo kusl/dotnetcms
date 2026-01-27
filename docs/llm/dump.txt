@@ -1,6 +1,6 @@
 ===============================================================================
 PROJECT EXPORT
-Generated: Mon Jan 26 08:48:08 PM EST 2026
+Generated: Mon Jan 26 10:01:00 PM EST 2026
 Project Path: /home/kushal/src/dotnet/MyBlog
 ===============================================================================
 
@@ -50,7 +50,9 @@ DIRECTORY STRUCTURE:
 │   │   │   ├── 0038.txt
 │   │   │   ├── 0039.txt
 │   │   │   ├── 0040.txt
-│   │   │   └── 0041.txt
+│   │   │   ├── 0041.txt
+│   │   │   ├── 0042.txt
+│   │   │   └── 0043.txt
 │   │   ├── chatgpt.md
 │   │   ├── claude.md
 │   │   ├── command.md
@@ -643,8 +645,8 @@ echo ""
 
 ================================================================================
 FILE: .github/workflows/build-deploy.yml
-SIZE: 4.54 KB
-MODIFIED: 2026-01-26 20:46:50
+SIZE: 4.47 KB
+MODIFIED: 2026-01-26 21:59:40
 ================================================================================
 
 name: Build, Test, and Deploy
@@ -701,8 +703,7 @@ jobs:
 
       - name: Install Playwright browsers
         run: |
-          dotnet tool install --global Microsoft.Playwright.CLI
-          playwright install chromium --with-deps --project src/MyBlog.E2E/MyBlog.E2E.csproj
+          pwsh src/MyBlog.E2E/bin/Release/net10.0/playwright.ps1 install chromium --with-deps
 
       - name: Build and run MyBlog
         run: |
@@ -742,7 +743,7 @@ jobs:
           retention-days: 7
 
   deploy:
-    needs: [build-test, e2e-tests]
+    needs: [build-test]
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop'
     runs-on: windows-latest
     
@@ -4902,8 +4903,8 @@ public sealed class HomePageTests(PlaywrightFixture fixture)
 
 ================================================================================
 FILE: src/MyBlog.E2E/Tests/LoginPageTests.cs
-SIZE: 5.35 KB
-MODIFIED: 2026-01-26 19:47:00
+SIZE: 4.78 KB
+MODIFIED: 2026-01-26 22:00:04
 ================================================================================
 
 // /home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/Tests/LoginPageTests.cs
@@ -4952,47 +4953,36 @@ public sealed class LoginPageTests(PlaywrightFixture fixture)
     public async Task LoginPage_WithInvalidCredentials_ShowsError()
     {
         var page = await _fixture.CreatePageAsync();
-
         await page.GotoAsync("/login");
 
-        // Fill in invalid credentials
-        await page.FillAsync("input[name='username'], input#username", "invalid");
-        await page.FillAsync("input[name='password'], input#password", "invalid");
+        await page.FillAsync("input[name='username']", "invalid");
+        await page.FillAsync("input[name='password']", "invalid");
 
-        // Click submit and wait for page to reload (form POST)
-        await page.ClickAsync("button[type='submit'], input[type='submit']");
+        // Submit and wait for the error message to appear
+        await page.ClickAsync("button[type='submit']");
 
-        // Wait for page to reload with error
-        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
-
-        // Check for ANY visible error indicator
-        var hasError = await page.Locator(
-            ".error, .error-message, .alert, .alert-danger, .validation-summary, " +
-            "[class*='error'], [class*='invalid'], .text-danger, .danger"
-        ).CountAsync();
-
-        Assert.True(hasError > 0, "Expected error message to be displayed after invalid login");
+        // Target the actual class used in Login.razor
+        var errorLocator = page.Locator(".error-message");
+        await Assertions.Expect(errorLocator).ToBeVisibleAsync();
     }
 
+    [Obsolete]
     [Fact]
     public async Task LoginPage_WithValidCredentials_RedirectsToAdmin()
     {
         var page = await _fixture.CreatePageAsync();
-
         await page.GotoAsync("/login");
 
-        // Fill in valid credentials
-        await page.FillAsync("input[name='username'], input#username", "admin");
-        await page.FillAsync("input[name='password'], input#password", "ChangeMe123!");
+        await page.FillAsync("input[name='username']", "admin");
+        await page.FillAsync("input[name='password']", "ChangeMe123!");
 
-        // Submit form
-        await page.ClickAsync("button[type='submit'], input[type='submit']");
+        // Use RunAndWaitForNavigationAsync to capture the redirect to /admin
+        await page.RunAndWaitForNavigationAsync(async () =>
+        {
+            await page.ClickAsync("button[type='submit']");
+        }, new() { UrlString = "**/admin", WaitUntil = WaitUntilState.DOMContentLoaded });
 
-        // Wait for navigation to complete
-        await page.WaitForURLAsync("**/admin**", new PageWaitForURLOptions { Timeout = 60000 });
-
-        // Verify we're on admin page
-        Assert.Contains("admin", page.Url, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("/admin", page.Url);
     }
 
     [Fact]
@@ -5006,18 +4996,19 @@ public sealed class LoginPageTests(PlaywrightFixture fixture)
         await page.FillAsync("input[name='username'], input#username", "admin");
         await page.FillAsync("input[name='password'], input#password", "ChangeMe123!");
         await page.ClickAsync("button[type='submit'], input[type='submit']");
+
         await page.WaitForURLAsync("**/admin**", new PageWaitForURLOptions { Timeout = 60000 });
 
-        // Wait for page to be fully loaded
-        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+        // Wait for DOM content to be ready (avoiding NetworkIdle due to SignalR)
+        await page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
 
         // Check for logout element
-        var hasLogout = await page.Locator(
+        var logoutButton = page.Locator(
             "text=/logout/i, text=/sign out/i, button:has-text('Logout'), " +
             "[href='/logout'], form[action*='logout']"
-        ).CountAsync();
+        ).First;
 
-        Assert.True(hasLogout > 0, "Expected logout button/link to be visible after login");
+        await Assertions.Expect(logoutButton).ToBeVisibleAsync();
     }
 
     [Fact]
@@ -5042,17 +5033,16 @@ public sealed class LoginPageTests(PlaywrightFixture fixture)
             throw;
         }
 
-        // Wait for page to be fully loaded
-        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+        // Wait for DOM to be ready
         await page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
 
         // Check for logout element
-        var hasLogout = await page.Locator(
+        var logoutButton = page.Locator(
             "text=/logout/i, text=/sign out/i, button:has-text('Logout'), " +
             "[href='/logout'], form[action*='logout']"
-        ).CountAsync();
+        ).First;
 
-        Assert.True(hasLogout > 0, "Expected logout button/link to be visible after login");
+        await Assertions.Expect(logoutButton).ToBeVisibleAsync();
     }
 }
 
@@ -13812,7 +13802,7 @@ window.themeManager = {
 
 
 ===============================================================================
-EXPORT COMPLETED: Mon Jan 26 08:48:09 PM EST 2026
+EXPORT COMPLETED: Mon Jan 26 10:01:01 PM EST 2026
 Total Files Found: 115
 Files Exported: 115
 Files Skipped: 0 (binary or large files)
