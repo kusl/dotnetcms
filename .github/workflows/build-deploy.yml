@@ -56,7 +56,7 @@ jobs:
 
       - name: Start MyBlog application
         run: |
-          dotnet run --project src/MyBlog.Web/MyBlog.Web.csproj -c Release --no-build > app.log 2>&1 &
+          dotnet run --project src/MyBlog.Web/MyBlog.Web.csproj -c Release --no-build --no-launch-profile > app.log 2>&1 &
           echo $! > app.pid
         env:
           ASPNETCORE_URLS: http://localhost:5000

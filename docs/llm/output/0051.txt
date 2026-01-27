@@ -1,0 +1,900 @@
+can you fix it? I will give you all the context you need give me full file for any file that needs to change please and thank you 
+
+I can see the issue! Your E2E tests are failing because the web application isn't starting up properly before the tests run. The problem is in your GitHub Actions workflow - the application is being started in the background, but it's not staying alive long enough for the tests to run.
+
+Here's the corrected workflow file:## Key Changes Made:
+
+1. **Proper application startup**: The app now starts with output redirected to `app.log` and the process ID saved to `app.pid`
+
+2. **Better health check**: Extended timeout to 60 attempts (2 minutes total) with better logging to help diagnose startup issues
+
+3. **Full solution build**: Added `dotnet restore` and `dotnet build` for the entire solution in the e2e-tests job to ensure all dependencies are built
+
+4. **Application lifecycle management**: 
+   - Saves the PID so the app can be properly stopped
+   - Includes a cleanup step that runs even if tests fail
+   - Captures application logs on failure for debugging
+
+5. **Deploy dependency**: Changed deploy to depend on both `build-test` AND `e2e-tests` so it only deploys if E2E tests pass
+
+6. **Log artifacts**: Application logs are now uploaded with test results for debugging
+
+The main issue was that your app was starting in the background but the process wasn't being kept alive properly. The new approach redirects output to a log file and saves the PID so the process stays running throughout the test execution.
+
+
+
+
+
+
+
+
+```yaml
+name: Build, Test, and Deploy
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+    branches: ['**']
+
+jobs:
+  build-test:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore src/MyBlog.slnx
+
+      - name: Build solution
+        run: dotnet build src/MyBlog.slnx -c Release --no-restore
+
+      - name: Run unit tests
+        run: dotnet run --project src/MyBlog.Tests/MyBlog.Tests.csproj
+
+  e2e-tests:
+    runs-on: ubuntu-latest
+    needs: build-test
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore src/MyBlog.slnx
+
+      - name: Build solution
+        run: dotnet build src/MyBlog.slnx -c Release --no-restore
+
+      - name: Install Playwright browsers
+        run: |
+          pwsh src/MyBlog.E2E/bin/Release/net10.0/playwright.ps1 install chromium --with-deps
+
+      - name: Start MyBlog application
+        run: |
+          dotnet run --project src/MyBlog.Web/MyBlog.Web.csproj -c Release --no-build > app.log 2>&1 &
+          echo $! > app.pid
+        env:
+          ASPNETCORE_URLS: http://localhost:5000
+          ASPNETCORE_ENVIRONMENT: Development
+          Authentication__DefaultAdminPassword: ChangeMe123!
+
+      - name: Wait for application to be ready
+        run: |
+          echo "Waiting for application to start..."
+          for i in {1..60}; do
+            if curl -sf http://localhost:5000/ > /dev/null 2>&1; then
+              echo "Application is ready!"
+              curl -v http://localhost:5000/ 2>&1 | head -20
+              break
+            fi
+            echo "Attempt $i/60: Application not ready yet..."
+            sleep 2
+            if [ $i -eq 60 ]; then
+              echo "Application failed to start within timeout"
+              echo "Application logs:"
+              cat app.log || echo "No logs available"
+              exit 1
+            fi
+          done
+
+      - name: Run E2E tests
+        run: dotnet run --project src/MyBlog.E2E/MyBlog.E2E.csproj -c Release --no-build
+        env:
+          MYBLOG_BASE_URL: http://localhost:5000
+          PLAYWRIGHT_HEADLESS: true
+
+      - name: Stop application
+        if: always()
+        run: |
+          if [ -f app.pid ]; then
+            kill $(cat app.pid) || true
+          fi
+
+      - name: Show application logs on failure
+        if: failure()
+        run: |
+          echo "=== Application Logs ==="
+          cat app.log || echo "No logs available"
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: e2e-test-results
+          path: |
+            src/MyBlog.E2E/TestResults/
+            test-results/
+            app.log
+          retention-days: 7
+
+  deploy:
+    needs: [build-test, e2e-tests]
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop'
+    runs-on: windows-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Publish application
+        run: dotnet publish src/MyBlog.Web/MyBlog.Web.csproj -c Release -o ./publish -r win-x86 --self-contained false
+
+      - name: Deploy via WebDeploy
+        shell: pwsh
+        env:
+          DEPLOY_SOURCE: ${{ github.workspace }}\publish
+          DEPLOY_SITE: ${{ secrets.WEBSITE_NAME }}
+          DEPLOY_HOST: ${{ secrets.SERVER_COMPUTER_NAME }}
+          DEPLOY_USER: ${{ secrets.SERVER_USERNAME }}
+          DEPLOY_PASSWORD: ${{ secrets.SERVER_PASSWORD }}
+        run: |
+          $msdeployPath = "C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe"
+          
+          if (-not (Test-Path $msdeployPath)) {
+            Write-Host "Installing Web Deploy..."
+            choco install webdeploy -y --no-progress
+          }
+          
+          Write-Host "Deploying to $env:DEPLOY_HOST..."
+          Write-Host "Note: Using AppOffline rule to prevent file-in-use errors"
+
+          $sourceArg = "-source:contentPath=$env:DEPLOY_SOURCE"
+          $destArg = "-dest:contentPath=$env:DEPLOY_SITE,computerName=https://$($env:DEPLOY_HOST):8172/MsDeploy.axd?site=$env:DEPLOY_SITE,userName=$env:DEPLOY_USER,password=$env:DEPLOY_PASSWORD,AuthType='Basic'"
+          
+          & $msdeployPath -verb:sync $sourceArg $destArg `
+            -allowUntrusted `
+            -enableRule:DoNotDeleteRule `
+            -enableRule:AppOffline `
+            -retryAttempts:3 `
+            -retryInterval:3000
+          
+          if ($LASTEXITCODE -ne 0) {
+            Write-Error "Deployment failed with exit code $LASTEXITCODE"
+            exit 1
+          }
+          
+          Write-Host "Deployment completed successfully!"
+```
+
+
+Run echo "Waiting for application to start..."
+Waiting for application to start...
+Attempt 1/60: Application not ready yet...
+Attempt 2/60: Application not ready yet...
+Attempt 3/60: Application not ready yet...
+Attempt 4/60: Application not ready yet...
+Attempt 5/60: Application not ready yet...
+Attempt 6/60: Application not ready yet...
+Attempt 7/60: Application not ready yet...
+Attempt 8/60: Application not ready yet...
+Attempt 9/60: Application not ready yet...
+Attempt 10/60: Application not ready yet...
+Attempt 11/60: Application not ready yet...
+Attempt 12/60: Application not ready yet...
+Attempt 13/60: Application not ready yet...
+Attempt 14/60: Application not ready yet...
+Attempt 15/60: Application not ready yet...
+Attempt 16/60: Application not ready yet...
+Attempt 17/60: Application not ready yet...
+Attempt 18/60: Application not ready yet...
+Attempt 19/60: Application not ready yet...
+Attempt 20/60: Application not ready yet...
+Attempt 21/60: Application not ready yet...
+Attempt 22/60: Application not ready yet...
+Attempt 23/60: Application not ready yet...
+Attempt 24/60: Application not ready yet...
+Attempt 25/60: Application not ready yet...
+Attempt 26/60: Application not ready yet...
+Attempt 27/60: Application not ready yet...
+Attempt 28/60: Application not ready yet...
+Attempt 29/60: Application not ready yet...
+Attempt 30/60: Application not ready yet...
+Attempt 31/60: Application not ready yet...
+Attempt 32/60: Application not ready yet...
+Attempt 33/60: Application not ready yet...
+Attempt 34/60: Application not ready yet...
+Attempt 35/60: Application not ready yet...
+Attempt 36/60: Application not ready yet...
+Attempt 37/60: Application not ready yet...
+Attempt 38/60: Application not ready yet...
+Attempt 39/60: Application not ready yet...
+Attempt 40/60: Application not ready yet...
+Attempt 41/60: Application not ready yet...
+Attempt 42/60: Application not ready yet...
+Attempt 43/60: Application not ready yet...
+Attempt 44/60: Application not ready yet...
+Attempt 45/60: Application not ready yet...
+Attempt 46/60: Application not ready yet...
+Attempt 47/60: Application not ready yet...
+Attempt 48/60: Application not ready yet...
+Attempt 49/60: Application not ready yet...
+Attempt 50/60: Application not ready yet...
+Attempt 51/60: Application not ready yet...
+Attempt 52/60: Application not ready yet...
+Attempt 53/60: Application not ready yet...
+Attempt 54/60: Application not ready yet...
+Attempt 55/60: Application not ready yet...
+Attempt 56/60: Application not ready yet...
+Attempt 57/60: Application not ready yet...
+Attempt 58/60: Application not ready yet...
+Attempt 59/60: Application not ready yet...
+Attempt 60/60: Application not ready yet...
+Application failed to start within timeout
+Application logs:
+Using launch settings from src/MyBlog.Web/Properties/launchSettings.json...
+info: Microsoft.AspNetCore.DataProtection.KeyManagement.XmlKeyManager[62]
+      User profile is available. Using '/home/runner/.aspnet/DataProtection-Keys' as key repository; keys will not be encrypted at rest.
+LogRecord.Timestamp:               2026-01-27T18:12:43.7163629Z
+LogRecord.CategoryName:            Microsoft.AspNetCore.DataProtection.KeyManagement.XmlKeyManager
+LogRecord.Severity:                Info
+LogRecord.SeverityText:            Information
+LogRecord.FormattedMessage:        User profile is available. Using '/home/runner/.aspnet/DataProtection-Keys' as key repository; keys will not be encrypted at rest.
+LogRecord.Body:                    User profile is available. Using '{FullName}' as key repository; keys will not be encrypted at rest.
+LogRecord.Attributes (Key:Value):
+    FullName: /home/runner/.aspnet/DataProtection-Keys
+    OriginalFormat (a.k.a Body): User profile is available. Using '{FullName}' as key repository; keys will not be encrypted at rest.
+LogRecord.EventId:                 62
+LogRecord.EventName:               UsingProfileAsKeyRepository
+
+Resource associated with LogRecord:
+service.name: MyBlog
+service.namespace: 1.0.0.0
+service.instance.id: 90958bc8-bcfe-41da-bb89-68083d3f08b5
+telemetry.sdk.name: opentelemetry
+telemetry.sdk.language: dotnet
+telemetry.sdk.version: 1.15.0
+
+dbug: Microsoft.Extensions.Hosting.Internal.Host[1]
+      Hosting starting
+LogRecord.Timestamp:               2026-01-27T18:12:45.1044676Z
+LogRecord.CategoryName:            Microsoft.Extensions.Hosting.Internal.Host
+LogRecord.Severity:                Debug
+LogRecord.SeverityText:            Debug
+LogRecord.FormattedMessage:        Hosting starting
+LogRecord.Body:                    Hosting starting
+LogRecord.Attributes (Key:Value):
+    OriginalFormat (a.k.a Body): Hosting starting
+LogRecord.EventId:                 1
+LogRecord.EventName:               Starting
+
+Resource associated with LogRecord:
+service.name: MyBlog
+service.namespace: 1.0.0.0
+service.instance.id: 90958bc8-bcfe-41da-bb89-68083d3f08b5
+telemetry.sdk.name: opentelemetry
+telemetry.sdk.language: dotnet
+telemetry.sdk.version: 1.15.0
+
+info: Microsoft.AspNetCore.DataProtection.KeyManagement.XmlKeyManager[58]
+      Creating key {2e37cea9-49e7-4a02-8fc9-311a64575860} with creation date 2026-01-27 18:12:45Z, activation date 2026-01-27 18:12:45Z, and expiration date 2026-04-27 18:12:45Z.
+LogRecord.Timestamp:               2026-01-27T18:12:45.1700222Z
+LogRecord.CategoryName:            Microsoft.AspNetCore.DataProtection.KeyManagement.XmlKeyManager
+LogRecord.Severity:                Info
+LogRecord.SeverityText:            Information
+LogRecord.FormattedMessage:        Creating key {2e37cea9-49e7-4a02-8fc9-311a64575860} with creation date 2026-01-27 18:12:45Z, activation date 2026-01-27 18:12:45Z, and expiration date 2026-04-27 18:12:45Z.
+LogRecord.Body:                    Creating key {KeyId:B} with creation date {CreationDate:u}, activation date {ActivationDate:u}, and expiration date {ExpirationDate:u}.
+LogRecord.Attributes (Key:Value):
+    KeyId: 2e37cea9-49e7-4a02-8fc9-311a64575860
+    CreationDate: 01/27/2026 18:12:45 +00:00
+    ActivationDate: 01/27/2026 18:12:45 +00:00
+    ExpirationDate: 04/27/2026 18:12:45 +00:00
+    OriginalFormat (a.k.a Body): Creating key {KeyId:B} with creation date {CreationDate:u}, activation date {ActivationDate:u}, and expiration date {ExpirationDate:u}.
+LogRecord.EventId:                 58
+LogRecord.EventName:               CreatingKey
+
+Resource associated with LogRecord:
+service.name: MyBlog
+service.namespace: 1.0.0.0
+service.instance.id: 90958bc8-bcfe-41da-bb89-68083d3f08b5
+telemetry.sdk.name: opentelemetry
+telemetry.sdk.language: dotnet
+telemetry.sdk.version: 1.15.0
+
+warn: Microsoft.AspNetCore.DataProtection.KeyManagement.XmlKeyManager[35]
+      No XML encryptor configured. Key {2e37cea9-49e7-4a02-8fc9-311a64575860} may be persisted to storage in unencrypted form.
+LogRecord.Timestamp:               2026-01-27T18:12:45.1917255Z
+LogRecord.CategoryName:            Microsoft.AspNetCore.DataProtection.KeyManagement.XmlKeyManager
+LogRecord.Severity:                Warn
+LogRecord.SeverityText:            Warning
+LogRecord.FormattedMessage:        No XML encryptor configured. Key {2e37cea9-49e7-4a02-8fc9-311a64575860} may be persisted to storage in unencrypted form.
+LogRecord.Body:                    No XML encryptor configured. Key {KeyId:B} may be persisted to storage in unencrypted form.
+LogRecord.Attributes (Key:Value):
+    KeyId: 2e37cea9-49e7-4a02-8fc9-311a64575860
+    OriginalFormat (a.k.a Body): No XML encryptor configured. Key {KeyId:B} may be persisted to storage in unencrypted form.
+LogRecord.EventId:                 35
+LogRecord.EventName:               NoXMLEncryptorConfiguredKeyMayBePersistedToStorageInUnencryptedForm
+
+Resource associated with LogRecord:
+service.name: MyBlog
+service.namespace: 1.0.0.0
+service.instance.id: 90958bc8-bcfe-41da-bb89-68083d3f08b5
+telemetry.sdk.name: opentelemetry
+telemetry.sdk.language: dotnet
+telemetry.sdk.version: 1.15.0
+
+info: Microsoft.AspNetCore.DataProtection.Repositories.FileSystemXmlRepository[39]
+      Writing data to file '/home/runner/.aspnet/DataProtection-Keys/key-2e37cea9-49e7-4a02-8fc9-311a64575860.xml'.
+LogRecord.Timestamp:               2026-01-27T18:12:45.1946194Z
+LogRecord.CategoryName:            Microsoft.AspNetCore.DataProtection.Repositories.FileSystemXmlRepository
+LogRecord.Severity:                Info
+LogRecord.SeverityText:            Information
+LogRecord.FormattedMessage:        Writing data to file '/home/runner/.aspnet/DataProtection-Keys/key-2e37cea9-49e7-4a02-8fc9-311a64575860.xml'.
+LogRecord.Body:                    Writing data to file '{FileName}'.
+LogRecord.Attributes (Key:Value):
+    FileName: /home/runner/.aspnet/DataProtection-Keys/key-2e37cea9-49e7-4a02-8fc9-311a64575860.xml
+    OriginalFormat (a.k.a Body): Writing data to file '{FileName}'.
+LogRecord.EventId:                 39
+LogRecord.EventName:               WritingDataToFile
+
+Resource associated with LogRecord:
+service.name: MyBlog
+service.namespace: 1.0.0.0
+service.instance.id: 90958bc8-bcfe-41da-bb89-68083d3f08b5
+telemetry.sdk.name: opentelemetry
+telemetry.sdk.language: dotnet
+telemetry.sdk.version: 1.15.0
+
+warn: Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServer[8]
+      The ASP.NET Core developer certificate is not trusted. For information about trusting the ASP.NET Core developer certificate, see https://aka.ms/aspnet/https-trust-dev-cert
+LogRecord.Timestamp:               2026-01-27T18:12:45.5105951Z
+LogRecord.CategoryName:            Microsoft.AspNetCore.Server.Kestrel.Core.KestrelServer
+LogRecord.Severity:                Warn
+LogRecord.SeverityText:            Warning
+LogRecord.FormattedMessage:        The ASP.NET Core developer certificate is not trusted. For information about trusting the ASP.NET Core developer certificate, see https://aka.ms/aspnet/https-trust-dev-cert
+LogRecord.Body:                    The ASP.NET Core developer certificate is not trusted. For information about trusting the ASP.NET Core developer certificate, see https://aka.ms/aspnet/https-trust-dev-cert
+LogRecord.Attributes (Key:Value):
+    OriginalFormat (a.k.a Body): The ASP.NET Core developer certificate is not trusted. For information about trusting the ASP.NET Core developer certificate, see https://aka.ms/aspnet/https-trust-dev-cert
+LogRecord.EventId:                 8
+LogRecord.EventName:               DeveloperCertificateNotTrusted
+
+Resource associated with LogRecord:
+service.name: MyBlog
+service.namespace: 1.0.0.0
+service.instance.id: 90958bc8-bcfe-41da-bb89-68083d3f08b5
+telemetry.sdk.name: opentelemetry
+telemetry.sdk.language: dotnet
+telemetry.sdk.version: 1.15.0
+
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: https://localhost:51226
+LogRecord.Timestamp:               2026-01-27T18:12:45.5196987Z
+LogRecord.CategoryName:            Microsoft.Hosting.Lifetime
+LogRecord.Severity:                Info
+LogRecord.SeverityText:            Information
+LogRecord.FormattedMessage:        Now listening on: https://localhost:51226
+LogRecord.Body:                    Now listening on: {address}
+LogRecord.Attributes (Key:Value):
+    address: https://localhost:51226
+    OriginalFormat (a.k.a Body): Now listening on: {address}
+LogRecord.EventId:                 14
+LogRecord.EventName:               ListeningOnAddress
+
+Resource associated with LogRecord:
+service.name: MyBlog
+service.namespace: 1.0.0.0
+service.instance.id: 90958bc8-bcfe-41da-bb89-68083d3f08b5
+telemetry.sdk.name: opentelemetry
+telemetry.sdk.language: dotnet
+telemetry.sdk.version: 1.15.0
+
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://localhost:51227
+LogRecord.Timestamp:               2026-01-27T18:12:45.5198063Z
+LogRecord.CategoryName:            Microsoft.Hosting.Lifetime
+LogRecord.Severity:                Info
+LogRecord.SeverityText:            Information
+LogRecord.FormattedMessage:        Now listening on: http://localhost:51227
+LogRecord.Body:                    Now listening on: {address}
+LogRecord.Attributes (Key:Value):
+    address: http://localhost:51227
+    OriginalFormat (a.k.a Body): Now listening on: {address}
+LogRecord.EventId:                 14
+LogRecord.EventName:               ListeningOnAddress
+
+Resource associated with LogRecord:
+service.name: MyBlog
+service.namespace: 1.0.0.0
+service.instance.id: 90958bc8-bcfe-41da-bb89-68083d3f08b5
+telemetry.sdk.name: opentelemetry
+telemetry.sdk.language: dotnet
+telemetry.sdk.version: 1.15.0
+
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+LogRecord.Timestamp:               2026-01-27T18:12:45.5200170Z
+LogRecord.CategoryName:            Microsoft.Hosting.Lifetime
+LogRecord.Severity:                Info
+LogRecord.SeverityText:            Information
+LogRecord.FormattedMessage:        Application started. Press Ctrl+C to shut down.
+LogRecord.Body:                    Application started. Press Ctrl+C to shut down.
+LogRecord.Attributes (Key:Value):
+    OriginalFormat (a.k.a Body): Application started. Press Ctrl+C to shut down.
+
+Resource associated with LogRecord:
+service.name: MyBlog
+service.namespace: 1.0.0.0
+service.instance.id: 90958bc8-bcfe-41da-bb89-68083d3f08b5
+telemetry.sdk.name: opentelemetry
+telemetry.sdk.language: dotnet
+telemetry.sdk.version: 1.15.0
+
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Development
+LogRecord.Timestamp:               2026-01-27T18:12:45.5203156Z
+LogRecord.CategoryName:            Microsoft.Hosting.Lifetime
+LogRecord.Severity:                Info
+LogRecord.SeverityText:            Information
+LogRecord.FormattedMessage:        Hosting environment: Development
+LogRecord.Body:                    Hosting environment: {EnvName}
+LogRecord.Attributes (Key:Value):
+    EnvName: Development
+    OriginalFormat (a.k.a Body): Hosting environment: {EnvName}
+
+Resource associated with LogRecord:
+service.name: MyBlog
+service.namespace: 1.0.0.0
+service.instance.id: 90958bc8-bcfe-41da-bb89-68083d3f08b5
+telemetry.sdk.name: opentelemetry
+telemetry.sdk.language: dotnet
+telemetry.sdk.version: 1.15.0
+
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: /home/runner/work/dotnetcms/dotnetcms/src/MyBlog.Web
+LogRecord.Timestamp:               2026-01-27T18:12:45.5204287Z
+LogRecord.CategoryName:            Microsoft.Hosting.Lifetime
+LogRecord.Severity:                Info
+LogRecord.SeverityText:            Information
+LogRecord.FormattedMessage:        Content root path: /home/runner/work/dotnetcms/dotnetcms/src/MyBlog.Web
+LogRecord.Body:                    Content root path: {ContentRoot}
+LogRecord.Attributes (Key:Value):
+    ContentRoot: /home/runner/work/dotnetcms/dotnetcms/src/MyBlog.Web
+    OriginalFormat (a.k.a Body): Content root path: {ContentRoot}
+
+Resource associated with LogRecord:
+service.name: MyBlog
+service.namespace: 1.0.0.0
+service.instance.id: 90958bc8-bcfe-41da-bb89-68083d3f08b5
+telemetry.sdk.name: opentelemetry
+telemetry.sdk.language: dotnet
+telemetry.sdk.version: 1.15.0
+
+dbug: Microsoft.Extensions.Hosting.Internal.Host[2]
+      Hosting started
+LogRecord.Timestamp:               2026-01-27T18:12:45.5217589Z
+LogRecord.CategoryName:            Microsoft.Extensions.Hosting.Internal.Host
+LogRecord.Severity:                Debug
+LogRecord.SeverityText:            Debug
+LogRecord.FormattedMessage:        Hosting started
+LogRecord.Body:                    Hosting started
+LogRecord.Attributes (Key:Value):
+    OriginalFormat (a.k.a Body): Hosting started
+LogRecord.EventId:                 2
+LogRecord.EventName:               Started
+
+Resource associated with LogRecord:
+service.name: MyBlog
+service.namespace: 1.0.0.0
+service.instance.id: 90958bc8-bcfe-41da-bb89-68083d3f08b5
+telemetry.sdk.name: opentelemetry
+telemetry.sdk.language: dotnet
+telemetry.sdk.version: 1.15.0
+
+info: MyBlog.Infrastructure.Services.ImageCacheWarmerService[0]
+      Image Cache Warmer started. Scanning posts for uncached images...
+LogRecord.Timestamp:               2026-01-27T18:12:50.2061383Z
+LogRecord.CategoryName:            MyBlog.Infrastructure.Services.ImageCacheWarmerService
+LogRecord.Severity:                Info
+LogRecord.SeverityText:            Information
+LogRecord.FormattedMessage:        Image Cache Warmer started. Scanning posts for uncached images...
+LogRecord.Body:                    Image Cache Warmer started. Scanning posts for uncached images...
+LogRecord.Attributes (Key:Value):
+    OriginalFormat (a.k.a Body): Image Cache Warmer started. Scanning posts for uncached images...
+
+Resource associated with LogRecord:
+service.name: MyBlog
+service.namespace: 1.0.0.0
+service.instance.id: 90958bc8-bcfe-41da-bb89-68083d3f08b5
+telemetry.sdk.name: opentelemetry
+telemetry.sdk.language: dotnet
+telemetry.sdk.version: 1.15.0
+
+info: MyBlog.Infrastructure.Services.ImageCacheWarmerService[0]
+      Image Cache Warmer: All images are already cached.
+LogRecord.Timestamp:               2026-01-27T18:12:50.2759633Z
+LogRecord.CategoryName:            MyBlog.Infrastructure.Services.ImageCacheWarmerService
+LogRecord.Severity:                Info
+LogRecord.SeverityText:            Information
+LogRecord.FormattedMessage:        Image Cache Warmer: All images are already cached.
+LogRecord.Body:                    Image Cache Warmer: All images are already cached.
+LogRecord.Attributes (Key:Value):
+    OriginalFormat (a.k.a Body): Image Cache Warmer: All images are already cached.
+
+Resource associated with LogRecord:
+service.name: MyBlog
+service.namespace: 1.0.0.0
+service.instance.id: 90958bc8-bcfe-41da-bb89-68083d3f08b5
+telemetry.sdk.name: opentelemetry
+telemetry.sdk.language: dotnet
+telemetry.sdk.version: 1.15.0
+
+Resource associated with Metrics:
+	service.name: MyBlog
+	service.namespace: 1.0.0.0
+	service.instance.id: 90958bc8-bcfe-41da-bb89-68083d3f08b5
+	telemetry.sdk.name: opentelemetry
+	telemetry.sdk.language: dotnet
+	telemetry.sdk.version: 1.15.0
+Resource associated with Metrics:
+	service.name: MyBlog
+	service.namespace: 1.0.0.0
+	service.instance.id: 90958bc8-bcfe-41da-bb89-68083d3f08b5
+	telemetry.sdk.name: opentelemetry
+	telemetry.sdk.language: dotnet
+	telemetry.sdk.version: 1.15.0
+Resource associated with Metrics:
+	service.name: MyBlog
+	service.namespace: 1.0.0.0
+	service.instance.id: 90958bc8-bcfe-41da-bb89-68083d3f08b5
+	telemetry.sdk.name: opentelemetry
+	telemetry.sdk.language: dotnet
+	telemetry.sdk.version: 1.15.0
+Resource associated with Metrics:
+	service.name: MyBlog
+	service.namespace: 1.0.0.0
+	service.instance.id: 90958bc8-bcfe-41da-bb89-68083d3f08b5
+	telemetry.sdk.name: opentelemetry
+	telemetry.sdk.language: dotnet
+	telemetry.sdk.version: 1.15.0
+Resource associated with Metrics:
+	service.name: MyBlog
+	service.namespace: 1.0.0.0
+	service.instance.id: 90958bc8-bcfe-41da-bb89-68083d3f08b5
+	telemetry.sdk.name: opentelemetry
+	telemetry.sdk.language: dotnet
+	telemetry.sdk.version: 1.15.0
+Resource associated with Metrics:
+	service.name: MyBlog
+	service.namespace: 1.0.0.0
+	service.instance.id: 90958bc8-bcfe-41da-bb89-68083d3f08b5
+	telemetry.sdk.name: opentelemetry
+	telemetry.sdk.language: dotnet
+	telemetry.sdk.version: 1.15.0
+Resource associated with Metrics:
+	service.name: MyBlog
+	service.namespace: 1.0.0.0
+	service.instance.id: 90958bc8-bcfe-41da-bb89-68083d3f08b5
+	telemetry.sdk.name: opentelemetry
+	telemetry.sdk.language: dotnet
+	telemetry.sdk.version: 1.15.0
+Resource associated with Metrics:
+	service.name: MyBlog
+	service.namespace: 1.0.0.0
+	service.instance.id: 90958bc8-bcfe-41da-bb89-68083d3f08b5
+	telemetry.sdk.name: opentelemetry
+	telemetry.sdk.language: dotnet
+	telemetry.sdk.version: 1.15.0
+Resource associated with Metrics:
+	service.name: MyBlog
+	service.namespace: 1.0.0.0
+	service.instance.id: 90958bc8-bcfe-41da-bb89-68083d3f08b5
+	telemetry.sdk.name: opentelemetry
+	telemetry.sdk.language: dotnet
+	telemetry.sdk.version: 1.15.0
+Resource associated with Metrics:
+	service.name: MyBlog
+	service.namespace: 1.0.0.0
+	service.instance.id: 90958bc8-bcfe-41da-bb89-68083d3f08b5
+	telemetry.sdk.name: opentelemetry
+	telemetry.sdk.language: dotnet
+	telemetry.sdk.version: 1.15.0
+Resource associated with Metrics:
+	service.name: MyBlog
+	service.namespace: 1.0.0.0
+	service.instance.id: 90958bc8-bcfe-41da-bb89-68083d3f08b5
+	telemetry.sdk.name: opentelemetry
+	telemetry.sdk.language: dotnet
+	telemetry.sdk.version: 1.15.0
+Error: Process completed with exit code 1.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Ah! I see the problem now! The application **is** starting successfully, but it's listening on the **wrong ports**. Look at these lines from the log:
+
+```
+Now listening on: https://localhost:51226
+Now listening on: http://localhost:51227
+```
+
+But your tests are trying to connect to `http://localhost:5000`!
+
+The issue is that the `ASPNETCORE_URLS` environment variable is being **overridden by the launchSettings.json file**. The log shows: `Using launch settings from src/MyBlog.Web/Properties/launchSettings.json...`
+
+Here's the fixed workflow:Perfect! The **key change** is adding the `--no-launch-profile` flag to the `dotnet run` command:
+
+```bash
+dotnet run --project src/MyBlog.Web/MyBlog.Web.csproj -c Release --no-build --no-launch-profile
+```
+
+This tells .NET to **ignore the launchSettings.json file** and instead use the environment variables you've specified (`ASPNETCORE_URLS: http://localhost:5000`).
+
+Without this flag, .NET uses the ports defined in `launchSettings.json` (which were 51226 and 51227), causing your tests to fail when trying to connect to port 5000.
+
+```yaml
+name: Build, Test, and Deploy
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+    branches: ['**']
+
+jobs:
+  build-test:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore src/MyBlog.slnx
+
+      - name: Build solution
+        run: dotnet build src/MyBlog.slnx -c Release --no-restore
+
+      - name: Run unit tests
+        run: dotnet run --project src/MyBlog.Tests/MyBlog.Tests.csproj
+
+  e2e-tests:
+    runs-on: ubuntu-latest
+    needs: build-test
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Restore dependencies
+        run: dotnet restore src/MyBlog.slnx
+
+      - name: Build solution
+        run: dotnet build src/MyBlog.slnx -c Release --no-restore
+
+      - name: Install Playwright browsers
+        run: |
+          pwsh src/MyBlog.E2E/bin/Release/net10.0/playwright.ps1 install chromium --with-deps
+
+      - name: Start MyBlog application
+        run: |
+          dotnet run --project src/MyBlog.Web/MyBlog.Web.csproj -c Release --no-build --no-launch-profile > app.log 2>&1 &
+          echo $! > app.pid
+        env:
+          ASPNETCORE_URLS: http://localhost:5000
+          ASPNETCORE_ENVIRONMENT: Development
+          Authentication__DefaultAdminPassword: ChangeMe123!
+
+      - name: Wait for application to be ready
+        run: |
+          echo "Waiting for application to start..."
+          for i in {1..60}; do
+            if curl -sf http://localhost:5000/ > /dev/null 2>&1; then
+              echo "Application is ready!"
+              curl -v http://localhost:5000/ 2>&1 | head -20
+              break
+            fi
+            echo "Attempt $i/60: Application not ready yet..."
+            sleep 2
+            if [ $i -eq 60 ]; then
+              echo "Application failed to start within timeout"
+              echo "Application logs:"
+              cat app.log || echo "No logs available"
+              exit 1
+            fi
+          done
+
+      - name: Run E2E tests
+        run: dotnet run --project src/MyBlog.E2E/MyBlog.E2E.csproj -c Release --no-build
+        env:
+          MYBLOG_BASE_URL: http://localhost:5000
+          PLAYWRIGHT_HEADLESS: true
+
+      - name: Stop application
+        if: always()
+        run: |
+          if [ -f app.pid ]; then
+            kill $(cat app.pid) || true
+          fi
+
+      - name: Show application logs on failure
+        if: failure()
+        run: |
+          echo "=== Application Logs ==="
+          cat app.log || echo "No logs available"
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: e2e-test-results
+          path: |
+            src/MyBlog.E2E/TestResults/
+            test-results/
+            app.log
+          retention-days: 7
+
+  deploy:
+    needs: [build-test, e2e-tests]
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop'
+    runs-on: windows-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Publish application
+        run: dotnet publish src/MyBlog.Web/MyBlog.Web.csproj -c Release -o ./publish -r win-x86 --self-contained false
+
+      - name: Deploy via WebDeploy
+        shell: pwsh
+        env:
+          DEPLOY_SOURCE: ${{ github.workspace }}\publish
+          DEPLOY_SITE: ${{ secrets.WEBSITE_NAME }}
+          DEPLOY_HOST: ${{ secrets.SERVER_COMPUTER_NAME }}
+          DEPLOY_USER: ${{ secrets.SERVER_USERNAME }}
+          DEPLOY_PASSWORD: ${{ secrets.SERVER_PASSWORD }}
+        run: |
+          $msdeployPath = "C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe"
+          
+          if (-not (Test-Path $msdeployPath)) {
+            Write-Host "Installing Web Deploy..."
+            choco install webdeploy -y --no-progress
+          }
+          
+          Write-Host "Deploying to $env:DEPLOY_HOST..."
+          Write-Host "Note: Using AppOffline rule to prevent file-in-use errors"
+
+          $sourceArg = "-source:contentPath=$env:DEPLOY_SOURCE"
+          $destArg = "-dest:contentPath=$env:DEPLOY_SITE,computerName=https://$($env:DEPLOY_HOST):8172/MsDeploy.axd?site=$env:DEPLOY_SITE,userName=$env:DEPLOY_USER,password=$env:DEPLOY_PASSWORD,AuthType='Basic'"
+          
+          & $msdeployPath -verb:sync $sourceArg $destArg `
+            -allowUntrusted `
+            -enableRule:DoNotDeleteRule `
+            -enableRule:AppOffline `
+            -retryAttempts:3 `
+            -retryInterval:3000
+          
+          if ($LASTEXITCODE -ne 0) {
+            Write-Error "Deployment failed with exit code $LASTEXITCODE"
+            exit 1
+          }
+          
+          Write-Host "Deployment completed successfully!"
+
+```
+
+
+
+
+
+
+
+
+
+
