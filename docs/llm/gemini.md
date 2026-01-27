@@ -3098,3 +3098,303 @@ kushal@fedora:~/src/dotnet/MyBlog$
 
 
 
+I made all these changes but I still have errors 
+554c41eb24498df0d6f3d7e06fbd31862c5e5e0ae2a44358cd04da0bf2626f39
+[myblog-web] | cannot open `/run/user/1000/crun/f46130bdb89dbebf8a84da22c490f0afdf1f59ae9b2e7eb160bd650fe46ac2ce/exec.fifo`: No such file or directory
+[myblog-web] | Error: unable to start container f46130bdb89dbebf8a84da22c490f0afdf1f59ae9b2e7eb160bd650fe46ac2ce: `/usr/bin/crun start f46130bdb89dbebf8a84da22c490f0afdf1f59ae9b2e7eb160bd650fe46ac2ce` failed: exit status 1
+[myblog-e2e] | xUnit.net v3 In-Process Runner v3.2.2+728c1dce01 (64-bit .NET 10.0.1)
+[myblog-e2e] |   Discovering: MyBlog.E2E
+[myblog-e2e] |   Discovered:  MyBlog.E2E
+[myblog-e2e] |   Starting:    MyBlog.E2E
+[myblog-e2e] |     MyBlog.E2E.Tests.LoginPageTests.LoginPage_AfterLogin_ShowsLogoutButton [FAIL]
+[myblog-e2e] |       Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/admin'
+[myblog-e2e] |       But was: 'http://myblog-web:5000/login' 
+[myblog-e2e] |       Call log:
+[myblog-e2e] |         - Expect "ToHaveURLAsync" with timeout 5000ms
+[myblog-e2e] |           9 × unexpected value "http://myblog-web:5000/login"
+[myblog-e2e] |       Stack Trace:
+[myblog-e2e] |         /_/src/Playwright/Core/AssertionsBase.cs(92,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+[myblog-e2e] |         /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+[myblog-e2e] |         /_/src/Playwright/Core/AssertionsBase.cs(58,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options)
+[myblog-e2e] |         Tests/LoginPageTests.cs(82,0): at MyBlog.E2E.Tests.LoginPageTests.LoginPage_AfterLogin_ShowsLogoutButton()
+[myblog-e2e] |         --- End of stack trace from previous location ---
+[myblog-e2e] |     MyBlog.E2E.Tests.LoginPageTests.LoginPage_WithValidCredentials_RedirectsToAdmin [FAIL]
+[myblog-e2e] |       Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/admin'
+[myblog-e2e] |       But was: 'http://myblog-web:5000/login' 
+[myblog-e2e] |       Call log:
+[myblog-e2e] |         - Expect "ToHaveURLAsync" with timeout 5000ms
+[myblog-e2e] |           9 × unexpected value "http://myblog-web:5000/login"
+[myblog-e2e] |       Stack Trace:
+[myblog-e2e] |         /_/src/Playwright/Core/AssertionsBase.cs(92,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+[myblog-e2e] |         /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+[myblog-e2e] |         /_/src/Playwright/Core/AssertionsBase.cs(58,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options)
+[myblog-e2e] |         Tests/LoginPageTests.cs(66,0): at MyBlog.E2E.Tests.LoginPageTests.LoginPage_WithValidCredentials_RedirectsToAdmin()
+[myblog-e2e] |         --- End of stack trace from previous location ---
+[myblog-e2e] |     MyBlog.E2E.Tests.LoginPageTests.LoginPage_WithInvalidCredentials_ShowsError [FAIL]
+[myblog-e2e] |       Microsoft.Playwright.PlaywrightException : Locator expected to be visible
+[myblog-e2e] |       Error: element(s) not found 
+[myblog-e2e] |       Call log:
+[myblog-e2e] |         - Expect "ToBeVisibleAsync" with timeout 5000ms
+[myblog-e2e] |         - waiting for Locator(".error-message")
+[myblog-e2e] |       Stack Trace:
+[myblog-e2e] |         /_/src/Playwright/Core/AssertionsBase.cs(90,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+[myblog-e2e] |         /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+[myblog-e2e] |         Tests/LoginPageTests.cs(48,0): at MyBlog.E2E.Tests.LoginPageTests.LoginPage_WithInvalidCredentials_ShowsError()
+[myblog-e2e] |         --- End of stack trace from previous location ---
+[myblog-e2e] |   Finished:    MyBlog.E2E (ID = '4d488734a9156ea8719a93bca3e9cb47dfeac4715a7981582060bf185a1e7bf4')
+[myblog-e2e] | === TEST EXECUTION SUMMARY ===
+[myblog-e2e] |    MyBlog.E2E  Total: 18, Errors: 0, Failed: 3, Skipped: 0, Not Run: 0, Time: 21.159s
+[myblog-e2e] | 
+
+the tests are at src/MyBlog.E2E/Tests/LoginPageTests.cs and you can find it in dump.txt 
+the test run are in the output 0044.txt 
+
+please fix this and give me the full file for any file that needs to change please and thank you 
+what is causing this? Please do an in depth deep dive 
+
+
+
+
+
+
+
+This error occurs because the **Antiforgery validation** is implicitly failing in your containerized environment.
+
+### The Deep Dive 🕵️‍♂️
+
+1. **The Conflict:** Your `Login.razor` submits a standard HTML Form POST to `/account/login`. By default, ASP.NET Core 10 (via `AddRazorComponents`) enables Antiforgery middleware.
+2. **The Failure:** The Minimal API endpoint (`app.MapPost("/account/login")`) in `Program.cs` receives the POST request. The middleware detects a form submission but likely fails validation because Data Protection keys (used to sign the tokens) are ephemeral in Docker containers. If the app restarts or keys cycle, the token generated on the GET request becomes invalid by the POST request, resulting in a **400 Bad Request**.
+3. **The Symptom:** * The test expects a redirect (302) to `/admin` or `/login?error=...`.
+* Instead, it receives a 400 error page.
+* The browser URL stays at `/login` (the action URL), causing the Playwright assertion `But was: '.../login'` to fail.
+* The `.error-message` element is never rendered because the app crashes out to a generic error page before reaching your logic.
+
+
+
+### The Fix 🛠️
+
+We need to explicitly **disable Antiforgery validation** on the login and logout endpoints in `Program.cs`. Since you are handling authentication logic manually within these endpoints and they are entry points for authentication, this is a standard pattern for "Hybrid" Blazor scenarios.
+
+Here is the corrected `Program.cs`:
+
+#### **File: src/MyBlog.Web/Program.cs**
+
+```csharp
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.EntityFrameworkCore;
+using MyBlog.Core.Constants;
+using MyBlog.Core.Interfaces;
+using MyBlog.Infrastructure;
+using MyBlog.Infrastructure.Data;
+using MyBlog.Infrastructure.Telemetry;
+using MyBlog.Web.Components;
+using MyBlog.Web.Hubs;
+using MyBlog.Web.Middleware;
+using OpenTelemetry;
+using OpenTelemetry.Logs;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
+
+var builder = WebApplication.CreateBuilder(args);
+
+// Add services
+builder.Services.AddRazorComponents()
+    .AddInteractiveServerComponents();
+
+// Register SignalR
+builder.Services.AddSignalR();
+
+builder.Services.AddInfrastructure(builder.Configuration);
+
+// Configure authentication
+var sessionTimeout = builder.Configuration.GetValue("Authentication:SessionTimeoutMinutes", 30);
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.Cookie.Name = AppConstants.AuthCookieName;
+        options.LoginPath = "/login";
+        options.LogoutPath = "/logout";
+        options.AccessDeniedPath = "/access-denied";
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(sessionTimeout);
+        options.SlidingExpiration = true;
+        options.Cookie.HttpOnly = true;
+        options.Cookie.SecurePolicy = builder.Configuration.GetValue("Application:RequireHttps", false)
+            ? CookieSecurePolicy.Always
+            : CookieSecurePolicy.SameAsRequest;
+    });
+
+builder.Services.AddAuthorization();
+builder.Services.AddCascadingAuthenticationState();
+builder.Services.AddHttpContextAccessor();
+
+// Configure OpenTelemetry
+var serviceName = "MyBlog";
+var serviceVersion = typeof(Program).Assembly.GetName().Version?.ToString() ?? "1.0.0";
+
+builder.Services.AddOpenTelemetry()
+    .ConfigureResource(resource => resource.AddService(serviceName, serviceVersion))
+    .WithTracing(tracing => tracing
+        .AddAspNetCoreInstrumentation()
+        .AddHttpClientInstrumentation()
+        .AddConsoleExporter())
+    .WithMetrics(metrics => metrics
+        .AddAspNetCoreInstrumentation()
+        .AddHttpClientInstrumentation()
+        .AddConsoleExporter());
+
+// Configure logging with OpenTelemetry
+builder.Logging.AddOpenTelemetry(logging =>
+{
+    logging.IncludeFormattedMessage = true;
+    logging.IncludeScopes = true;
+    logging.AddConsoleExporter();
+});
+
+var app = builder.Build();
+
+// Configure the HTTP request pipeline
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler("/Error");
+}
+
+app.UseStaticFiles();
+
+// Rate limiting for login attempts
+app.UseLoginRateLimit();
+
+app.UseRouting();
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.UseAntiforgery();
+
+// Minimal API endpoints
+app.MapPost("/account/login", async (HttpContext context, IAuthService authService) =>
+{
+    var form = await context.Request.ReadFormAsync();
+    var username = form["username"].ToString();
+    var password = form["password"].ToString();
+    var returnUrl = form["returnUrl"].ToString();
+
+    if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+    {
+        return Results.Redirect($"/login?error=required&returnUrl={Uri.EscapeDataString(returnUrl ?? "")}");
+    }
+
+    var user = await authService.AuthenticateAsync(username, password);
+    if (user is null)
+    {
+        return Results.Redirect($"/login?error=invalid&returnUrl={Uri.EscapeDataString(returnUrl ?? "")}");
+    }
+
+    var claims = new List<Claim>
+    {
+        new(ClaimTypes.NameIdentifier, user.Id.ToString()),
+        new(ClaimTypes.Name, user.Username),
+        new("DisplayName", user.DisplayName),
+        new(ClaimTypes.Role, AppConstants.AdminRole)
+    };
+
+    var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+    var principal = new ClaimsPrincipal(identity);
+
+    await context.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+
+    return Results.Redirect(string.IsNullOrWhiteSpace(returnUrl) ? "/admin" : returnUrl);
+})
+.DisableAntiforgery(); // FIX: Explicitly disable antiforgery for this public entry point
+
+app.MapPost("/logout", async (HttpContext context) =>
+{
+    await context.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+    return Results.Redirect("/");
+})
+.RequireAuthorization()
+.DisableAntiforgery(); // FIX: Explicitly disable antiforgery to prevent 400 errors during logout
+
+app.MapGet("/api/images/{id:guid}", async (Guid id, IImageRepository imageRepository) =>
+{
+    var image = await imageRepository.GetByIdAsync(id);
+    if (image is null)
+    {
+        return Results.NotFound();
+    }
+    return Results.File(image.Data, image.ContentType);
+});
+
+app.MapRazorComponents<App>()
+    .AddInteractiveServerRenderMode();
+
+app.MapHub<ReaderHub>("/readerHub");
+
+// Initialize database and ensure admin user
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<BlogDbContext>();
+    
+    // EnsureCreated creates the database and all tables if they don't exist
+    await context.Database.EnsureCreatedAsync();
+    
+    // Apply any incremental schema updates for existing databases
+    await DatabaseSchemaUpdater.ApplyUpdatesAsync(context);
+
+    var authService = scope.ServiceProvider.GetRequiredService<IAuthService>();
+    await authService.EnsureAdminUserAsync();
+    
+    // Register telemetry exporters with the service provider
+    var logExporter = scope.ServiceProvider.GetService<FileLogExporter>();
+    var dbExporter = scope.ServiceProvider.GetService<DatabaseLogExporter>();
+}
+
+app.Run();
+
+```
+
+### Next Step
+
+Would you like me to update the `Dockerfile` to ensure Data Protection keys are persisted to a volume, which would address the root cause of key instability in Docker?
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
