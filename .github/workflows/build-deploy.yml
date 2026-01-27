@@ -44,35 +44,42 @@ jobs:
         with:
           dotnet-version: '10.0.x'
 
-      - name: Restore E2E dependencies
-        run: dotnet restore src/MyBlog.E2E/MyBlog.E2E.csproj
+      - name: Restore dependencies
+        run: dotnet restore src/MyBlog.slnx
 
-      - name: Build E2E project
-        run: dotnet build src/MyBlog.E2E/MyBlog.E2E.csproj -c Release --no-restore
+      - name: Build solution
+        run: dotnet build src/MyBlog.slnx -c Release --no-restore
 
       - name: Install Playwright browsers
         run: |
           pwsh src/MyBlog.E2E/bin/Release/net10.0/playwright.ps1 install chromium --with-deps
 
-      - name: Build and run MyBlog
+      - name: Start MyBlog application
         run: |
-          dotnet build src/MyBlog.Web/MyBlog.Web.csproj -c Release
-          dotnet run --project src/MyBlog.Web/MyBlog.Web.csproj -c Release --no-build &
-          sleep 15
+          dotnet run --project src/MyBlog.Web/MyBlog.Web.csproj -c Release --no-build > app.log 2>&1 &
+          echo $! > app.pid
         env:
           ASPNETCORE_URLS: http://localhost:5000
           ASPNETCORE_ENVIRONMENT: Development
           Authentication__DefaultAdminPassword: ChangeMe123!
 
-      - name: Wait for application to start
+      - name: Wait for application to be ready
         run: |
-          for i in {1..30}; do
+          echo "Waiting for application to start..."
+          for i in {1..60}; do
             if curl -sf http://localhost:5000/ > /dev/null 2>&1; then
-              echo "Application is ready"
+              echo "Application is ready!"
+              curl -v http://localhost:5000/ 2>&1 | head -20
               break
             fi
-            echo "Waiting for application... ($i/30)"
+            echo "Attempt $i/60: Application not ready yet..."
             sleep 2
+            if [ $i -eq 60 ]; then
+              echo "Application failed to start within timeout"
+              echo "Application logs:"
+              cat app.log || echo "No logs available"
+              exit 1
+            fi
           done
 
       - name: Run E2E tests
@@ -80,6 +87,19 @@ jobs:
         env:
           MYBLOG_BASE_URL: http://localhost:5000
           PLAYWRIGHT_HEADLESS: true
+
+      - name: Stop application
+        if: always()
+        run: |
+          if [ -f app.pid ]; then
+            kill $(cat app.pid) || true
+          fi
+
+      - name: Show application logs on failure
+        if: failure()
+        run: |
+          echo "=== Application Logs ==="
+          cat app.log || echo "No logs available"
 
       - name: Upload test results
         uses: actions/upload-artifact@v4
@@ -89,10 +109,11 @@ jobs:
           path: |
             src/MyBlog.E2E/TestResults/
             test-results/
+            app.log
           retention-days: 7
 
   deploy:
-    needs: [build-test]
+    needs: [build-test, e2e-tests]
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop'
     runs-on: windows-latest
     
