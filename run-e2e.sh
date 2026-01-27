@@ -49,7 +49,7 @@ for arg in "$@"; do
     esac
 done
 
-# Clean up if requested
+# Clean up if requested (manual clean only)
 if [ "$CLEAN_FLAG" == "true" ]; then
     log_info "Cleaning up containers and volumes..."
     podman-compose -f docker-compose.e2e.yml down -v --remove-orphans 2>/dev/null || true
@@ -67,6 +67,11 @@ if command -v chcon &> /dev/null && getenforce 2>/dev/null | grep -q "Enforcing"
 fi
 
 log_info "Starting E2E test environment..."
+
+# Always ensure a clean start for tests to prevent stale DB state
+# This fixes issues where the admin password might be different in an old volume
+log_info "Ensuring clean environment..."
+podman-compose -f docker-compose.e2e.yml down -v --remove-orphans 2>/dev/null || true
 
 # Build and start services
 log_info "Building containers..."
