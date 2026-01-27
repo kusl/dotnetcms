@@ -1,0 +1,563 @@
+kushal@fedora:~/src/dotnet/MyBlog$ export PLAYWRIGHT_HEADLESS=true; export MYBLOG_BASE_URL=http://localhost:51226; cd /home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E; time dotnet run
+xUnit.net v3 In-Process Runner v3.2.2+728c1dce01 (64-bit .NET 10.0.2)
+  Discovering: MyBlog.E2E
+  Discovered:  MyBlog.E2E
+  Starting:    MyBlog.E2E
+    MyBlog.E2E.Tests.AboutPageTests.AboutPage_HasReaderBadge [FAIL]
+      Microsoft.Playwright.PlaywrightException : net::ERR_EMPTY_RESPONSE at http://localhost:51226/about
+      Call log:
+        - navigating to "http://localhost:51226/about", waiting until "load"
+      Stack Trace:
+        /_/src/Playwright/Transport/Connection.cs(201,0): at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls)
+        /_/src/Playwright/Transport/Connection.cs(499,0): at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title)
+        /_/src/Playwright/Core/Frame.cs(815,0): at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options)
+        Tests/AboutPageTests.cs(66,0): at MyBlog.E2E.Tests.AboutPageTests.AboutPage_HasReaderBadge()
+        --- End of stack trace from previous location ---
+    MyBlog.E2E.Tests.AboutPageTests.AboutPage_DisplaysAboutHeading [FAIL]
+      Microsoft.Playwright.PlaywrightException : net::ERR_EMPTY_RESPONSE at http://localhost:51226/about
+      Call log:
+        - navigating to "http://localhost:51226/about", waiting until "load"
+      Stack Trace:
+        /_/src/Playwright/Transport/Connection.cs(201,0): at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls)
+        /_/src/Playwright/Transport/Connection.cs(499,0): at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title)
+        /_/src/Playwright/Core/Frame.cs(815,0): at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options)
+        Tests/AboutPageTests.cs(30,0): at MyBlog.E2E.Tests.AboutPageTests.AboutPage_DisplaysAboutHeading()
+        --- End of stack trace from previous location ---
+    MyBlog.E2E.Tests.AboutPageTests.AboutPage_DisplaysArchitectureSection [FAIL]
+      Microsoft.Playwright.PlaywrightException : net::ERR_EMPTY_RESPONSE at http://localhost:51226/about
+      Call log:
+        - navigating to "http://localhost:51226/about", waiting until "load"
+      Stack Trace:
+        /_/src/Playwright/Transport/Connection.cs(201,0): at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls)
+        /_/src/Playwright/Transport/Connection.cs(499,0): at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title)
+        /_/src/Playwright/Core/Frame.cs(815,0): at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options)
+        Tests/AboutPageTests.cs(42,0): at MyBlog.E2E.Tests.AboutPageTests.AboutPage_DisplaysArchitectureSection()
+        --- End of stack trace from previous location ---
+    MyBlog.E2E.Tests.AboutPageTests.AboutPage_DisplaysTechnologyStack [FAIL]
+      Microsoft.Playwright.PlaywrightException : net::ERR_EMPTY_RESPONSE at http://localhost:51226/about
+      Call log:
+        - navigating to "http://localhost:51226/about", waiting until "load"
+      Stack Trace:
+        /_/src/Playwright/Transport/Connection.cs(201,0): at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls)
+        /_/src/Playwright/Transport/Connection.cs(499,0): at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title)
+        /_/src/Playwright/Core/Frame.cs(815,0): at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options)
+        Tests/AboutPageTests.cs(53,0): at MyBlog.E2E.Tests.AboutPageTests.AboutPage_DisplaysTechnologyStack()
+        --- End of stack trace from previous location ---
+    MyBlog.E2E.Tests.AboutPageTests.AboutPage_LoadsSuccessfully [FAIL]
+      Microsoft.Playwright.PlaywrightException : net::ERR_EMPTY_RESPONSE at http://localhost:51226/about
+      Call log:
+        - navigating to "http://localhost:51226/about", waiting until "load"
+      Stack Trace:
+        /_/src/Playwright/Transport/Connection.cs(201,0): at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls)
+        /_/src/Playwright/Transport/Connection.cs(499,0): at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title)
+        /_/src/Playwright/Core/Frame.cs(815,0): at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options)
+        Tests/AboutPageTests.cs(19,0): at MyBlog.E2E.Tests.AboutPageTests.AboutPage_LoadsSuccessfully()
+        --- End of stack trace from previous location ---
+    MyBlog.E2E.Tests.ThemeSwitcherTests.ThemeSwitcher_IsVisibleOnPage [FAIL]
+      Microsoft.Playwright.PlaywrightException : net::ERR_EMPTY_RESPONSE at http://localhost:51226/
+      Call log:
+        - navigating to "http://localhost:51226/", waiting until "load"
+      Stack Trace:
+        /_/src/Playwright/Transport/Connection.cs(201,0): at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls)
+        /_/src/Playwright/Transport/Connection.cs(499,0): at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title)
+        /_/src/Playwright/Core/Frame.cs(815,0): at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options)
+        Tests/ThemeSwitcherTests.cs(20,0): at MyBlog.E2E.Tests.ThemeSwitcherTests.ThemeSwitcher_IsVisibleOnPage()
+        --- End of stack trace from previous location ---
+    MyBlog.E2E.Tests.ThemeSwitcherTests.ThemeSwitcher_HasMultipleOptions [FAIL]
+      Microsoft.Playwright.PlaywrightException : net::ERR_EMPTY_RESPONSE at http://localhost:51226/
+      Call log:
+        - navigating to "http://localhost:51226/", waiting until "load"
+      Stack Trace:
+        /_/src/Playwright/Transport/Connection.cs(201,0): at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls)
+        /_/src/Playwright/Transport/Connection.cs(499,0): at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title)
+        /_/src/Playwright/Core/Frame.cs(815,0): at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options)
+        Tests/ThemeSwitcherTests.cs(63,0): at MyBlog.E2E.Tests.ThemeSwitcherTests.ThemeSwitcher_HasMultipleOptions()
+        --- End of stack trace from previous location ---
+    MyBlog.E2E.Tests.ThemeSwitcherTests.ThemeSwitcher_ChangesTheme [FAIL]
+      Microsoft.Playwright.PlaywrightException : net::ERR_EMPTY_RESPONSE at http://localhost:51226/
+      Call log:
+        - navigating to "http://localhost:51226/", waiting until "load"
+      Stack Trace:
+        /_/src/Playwright/Transport/Connection.cs(201,0): at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls)
+        /_/src/Playwright/Transport/Connection.cs(499,0): at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title)
+        /_/src/Playwright/Core/Frame.cs(815,0): at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options)
+        Tests/ThemeSwitcherTests.cs(32,0): at MyBlog.E2E.Tests.ThemeSwitcherTests.ThemeSwitcher_ChangesTheme()
+        --- End of stack trace from previous location ---
+    MyBlog.E2E.Tests.LoginPageTests.LoginPage_DisplaysLoginForm [FAIL]
+      Microsoft.Playwright.PlaywrightException : net::ERR_EMPTY_RESPONSE at http://localhost:51226/login
+      Call log:
+        - navigating to "http://localhost:51226/login", waiting until "load"
+      Stack Trace:
+        /_/src/Playwright/Transport/Connection.cs(201,0): at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls)
+        /_/src/Playwright/Transport/Connection.cs(499,0): at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title)
+        /_/src/Playwright/Core/Frame.cs(815,0): at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options)
+        Tests/LoginPageTests.cs(26,0): at MyBlog.E2E.Tests.LoginPageTests.LoginPage_DisplaysLoginForm()
+        --- End of stack trace from previous location ---
+    MyBlog.E2E.Tests.LoginPageTests.LoginPage_WithValidCredentials_RedirectsToAdmin [FAIL]
+      Microsoft.Playwright.PlaywrightException : net::ERR_EMPTY_RESPONSE at http://localhost:51226/login
+      Call log:
+        - navigating to "http://localhost:51226/login", waiting until "load"
+      Stack Trace:
+        /_/src/Playwright/Transport/Connection.cs(201,0): at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls)
+        /_/src/Playwright/Transport/Connection.cs(499,0): at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title)
+        /_/src/Playwright/Core/Frame.cs(815,0): at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options)
+        Tests/LoginPageTests.cs(56,0): at MyBlog.E2E.Tests.LoginPageTests.LoginPage_WithValidCredentials_RedirectsToAdmin()
+        --- End of stack trace from previous location ---
+    MyBlog.E2E.Tests.LoginPageTests.LoginPage_LoadsSuccessfully [FAIL]
+      Microsoft.Playwright.PlaywrightException : net::ERR_EMPTY_RESPONSE at http://localhost:51226/login
+      Call log:
+        - navigating to "http://localhost:51226/login", waiting until "load"
+      Stack Trace:
+        /_/src/Playwright/Transport/Connection.cs(201,0): at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls)
+        /_/src/Playwright/Transport/Connection.cs(499,0): at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title)
+        /_/src/Playwright/Core/Frame.cs(815,0): at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options)
+        Tests/LoginPageTests.cs(16,0): at MyBlog.E2E.Tests.LoginPageTests.LoginPage_LoadsSuccessfully()
+        --- End of stack trace from previous location ---
+    MyBlog.E2E.Tests.LoginPageTests.LoginPage_AfterLogin_ShowsLogoutButton [FAIL]
+      Microsoft.Playwright.PlaywrightException : net::ERR_EMPTY_RESPONSE at http://localhost:51226/login
+      Call log:
+        - navigating to "http://localhost:51226/login", waiting until "load"
+      Stack Trace:
+        /_/src/Playwright/Transport/Connection.cs(201,0): at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls)
+        /_/src/Playwright/Transport/Connection.cs(499,0): at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title)
+        /_/src/Playwright/Core/Frame.cs(815,0): at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options)
+        Tests/LoginPageTests.cs(73,0): at MyBlog.E2E.Tests.LoginPageTests.LoginPage_AfterLogin_ShowsLogoutButton()
+        --- End of stack trace from previous location ---
+    MyBlog.E2E.Tests.LoginPageTests.LoginPage_WithInvalidCredentials_ShowsError [FAIL]
+      Microsoft.Playwright.PlaywrightException : net::ERR_EMPTY_RESPONSE at http://localhost:51226/login
+      Call log:
+        - navigating to "http://localhost:51226/login", waiting until "load"
+      Stack Trace:
+        /_/src/Playwright/Transport/Connection.cs(201,0): at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls)
+        /_/src/Playwright/Transport/Connection.cs(499,0): at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title)
+        /_/src/Playwright/Core/Frame.cs(815,0): at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options)
+        Tests/LoginPageTests.cs(38,0): at MyBlog.E2E.Tests.LoginPageTests.LoginPage_WithInvalidCredentials_ShowsError()
+        --- End of stack trace from previous location ---
+    MyBlog.E2E.Tests.HomePageTests.HomePage_HasFooter [FAIL]
+      Microsoft.Playwright.PlaywrightException : net::ERR_EMPTY_RESPONSE at http://localhost:51226/
+      Call log:
+        - navigating to "http://localhost:51226/", waiting until "load"
+      Stack Trace:
+        /_/src/Playwright/Transport/Connection.cs(201,0): at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls)
+        /_/src/Playwright/Transport/Connection.cs(499,0): at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title)
+        /_/src/Playwright/Core/Frame.cs(815,0): at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options)
+        Tests/HomePageTests.cs(59,0): at MyBlog.E2E.Tests.HomePageTests.HomePage_HasFooter()
+        --- End of stack trace from previous location ---
+    MyBlog.E2E.Tests.HomePageTests.HomePage_HasNavigationLinks [FAIL]
+      Microsoft.Playwright.PlaywrightException : net::ERR_EMPTY_RESPONSE at http://localhost:51226/
+      Call log:
+        - navigating to "http://localhost:51226/", waiting until "load"
+      Stack Trace:
+        /_/src/Playwright/Transport/Connection.cs(201,0): at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls)
+        /_/src/Playwright/Transport/Connection.cs(499,0): at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title)
+        /_/src/Playwright/Core/Frame.cs(815,0): at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options)
+        Tests/HomePageTests.cs(42,0): at MyBlog.E2E.Tests.HomePageTests.HomePage_HasNavigationLinks()
+        --- End of stack trace from previous location ---
+    MyBlog.E2E.Tests.HomePageTests.HomePage_LoadsSuccessfully [FAIL]
+      Microsoft.Playwright.PlaywrightException : net::ERR_EMPTY_RESPONSE at http://localhost:51226/
+      Call log:
+        - navigating to "http://localhost:51226/", waiting until "load"
+      Stack Trace:
+        /_/src/Playwright/Transport/Connection.cs(201,0): at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls)
+        /_/src/Playwright/Transport/Connection.cs(499,0): at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title)
+        /_/src/Playwright/Core/Frame.cs(815,0): at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options)
+        Tests/HomePageTests.cs(19,0): at MyBlog.E2E.Tests.HomePageTests.HomePage_LoadsSuccessfully()
+        --- End of stack trace from previous location ---
+    MyBlog.E2E.Tests.HomePageTests.HomePage_NavigationToAbout_Works [FAIL]
+      Microsoft.Playwright.PlaywrightException : net::ERR_EMPTY_RESPONSE at http://localhost:51226/
+      Call log:
+        - navigating to "http://localhost:51226/", waiting until "load"
+      Stack Trace:
+        /_/src/Playwright/Transport/Connection.cs(201,0): at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls)
+        /_/src/Playwright/Transport/Connection.cs(499,0): at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title)
+        /_/src/Playwright/Core/Frame.cs(815,0): at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options)
+        Tests/HomePageTests.cs(70,0): at MyBlog.E2E.Tests.HomePageTests.HomePage_NavigationToAbout_Works()
+        --- End of stack trace from previous location ---
+    MyBlog.E2E.Tests.HomePageTests.HomePage_DisplaysWelcomeHeading [FAIL]
+      Microsoft.Playwright.PlaywrightException : net::ERR_EMPTY_RESPONSE at http://localhost:51226/
+      Call log:
+        - navigating to "http://localhost:51226/", waiting until "load"
+      Stack Trace:
+        /_/src/Playwright/Transport/Connection.cs(201,0): at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls)
+        /_/src/Playwright/Transport/Connection.cs(499,0): at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title)
+        /_/src/Playwright/Core/Frame.cs(815,0): at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options)
+        Tests/HomePageTests.cs(30,0): at MyBlog.E2E.Tests.HomePageTests.HomePage_DisplaysWelcomeHeading()
+        --- End of stack trace from previous location ---
+  Finished:    MyBlog.E2E (ID = '4da13f9d563b191d498eddd21e3e1a69685c77da9d3c1623ac434c46a99ec86c')
+=== TEST EXECUTION SUMMARY ===
+   MyBlog.E2E  Total: 18, Errors: 0, Failed: 18, Skipped: 0, Not Run: 0, Time: 1.132s
+
+real	0m3.811s
+user	0m4.182s
+sys	0m0.759s
+kushal@fedora:~/src/dotnet/MyBlog/src/MyBlog.E2E$ export PLAYWRIGHT_HEADLESS=false; export MYBLOG_BASE_URL=http://localhost:51226; cd /home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E; time dotnet run
+xUnit.net v3 In-Process Runner v3.2.2+728c1dce01 (64-bit .NET 10.0.2)
+  Discovering: MyBlog.E2E
+  Discovered:  MyBlog.E2E
+  Starting:    MyBlog.E2E
+    MyBlog.E2E.Tests.AboutPageTests.AboutPage_HasReaderBadge [FAIL]
+      Microsoft.Playwright.PlaywrightException : net::ERR_EMPTY_RESPONSE at http://localhost:51226/about
+      Call log:
+        - navigating to "http://localhost:51226/about", waiting until "load"
+      Stack Trace:
+        /_/src/Playwright/Transport/Connection.cs(201,0): at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls)
+        /_/src/Playwright/Transport/Connection.cs(499,0): at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title)
+        /_/src/Playwright/Core/Frame.cs(815,0): at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options)
+        Tests/AboutPageTests.cs(66,0): at MyBlog.E2E.Tests.AboutPageTests.AboutPage_HasReaderBadge()
+        --- End of stack trace from previous location ---
+    MyBlog.E2E.Tests.AboutPageTests.AboutPage_DisplaysAboutHeading [FAIL]
+      Microsoft.Playwright.PlaywrightException : net::ERR_EMPTY_RESPONSE at http://localhost:51226/about
+      Call log:
+        - navigating to "http://localhost:51226/about", waiting until "load"
+      Stack Trace:
+        /_/src/Playwright/Transport/Connection.cs(201,0): at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls)
+        /_/src/Playwright/Transport/Connection.cs(499,0): at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title)
+        /_/src/Playwright/Core/Frame.cs(815,0): at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options)
+        Tests/AboutPageTests.cs(30,0): at MyBlog.E2E.Tests.AboutPageTests.AboutPage_DisplaysAboutHeading()
+        --- End of stack trace from previous location ---
+    MyBlog.E2E.Tests.AboutPageTests.AboutPage_DisplaysArchitectureSection [FAIL]
+      Microsoft.Playwright.PlaywrightException : net::ERR_EMPTY_RESPONSE at http://localhost:51226/about
+      Call log:
+        - navigating to "http://localhost:51226/about", waiting until "load"
+      Stack Trace:
+        /_/src/Playwright/Transport/Connection.cs(201,0): at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls)
+        /_/src/Playwright/Transport/Connection.cs(499,0): at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title)
+        /_/src/Playwright/Core/Frame.cs(815,0): at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options)
+        Tests/AboutPageTests.cs(42,0): at MyBlog.E2E.Tests.AboutPageTests.AboutPage_DisplaysArchitectureSection()
+        --- End of stack trace from previous location ---
+    MyBlog.E2E.Tests.AboutPageTests.AboutPage_DisplaysTechnologyStack [FAIL]
+      Microsoft.Playwright.PlaywrightException : net::ERR_EMPTY_RESPONSE at http://localhost:51226/about
+      Call log:
+        - navigating to "http://localhost:51226/about", waiting until "load"
+      Stack Trace:
+        /_/src/Playwright/Transport/Connection.cs(201,0): at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls)
+        /_/src/Playwright/Transport/Connection.cs(499,0): at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title)
+        /_/src/Playwright/Core/Frame.cs(815,0): at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options)
+        Tests/AboutPageTests.cs(53,0): at MyBlog.E2E.Tests.AboutPageTests.AboutPage_DisplaysTechnologyStack()
+        --- End of stack trace from previous location ---
+    MyBlog.E2E.Tests.AboutPageTests.AboutPage_LoadsSuccessfully [FAIL]
+      Microsoft.Playwright.PlaywrightException : net::ERR_EMPTY_RESPONSE at http://localhost:51226/about
+      Call log:
+        - navigating to "http://localhost:51226/about", waiting until "load"
+      Stack Trace:
+        /_/src/Playwright/Transport/Connection.cs(201,0): at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls)
+        /_/src/Playwright/Transport/Connection.cs(499,0): at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title)
+        /_/src/Playwright/Core/Frame.cs(815,0): at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options)
+        Tests/AboutPageTests.cs(19,0): at MyBlog.E2E.Tests.AboutPageTests.AboutPage_LoadsSuccessfully()
+        --- End of stack trace from previous location ---
+    MyBlog.E2E.Tests.ThemeSwitcherTests.ThemeSwitcher_IsVisibleOnPage [FAIL]
+      Microsoft.Playwright.PlaywrightException : net::ERR_EMPTY_RESPONSE at http://localhost:51226/
+      Call log:
+        - navigating to "http://localhost:51226/", waiting until "load"
+      Stack Trace:
+        /_/src/Playwright/Transport/Connection.cs(201,0): at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls)
+        /_/src/Playwright/Transport/Connection.cs(499,0): at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title)
+        /_/src/Playwright/Core/Frame.cs(815,0): at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options)
+        Tests/ThemeSwitcherTests.cs(20,0): at MyBlog.E2E.Tests.ThemeSwitcherTests.ThemeSwitcher_IsVisibleOnPage()
+        --- End of stack trace from previous location ---
+    MyBlog.E2E.Tests.ThemeSwitcherTests.ThemeSwitcher_HasMultipleOptions [FAIL]
+      Microsoft.Playwright.PlaywrightException : net::ERR_EMPTY_RESPONSE at http://localhost:51226/
+      Call log:
+        - navigating to "http://localhost:51226/", waiting until "load"
+      Stack Trace:
+        /_/src/Playwright/Transport/Connection.cs(201,0): at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls)
+        /_/src/Playwright/Transport/Connection.cs(499,0): at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title)
+        /_/src/Playwright/Core/Frame.cs(815,0): at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options)
+        Tests/ThemeSwitcherTests.cs(63,0): at MyBlog.E2E.Tests.ThemeSwitcherTests.ThemeSwitcher_HasMultipleOptions()
+        --- End of stack trace from previous location ---
+    MyBlog.E2E.Tests.ThemeSwitcherTests.ThemeSwitcher_ChangesTheme [FAIL]
+      Microsoft.Playwright.PlaywrightException : net::ERR_EMPTY_RESPONSE at http://localhost:51226/
+      Call log:
+        - navigating to "http://localhost:51226/", waiting until "load"
+      Stack Trace:
+        /_/src/Playwright/Transport/Connection.cs(201,0): at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls)
+        /_/src/Playwright/Transport/Connection.cs(499,0): at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title)
+        /_/src/Playwright/Core/Frame.cs(815,0): at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options)
+        Tests/ThemeSwitcherTests.cs(32,0): at MyBlog.E2E.Tests.ThemeSwitcherTests.ThemeSwitcher_ChangesTheme()
+        --- End of stack trace from previous location ---
+    MyBlog.E2E.Tests.LoginPageTests.LoginPage_DisplaysLoginForm [FAIL]
+      Microsoft.Playwright.PlaywrightException : net::ERR_EMPTY_RESPONSE at http://localhost:51226/login
+      Call log:
+        - navigating to "http://localhost:51226/login", waiting until "load"
+      Stack Trace:
+        /_/src/Playwright/Transport/Connection.cs(201,0): at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls)
+        /_/src/Playwright/Transport/Connection.cs(499,0): at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title)
+        /_/src/Playwright/Core/Frame.cs(815,0): at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options)
+        Tests/LoginPageTests.cs(26,0): at MyBlog.E2E.Tests.LoginPageTests.LoginPage_DisplaysLoginForm()
+        --- End of stack trace from previous location ---
+    MyBlog.E2E.Tests.LoginPageTests.LoginPage_WithValidCredentials_RedirectsToAdmin [FAIL]
+      Microsoft.Playwright.PlaywrightException : net::ERR_EMPTY_RESPONSE at http://localhost:51226/login
+      Call log:
+        - navigating to "http://localhost:51226/login", waiting until "load"
+      Stack Trace:
+        /_/src/Playwright/Transport/Connection.cs(201,0): at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls)
+        /_/src/Playwright/Transport/Connection.cs(499,0): at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title)
+        /_/src/Playwright/Core/Frame.cs(815,0): at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options)
+        Tests/LoginPageTests.cs(56,0): at MyBlog.E2E.Tests.LoginPageTests.LoginPage_WithValidCredentials_RedirectsToAdmin()
+        --- End of stack trace from previous location ---
+    MyBlog.E2E.Tests.LoginPageTests.LoginPage_LoadsSuccessfully [FAIL]
+      Microsoft.Playwright.PlaywrightException : net::ERR_EMPTY_RESPONSE at http://localhost:51226/login
+      Call log:
+        - navigating to "http://localhost:51226/login", waiting until "load"
+      Stack Trace:
+        /_/src/Playwright/Transport/Connection.cs(201,0): at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls)
+        /_/src/Playwright/Transport/Connection.cs(499,0): at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title)
+        /_/src/Playwright/Core/Frame.cs(815,0): at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options)
+        Tests/LoginPageTests.cs(16,0): at MyBlog.E2E.Tests.LoginPageTests.LoginPage_LoadsSuccessfully()
+        --- End of stack trace from previous location ---
+    MyBlog.E2E.Tests.LoginPageTests.LoginPage_AfterLogin_ShowsLogoutButton [FAIL]
+      Microsoft.Playwright.PlaywrightException : net::ERR_EMPTY_RESPONSE at http://localhost:51226/login
+      Call log:
+        - navigating to "http://localhost:51226/login", waiting until "load"
+      Stack Trace:
+        /_/src/Playwright/Transport/Connection.cs(201,0): at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls)
+        /_/src/Playwright/Transport/Connection.cs(499,0): at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title)
+        /_/src/Playwright/Core/Frame.cs(815,0): at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options)
+        Tests/LoginPageTests.cs(73,0): at MyBlog.E2E.Tests.LoginPageTests.LoginPage_AfterLogin_ShowsLogoutButton()
+        --- End of stack trace from previous location ---
+    MyBlog.E2E.Tests.LoginPageTests.LoginPage_WithInvalidCredentials_ShowsError [FAIL]
+      Microsoft.Playwright.PlaywrightException : net::ERR_EMPTY_RESPONSE at http://localhost:51226/login
+      Call log:
+        - navigating to "http://localhost:51226/login", waiting until "load"
+      Stack Trace:
+        /_/src/Playwright/Transport/Connection.cs(201,0): at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls)
+        /_/src/Playwright/Transport/Connection.cs(499,0): at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title)
+        /_/src/Playwright/Core/Frame.cs(815,0): at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options)
+        Tests/LoginPageTests.cs(38,0): at MyBlog.E2E.Tests.LoginPageTests.LoginPage_WithInvalidCredentials_ShowsError()
+        --- End of stack trace from previous location ---
+    MyBlog.E2E.Tests.HomePageTests.HomePage_HasFooter [FAIL]
+      Microsoft.Playwright.PlaywrightException : net::ERR_EMPTY_RESPONSE at http://localhost:51226/
+      Call log:
+        - navigating to "http://localhost:51226/", waiting until "load"
+      Stack Trace:
+        /_/src/Playwright/Transport/Connection.cs(201,0): at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls)
+        /_/src/Playwright/Transport/Connection.cs(499,0): at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title)
+        /_/src/Playwright/Core/Frame.cs(815,0): at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options)
+        Tests/HomePageTests.cs(59,0): at MyBlog.E2E.Tests.HomePageTests.HomePage_HasFooter()
+        --- End of stack trace from previous location ---
+    MyBlog.E2E.Tests.HomePageTests.HomePage_HasNavigationLinks [FAIL]
+      Microsoft.Playwright.PlaywrightException : net::ERR_EMPTY_RESPONSE at http://localhost:51226/
+      Call log:
+        - navigating to "http://localhost:51226/", waiting until "load"
+      Stack Trace:
+        /_/src/Playwright/Transport/Connection.cs(201,0): at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls)
+        /_/src/Playwright/Transport/Connection.cs(499,0): at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title)
+        /_/src/Playwright/Core/Frame.cs(815,0): at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options)
+        Tests/HomePageTests.cs(42,0): at MyBlog.E2E.Tests.HomePageTests.HomePage_HasNavigationLinks()
+        --- End of stack trace from previous location ---
+    MyBlog.E2E.Tests.HomePageTests.HomePage_LoadsSuccessfully [FAIL]
+      Microsoft.Playwright.PlaywrightException : net::ERR_EMPTY_RESPONSE at http://localhost:51226/
+      Call log:
+        - navigating to "http://localhost:51226/", waiting until "load"
+      Stack Trace:
+        /_/src/Playwright/Transport/Connection.cs(201,0): at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls)
+        /_/src/Playwright/Transport/Connection.cs(499,0): at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title)
+        /_/src/Playwright/Core/Frame.cs(815,0): at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options)
+        Tests/HomePageTests.cs(19,0): at MyBlog.E2E.Tests.HomePageTests.HomePage_LoadsSuccessfully()
+        --- End of stack trace from previous location ---
+    MyBlog.E2E.Tests.HomePageTests.HomePage_NavigationToAbout_Works [FAIL]
+      Microsoft.Playwright.PlaywrightException : net::ERR_EMPTY_RESPONSE at http://localhost:51226/
+      Call log:
+        - navigating to "http://localhost:51226/", waiting until "load"
+      Stack Trace:
+        /_/src/Playwright/Transport/Connection.cs(201,0): at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls)
+        /_/src/Playwright/Transport/Connection.cs(499,0): at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title)
+        /_/src/Playwright/Core/Frame.cs(815,0): at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options)
+        Tests/HomePageTests.cs(70,0): at MyBlog.E2E.Tests.HomePageTests.HomePage_NavigationToAbout_Works()
+        --- End of stack trace from previous location ---
+    MyBlog.E2E.Tests.HomePageTests.HomePage_DisplaysWelcomeHeading [FAIL]
+      Microsoft.Playwright.PlaywrightException : net::ERR_EMPTY_RESPONSE at http://localhost:51226/
+      Call log:
+        - navigating to "http://localhost:51226/", waiting until "load"
+      Stack Trace:
+        /_/src/Playwright/Transport/Connection.cs(201,0): at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls)
+        /_/src/Playwright/Transport/Connection.cs(499,0): at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title)
+        /_/src/Playwright/Core/Frame.cs(815,0): at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options)
+        Tests/HomePageTests.cs(30,0): at MyBlog.E2E.Tests.HomePageTests.HomePage_DisplaysWelcomeHeading()
+        --- End of stack trace from previous location ---
+  Finished:    MyBlog.E2E (ID = '4da13f9d563b191d498eddd21e3e1a69685c77da9d3c1623ac434c46a99ec86c')
+=== TEST EXECUTION SUMMARY ===
+   MyBlog.E2E  Total: 18, Errors: 0, Failed: 18, Skipped: 0, Not Run: 0, Time: 3.554s
+
+real	0m5.458s
+user	0m4.873s
+sys	0m1.182s
+kushal@fedora:~/src/dotnet/MyBlog/src/MyBlog.E2E$ export PLAYWRIGHT_HEADLESS=true; export MYBLOG_BASE_URL=https://localhost:51226; cd /home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E; time dotnet run
+xUnit.net v3 In-Process Runner v3.2.2+728c1dce01 (64-bit .NET 10.0.2)
+  Discovering: MyBlog.E2E
+  Discovered:  MyBlog.E2E
+  Starting:    MyBlog.E2E
+    MyBlog.E2E.Tests.LoginPageTests.LoginPage_WithValidCredentials_RedirectsToAdmin [FAIL]
+      Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/admin'
+      But was: 'https://localhost:51226/login' 
+      Call log:
+        - Expect "ToHaveURLAsync" with timeout 5000ms
+          9 × unexpected value "https://localhost:51226/login"
+      Stack Trace:
+        /_/src/Playwright/Core/AssertionsBase.cs(92,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+        /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+        /_/src/Playwright/Core/AssertionsBase.cs(58,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options)
+        Tests/LoginPageTests.cs(66,0): at MyBlog.E2E.Tests.LoginPageTests.LoginPage_WithValidCredentials_RedirectsToAdmin()
+        --- End of stack trace from previous location ---
+    MyBlog.E2E.Tests.LoginPageTests.LoginPage_AfterLogin_ShowsLogoutButton [FAIL]
+      Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/admin'
+      But was: 'https://localhost:51226/login' 
+      Call log:
+        - Expect "ToHaveURLAsync" with timeout 5000ms
+          9 × unexpected value "https://localhost:51226/login"
+      Stack Trace:
+        /_/src/Playwright/Core/AssertionsBase.cs(92,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+        /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+        /_/src/Playwright/Core/AssertionsBase.cs(58,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options)
+        Tests/LoginPageTests.cs(82,0): at MyBlog.E2E.Tests.LoginPageTests.LoginPage_AfterLogin_ShowsLogoutButton()
+        --- End of stack trace from previous location ---
+    MyBlog.E2E.Tests.LoginPageTests.LoginPage_WithInvalidCredentials_ShowsError [FAIL]
+      Microsoft.Playwright.PlaywrightException : Locator expected to be visible
+      Error: element(s) not found 
+      Call log:
+        - Expect "ToBeVisibleAsync" with timeout 5000ms
+        - waiting for Locator(".error-message")
+      Stack Trace:
+        /_/src/Playwright/Core/AssertionsBase.cs(90,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+        /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+        Tests/LoginPageTests.cs(48,0): at MyBlog.E2E.Tests.LoginPageTests.LoginPage_WithInvalidCredentials_ShowsError()
+        --- End of stack trace from previous location ---
+  Finished:    MyBlog.E2E (ID = '4da13f9d563b191d498eddd21e3e1a69685c77da9d3c1623ac434c46a99ec86c')
+=== TEST EXECUTION SUMMARY ===
+   MyBlog.E2E  Total: 18, Errors: 0, Failed: 3, Skipped: 0, Not Run: 0, Time: 21.719s
+
+real	0m23.614s
+user	0m4.797s
+sys	0m0.958s
+kushal@fedora:~/src/dotnet/MyBlog/src/MyBlog.E2E$ export PLAYWRIGHT_HEADLESS=false; export MYBLOG_BASE_URL=https://localhost:51226; cd /home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E; time dotnet run
+xUnit.net v3 In-Process Runner v3.2.2+728c1dce01 (64-bit .NET 10.0.2)
+  Discovering: MyBlog.E2E
+  Discovered:  MyBlog.E2E
+  Starting:    MyBlog.E2E
+  Finished:    MyBlog.E2E (ID = '4da13f9d563b191d498eddd21e3e1a69685c77da9d3c1623ac434c46a99ec86c')
+=== TEST EXECUTION SUMMARY ===
+   MyBlog.E2E  Total: 18, Errors: 0, Failed: 0, Skipped: 0, Not Run: 0, Time: 9.585s
+
+real	0m11.357s
+user	0m6.232s
+sys	0m1.434s
+kushal@fedora:~/src/dotnet/MyBlog/src/MyBlog.E2E$ export PLAYWRIGHT_HEADLESS=false; export MYBLOG_BASE_URL=https://localhost:51226; cd /home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E; time dotnet run
+xUnit.net v3 In-Process Runner v3.2.2+728c1dce01 (64-bit .NET 10.0.2)
+  Discovering: MyBlog.E2E
+  Discovered:  MyBlog.E2E
+  Starting:    MyBlog.E2E
+  Finished:    MyBlog.E2E (ID = '4da13f9d563b191d498eddd21e3e1a69685c77da9d3c1623ac434c46a99ec86c')
+=== TEST EXECUTION SUMMARY ===
+   MyBlog.E2E  Total: 18, Errors: 0, Failed: 0, Skipped: 0, Not Run: 0, Time: 10.545s
+
+real	0m12.324s
+user	0m6.278s
+sys	0m1.436s
+kushal@fedora:~/src/dotnet/MyBlog/src/MyBlog.E2E$ export PLAYWRIGHT_HEADLESS=false; export MYBLOG_BASE_URL=https://localhost:51226; cd /home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E; time dotnet run
+xUnit.net v3 In-Process Runner v3.2.2+728c1dce01 (64-bit .NET 10.0.2)
+  Discovering: MyBlog.E2E
+  Discovered:  MyBlog.E2E
+  Starting:    MyBlog.E2E
+  Finished:    MyBlog.E2E (ID = '4da13f9d563b191d498eddd21e3e1a69685c77da9d3c1623ac434c46a99ec86c')
+=== TEST EXECUTION SUMMARY ===
+   MyBlog.E2E  Total: 18, Errors: 0, Failed: 0, Skipped: 0, Not Run: 0, Time: 23.486s
+
+real	0m25.229s
+user	0m7.012s
+sys	0m1.864s
+kushal@fedora:~/src/dotnet/MyBlog/src/MyBlog.E2E$ export PLAYWRIGHT_HEADLESS=false; export MYBLOG_BASE_URL=https://localhost:51226; cd /home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E; time dotnet run
+xUnit.net v3 In-Process Runner v3.2.2+728c1dce01 (64-bit .NET 10.0.2)
+  Discovering: MyBlog.E2E
+  Discovered:  MyBlog.E2E
+  Starting:    MyBlog.E2E
+    MyBlog.E2E.Tests.LoginPageTests.LoginPage_AfterLogin_ShowsLogoutButton [FAIL]
+      System.TimeoutException : Timeout 30000ms exceeded.
+      Call log:
+        - waiting for Locator("button[type='submit']")
+          - locator resolved to <button type="submit" b-9i1dxi8u9e="" class="btn btn-primary">Login</button>
+        - attempting click action
+          - waiting for element to be visible, enabled and stable
+          - element is visible, enabled and stable
+          - scrolling into view if needed
+          - done scrolling
+          - performing click action
+          - click action done
+          - waiting for scheduled navigations to finish
+      Stack Trace:
+        /_/src/Playwright/Transport/Connection.cs(201,0): at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls)
+        /_/src/Playwright/Transport/Connection.cs(499,0): at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title)
+        Tests/LoginPageTests.cs(78,0): at MyBlog.E2E.Tests.LoginPageTests.LoginPage_AfterLogin_ShowsLogoutButton()
+        --- End of stack trace from previous location ---
+    MyBlog.E2E.Tests.LoginPageTests.LoginPage_WithInvalidCredentials_ShowsError [FAIL]
+      System.TimeoutException : Timeout 30000ms exceeded.
+      Call log:
+        - waiting for Locator("button[type='submit']")
+          - locator resolved to <button type="submit" b-9i1dxi8u9e="" class="btn btn-primary">Login</button>
+        - attempting click action
+          - waiting for element to be visible, enabled and stable
+          - element is visible, enabled and stable
+          - scrolling into view if needed
+          - done scrolling
+          - performing click action
+          - click action done
+          - waiting for scheduled navigations to finish
+      Stack Trace:
+        /_/src/Playwright/Transport/Connection.cs(201,0): at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls)
+        /_/src/Playwright/Transport/Connection.cs(499,0): at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title)
+        Tests/LoginPageTests.cs(43,0): at MyBlog.E2E.Tests.LoginPageTests.LoginPage_WithInvalidCredentials_ShowsError()
+        --- End of stack trace from previous location ---
+  Finished:    MyBlog.E2E (ID = '4da13f9d563b191d498eddd21e3e1a69685c77da9d3c1623ac434c46a99ec86c')
+=== TEST EXECUTION SUMMARY ===
+   MyBlog.E2E  Total: 18, Errors: 0, Failed: 2, Skipped: 0, Not Run: 0, Time: 85.333s
+
+real	1m27.231s
+user	0m10.223s
+sys	0m3.323s
+kushal@fedora:~/src/dotnet/MyBlog/src/MyBlog.E2E$ export PLAYWRIGHT_HEADLESS=true; export MYBLOG_BASE_URL=https://localhost:51226; cd /home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E; time dotnet run
+xUnit.net v3 In-Process Runner v3.2.2+728c1dce01 (64-bit .NET 10.0.2)
+  Discovering: MyBlog.E2E
+  Discovered:  MyBlog.E2E
+  Starting:    MyBlog.E2E
+    MyBlog.E2E.Tests.LoginPageTests.LoginPage_WithValidCredentials_RedirectsToAdmin [FAIL]
+      Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/admin'
+      But was: 'https://localhost:51226/login' 
+      Call log:
+        - Expect "ToHaveURLAsync" with timeout 5000ms
+          9 × unexpected value "https://localhost:51226/login"
+      Stack Trace:
+        /_/src/Playwright/Core/AssertionsBase.cs(92,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+        /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+        /_/src/Playwright/Core/AssertionsBase.cs(58,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options)
+        Tests/LoginPageTests.cs(66,0): at MyBlog.E2E.Tests.LoginPageTests.LoginPage_WithValidCredentials_RedirectsToAdmin()
+        --- End of stack trace from previous location ---
+    MyBlog.E2E.Tests.LoginPageTests.LoginPage_AfterLogin_ShowsLogoutButton [FAIL]
+      Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/admin'
+      But was: 'https://localhost:51226/login' 
+      Call log:
+        - Expect "ToHaveURLAsync" with timeout 5000ms
+          9 × unexpected value "https://localhost:51226/login"
+      Stack Trace:
+        /_/src/Playwright/Core/AssertionsBase.cs(92,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+        /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+        /_/src/Playwright/Core/AssertionsBase.cs(58,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options)
+        Tests/LoginPageTests.cs(82,0): at MyBlog.E2E.Tests.LoginPageTests.LoginPage_AfterLogin_ShowsLogoutButton()
+        --- End of stack trace from previous location ---
+    MyBlog.E2E.Tests.LoginPageTests.LoginPage_WithInvalidCredentials_ShowsError [FAIL]
+      Microsoft.Playwright.PlaywrightException : Locator expected to be visible
+      Error: element(s) not found 
+      Call log:
+        - Expect "ToBeVisibleAsync" with timeout 5000ms
+        - waiting for Locator(".error-message")
+      Stack Trace:
+        /_/src/Playwright/Core/AssertionsBase.cs(90,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+        /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+        Tests/LoginPageTests.cs(48,0): at MyBlog.E2E.Tests.LoginPageTests.LoginPage_WithInvalidCredentials_ShowsError()
+        --- End of stack trace from previous location ---
+  Finished:    MyBlog.E2E (ID = '4da13f9d563b191d498eddd21e3e1a69685c77da9d3c1623ac434c46a99ec86c')
+=== TEST EXECUTION SUMMARY ===
+   MyBlog.E2E  Total: 18, Errors: 0, Failed: 3, Skipped: 0, Not Run: 0, Time: 21.089s
+
+real	0m22.837s
+user	0m4.442s
+sys	0m0.892s
+kushal@fedora:~/src/dotnet/MyBlog/src/MyBlog.E2E$ 
