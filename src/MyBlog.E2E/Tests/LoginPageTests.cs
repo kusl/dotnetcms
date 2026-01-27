@@ -1,15 +1,9 @@
-// /home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/Tests/LoginPageTests.cs
-
 using System.Text.RegularExpressions;
 using Microsoft.Playwright;
 using Xunit;
 
 namespace MyBlog.E2E.Tests;
 
-/// <summary>
-/// E2E tests for authentication (Epic 1: Authentication).
-/// The login page uses a standard HTML form that posts to /login minimal API endpoint.
-/// </summary>
 [Collection(PlaywrightCollection.Name)]
 public sealed class LoginPageTests(PlaywrightFixture fixture)
 {
@@ -19,7 +13,6 @@ public sealed class LoginPageTests(PlaywrightFixture fixture)
     public async Task LoginPage_LoadsSuccessfully()
     {
         var page = await _fixture.CreatePageAsync();
-
         var response = await page.GotoAsync("/login");
 
         Assert.NotNull(response);
@@ -30,16 +23,12 @@ public sealed class LoginPageTests(PlaywrightFixture fixture)
     public async Task LoginPage_DisplaysLoginForm()
     {
         var page = await _fixture.CreatePageAsync();
-
         await page.GotoAsync("/login");
 
-        var usernameInput = page.Locator("input#username, input[name='username']");
-        var passwordInput = page.Locator("input#password, input[name='password']");
-        var submitButton = page.Locator("button[type='submit']");
-
-        await Assertions.Expect(usernameInput).ToBeVisibleAsync();
-        await Assertions.Expect(passwordInput).ToBeVisibleAsync();
-        await Assertions.Expect(submitButton).ToBeVisibleAsync();
+        // Use Web Assertions to wait for visibility
+        await Assertions.Expect(page.Locator("input[name='username']")).ToBeVisibleAsync();
+        await Assertions.Expect(page.Locator("input[name='password']")).ToBeVisibleAsync();
+        await Assertions.Expect(page.Locator("button[type='submit']")).ToBeVisibleAsync();
     }
 
     [Fact]
@@ -51,15 +40,15 @@ public sealed class LoginPageTests(PlaywrightFixture fixture)
         await page.FillAsync("input[name='username']", "invalid");
         await page.FillAsync("input[name='password']", "invalid");
 
-        // Submit and wait for the error message to appear
         await page.ClickAsync("button[type='submit']");
 
-        // Target the actual class used in Login.razor
+        // Web Assertion: This automatically waits for the error message to appear
+        // It handles the postback and re-render implicitly.
         var errorLocator = page.Locator(".error-message");
         await Assertions.Expect(errorLocator).ToBeVisibleAsync();
+        await Assertions.Expect(errorLocator).ToContainTextAsync("Invalid username or password");
     }
 
-    [Obsolete]
     [Fact]
     public async Task LoginPage_WithValidCredentials_RedirectsToAdmin()
     {
@@ -69,13 +58,12 @@ public sealed class LoginPageTests(PlaywrightFixture fixture)
         await page.FillAsync("input[name='username']", "admin");
         await page.FillAsync("input[name='password']", "ChangeMe123!");
 
-        // Use RunAndWaitForNavigationAsync to capture the redirect to /admin
-        await page.RunAndWaitForNavigationAsync(async () =>
-        {
-            await page.ClickAsync("button[type='submit']");
-        }, new PageRunAndWaitForNavigationOptions { UrlString = "**/admin", WaitUntil = WaitUntilState.DOMContentLoaded });
+        await page.ClickAsync("button[type='submit']");
 
-        Assert.Contains("/admin", page.Url);
+        // KEY FIX: Use Expect(page).ToHaveURLAsync
+        // This replaces WaitForURLAsync. It retries repeatedly until the URL matches
+        // the regex or the timeout is reached. It implies navigation is complete.
+        await Assertions.Expect(page).ToHaveURLAsync(new Regex("/admin"));
     }
 
     [Fact]
@@ -84,16 +72,24 @@ public sealed class LoginPageTests(PlaywrightFixture fixture)
         var page = await _fixture.CreatePageAsync();
         await page.GotoAsync("/login");
 
-        // Login first
-        await page.FillAsync("input[name='username'], input#username", "admin");
-        await page.FillAsync("input[name='password'], input#password", "ChangeMe123!");
-        await page.ClickAsync("button[type='submit'], input[type='submit']");
+        await page.FillAsync("input[name='username']", "admin");
+        await page.FillAsync("input[name='password']", "ChangeMe123!");
 
-        // Wait for navigation
-        await page.WaitForURLAsync("**/admin**", new PageWaitForURLOptions { Timeout = 90000 });
-        var logoutButton = page.GetByRole(AriaRole.Button, new PageGetByRoleOptions { NameRegex = new Regex("logout|sign out", RegexOptions.IgnoreCase) })
-            .Or(page.GetByRole(AriaRole.Link, new PageGetByRoleOptions { NameRegex = new Regex("logout|sign out", RegexOptions.IgnoreCase) }))
-            .First;
+        await page.ClickAsync("button[type='submit']");
+
+        // 1. Guard Assertion: Verify we landed on the right URL first.
+        // This ensures the POST succeeded and redirect happened.
+        await Assertions.Expect(page).ToHaveURLAsync(new Regex("/admin"));
+
+        // 2. State Assertion: Verify Blazor has hydrated and shows the Dashboard header.
+        // In your Dashboard.razor, there is an <h1>Admin Dashboard</h1>.
+        // Waiting for this ensures the main content area is ready.
+        await Assertions.Expect(page.Locator("h1")).ToContainTextAsync("Dashboard");
+
+        // 3. Auth Assertion: Verify the Logout button is visible.
+        // In MainLayout.razor, this button is inside <Authorized>, so its presence
+        // proves authentication state is resolved.
+        var logoutButton = page.Locator("form[action='/logout'] button");
         await Assertions.Expect(logoutButton).ToBeVisibleAsync();
     }
 }
