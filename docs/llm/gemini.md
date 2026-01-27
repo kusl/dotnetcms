@@ -2998,3 +2998,103 @@ public sealed class LoginPageTests(PlaywrightFixture fixture)
 
 
 
+test is still broken 
+[INFO] MyBlog is ready!
+[INFO] Running E2E tests...
+a3fbd05c0a04cc872616dba3985816f9329a2a43c0c9b605001c56d82e460753
+[myblog-web] | cannot open `/run/user/1000/crun/2b1ecda6afacb39b1191d06dfe4700a6690ec09321d3e9fd97c410f3794f8d76/exec.fifo`: No such file or directory
+[myblog-web] | Error: unable to start container 2b1ecda6afacb39b1191d06dfe4700a6690ec09321d3e9fd97c410f3794f8d76: `/usr/bin/crun start 2b1ecda6afacb39b1191d06dfe4700a6690ec09321d3e9fd97c410f3794f8d76` failed: exit status 1
+[myblog-e2e] | xUnit.net v3 In-Process Runner v3.2.2+728c1dce01 (64-bit .NET 10.0.1)
+[myblog-e2e] |   Discovering: MyBlog.E2E
+[myblog-e2e] |   Discovered:  MyBlog.E2E
+[myblog-e2e] |   Starting:    MyBlog.E2E
+[myblog-e2e] |     MyBlog.E2E.Tests.LoginPageTests.LoginPage_AfterLogin_ShowsLogoutButton [FAIL]
+[myblog-e2e] |       System.TimeoutException : Timeout 60000ms exceeded.
+[myblog-e2e] |       =========================== logs ===========================
+[myblog-e2e] |       waiting for navigation to "**/admin**" until "Load"
+[myblog-e2e] |       ============================================================
+[myblog-e2e] |       ---- System.TimeoutException : Timeout 60000ms exceeded.
+[myblog-e2e] |       Stack Trace:
+[myblog-e2e] |         /_/src/Playwright/Core/Waiter.cs(226,0): at Microsoft.Playwright.Core.Waiter.WaitForPromiseAsync[T](Task`1 task, Action dispose)
+[myblog-e2e] |         /_/src/Playwright/Core/Frame.cs(321,0): at Microsoft.Playwright.Core.Frame.WaitForNavigationInternalAsync(Waiter waiter, String urlString, Func`2 urlFunc, Regex urlRegex, Nullable`1 waitUntil)
+[myblog-e2e] |         /_/src/Playwright/Core/Frame.cs(285,0): at Microsoft.Playwright.Core.Frame.RunAndWaitForNavigationAsync(Func`1 action, FrameRunAndWaitForNavigationOptions options)
+[myblog-e2e] |         Tests/LoginPageTests.cs(102,0): at MyBlog.E2E.Tests.LoginPageTests.LoginPage_AfterLogin_ShowsLogoutButton()
+[myblog-e2e] |         --- End of stack trace from previous location ---
+[myblog-e2e] |         ----- Inner Stack Trace -----
+[myblog-e2e] |         /_/src/Playwright/Helpers/TaskHelper.cs(72,0): at Microsoft.Playwright.Helpers.TaskHelper.<>c__DisplayClass2_0.<WithTimeout>b__0()
+[myblog-e2e] |         /_/src/Playwright/Helpers/TaskHelper.cs(108,0): at Microsoft.Playwright.Helpers.TaskHelper.WithTimeout(Task task, Func`1 timeoutAction, TimeSpan timeout, CancellationToken cancellationToken)
+[myblog-e2e] |         /_/src/Playwright/Core/Waiter.cs(218,0): at Microsoft.Playwright.Core.Waiter.WaitForPromiseAsync[T](Task`1 task, Action dispose)
+[myblog-e2e] | Test timed out waiting for URL: Timeout 90000ms exceeded.
+[myblog-e2e] | =========================== logs ===========================
+[myblog-e2e] | waiting for navigation to "**/admin**" until "Load"
+[myblog-e2e] | ============================================================
+[myblog-e2e] |     MyBlog.E2E.Tests.LoginPageTests.LoginPage_AfterLogin_ShowsLogoutButton_Updated_by_Qwen [FAIL]
+[myblog-e2e] |       System.TimeoutException : Timeout 90000ms exceeded.
+[myblog-e2e] |       =========================== logs ===========================
+[myblog-e2e] |       waiting for navigation to "**/admin**" until "Load"
+[myblog-e2e] |       ============================================================
+[myblog-e2e] |       ---- System.TimeoutException : Timeout 90000ms exceeded.
+[myblog-e2e] |       Stack Trace:
+[myblog-e2e] |         /_/src/Playwright/Core/Waiter.cs(226,0): at Microsoft.Playwright.Core.Waiter.WaitForPromiseAsync[T](Task`1 task, Action dispose)
+[myblog-e2e] |         /_/src/Playwright/Core/Frame.cs(321,0): at Microsoft.Playwright.Core.Frame.WaitForNavigationInternalAsync(Waiter waiter, String urlString, Func`2 urlFunc, Regex urlRegex, Nullable`1 waitUntil)
+[myblog-e2e] |         /_/src/Playwright/Core/Frame.cs(285,0): at Microsoft.Playwright.Core.Frame.RunAndWaitForNavigationAsync(Func`1 action, FrameRunAndWaitForNavigationOptions options)
+[myblog-e2e] |         Tests/LoginPageTests.cs(130,0): at MyBlog.E2E.Tests.LoginPageTests.LoginPage_AfterLogin_ShowsLogoutButton_Updated_by_Qwen()
+[myblog-e2e] |         --- End of stack trace from previous location ---
+[myblog-e2e] |         ----- Inner Stack Trace -----
+[myblog-e2e] |         /_/src/Playwright/Helpers/TaskHelper.cs(72,0): at Microsoft.Playwright.Helpers.TaskHelper.<>c__DisplayClass2_0.<WithTimeout>b__0()
+[myblog-e2e] |         /_/src/Playwright/Helpers/TaskHelper.cs(108,0): at Microsoft.Playwright.Helpers.TaskHelper.WithTimeout(Task task, Func`1 timeoutAction, TimeSpan timeout, CancellationToken cancellationToken)
+[myblog-e2e] |         /_/src/Playwright/Core/Waiter.cs(218,0): at Microsoft.Playwright.Core.Waiter.WaitForPromiseAsync[T](Task`1 task, Action dispose)
+[myblog-e2e] |     MyBlog.E2E.Tests.LoginPageTests.LoginPage_WithValidCredentials_RedirectsToAdmin [FAIL]
+[myblog-e2e] |       System.TimeoutException : Timeout 60000ms exceeded.
+[myblog-e2e] |       =========================== logs ===========================
+[myblog-e2e] |       waiting for navigation to "**/admin**" until "Load"
+[myblog-e2e] |       ============================================================
+[myblog-e2e] |       ---- System.TimeoutException : Timeout 60000ms exceeded.
+[myblog-e2e] |       Stack Trace:
+[myblog-e2e] |         /_/src/Playwright/Core/Waiter.cs(226,0): at Microsoft.Playwright.Core.Waiter.WaitForPromiseAsync[T](Task`1 task, Action dispose)
+[myblog-e2e] |         /_/src/Playwright/Core/Frame.cs(321,0): at Microsoft.Playwright.Core.Frame.WaitForNavigationInternalAsync(Waiter waiter, String urlString, Func`2 urlFunc, Regex urlRegex, Nullable`1 waitUntil)
+[myblog-e2e] |         /_/src/Playwright/Core/Frame.cs(285,0): at Microsoft.Playwright.Core.Frame.RunAndWaitForNavigationAsync(Func`1 action, FrameRunAndWaitForNavigationOptions options)
+[myblog-e2e] |         Tests/LoginPageTests.cs(84,0): at MyBlog.E2E.Tests.LoginPageTests.LoginPage_WithValidCredentials_RedirectsToAdmin()
+[myblog-e2e] |         --- End of stack trace from previous location ---
+[myblog-e2e] |         ----- Inner Stack Trace -----
+[myblog-e2e] |         /_/src/Playwright/Helpers/TaskHelper.cs(72,0): at Microsoft.Playwright.Helpers.TaskHelper.<>c__DisplayClass2_0.<WithTimeout>b__0()
+[myblog-e2e] |         /_/src/Playwright/Helpers/TaskHelper.cs(108,0): at Microsoft.Playwright.Helpers.TaskHelper.WithTimeout(Task task, Func`1 timeoutAction, TimeSpan timeout, CancellationToken cancellationToken)
+[myblog-e2e] |         /_/src/Playwright/Core/Waiter.cs(218,0): at Microsoft.Playwright.Core.Waiter.WaitForPromiseAsync[T](Task`1 task, Action dispose)
+[myblog-e2e] |     MyBlog.E2E.Tests.LoginPageTests.LoginPage_WithInvalidCredentials_ShowsError [FAIL]
+[myblog-e2e] |       Microsoft.Playwright.PlaywrightException : Locator expected to be visible
+[myblog-e2e] |       Error: element(s) not found 
+[myblog-e2e] |       Call log:
+[myblog-e2e] |         - Expect "ToBeVisibleAsync" with timeout 5000ms
+[myblog-e2e] |         - waiting for Locator(".error, .error-message, .alert, .alert-danger, .validation-summary, [class*='error'], [class*='invalid'], .text-danger, .danger").First
+[myblog-e2e] |       Stack Trace:
+[myblog-e2e] |         /_/src/Playwright/Core/AssertionsBase.cs(90,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+[myblog-e2e] |         /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+[myblog-e2e] |         Tests/LoginPageTests.cs(64,0): at MyBlog.E2E.Tests.LoginPageTests.LoginPage_WithInvalidCredentials_ShowsError()
+[myblog-e2e] |         --- End of stack trace from previous location ---
+[myblog-e2e] |   Finished:    MyBlog.E2E (ID = '4d488734a9156ea8719a93bca3e9cb47dfeac4715a7981582060bf185a1e7bf4')
+[myblog-e2e] | === TEST EXECUTION SUMMARY ===
+[myblog-e2e] |    MyBlog.E2E  Total: 19, Errors: 0, Failed: 4, Skipped: 0, Not Run: 0, Time: 221.382s
+[myblog-e2e] | 
+[INFO] Capturing logs...
+[INFO] Cleaning up...
+myblog-e2e
+myblog-web
+myblog-e2e
+myblog-web
+myblog_myblog-data
+b7d3aaeac77badf75fa15a640ca5511b56a8c6c3dfaa85754e2d4015d4125573
+myblog_myblog-network
+[INFO] E2E tests passed! ✓
+
+real	4m21.471s
+user	0m18.961s
+sys	0m13.063s
+kushal@fedora:~/src/dotnet/MyBlog$ 
+
+
+
+
+
+
+
+

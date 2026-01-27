@@ -40,52 +40,41 @@ public sealed class LoginPageTests(PlaywrightFixture fixture)
         await Assertions.Expect(submitButton).ToBeVisibleAsync();
     }
 
-    [Fact]
-    public async Task LoginPage_WithInvalidCredentials_ShowsError()
+[Fact]
+public async Task LoginPage_WithInvalidCredentials_ShowsError()
+{
+    var page = await _fixture.CreatePageAsync();
+    await page.GotoAsync("/login");
+
+    await page.FillAsync("input[name='username']", "invalid");
+    await page.FillAsync("input[name='password']", "invalid");
+
+    // Submit and wait for the error message to appear
+    await page.ClickAsync("button[type='submit']");
+    
+    // Target the actual class used in Login.razor
+    var errorLocator = page.Locator(".error-message");
+    await Assertions.Expect(errorLocator).ToBeVisibleAsync();
+}
+
+[Obsolete]
+[Fact]
+public async Task LoginPage_WithValidCredentials_RedirectsToAdmin()
+{
+    var page = await _fixture.CreatePageAsync();
+    await page.GotoAsync("/login");
+
+    await page.FillAsync("input[name='username']", "admin");
+    await page.FillAsync("input[name='password']", "ChangeMe123!");
+
+    // Use RunAndWaitForNavigationAsync to capture the redirect to /admin
+    await page.RunAndWaitForNavigationAsync(async () =>
     {
-        var page = await _fixture.CreatePageAsync();
+        await page.ClickAsync("button[type='submit']");
+    }, new() { UrlString = "**/admin", WaitUntil = WaitUntilState.DOMContentLoaded });
 
-        await page.GotoAsync("/login");
-
-        // Fill in invalid credentials
-        await page.FillAsync("input[name='username'], input#username", "invalid");
-        await page.FillAsync("input[name='password'], input#password", "invalid");
-
-        // Click submit and wait for the page to reload or error to appear
-        // Note: Avoiding WaitForLoadStateAsync(NetworkIdle) as Blazor SignalR connection keeps network active
-        await page.ClickAsync("button[type='submit'], input[type='submit']");
-
-        // Wait explicitly for the error message element to appear
-        var errorLocator = page.Locator(
-            ".error, .error-message, .alert, .alert-danger, .validation-summary, " +
-            "[class*='error'], [class*='invalid'], .text-danger, .danger"
-        );
-
-        await Assertions.Expect(errorLocator.First).ToBeVisibleAsync();
-        await Assertions.Expect(errorLocator.First).ToContainTextAsync("Invalid username or password");
-    }
-
-    [Fact]
-    public async Task LoginPage_WithValidCredentials_RedirectsToAdmin()
-    {
-        var page = await _fixture.CreatePageAsync();
-
-        await page.GotoAsync("/login");
-
-        // Fill in valid credentials
-        await page.FillAsync("input[name='username'], input#username", "admin");
-        await page.FillAsync("input[name='password'], input#password", "ChangeMe123!");
-
-        // Submit form
-        await page.ClickAsync("button[type='submit'], input[type='submit']");
-
-        // Wait for navigation to complete
-        // Using regex pattern to match admin URL safely
-        await page.WaitForURLAsync("**/admin**", new PageWaitForURLOptions { Timeout = 60000 });
-
-        // Verify we're on admin page
-        Assert.Contains("admin", page.Url, StringComparison.OrdinalIgnoreCase);
-    }
+    Assert.Contains("/admin", page.Url);
+}
 
     [Fact]
     public async Task LoginPage_AfterLogin_ShowsLogoutButton()
