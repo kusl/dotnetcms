@@ -1,6 +1,6 @@
 ===============================================================================
 PROJECT EXPORT
-Generated: Tue Jan 27 08:59:40 AM EST 2026
+Generated: Tue Jan 27 09:24:54 AM EST 2026
 Project Path: /home/kushal/src/dotnet/MyBlog
 ===============================================================================
 
@@ -53,7 +53,9 @@ DIRECTORY STRUCTURE:
 │   │   │   ├── 0041.txt
 │   │   │   ├── 0042.txt
 │   │   │   ├── 0043.txt
-│   │   │   └── 0044.txt
+│   │   │   ├── 0044.txt
+│   │   │   ├── 0045.txt
+│   │   │   └── 0046.txt
 │   │   ├── chatgpt.md
 │   │   ├── claude.md
 │   │   ├── command.md
@@ -3308,8 +3310,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ================================================================================
 FILE: run-e2e.sh
-SIZE: 3.41 KB
-MODIFIED: 2026-01-27 08:58:09
+SIZE: 3.49 KB
+MODIFIED: 2026-01-27 09:15:09
 ================================================================================
 
 #!/bin/bash
@@ -3382,10 +3384,12 @@ fi
 
 log_info "Starting E2E test environment..."
 
-# Always ensure a clean start for tests to prevent stale DB state
-# This fixes issues where the admin password might be different in an old volume
+# FORCE CLEANUP: Ensure we start with a fresh database
+# This prevents test failures due to stale data/passwords from previous runs
 log_info "Ensuring clean environment..."
 podman-compose -f docker-compose.e2e.yml down -v --remove-orphans 2>/dev/null || true
+# Explicitly remove the volume to be safe
+podman volume rm myblog_myblog-data 2>/dev/null || true
 
 # Build and start services
 log_info "Building containers..."
@@ -5783,8 +5787,8 @@ public static class ServiceCollectionExtensions
 
 ================================================================================
 FILE: src/MyBlog.Infrastructure/Services/AuthService.cs
-SIZE: 3.21 KB
-MODIFIED: 2025-12-28 11:33:37
+SIZE: 3.36 KB
+MODIFIED: 2026-01-27 09:14:35
 ================================================================================
 
 using Microsoft.Extensions.Configuration;
@@ -5829,6 +5833,8 @@ public sealed class AuthService : IAuthService
     /// <inheritdoc />
     public async Task EnsureAdminUserAsync(CancellationToken cancellationToken = default)
     {
+        // SAFETY FIX: Do NOT modify the user if they already exist. 
+        // Only create the user if the database is empty or the admin is missing.
         if (await _userRepository.AnyUsersExistAsync(cancellationToken))
         {
             return;
@@ -12532,13 +12538,14 @@ MODIFIED: 2026-01-16 20:29:40
 
 ================================================================================
 FILE: src/MyBlog.Web/Program.cs
-SIZE: 5.46 KB
-MODIFIED: 2026-01-27 08:57:52
+SIZE: 5.90 KB
+MODIFIED: 2026-01-27 09:14:52
 ================================================================================
 
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.DataProtection; // Required for key persistence
 using Microsoft.EntityFrameworkCore;
 using MyBlog.Core.Constants;
 using MyBlog.Core.Interfaces;
@@ -12564,6 +12571,14 @@ builder.Services.AddRazorComponents()
 builder.Services.AddSignalR();
 
 builder.Services.AddInfrastructure(builder.Configuration);
+
+// CRITICAL FIX: Persist Data Protection keys to the mounted volume.
+// Without this, keys are generated in memory and lost on restart.
+// This causes:
+// 1. Valid logins to fail immediately (cookie cannot be decrypted) -> Redirect to /login
+// 2. Antiforgery tokens to fail validation (keys mismatch) -> 400 Bad Request
+builder.Services.AddDataProtection()
+    .PersistKeysToFileSystem(new DirectoryInfo(Path.Combine(builder.Environment.ContentRootPath, "data", "keys")));
 
 // Configure authentication
 var sessionTimeout = builder.Configuration.GetValue("Authentication:SessionTimeoutMinutes", 30);
@@ -12662,7 +12677,7 @@ app.MapPost("/account/login", async (HttpContext context, IAuthService authServi
     await context.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
 
     return Results.Redirect(string.IsNullOrWhiteSpace(returnUrl) ? "/admin" : returnUrl);
-}).DisableAntiforgery(); // Explicitly disable antiforgery for this endpoint to prevent validation issues
+});
 
 app.MapPost("/logout", async (HttpContext context) =>
 {
@@ -13776,7 +13791,7 @@ window.themeManager = {
 
 
 ===============================================================================
-EXPORT COMPLETED: Tue Jan 27 08:59:41 AM EST 2026
+EXPORT COMPLETED: Tue Jan 27 09:24:55 AM EST 2026
 Total Files Found: 115
 Files Exported: 115
 Files Skipped: 0 (binary or large files)
