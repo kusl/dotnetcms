@@ -1,0 +1,237 @@
+kushal@fedora:~/src/dotnet/MyBlog$ export PLAYWRIGHT_HEADLESS=false; export MYBLOG_BASE_URL=http://localhost:51227; cd /home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E; dotnet run
+xUnit.net v3 In-Process Runner v3.2.2+728c1dce01 (64-bit .NET 10.0.2)
+  Discovering: MyBlog.E2E
+  Discovered:  MyBlog.E2E
+  Starting:    MyBlog.E2E
+    MyBlog.E2E.Tests.LoginPageTests.LoginPage_AfterLogin_ShowsLogoutButton [FAIL]
+      Microsoft.Playwright.PlaywrightException : Locator expected to be visible
+      SyntaxError: Invalid flags supplied to RegExp constructor 'logout'], form[action*='logout']'
+          at new RegExp (<anonymous>)
+          at createTextMatcher (<anonymous>:7912:16)
+          at Object.queryAll (<anonymous>:6816:33)
+          at InjectedScript._queryEngineAll (<anonymous>:6789:49)
+          at InjectedScript.querySelectorAll (<anonymous>:6776:30)
+          at eval (eval at evaluate (:290:30), <anonymous>:2:42)
+          at UtilityScript.evaluate (<anonymous>:292:16)
+          at UtilityScript.<anonymous> (<anonymous>:1:44) 
+      Call log:
+        - Expect "ToBeVisibleAsync" with timeout 5000ms
+        - waiting for Locator("text=/logout/i, text=/sign out/i, button:has-text('Logout'), [href='/logout'], form[action*='logout']").First
+      Stack Trace:
+        /_/src/Playwright/Core/AssertionsBase.cs(90,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+        /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+        Tests/LoginPageTests.cs(102,0): at MyBlog.E2E.Tests.LoginPageTests.LoginPage_AfterLogin_ShowsLogoutButton()
+        --- End of stack trace from previous location ---
+    MyBlog.E2E.Tests.LoginPageTests.LoginPage_AfterLogin_ShowsLogoutButton_Updated_by_Qwen [FAIL]
+      Microsoft.Playwright.PlaywrightException : Locator expected to be visible
+      SyntaxError: Invalid flags supplied to RegExp constructor 'logout'], form[action*='logout']'
+          at new RegExp (<anonymous>)
+          at createTextMatcher (<anonymous>:7912:16)
+          at Object.queryAll (<anonymous>:6816:33)
+          at InjectedScript._queryEngineAll (<anonymous>:6789:49)
+          at InjectedScript.querySelectorAll (<anonymous>:6776:30)
+          at eval (eval at evaluate (:290:30), <anonymous>:2:42)
+          at UtilityScript.evaluate (<anonymous>:292:16)
+          at UtilityScript.<anonymous> (<anonymous>:1:44) 
+      Call log:
+        - Expect "ToBeVisibleAsync" with timeout 5000ms
+        - waiting for Locator("text=/logout/i, text=/sign out/i, button:has-text('Logout'), [href='/logout'], form[action*='logout']").First
+      Stack Trace:
+        /_/src/Playwright/Core/AssertionsBase.cs(90,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+        /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+        Tests/LoginPageTests.cs(136,0): at MyBlog.E2E.Tests.LoginPageTests.LoginPage_AfterLogin_ShowsLogoutButton_Updated_by_Qwen()
+        --- End of stack trace from previous location ---
+  Finished:    MyBlog.E2E (ID = '4da13f9d563b191d498eddd21e3e1a69685c77da9d3c1623ac434c46a99ec86c')
+=== TEST EXECUTION SUMMARY ===
+   MyBlog.E2E  Total: 19, Errors: 0, Failed: 2, Skipped: 0, Not Run: 0, Time: 11.191s
+kushal@fedora:~/src/dotnet/MyBlog/src/MyBlog.E2E$ export PLAYWRIGHT_HEADLESS=false; export MYBLOG_BASE_URL=http://localhost:51227; cd /home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E; dotnet run
+xUnit.net v3 In-Process Runner v3.2.2+728c1dce01 (64-bit .NET 10.0.2)
+  Discovering: MyBlog.E2E
+  Discovered:  MyBlog.E2E
+  Starting:    MyBlog.E2E
+  Finished:    MyBlog.E2E (ID = '4da13f9d563b191d498eddd21e3e1a69685c77da9d3c1623ac434c46a99ec86c')
+=== TEST EXECUTION SUMMARY ===
+   MyBlog.E2E  Total: 18, Errors: 0, Failed: 0, Skipped: 0, Not Run: 0, Time: 12.716s
+kushal@fedora:~/src/dotnet/MyBlog/src/MyBlog.E2E$ export PLAYWRIGHT_HEADLESS=false; export MYBLOG_BASE_URL=http://localhost:51227; cd /home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E; dotnet run
+xUnit.net v3 In-Process Runner v3.2.2+728c1dce01 (64-bit .NET 10.0.2)
+  Discovering: MyBlog.E2E
+  Discovered:  MyBlog.E2E
+  Starting:    MyBlog.E2E
+  Finished:    MyBlog.E2E (ID = '4da13f9d563b191d498eddd21e3e1a69685c77da9d3c1623ac434c46a99ec86c')
+=== TEST EXECUTION SUMMARY ===
+   MyBlog.E2E  Total: 18, Errors: 0, Failed: 0, Skipped: 0, Not Run: 0, Time: 37.564s
+kushal@fedora:~/src/dotnet/MyBlog/src/MyBlog.E2E$ export PLAYWRIGHT_HEADLESS=false; export MYBLOG_BASE_URL=http://localhost:51227; cd /home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E; time dotnet run; export PLAYWRIGHT_HEADLESS=true; export MYBLOG_BASE_URL=http://localhost:51227; cd /home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E; time dotnet run;
+xUnit.net v3 In-Process Runner v3.2.2+728c1dce01 (64-bit .NET 10.0.2)
+  Discovering: MyBlog.E2E
+  Discovered:  MyBlog.E2E
+  Starting:    MyBlog.E2E
+    MyBlog.E2E.Tests.LoginPageTests.LoginPage_WithValidCredentials_RedirectsToAdmin [FAIL]
+      System.TimeoutException : Timeout 30000ms exceeded.
+      Call log:
+        - waiting for Locator("button[type='submit']")
+          - locator resolved to <button type="submit" b-9i1dxi8u9e="" class="btn btn-primary">Login</button>
+        - attempting click action
+          - waiting for element to be visible, enabled and stable
+          - element is visible, enabled and stable
+          - scrolling into view if needed
+          - done scrolling
+          - performing click action
+          - click action done
+          - waiting for scheduled navigations to finish
+      Stack Trace:
+        /_/src/Playwright/Transport/Connection.cs(201,0): at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls)
+        /_/src/Playwright/Transport/Connection.cs(499,0): at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title)
+        Tests/LoginPageTests.cs(61,0): at MyBlog.E2E.Tests.LoginPageTests.LoginPage_WithValidCredentials_RedirectsToAdmin()
+        --- End of stack trace from previous location ---
+    MyBlog.E2E.Tests.LoginPageTests.LoginPage_AfterLogin_ShowsLogoutButton [FAIL]
+      System.TimeoutException : Timeout 30000ms exceeded.
+      Call log:
+        - waiting for Locator("button[type='submit']")
+          - locator resolved to <button type="submit" b-9i1dxi8u9e="" class="btn btn-primary">Login</button>
+        - attempting click action
+          - waiting for element to be visible, enabled and stable
+          - element is visible, enabled and stable
+          - scrolling into view if needed
+          - done scrolling
+          - performing click action
+          - click action done
+          - waiting for scheduled navigations to finish
+      Stack Trace:
+        /_/src/Playwright/Transport/Connection.cs(201,0): at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls)
+        /_/src/Playwright/Transport/Connection.cs(499,0): at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title)
+        Tests/LoginPageTests.cs(78,0): at MyBlog.E2E.Tests.LoginPageTests.LoginPage_AfterLogin_ShowsLogoutButton()
+        --- End of stack trace from previous location ---
+    MyBlog.E2E.Tests.LoginPageTests.LoginPage_WithInvalidCredentials_ShowsError [FAIL]
+      System.TimeoutException : Timeout 30000ms exceeded.
+      Call log:
+        - waiting for Locator("button[type='submit']")
+          - locator resolved to <button type="submit" b-9i1dxi8u9e="" class="btn btn-primary">Login</button>
+        - attempting click action
+          - waiting for element to be visible, enabled and stable
+          - element is visible, enabled and stable
+          - scrolling into view if needed
+          - done scrolling
+          - performing click action
+          - click action done
+          - waiting for scheduled navigations to finish
+      Stack Trace:
+        /_/src/Playwright/Transport/Connection.cs(201,0): at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls)
+        /_/src/Playwright/Transport/Connection.cs(499,0): at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title)
+        Tests/LoginPageTests.cs(43,0): at MyBlog.E2E.Tests.LoginPageTests.LoginPage_WithInvalidCredentials_ShowsError()
+        --- End of stack trace from previous location ---
+  Finished:    MyBlog.E2E (ID = '4da13f9d563b191d498eddd21e3e1a69685c77da9d3c1623ac434c46a99ec86c')
+=== TEST EXECUTION SUMMARY ===
+   MyBlog.E2E  Total: 18, Errors: 0, Failed: 3, Skipped: 0, Not Run: 0, Time: 99.412s
+
+real	1m41.236s
+user	0m11.105s
+sys	0m3.691s
+xUnit.net v3 In-Process Runner v3.2.2+728c1dce01 (64-bit .NET 10.0.2)
+  Discovering: MyBlog.E2E
+  Discovered:  MyBlog.E2E
+  Starting:    MyBlog.E2E
+    MyBlog.E2E.Tests.LoginPageTests.LoginPage_WithValidCredentials_RedirectsToAdmin [FAIL]
+      Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/admin'
+      But was: 'http://localhost:51227/login' 
+      Call log:
+        - Expect "ToHaveURLAsync" with timeout 5000ms
+          9 × unexpected value "http://localhost:51227/login"
+      Stack Trace:
+        /_/src/Playwright/Core/AssertionsBase.cs(92,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+        /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+        /_/src/Playwright/Core/AssertionsBase.cs(58,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options)
+        Tests/LoginPageTests.cs(66,0): at MyBlog.E2E.Tests.LoginPageTests.LoginPage_WithValidCredentials_RedirectsToAdmin()
+        --- End of stack trace from previous location ---
+    MyBlog.E2E.Tests.LoginPageTests.LoginPage_AfterLogin_ShowsLogoutButton [FAIL]
+      Microsoft.Playwright.PlaywrightException : Page URL expected to match regex '/admin'
+      But was: 'http://localhost:51227/login' 
+      Call log:
+        - Expect "ToHaveURLAsync" with timeout 5000ms
+          9 × unexpected value "http://localhost:51227/login"
+      Stack Trace:
+        /_/src/Playwright/Core/AssertionsBase.cs(92,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+        /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+        /_/src/Playwright/Core/AssertionsBase.cs(58,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options)
+        Tests/LoginPageTests.cs(82,0): at MyBlog.E2E.Tests.LoginPageTests.LoginPage_AfterLogin_ShowsLogoutButton()
+        --- End of stack trace from previous location ---
+    MyBlog.E2E.Tests.LoginPageTests.LoginPage_WithInvalidCredentials_ShowsError [FAIL]
+      Microsoft.Playwright.PlaywrightException : Locator expected to be visible
+      Error: element(s) not found 
+      Call log:
+        - Expect "ToBeVisibleAsync" with timeout 5000ms
+        - waiting for Locator(".error-message")
+      Stack Trace:
+        /_/src/Playwright/Core/AssertionsBase.cs(90,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+        /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+        Tests/LoginPageTests.cs(48,0): at MyBlog.E2E.Tests.LoginPageTests.LoginPage_WithInvalidCredentials_ShowsError()
+        --- End of stack trace from previous location ---
+  Finished:    MyBlog.E2E (ID = '4da13f9d563b191d498eddd21e3e1a69685c77da9d3c1623ac434c46a99ec86c')
+=== TEST EXECUTION SUMMARY ===
+   MyBlog.E2E  Total: 18, Errors: 0, Failed: 3, Skipped: 0, Not Run: 0, Time: 21.154s
+
+real	0m23.135s
+user	0m4.780s
+sys	0m0.968s
+kushal@fedora:~/src/dotnet/MyBlog/src/MyBlog.E2E$ export PLAYWRIGHT_HEADLESS=false; export MYBLOG_BASE_URL=http://localhost:51227; cd /home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E; dotnet run
+xUnit.net v3 In-Process Runner v3.2.2+728c1dce01 (64-bit .NET 10.0.2)
+  Discovering: MyBlog.E2E
+  Discovered:  MyBlog.E2E
+  Starting:    MyBlog.E2E
+    MyBlog.E2E.Tests.LoginPageTests.LoginPage_WithValidCredentials_RedirectsToAdmin [FAIL]
+      System.TimeoutException : Timeout 30000ms exceeded.
+      Call log:
+        - waiting for Locator("button[type='submit']")
+          - locator resolved to <button type="submit" b-9i1dxi8u9e="" class="btn btn-primary">Login</button>
+        - attempting click action
+          - waiting for element to be visible, enabled and stable
+          - element is visible, enabled and stable
+          - scrolling into view if needed
+          - done scrolling
+          - performing click action
+          - click action done
+          - waiting for scheduled navigations to finish
+      Stack Trace:
+        /_/src/Playwright/Transport/Connection.cs(201,0): at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls)
+        /_/src/Playwright/Transport/Connection.cs(499,0): at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title)
+        Tests/LoginPageTests.cs(61,0): at MyBlog.E2E.Tests.LoginPageTests.LoginPage_WithValidCredentials_RedirectsToAdmin()
+        --- End of stack trace from previous location ---
+    MyBlog.E2E.Tests.LoginPageTests.LoginPage_AfterLogin_ShowsLogoutButton [FAIL]
+      System.TimeoutException : Timeout 30000ms exceeded.
+      Call log:
+        - waiting for Locator("button[type='submit']")
+          - locator resolved to <button type="submit" b-9i1dxi8u9e="" class="btn btn-primary">Login</button>
+        - attempting click action
+          - waiting for element to be visible, enabled and stable
+          - element is visible, enabled and stable
+          - scrolling into view if needed
+          - done scrolling
+          - performing click action
+          - click action done
+          - waiting for scheduled navigations to finish
+      Stack Trace:
+        /_/src/Playwright/Transport/Connection.cs(201,0): at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls)
+        /_/src/Playwright/Transport/Connection.cs(499,0): at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title)
+        Tests/LoginPageTests.cs(78,0): at MyBlog.E2E.Tests.LoginPageTests.LoginPage_AfterLogin_ShowsLogoutButton()
+        --- End of stack trace from previous location ---
+    MyBlog.E2E.Tests.LoginPageTests.LoginPage_WithInvalidCredentials_ShowsError [FAIL]
+      System.TimeoutException : Timeout 30000ms exceeded.
+      Call log:
+        - waiting for Locator("button[type='submit']")
+          - locator resolved to <button type="submit" b-9i1dxi8u9e="" class="btn btn-primary">Login</button>
+        - attempting click action
+          - waiting for element to be visible, enabled and stable
+          - element is visible, enabled and stable
+          - scrolling into view if needed
+          - done scrolling
+          - performing click action
+          - click action done
+          - waiting for scheduled navigations to finish
+      Stack Trace:
+        /_/src/Playwright/Transport/Connection.cs(201,0): at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls)
+        /_/src/Playwright/Transport/Connection.cs(499,0): at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title)
+        Tests/LoginPageTests.cs(43,0): at MyBlog.E2E.Tests.LoginPageTests.LoginPage_WithInvalidCredentials_ShowsError()
+        --- End of stack trace from previous location ---
+  Finished:    MyBlog.E2E (ID = '4da13f9d563b191d498eddd21e3e1a69685c77da9d3c1623ac434c46a99ec86c')
+=== TEST EXECUTION SUMMARY ===
+   MyBlog.E2E  Total: 18, Errors: 0, Failed: 3, Skipped: 0, Not Run: 0, Time: 99.297s
+kushal@fedora:~/src/dotnet/MyBlog/src/MyBlog.E2E$ 
