@@ -40,26 +40,17 @@ public sealed class AuthService : IAuthService
     /// <inheritdoc />
     public async Task EnsureAdminUserAsync(CancellationToken cancellationToken = default)
     {
+        // SAFETY FIX: Do NOT modify the user if they already exist. 
+        // Only create the user if the database is empty or the admin is missing.
+        if (await _userRepository.AnyUsersExistAsync(cancellationToken))
+        {
+            return;
+        }
+
         var defaultPassword = Environment.GetEnvironmentVariable("MYBLOG_ADMIN_PASSWORD")
             ?? _configuration["Authentication:DefaultAdminPassword"]
             ?? "ChangeMe123!";
 
-        // Check if admin already exists
-        var adminUser = await _userRepository.GetByUsernameAsync("admin", cancellationToken);
-
-        if (adminUser is not null)
-        {
-            // LOGIC FIX: Always reset the admin password on startup to the configured default.
-            // This ensures E2E tests pass even if a previous run changed the password.
-            if (!_passwordService.VerifyPassword(adminUser.PasswordHash, defaultPassword))
-            {
-                adminUser.PasswordHash = _passwordService.HashPassword(defaultPassword);
-                await _userRepository.UpdateAsync(adminUser, cancellationToken);
-            }
-            return;
-        }
-
-        // Create new admin if not exists
         var admin = new User
         {
             Id = Guid.NewGuid(),

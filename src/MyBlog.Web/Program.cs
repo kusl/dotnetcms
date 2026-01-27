@@ -1,7 +1,7 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.DataProtection; // Add this namespace
+using Microsoft.AspNetCore.DataProtection; // Required for key persistence
 using Microsoft.EntityFrameworkCore;
 using MyBlog.Core.Constants;
 using MyBlog.Core.Interfaces;
@@ -28,9 +28,11 @@ builder.Services.AddSignalR();
 
 builder.Services.AddInfrastructure(builder.Configuration);
 
-// CONFIGURATION FIX 1: Persist Data Protection keys to the mounted volume.
-// This prevents "Login Loop" issues where cookies issued cannot be decrypted 
-// because keys were lost/rotated in the container.
+// CRITICAL FIX: Persist Data Protection keys to the mounted volume.
+// Without this, keys are generated in memory and lost on restart.
+// This causes:
+// 1. Valid logins to fail immediately (cookie cannot be decrypted) -> Redirect to /login
+// 2. Antiforgery tokens to fail validation (keys mismatch) -> 400 Bad Request
 builder.Services.AddDataProtection()
     .PersistKeysToFileSystem(new DirectoryInfo(Path.Combine(builder.Environment.ContentRootPath, "data", "keys")));
 
@@ -99,8 +101,6 @@ app.UseAuthorization();
 app.UseAntiforgery();
 
 // Minimal API endpoints
-// CONFIGURATION FIX 2: Explicitly DisableAntiforgery() for the login endpoint.
-// This prevents 400 Bad Request errors when the client submits the form.
 app.MapPost("/account/login", async (HttpContext context, IAuthService authService) =>
 {
     var form = await context.Request.ReadFormAsync();
@@ -133,7 +133,7 @@ app.MapPost("/account/login", async (HttpContext context, IAuthService authServi
     await context.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
 
     return Results.Redirect(string.IsNullOrWhiteSpace(returnUrl) ? "/admin" : returnUrl);
-}).DisableAntiforgery();
+});
 
 app.MapPost("/logout", async (HttpContext context) =>
 {

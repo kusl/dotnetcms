@@ -68,10 +68,12 @@ fi
 
 log_info "Starting E2E test environment..."
 
-# Always ensure a clean start for tests to prevent stale DB state
-# This fixes issues where the admin password might be different in an old volume
+# FORCE CLEANUP: Ensure we start with a fresh database
+# This prevents test failures due to stale data/passwords from previous runs
 log_info "Ensuring clean environment..."
 podman-compose -f docker-compose.e2e.yml down -v --remove-orphans 2>/dev/null || true
+# Explicitly remove the volume to be safe
+podman volume rm myblog_myblog-data 2>/dev/null || true
 
 # Build and start services
 log_info "Building containers..."
