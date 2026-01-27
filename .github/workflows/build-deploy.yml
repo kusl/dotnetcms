@@ -53,7 +53,7 @@ jobs:
       - name: Install Playwright browsers
         run: |
           dotnet tool install --global Microsoft.Playwright.CLI
-          playwright install chromium --with-deps
+          playwright install chromium --with-deps --project src/MyBlog.E2E/MyBlog.E2E.csproj
 
       - name: Build and run MyBlog
         run: |
