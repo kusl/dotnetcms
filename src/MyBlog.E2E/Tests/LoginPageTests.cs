@@ -1,4 +1,6 @@
 // /home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/Tests/LoginPageTests.cs
+
+using System.Text.RegularExpressions;
 using Microsoft.Playwright;
 using Xunit;
 
@@ -71,7 +73,7 @@ public sealed class LoginPageTests(PlaywrightFixture fixture)
         await page.RunAndWaitForNavigationAsync(async () =>
         {
             await page.ClickAsync("button[type='submit']");
-        }, new() { UrlString = "**/admin", WaitUntil = WaitUntilState.DOMContentLoaded });
+        }, new PageRunAndWaitForNavigationOptions { UrlString = "**/admin", WaitUntil = WaitUntilState.DOMContentLoaded });
 
         Assert.Contains("/admin", page.Url);
     }
@@ -80,7 +82,6 @@ public sealed class LoginPageTests(PlaywrightFixture fixture)
     public async Task LoginPage_AfterLogin_ShowsLogoutButton()
     {
         var page = await _fixture.CreatePageAsync();
-
         await page.GotoAsync("/login");
 
         // Login first
@@ -88,51 +89,11 @@ public sealed class LoginPageTests(PlaywrightFixture fixture)
         await page.FillAsync("input[name='password'], input#password", "ChangeMe123!");
         await page.ClickAsync("button[type='submit'], input[type='submit']");
 
-        await page.WaitForURLAsync("**/admin**", new PageWaitForURLOptions { Timeout = 60000 });
-
-        // Wait for DOM content to be ready (avoiding NetworkIdle due to SignalR)
-        await page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
-
-        // Check for logout element
-        var logoutButton = page.Locator(
-            "text=/logout/i, text=/sign out/i, button:has-text('Logout'), " +
-            "[href='/logout'], form[action*='logout']"
-        ).First;
-
-        await Assertions.Expect(logoutButton).ToBeVisibleAsync();
-    }
-
-    [Fact]
-    public async Task LoginPage_AfterLogin_ShowsLogoutButton_Updated_by_Qwen()
-    {
-        var page = await _fixture.CreatePageAsync();
-        await page.GotoAsync("/login");
-
-        // Login first
-        await page.FillAsync("input[name='username'], input#username", "admin");
-        await page.FillAsync("input[name='password'], input#password", "ChangeMe123!");
-        await page.ClickAsync("button[type='submit'], input[type='submit']");
-
-        try
-        {
-            // Wait for navigation to complete
-            await page.WaitForURLAsync("**/admin**", new PageWaitForURLOptions { Timeout = 90000 });
-        }
-        catch (TimeoutException ex)
-        {
-            Console.WriteLine("Test timed out waiting for URL: " + ex.Message);
-            throw;
-        }
-
-        // Wait for DOM to be ready
-        await page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
-
-        // Check for logout element
-        var logoutButton = page.Locator(
-            "text=/logout/i, text=/sign out/i, button:has-text('Logout'), " +
-            "[href='/logout'], form[action*='logout']"
-        ).First;
-
+        // Wait for navigation
+        await page.WaitForURLAsync("**/admin**", new PageWaitForURLOptions { Timeout = 90000 });
+        var logoutButton = page.GetByRole(AriaRole.Button, new PageGetByRoleOptions { NameRegex = new Regex("logout|sign out", RegexOptions.IgnoreCase) })
+            .Or(page.GetByRole(AriaRole.Link, new PageGetByRoleOptions { NameRegex = new Regex("logout|sign out", RegexOptions.IgnoreCase) }))
+            .First;
         await Assertions.Expect(logoutButton).ToBeVisibleAsync();
     }
 }
