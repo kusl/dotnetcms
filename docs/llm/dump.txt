@@ -1,6 +1,6 @@
 ===============================================================================
 PROJECT EXPORT
-Generated: Mon Jan 26 07:33:13 PM EST 2026
+Generated: Mon Jan 26 07:47:54 PM EST 2026
 Project Path: /home/kushal/src/dotnet/MyBlog
 ===============================================================================
 
@@ -4900,8 +4900,8 @@ public sealed class HomePageTests(PlaywrightFixture fixture)
 
 ================================================================================
 FILE: src/MyBlog.E2E/Tests/LoginPageTests.cs
-SIZE: 4.06 KB
-MODIFIED: 2026-01-26 13:52:43
+SIZE: 5.35 KB
+MODIFIED: 2026-01-26 19:47:00
 ================================================================================
 
 // /home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/Tests/LoginPageTests.cs
@@ -5008,6 +5008,41 @@ public sealed class LoginPageTests(PlaywrightFixture fixture)
 
         // Wait for page to be fully loaded
         await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+
+        // Check for logout element
+        var hasLogout = await page.Locator(
+            "text=/logout/i, text=/sign out/i, button:has-text('Logout'), " +
+            "[href='/logout'], form[action*='logout']"
+        ).CountAsync();
+
+        Assert.True(hasLogout > 0, "Expected logout button/link to be visible after login");
+    }
+
+    [Fact]
+    public async Task LoginPage_AfterLogin_ShowsLogoutButton_Updated_by_Qwen()
+    {
+        var page = await _fixture.CreatePageAsync();
+        await page.GotoAsync("/login");
+
+        // Login first
+        await page.FillAsync("input[name='username'], input#username", "admin");
+        await page.FillAsync("input[name='password'], input#password", "ChangeMe123!");
+        await page.ClickAsync("button[type='submit'], input[type='submit']");
+
+        try
+        {
+            // Wait for navigation to complete
+            await page.WaitForURLAsync("**/admin**", new PageWaitForURLOptions { Timeout = 90000 });
+        }
+        catch (TimeoutException ex)
+        {
+            Console.WriteLine("Test timed out waiting for URL: " + ex.Message);
+            throw;
+        }
+
+        // Wait for page to be fully loaded
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+        await page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
 
         // Check for logout element
         var hasLogout = await page.Locator(
@@ -13797,7 +13832,7 @@ window.themeManager = {
 
 
 ===============================================================================
-EXPORT COMPLETED: Mon Jan 26 07:33:14 PM EST 2026
+EXPORT COMPLETED: Mon Jan 26 07:47:55 PM EST 2026
 Total Files Found: 115
 Files Exported: 115
 Files Skipped: 0 (binary or large files)

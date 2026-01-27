@@ -111,4 +111,39 @@ public sealed class LoginPageTests(PlaywrightFixture fixture)
 
         Assert.True(hasLogout > 0, "Expected logout button/link to be visible after login");
     }
+
+    [Fact]
+    public async Task LoginPage_AfterLogin_ShowsLogoutButton_Updated_by_Qwen()
+    {
+        var page = await _fixture.CreatePageAsync();
+        await page.GotoAsync("/login");
+
+        // Login first
+        await page.FillAsync("input[name='username'], input#username", "admin");
+        await page.FillAsync("input[name='password'], input#password", "ChangeMe123!");
+        await page.ClickAsync("button[type='submit'], input[type='submit']");
+
+        try
+        {
+            // Wait for navigation to complete
+            await page.WaitForURLAsync("**/admin**", new PageWaitForURLOptions { Timeout = 90000 });
+        }
+        catch (TimeoutException ex)
+        {
+            Console.WriteLine("Test timed out waiting for URL: " + ex.Message);
+            throw;
+        }
+
+        // Wait for page to be fully loaded
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+        await page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
+
+        // Check for logout element
+        var hasLogout = await page.Locator(
+            "text=/logout/i, text=/sign out/i, button:has-text('Logout'), " +
+            "[href='/logout'], form[action*='logout']"
+        ).CountAsync();
+
+        Assert.True(hasLogout > 0, "Expected logout button/link to be visible after login");
+    }
 }
