@@ -1,6 +1,6 @@
 ===============================================================================
 PROJECT EXPORT
-Generated: Mon Jan 26 08:34:41 PM EST 2026
+Generated: Mon Jan 26 08:48:08 PM EST 2026
 Project Path: /home/kushal/src/dotnet/MyBlog
 ===============================================================================
 
@@ -48,7 +48,9 @@ DIRECTORY STRUCTURE:
 │   │   │   ├── 0035.md
 │   │   │   ├── 0037.txt
 │   │   │   ├── 0038.txt
-│   │   │   └── 0039.txt
+│   │   │   ├── 0039.txt
+│   │   │   ├── 0040.txt
+│   │   │   └── 0041.txt
 │   │   ├── chatgpt.md
 │   │   ├── claude.md
 │   │   ├── command.md
@@ -641,8 +643,8 @@ echo ""
 
 ================================================================================
 FILE: .github/workflows/build-deploy.yml
-SIZE: 4.50 KB
-MODIFIED: 2026-01-26 09:57:33
+SIZE: 4.54 KB
+MODIFIED: 2026-01-26 20:46:50
 ================================================================================
 
 name: Build, Test, and Deploy
@@ -700,7 +702,7 @@ jobs:
       - name: Install Playwright browsers
         run: |
           dotnet tool install --global Microsoft.Playwright.CLI
-          playwright install chromium --with-deps
+          playwright install chromium --with-deps --project src/MyBlog.E2E/MyBlog.E2E.csproj
 
       - name: Build and run MyBlog
         run: |
@@ -13810,7 +13812,7 @@ window.themeManager = {
 
 
 ===============================================================================
-EXPORT COMPLETED: Mon Jan 26 08:34:42 PM EST 2026
+EXPORT COMPLETED: Mon Jan 26 08:48:09 PM EST 2026
 Total Files Found: 115
 Files Exported: 115
 Files Skipped: 0 (binary or large files)
