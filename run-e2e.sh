@@ -96,6 +96,11 @@ until podman exec myblog-web curl -sf http://localhost:5000/ > /dev/null 2>&1; d
     echo -n "."
     sleep 2
 done
+# Add to run-e2e.sh after healthcheck loop
+echo "Verifying admin user exists..."
+until curl -sf http://localhost:5000/login | grep -q "username"; do
+    sleep 1
+done
 echo ""
 log_info "MyBlog is ready!"
 

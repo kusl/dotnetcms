@@ -40,9 +40,12 @@ ENV ASPNETCORE_URLS=http://+:5000
 ENV ASPNETCORE_ENVIRONMENT=Production
 ENV ConnectionStrings__DefaultConnection="Data Source=/app/data/myblog.db"
 
-# Switch to non-root user
+# Create data directory for SQLite AND Data Protection keys
+RUN mkdir -p /app/data/keys && \
+    chown -R appuser:appuser /app/data && \
+    chmod -R 755 /app/data
+
+# Ensure the appuser owns the keys directory specifically
 USER appuser
+RUN mkdir -p /app/data/keys  # Create as appuser to ensure ownership
 
-EXPOSE 5000
-
-ENTRYPOINT ["dotnet", "MyBlog.Web.dll"]
