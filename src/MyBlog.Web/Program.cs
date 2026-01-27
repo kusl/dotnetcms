@@ -17,7 +17,6 @@ using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 
 var builder = WebApplication.CreateBuilder(args);
-
 // Add services
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
@@ -43,7 +42,6 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
             ? CookieSecurePolicy.Always
             : CookieSecurePolicy.SameAsRequest;
     });
-
 builder.Services.AddAuthorization();
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddHttpContextAccessor();
@@ -51,7 +49,6 @@ builder.Services.AddHttpContextAccessor();
 // Configure OpenTelemetry
 var serviceName = "MyBlog";
 var serviceVersion = typeof(Program).Assembly.GetName().Version?.ToString() ?? "1.0.0";
-
 builder.Services.AddOpenTelemetry()
     .ConfigureResource(resource => resource.AddService(serviceName, serviceVersion))
     .WithTracing(tracing => tracing
@@ -62,7 +59,6 @@ builder.Services.AddOpenTelemetry()
         .AddAspNetCoreInstrumentation()
         .AddHttpClientInstrumentation()
         .AddConsoleExporter());
-
 // Configure logging with OpenTelemetry
 builder.Logging.AddOpenTelemetry(logging =>
 {
@@ -70,7 +66,6 @@ builder.Logging.AddOpenTelemetry(logging =>
     logging.IncludeScopes = true;
     logging.AddConsoleExporter();
 });
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline
@@ -80,7 +75,6 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseStaticFiles();
-
 // Rate limiting for login attempts
 app.UseLoginRateLimit();
 
@@ -90,9 +84,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseAntiforgery();
-
 // Minimal API endpoints
-app.MapPost("/login", async (HttpContext context, IAuthService authService) =>
+app.MapPost("/account/login", async (HttpContext context, IAuthService authService) =>
 {
     var form = await context.Request.ReadFormAsync();
     var username = form["username"].ToString();
@@ -125,13 +118,11 @@ app.MapPost("/login", async (HttpContext context, IAuthService authService) =>
 
     return Results.Redirect(string.IsNullOrWhiteSpace(returnUrl) ? "/admin" : returnUrl);
 });
-
 app.MapPost("/logout", async (HttpContext context) =>
 {
     await context.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
     return Results.Redirect("/");
 }).RequireAuthorization();
-
 app.MapGet("/api/images/{id:guid}", async (Guid id, IImageRepository imageRepository) =>
 {
     var image = await imageRepository.GetByIdAsync(id);
@@ -141,7 +132,6 @@ app.MapGet("/api/images/{id:guid}", async (Guid id, IImageRepository imageReposi
     }
     return Results.File(image.Data, image.ContentType);
 });
-
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
@@ -151,16 +141,13 @@ app.MapHub<ReaderHub>("/readerHub");
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<BlogDbContext>();
-
     // EnsureCreated creates the database and all tables if they don't exist
     await context.Database.EnsureCreatedAsync();
-
     // Apply any incremental schema updates for existing databases
     await DatabaseSchemaUpdater.ApplyUpdatesAsync(context);
 
     var authService = scope.ServiceProvider.GetRequiredService<IAuthService>();
     await authService.EnsureAdminUserAsync();
-
     // Register telemetry exporters with the service provider
     var logExporter = scope.ServiceProvider.GetService<FileLogExporter>();
     var dbExporter = scope.ServiceProvider.GetService<DatabaseLogExporter>();

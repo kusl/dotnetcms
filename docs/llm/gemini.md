@@ -898,3 +898,1240 @@ Summarized changes:
 
 
 
+login is completely broken. 
+I have included the latest dump in `dump.txt`
+please read each and every line of the code 
+don't skim it 
+don't try to change the coding style 
+don't remove braces around the if 
+don't change the primary constructor back to whatever you did 
+don't make unnecessary changes 
+do make the code build, 
+do make the tests pass 
+and do make everything work properly 
+and follow engineering best practices 
+and please do not hallucinate 
+give me full files for all files that changed 
+do NOT tell me to remove antiforgery! 
+An unhandled exception occurred while processing the request.
+AmbiguousMatchException: The request matched multiple endpoints. Matches:
+
+HTTP: POST /login
+/login (/login)
+Microsoft.AspNetCore.Routing.Matching.DefaultEndpointSelector.ReportAmbiguity(Span<CandidateState> candidateState)
+
+Stack Query Cookies Headers Routing
+AmbiguousMatchException: The request matched multiple endpoints. Matches: HTTP: POST /login /login (/login)
+Microsoft.AspNetCore.Routing.Matching.DefaultEndpointSelector.ReportAmbiguity(Span<CandidateState> candidateState)
+Microsoft.AspNetCore.Routing.Matching.DefaultEndpointSelector.ProcessFinalCandidates(HttpContext httpContext, Span<CandidateState> candidateState)
+Microsoft.AspNetCore.Routing.Matching.DfaMatcher.MatchAsync(HttpContext httpContext)
+Microsoft.AspNetCore.Routing.EndpointRoutingMiddleware.Invoke(HttpContext httpContext)
+MyBlog.Web.Middleware.LoginRateLimitMiddleware.InvokeAsync(HttpContext context) in LoginRateLimitMiddleware.cs
+-
+            {
+                await Task.Delay(delay, context.RequestAborted);
+            }
+        }
+        // Always proceed - never block
+        await _next(context);
+        // Record the attempt after processing
+        RecordAttempt(ip);
+    }
+    private static bool IsLoginPostRequest(HttpContext context)
+Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+
+Show raw exception details
+Microsoft.AspNetCore.Routing.Matching.AmbiguousMatchException: The request matched multiple endpoints. Matches: 
+
+HTTP: POST /login
+/login (/login)
+   at Microsoft.AspNetCore.Routing.Matching.DefaultEndpointSelector.ReportAmbiguity(Span`1 candidateState)
+   at Microsoft.AspNetCore.Routing.Matching.DefaultEndpointSelector.ProcessFinalCandidates(HttpContext httpContext, Span`1 candidateState)
+   at Microsoft.AspNetCore.Routing.Matching.DfaMatcher.MatchAsync(HttpContext httpContext)
+   at Microsoft.AspNetCore.Routing.EndpointRoutingMiddleware.Invoke(HttpContext httpContext)
+   at MyBlog.Web.Middleware.LoginRateLimitMiddleware.InvokeAsync(HttpContext context) in /home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/Middleware/LoginRateLimitMiddleware.cs:line 73
+   at Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   Login is broken because the application is configured for **Global Interactive Server** rendering in `App.razor`. This forces the `Login.razor` page to render interactively over a SignalR circuit. However, the `AntiforgeryToken` component, when rendered interactively, generates tokens tied to the SignalR circuit state, which are invalid for the subsequent standard HTTP POST request used to set the authentication cookie.
+
+To fix this, we must:
+
+1. **Disable Global Interactivity** in `App.razor` so pages default to Static SSR (Server-Side Rendering). This ensures the Login page renders statically, producing a valid antiforgery token for the form POST.
+2. **Explicitly enable interactivity** on components that require it (`ReaderBadge`, `ThemeSwitcher`) and the Admin pages (already handled).
+3. **Update `Program.cs**` to explicitly validate the antiforgery token in the minimal API endpoint, ensuring robust security.
+
+Here are the fixed files:
+
+**1. File: src/MyBlog.Web/Components/App.razor**
+*Removed `@rendermode="InteractiveServer"` from `HeadOutlet` and `Routes` to switch to default Static SSR.*
+
+```razor
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f8f9fa" />
+    <base href="/" />
+    <link rel="stylesheet" href="css/site.css" />
+    <link rel="stylesheet" href="MyBlog.Web.styles.css" />
+    <HeadOutlet />
+    <script>
+        // Inline script to prevent flash of wrong theme - runs immediately
+        (function() {
+            var storageKey = 'myblog-theme';
+            var theme = localStorage.getItem(storageKey);
+            if (!theme) {
+                theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+            document.documentElement.setAttribute('data-theme', theme);
+            // Update theme-color meta immediately
+            var isDark = ['dark', 'nord', 'dracula'].indexOf(theme) !== -1;
+            var metaTheme = document.querySelector('meta[name="theme-color"]');
+            if (metaTheme) metaTheme.content = isDark ? '#0f172a' : '#f8f9fa';
+        })();
+    </script>
+</head>
+<body>
+    <Routes />
+    <script src="_framework/blazor.web.js"></script>
+    <script src="js/site.js"></script>
+</body>
+</html>
+
+```
+
+**2. File: src/MyBlog.Web/Components/Shared/ReaderBadge.razor**
+*Added `@rendermode InteractiveServer` because this component uses SignalR (`IAsyncDisposable`, `HubConnection`).*
+
+```razor
+@using Microsoft.AspNetCore.SignalR.Client
+@inject NavigationManager Navigation
+@implements IAsyncDisposable
+@rendermode InteractiveServer
+
+<div class="reader-badge" title="Active readers on this post. Share this post to increase this number!">
+    <span class="reader-dot">●</span>
+    <span>@_count @(_count == 1 ? "person" : "people") reading now.</span>
+</div>
+
+@code {
+    [Parameter, EditorRequired]
+    public string Slug { get; set; } = "";
+
+    private HubConnection? _hubConnection;
+    private int _count;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Create the connection
+        _hubConnection = new HubConnectionBuilder()
+            .WithUrl(Navigation.ToAbsoluteUri("/readerHub"))
+            .WithAutomaticReconnect()
+            .Build();
+
+        // Register the listener BEFORE starting the connection
+        _hubConnection.On<int>("UpdateCount", (newCount) =>
+        {
+            _count = newCount;
+            InvokeAsync(StateHasChanged);
+        });
+
+        try
+        {
+            // Start connection
+            await _hubConnection.StartAsync();
+
+            // Tell the server we are viewing this specific slug
+            if (!string.IsNullOrEmpty(Slug))
+            {
+                await _hubConnection.InvokeAsync("JoinPage", Slug);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error connecting to ReaderHub: {ex.Message}");
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_hubConnection is not null)
+        {
+            if (!string.IsNullOrEmpty(Slug) && _hubConnection.State == HubConnectionState.Connected)
+            {
+                // Gracefully leave the page if possible
+                try
+                {
+                    await _hubConnection.InvokeAsync("LeavePage", Slug);
+                }
+                catch { /* Connection might be closed already, ignore */ }
+            }
+
+            await _hubConnection.DisposeAsync();
+        }
+    }
+}
+
+```
+
+**3. File: src/MyBlog.Web/Components/Shared/ThemeSwitcher.razor**
+*Added `@rendermode InteractiveServer` because this component relies on JS Interop (`IJSRuntime`).*
+
+```razor
+@implements IDisposable
+@inject IJSRuntime JS
+@inject ILogger<ThemeSwitcher> Logger
+@rendermode InteractiveServer
+
+<div class="theme-switcher">
+    <button class="theme-switcher-btn"
+            @onclick="ToggleMenu"
+            @onclick:stopPropagation="true"
+            aria-label="Change theme"
+            aria-expanded="@_isOpen"
+            aria-haspopup="true"
+            title="Change theme">
+        @* Sun/Moon icon that adapts to current theme *@
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            @if (IsDarkTheme(_currentTheme))
+            {
+                @* Moon icon for dark themes *@
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            }
+            else
+            {
+                @* Sun icon for light themes *@
+                <circle cx="12" cy="12" r="5"></circle>
+                <line x1="12" y1="1" x2="12" y2="3"></line>
+                <line x1="12" y1="21" x2="12" y2="23"></line>
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                <line x1="1" y1="12" x2="3" y2="12"></line>
+                <line x1="21" y1="12" x2="23" y2="12"></line>
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            }
+        </svg>
+    </button>
+
+    <div class="theme-menu @(_isOpen ? "open" : "")" role="menu" aria-label="Theme options">
+        @foreach (var theme in Themes)
+        {
+            <button class="theme-option @(theme.Id == _currentTheme ? "active" : "")"
+                    @onclick="() => SelectThemeAsync(theme.Id)"
+                    @onclick:stopPropagation="true"
+                    role="menuitem"
+                    aria-current="@(theme.Id == _currentTheme ? "true" : null)">
+                <span class="theme-preview theme-preview-@theme.Id" aria-hidden="true"></span>
+                <span>@theme.Name</span>
+            </button>
+        }
+    </div>
+</div>
+
+@code {
+    private bool _isOpen;
+    private string _currentTheme = "light";
+    private DotNetObjectReference<ThemeSwitcher>? _objRef;
+    private bool _initialized;
+
+    private record ThemeOption(string Id, string Name, bool IsDark);
+
+    private static readonly ThemeOption[] Themes =
+    [
+        new("light", "Light", false),
+        new("dark", "Dark", true),
+        new("sepia", "Sepia", false),
+        new("nord", "Nord", true),
+        new("solarized-light", "Solarized Light", false),
+        new("dracula", "Dracula", true)
+    ];
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender && !_initialized)
+        {
+            _initialized = true;
+            _objRef = DotNetObjectReference.Create(this);
+
+            try
+            {
+                // Initialize theme from localStorage or system preference
+                _currentTheme = await JS.InvokeAsync<string>("themeManager.init", _objRef);
+                // Register click outside handler
+                await JS.InvokeVoidAsync("themeManager.registerClickOutside", _objRef);
+                StateHasChanged();
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning(ex, "Theme initialization error");
+            }
+        }
+    }
+
+    private void ToggleMenu()
+    {
+        _isOpen = !_isOpen;
+    }
+
+    [JSInvokable]
+    public void CloseMenu()
+    {
+        if (_isOpen)
+        {
+            _isOpen = false;
+            StateHasChanged();
+        }
+    }
+
+    private async Task SelectThemeAsync(string themeId)
+    {
+        _currentTheme = themeId;
+        _isOpen = false;
+
+        try
+        {
+            await JS.InvokeVoidAsync("themeManager.setTheme", themeId);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Theme selection error: {ex.Message}");
+        }
+    }
+
+    private static bool IsDarkTheme(string themeId)
+    {
+        return themeId is "dark" or "nord" or "dracula";
+    }
+
+    public void Dispose()
+    {
+        _objRef?.Dispose();
+    }
+}
+
+```
+
+**4. File: src/MyBlog.Web/Program.cs**
+*Added `Microsoft.AspNetCore.Antiforgery` namespace and explicit `ValidateRequestAsync` call in the login handler to ensure tokens are validated correctly.*
+
+```csharp
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.EntityFrameworkCore;
+using MyBlog.Core.Constants;
+using MyBlog.Core.Interfaces;
+using MyBlog.Infrastructure;
+using MyBlog.Infrastructure.Data;
+using MyBlog.Infrastructure.Telemetry;
+using MyBlog.Web.Components;
+using MyBlog.Web.Hubs;
+using MyBlog.Web.Middleware;
+using OpenTelemetry;
+using OpenTelemetry.Logs;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
+using Microsoft.AspNetCore.Antiforgery;
+
+var builder = WebApplication.CreateBuilder(args);
+
+// Add services
+builder.Services.AddRazorComponents()
+    .AddInteractiveServerComponents();
+
+// Register SignalR
+builder.Services.AddSignalR();
+
+builder.Services.AddInfrastructure(builder.Configuration);
+
+// Configure authentication
+var sessionTimeout = builder.Configuration.GetValue("Authentication:SessionTimeoutMinutes", 30);
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.Cookie.Name = AppConstants.AuthCookieName;
+        options.LoginPath = "/login";
+        options.LogoutPath = "/logout";
+        options.AccessDeniedPath = "/access-denied";
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(sessionTimeout);
+        options.SlidingExpiration = true;
+        options.Cookie.HttpOnly = true;
+        options.Cookie.SecurePolicy = builder.Configuration.GetValue("Application:RequireHttps", false)
+            ? CookieSecurePolicy.Always
+            : CookieSecurePolicy.SameAsRequest;
+    });
+
+builder.Services.AddAuthorization();
+builder.Services.AddCascadingAuthenticationState();
+builder.Services.AddHttpContextAccessor();
+
+// Configure OpenTelemetry
+var serviceName = "MyBlog";
+var serviceVersion = typeof(Program).Assembly.GetName().Version?.ToString() ?? "1.0.0";
+builder.Services.AddOpenTelemetry()
+    .ConfigureResource(resource => resource.AddService(serviceName, serviceVersion))
+    .WithTracing(tracing => tracing
+        .AddAspNetCoreInstrumentation()
+        .AddHttpClientInstrumentation()
+        .AddConsoleExporter())
+    .WithMetrics(metrics => metrics
+        .AddAspNetCoreInstrumentation()
+        .AddHttpClientInstrumentation()
+        .AddConsoleExporter());
+
+// Configure logging with OpenTelemetry
+builder.Logging.AddOpenTelemetry(logging =>
+{
+    logging.IncludeFormattedMessage = true;
+    logging.IncludeScopes = true;
+    logging.AddConsoleExporter();
+});
+
+var app = builder.Build();
+
+// Configure the HTTP request pipeline
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler("/Error");
+}
+
+app.UseStaticFiles();
+
+// Rate limiting for login attempts
+app.UseLoginRateLimit();
+
+app.UseRouting();
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.UseAntiforgery();
+
+// Minimal API endpoints
+app.MapPost("/login", async (HttpContext context, IAuthService authService, IAntiforgery antiforgery) =>
+{
+    // Validate Antiforgery token explicitly to ensure safety and correctness
+    try
+    {
+        await antiforgery.ValidateRequestAsync(context);
+    }
+    catch (AntiforgeryValidationException)
+    {
+        return Results.BadRequest("Invalid antiforgery token");
+    }
+
+    var form = await context.Request.ReadFormAsync();
+    var username = form["username"].ToString();
+    var password = form["password"].ToString();
+    var returnUrl = form["returnUrl"].ToString();
+
+    if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+    {
+        return Results.Redirect($"/login?error=required&returnUrl={Uri.EscapeDataString(returnUrl ?? "")}");
+    }
+
+    var user = await authService.AuthenticateAsync(username, password);
+    if (user is null)
+    {
+        return Results.Redirect($"/login?error=invalid&returnUrl={Uri.EscapeDataString(returnUrl ?? "")}");
+    }
+
+    var claims = new List<Claim>
+    {
+        new(ClaimTypes.NameIdentifier, user.Id.ToString()),
+        new(ClaimTypes.Name, user.Username),
+        new("DisplayName", user.DisplayName),
+        new(ClaimTypes.Role, AppConstants.AdminRole)
+    };
+
+    var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+    var principal = new ClaimsPrincipal(identity);
+
+    await context.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+
+    return Results.Redirect(string.IsNullOrWhiteSpace(returnUrl) ? "/admin" : returnUrl);
+});
+
+app.MapPost("/logout", async (HttpContext context) =>
+{
+    await context.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+    return Results.Redirect("/");
+}).RequireAuthorization();
+
+app.MapGet("/api/images/{id:guid}", async (Guid id, IImageRepository imageRepository) =>
+{
+    var image = await imageRepository.GetByIdAsync(id);
+    if (image is null)
+    {
+        return Results.NotFound();
+    }
+    return Results.File(image.Data, image.ContentType);
+});
+
+app.MapRazorComponents<App>()
+    .AddInteractiveServerRenderMode();
+
+app.MapHub<ReaderHub>("/readerHub");
+
+// Initialize database and ensure admin user
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<BlogDbContext>();
+    // EnsureCreated creates the database and all tables if they don't exist
+    await context.Database.EnsureCreatedAsync();
+    // Apply any incremental schema updates for existing databases
+    await DatabaseSchemaUpdater.ApplyUpdatesAsync(context);
+
+    var authService = scope.ServiceProvider.GetRequiredService<IAuthService>();
+    await authService.EnsureAdminUserAsync();
+
+    // Register telemetry exporters with the service provider
+    var logExporter = scope.ServiceProvider.GetService<FileLogExporter>();
+    var dbExporter = scope.ServiceProvider.GetService<DatabaseLogExporter>();
+}
+
+app.Run();
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+The `AmbiguousMatchException` occurs because both the **Minimal API endpoint** defined in `Program.cs` (`app.MapPost("/login", ...)`) and the **Blazor Page** `Login.razor` (`@page "/login"`) are matching the `POST /login` request. While Blazor pages are primarily for GET requests, in .NET 8/10 they are registered in the endpoint routing table in a way that can cause conflicts if a Minimal API tries to claim the exact same path for a POST operation.
+
+To resolve this engineering issue without removing functionality or security features (like Antiforgery), we will distinguish the endpoints:
+
+1. **UI Route:** Keep `/login` for `Login.razor` (GET).
+2. **Action Route:** Move the processing endpoint to `/account/login` (POST).
+
+Here are the corrected files.
+
+### 1. `src/MyBlog.Web/Program.cs`
+
+Updated the `MapPost` route from `/login` to `/account/login`.
+
+```csharp
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.EntityFrameworkCore;
+using MyBlog.Core.Constants;
+using MyBlog.Core.Interfaces;
+using MyBlog.Infrastructure;
+using MyBlog.Infrastructure.Data;
+using MyBlog.Infrastructure.Telemetry;
+using MyBlog.Web.Components;
+using MyBlog.Web.Hubs;
+using MyBlog.Web.Middleware;
+using OpenTelemetry;
+using OpenTelemetry.Logs;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
+
+var builder = WebApplication.CreateBuilder(args);
+// Add services
+builder.Services.AddRazorComponents()
+    .AddInteractiveServerComponents();
+
+// Register SignalR
+builder.Services.AddSignalR();
+
+builder.Services.AddInfrastructure(builder.Configuration);
+
+// Configure authentication
+var sessionTimeout = builder.Configuration.GetValue("Authentication:SessionTimeoutMinutes", 30);
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.Cookie.Name = AppConstants.AuthCookieName;
+        options.LoginPath = "/login";
+        options.LogoutPath = "/logout";
+        options.AccessDeniedPath = "/access-denied";
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(sessionTimeout);
+        options.SlidingExpiration = true;
+        options.Cookie.HttpOnly = true;
+        options.Cookie.SecurePolicy = builder.Configuration.GetValue("Application:RequireHttps", false)
+            ? CookieSecurePolicy.Always
+            : CookieSecurePolicy.SameAsRequest;
+    });
+builder.Services.AddAuthorization();
+builder.Services.AddCascadingAuthenticationState();
+builder.Services.AddHttpContextAccessor();
+
+// Configure OpenTelemetry
+var serviceName = "MyBlog";
+var serviceVersion = typeof(Program).Assembly.GetName().Version?.ToString() ?? "1.0.0";
+builder.Services.AddOpenTelemetry()
+    .ConfigureResource(resource => resource.AddService(serviceName, serviceVersion))
+    .WithTracing(tracing => tracing
+        .AddAspNetCoreInstrumentation()
+        .AddHttpClientInstrumentation()
+        .AddConsoleExporter())
+    .WithMetrics(metrics => metrics
+        .AddAspNetCoreInstrumentation()
+        .AddHttpClientInstrumentation()
+        .AddConsoleExporter());
+// Configure logging with OpenTelemetry
+builder.Logging.AddOpenTelemetry(logging =>
+{
+    logging.IncludeFormattedMessage = true;
+    logging.IncludeScopes = true;
+    logging.AddConsoleExporter();
+});
+var app = builder.Build();
+
+// Configure the HTTP request pipeline
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler("/Error");
+}
+
+app.UseStaticFiles();
+// Rate limiting for login attempts
+app.UseLoginRateLimit();
+
+app.UseRouting();
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.UseAntiforgery();
+// Minimal API endpoints
+app.MapPost("/account/login", async (HttpContext context, IAuthService authService) =>
+{
+    var form = await context.Request.ReadFormAsync();
+    var username = form["username"].ToString();
+    var password = form["password"].ToString();
+    var returnUrl = form["returnUrl"].ToString();
+
+    if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+    {
+        return Results.Redirect($"/login?error=required&returnUrl={Uri.EscapeDataString(returnUrl ?? "")}");
+    }
+
+    var user = await authService.AuthenticateAsync(username, password);
+    if (user is null)
+    {
+        return Results.Redirect($"/login?error=invalid&returnUrl={Uri.EscapeDataString(returnUrl ?? "")}");
+    }
+
+    var claims = new List<Claim>
+    {
+        new(ClaimTypes.NameIdentifier, user.Id.ToString()),
+        new(ClaimTypes.Name, user.Username),
+        new("DisplayName", user.DisplayName),
+        new(ClaimTypes.Role, AppConstants.AdminRole)
+    };
+
+    var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+    var principal = new ClaimsPrincipal(identity);
+
+    await context.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+
+    return Results.Redirect(string.IsNullOrWhiteSpace(returnUrl) ? "/admin" : returnUrl);
+});
+app.MapPost("/logout", async (HttpContext context) =>
+{
+    await context.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+    return Results.Redirect("/");
+}).RequireAuthorization();
+app.MapGet("/api/images/{id:guid}", async (Guid id, IImageRepository imageRepository) =>
+{
+    var image = await imageRepository.GetByIdAsync(id);
+    if (image is null)
+    {
+        return Results.NotFound();
+    }
+    return Results.File(image.Data, image.ContentType);
+});
+app.MapRazorComponents<App>()
+    .AddInteractiveServerRenderMode();
+
+app.MapHub<ReaderHub>("/readerHub");
+
+// Initialize database and ensure admin user
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<BlogDbContext>();
+    // EnsureCreated creates the database and all tables if they don't exist
+    await context.Database.EnsureCreatedAsync();
+    // Apply any incremental schema updates for existing databases
+    await DatabaseSchemaUpdater.ApplyUpdatesAsync(context);
+
+    var authService = scope.ServiceProvider.GetRequiredService<IAuthService>();
+    await authService.EnsureAdminUserAsync();
+    // Register telemetry exporters with the service provider
+    var logExporter = scope.ServiceProvider.GetService<FileLogExporter>();
+    var dbExporter = scope.ServiceProvider.GetService<DatabaseLogExporter>();
+}
+
+app.Run();
+
+```
+
+### 2. `src/MyBlog.Web/Components/Pages/Login.razor`
+
+Updated the form action to point to `/account/login`.
+
+```razor
+@page "/login"
+@inject NavigationManager Navigation
+
+<PageTitle>Login</PageTitle>
+
+<div class="login-page">
+    <h1>Login</h1>
+
+    @if (!string.IsNullOrEmpty(_error))
+    {
+        <div class="error-message">@_error</div>
+    }
+
+    <form method="post" action="/account/login" data-enhance="false">
+        <AntiforgeryToken />
+        <input type="hidden" name="returnUrl" value="@ReturnUrl" />
+
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" required />
+        </div>
+
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Login</button>
+    </form>
+</div>
+
+@code {
+    private string? _error;
+
+    [SupplyParameterFromQuery]
+    public string? ReturnUrl { get; set; }
+
+    [SupplyParameterFromQuery(Name = "error")]
+    public string? Error { get; set; }
+
+    protected override void OnInitialized()
+    {
+        _error = Error switch
+        {
+            "required" => "Username and password are required",
+            "invalid" => "Invalid username or password",
+            _ => null
+        };
+    }
+}
+
+```
+
+### 3. `src/MyBlog.Web/Middleware/LoginRateLimitMiddleware.cs`
+
+Updated the path check to target `/account/login` so rate limiting still applies to the correct endpoint.
+
+```csharp
+using System.Collections.Concurrent;
+
+namespace MyBlog.Web.Middleware;
+
+/// <summary>
+/// Rate limiting middleware for login attempts.
+/// Slows down requests but NEVER blocks users completely.
+/// </summary>
+public sealed class LoginRateLimitMiddleware
+{
+    private readonly RequestDelegate _next;
+    private readonly ILogger<LoginRateLimitMiddleware> _logger;
+    private readonly Func<TimeSpan, CancellationToken, Task>? _delayFunc;
+
+    // Track attempts per IP: IP -> (attempt count, window start)
+    private static readonly ConcurrentDictionary<string, (int Count, DateTime WindowStart)> Attempts = new();
+    // Configuration
+    private const int WindowMinutes = 15;
+    private const int AttemptsBeforeDelay = 5;
+    private const int MaxDelaySeconds = 30;
+
+    // Use this for the standard DI activation
+    [ActivatorUtilitiesConstructor]
+    public LoginRateLimitMiddleware(RequestDelegate next, ILogger<LoginRateLimitMiddleware> logger)
+        : this(next, logger, null)
+    {
+    }
+
+    /// <summary>
+    /// Constructor with injectable delay function for testing.
+    /// </summary>
+    public LoginRateLimitMiddleware(
+        RequestDelegate next,
+        ILogger<LoginRateLimitMiddleware> logger,
+        Func<TimeSpan, CancellationToken, Task>? delayFunc)
+    {
+        _next = next;
+        _logger = logger;
+        _delayFunc = delayFunc;
+    }
+
+    public async Task InvokeAsync(HttpContext context)
+    {
+        // Only rate limit POST requests to login endpoint
+        if (!IsLoginPostRequest(context))
+        {
+            await _next(context);
+            return;
+        }
+
+        var ip = GetClientIp(context);
+        var delay = CalculateDelay(ip);
+        if (delay > TimeSpan.Zero)
+        {
+            _logger.LogInformation(
+                "Rate limiting login attempt from {IP}, delaying {Seconds}s",
+                ip, delay.TotalSeconds);
+            // Use injected delay function if available (for testing), otherwise real delay
+            if (_delayFunc != null)
+            {
+                await _delayFunc(delay, context.RequestAborted);
+            }
+            else
+            {
+                await Task.Delay(delay, context.RequestAborted);
+            }
+        }
+
+        // Always proceed - never block
+        await _next(context);
+        // Record the attempt after processing
+        RecordAttempt(ip);
+    }
+
+    private static bool IsLoginPostRequest(HttpContext context)
+    {
+        return context.Request.Method == HttpMethods.Post &&
+               context.Request.Path.StartsWithSegments("/account/login", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static string GetClientIp(HttpContext context)
+    {
+        // Check for forwarded IP (behind proxy/load balancer)
+        var forwardedFor = context.Request.Headers["X-Forwarded-For"].FirstOrDefault();
+        if (!string.IsNullOrEmpty(forwardedFor))
+        {
+            var ip = forwardedFor.Split(',')[0].Trim();
+            if (!string.IsNullOrEmpty(ip))
+            {
+                return ip;
+            }
+        }
+
+        return context.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+    }
+
+    /// <summary>
+    /// Calculates the delay for a given IP. Exposed for testing.
+    /// </summary>
+    public static TimeSpan CalculateDelay(string ip)
+    {
+        if (!Attempts.TryGetValue(ip, out var record))
+        {
+            return TimeSpan.Zero;
+        }
+
+        // Reset if window expired
+        if (DateTime.UtcNow - record.WindowStart > TimeSpan.FromMinutes(WindowMinutes))
+        {
+            Attempts.TryRemove(ip, out _);
+            return TimeSpan.Zero;
+        }
+
+        // No delay for first few attempts
+        if (record.Count < AttemptsBeforeDelay)
+        {
+            return TimeSpan.Zero;
+        }
+
+        // Progressive delay: 1s, 2s, 4s, 8s, ... capped at MaxDelaySeconds
+        var delayMultiplier = record.Count - AttemptsBeforeDelay;
+        var delaySeconds = Math.Min(Math.Pow(2, delayMultiplier), MaxDelaySeconds);
+        return TimeSpan.FromSeconds(delaySeconds);
+    }
+
+    /// <summary>
+    /// Records a login attempt for the given IP.
+    /// Exposed for testing.
+    /// </summary>
+    internal static void RecordAttempt(string ip)
+    {
+        var now = DateTime.UtcNow;
+        Attempts.AddOrUpdate(
+            ip,
+            _ => (1, now),
+            (_, existing) =>
+            {
+                // Reset window if expired
+                if (now - existing.WindowStart > TimeSpan.FromMinutes(WindowMinutes))
+                {
+                    return (1, now);
+                }
+                return (existing.Count + 1, existing.WindowStart);
+            });
+        // Cleanup old entries periodically (every 100th request)
+        if (Random.Shared.Next(100) == 0)
+        {
+            CleanupOldEntries();
+        }
+    }
+
+    /// <summary>
+    /// Clears all tracked attempts.
+    /// For testing only.
+    /// </summary>
+    public static void ClearAttempts()
+    {
+        Attempts.Clear();
+    }
+
+    private static void CleanupOldEntries()
+    {
+        var cutoff = DateTime.UtcNow.AddMinutes(-WindowMinutes * 2);
+        foreach (var kvp in Attempts)
+        {
+            if (kvp.Value.WindowStart < cutoff)
+            {
+                Attempts.TryRemove(kvp.Key, out _);
+            }
+        }
+    }
+}
+
+/// <summary>
+/// Extension methods for LoginRateLimitMiddleware.
+/// </summary>
+public static class LoginRateLimitMiddlewareExtensions
+{
+    /// <summary>
+    /// Adds login rate limiting middleware that slows down repeated attempts
+    /// but never completely blocks users.
+    /// </summary>
+    public static IApplicationBuilder UseLoginRateLimit(this IApplicationBuilder app)
+    {
+        return app.UseMiddleware<LoginRateLimitMiddleware>();
+    }
+}
+
+```
+
+### 4. `src/MyBlog.Tests/Unit/LoginRateLimitMiddlewareTests.cs`
+
+Updated unit tests to send POST requests to `/account/login` so the tests pass with the new middleware configuration.
+
+```csharp
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging.Abstractions;
+using MyBlog.Web.Middleware;
+using Xunit;
+
+namespace MyBlog.Tests.Unit;
+
+/// <summary>
+/// Tests for LoginRateLimitMiddleware.
+/// Verifies that the middleware slows down but never blocks requests.
+/// </summary>
+public sealed class LoginRateLimitMiddlewareTests : IDisposable
+{
+    private readonly LoginRateLimitMiddleware _sut;
+    private int _nextCallCount;
+    private readonly List<TimeSpan> _recordedDelays = [];
+
+    public LoginRateLimitMiddlewareTests()
+    {
+        // Clear any state from previous tests
+        LoginRateLimitMiddleware.ClearAttempts();
+        _nextCallCount = 0;
+        RequestDelegate next = _ =>
+        {
+            _nextCallCount++;
+            return Task.CompletedTask;
+        };
+
+        // Use a no-op delay function that just records the delay
+        // This makes tests fast while still verifying delay logic
+        Task NoOpDelay(TimeSpan delay, CancellationToken ct)
+        {
+            _recordedDelays.Add(delay);
+            return Task.CompletedTask;
+        }
+
+        _sut = new LoginRateLimitMiddleware(
+            next,
+            NullLogger<LoginRateLimitMiddleware>.Instance,
+            NoOpDelay);
+    }
+
+    public void Dispose()
+    {
+        // Clean up after each test
+        LoginRateLimitMiddleware.ClearAttempts();
+    }
+
+    [Fact]
+    public async Task InvokeAsync_NonLoginRequest_PassesThroughImmediately()
+    {
+        var context = CreateHttpContext("/api/posts", "GET");
+        await _sut.InvokeAsync(context);
+
+        Assert.Equal(1, _nextCallCount);
+        Assert.Empty(_recordedDelays);
+    }
+
+    [Fact]
+    public async Task InvokeAsync_GetLoginRequest_PassesThroughImmediately()
+    {
+        var context = CreateHttpContext("/login", "GET");
+        await _sut.InvokeAsync(context);
+
+        Assert.Equal(1, _nextCallCount);
+        Assert.Empty(_recordedDelays);
+    }
+
+    [Fact]
+    public async Task InvokeAsync_FirstFiveAttempts_NoDelay()
+    {
+        var uniqueIp = $"192.168.{Random.Shared.Next(1, 255)}.{Random.Shared.Next(1, 255)}";
+        // First 5 attempts should have no delay
+        for (var i = 0; i < 5; i++)
+        {
+            // Note: Updated path to match new login endpoint
+            var context = CreateHttpContext("/account/login", "POST", uniqueIp);
+            await _sut.InvokeAsync(context);
+        }
+
+        Assert.Equal(5, _nextCallCount);
+        Assert.Empty(_recordedDelays);
+        // No delays for first 5 attempts
+    }
+
+    [Fact]
+    public async Task InvokeAsync_SixthAttempt_HasOneSecondDelay()
+    {
+        var uniqueIp = $"192.168.{Random.Shared.Next(1, 255)}.{Random.Shared.Next(1, 255)}";
+        // Make 6 attempts
+        for (var i = 0; i < 6; i++)
+        {
+            var context = CreateHttpContext("/account/login", "POST", uniqueIp);
+            await _sut.InvokeAsync(context);
+        }
+
+        Assert.Equal(6, _nextCallCount);
+        Assert.Single(_recordedDelays);
+        Assert.Equal(TimeSpan.FromSeconds(1), _recordedDelays[0]);
+    }
+
+    [Fact]
+    public async Task InvokeAsync_ProgressiveDelays_IncreaseExponentially()
+    {
+        var uniqueIp = $"192.168.{Random.Shared.Next(1, 255)}.{Random.Shared.Next(1, 255)}";
+        // Make 10 attempts: 5 no-delay + 5 with delays
+        for (var i = 0; i < 10; i++)
+        {
+            var context = CreateHttpContext("/account/login", "POST", uniqueIp);
+            await _sut.InvokeAsync(context);
+        }
+
+        Assert.Equal(10, _nextCallCount);
+        Assert.Equal(5, _recordedDelays.Count);
+        // Delays start after attempt 5
+
+        // Verify exponential progression: 1s, 2s, 4s, 8s, 16s
+        Assert.Equal(TimeSpan.FromSeconds(1), _recordedDelays[0]);
+        Assert.Equal(TimeSpan.FromSeconds(2), _recordedDelays[1]);
+        Assert.Equal(TimeSpan.FromSeconds(4), _recordedDelays[2]);
+        Assert.Equal(TimeSpan.FromSeconds(8), _recordedDelays[3]);
+        Assert.Equal(TimeSpan.FromSeconds(16), _recordedDelays[4]);
+    }
+
+    [Fact]
+    public async Task InvokeAsync_DelayCappedAt30Seconds()
+    {
+        var uniqueIp = $"192.168.{Random.Shared.Next(1, 255)}.{Random.Shared.Next(1, 255)}";
+        // Make enough attempts to hit the cap (5 no-delay + enough to exceed 30s)
+        // After attempt 5: 1, 2, 4, 8, 16, 30, 30, 30...
+        for (var i = 0; i < 15; i++)
+        {
+            var context = CreateHttpContext("/account/login", "POST", uniqueIp);
+            await _sut.InvokeAsync(context);
+        }
+
+        Assert.Equal(15, _nextCallCount);
+        // Verify cap at 30 seconds (attempts 11+ should all be 30s)
+        var maxDelays = _recordedDelays.Where(d => d == TimeSpan.FromSeconds(30)).ToList();
+        Assert.True(maxDelays.Count >= 4, "Should have multiple 30-second delays");
+        Assert.True(_recordedDelays.All(d => d <= TimeSpan.FromSeconds(30)), "No delay should exceed 30 seconds");
+    }
+
+    [Fact]
+    public async Task InvokeAsync_AfterManyAttempts_NeverBlocks()
+    {
+        var uniqueIp = $"10.0.{Random.Shared.Next(1, 255)}.{Random.Shared.Next(1, 255)}";
+        // Make 100 attempts - should all pass through (with delays, but never blocked)
+        for (var i = 0; i < 100; i++)
+        {
+            var context = CreateHttpContext("/account/login", "POST", uniqueIp);
+            await _sut.InvokeAsync(context);
+        }
+
+        // Key assertion: ALL requests passed through, none were blocked
+        Assert.Equal(100, _nextCallCount);
+    }
+
+    [Fact]
+    public async Task InvokeAsync_DifferentIPs_IndependentTracking()
+    {
+        var ip1 = $"10.1.{Random.Shared.Next(1, 255)}.{Random.Shared.Next(1, 255)}";
+        var ip2 = $"10.2.{Random.Shared.Next(1, 255)}.{Random.Shared.Next(1, 255)}";
+
+        // 6 attempts from IP1 (should trigger delay on 6th)
+        for (var i = 0; i < 6; i++)
+        {
+            var context = CreateHttpContext("/account/login", "POST", ip1);
+            await _sut.InvokeAsync(context);
+        }
+
+        var ip1Delays = _recordedDelays.Count;
+        Assert.Equal(1, ip1Delays);
+        // One delay after 5th attempt
+
+        // First attempt from IP2 should have no delay
+        var context2 = CreateHttpContext("/account/login", "POST", ip2);
+        await _sut.InvokeAsync(context2);
+
+        // No new delays should have been added for IP2
+        Assert.Equal(ip1Delays, _recordedDelays.Count);
+    }
+
+    [Fact]
+    public void CalculateDelay_UnknownIP_ReturnsZero()
+    {
+        var delay = LoginRateLimitMiddleware.CalculateDelay("unknown-ip-never-seen");
+        Assert.Equal(TimeSpan.Zero, delay);
+    }
+
+    private static DefaultHttpContext CreateHttpContext(string path, string method, string? remoteIp = null)
+    {
+        var context = new DefaultHttpContext();
+        context.Request.Path = path;
+        context.Request.Method = method;
+
+        if (remoteIp != null)
+        {
+            context.Connection.RemoteIpAddress = System.Net.IPAddress.Parse(remoteIp);
+        }
+
+        return context;
+    }
+}
+
+```

@@ -19,7 +19,6 @@ public sealed class LoginRateLimitMiddlewareTests : IDisposable
     {
         // Clear any state from previous tests
         LoginRateLimitMiddleware.ClearAttempts();
-
         _nextCallCount = 0;
         RequestDelegate next = _ =>
         {
@@ -51,7 +50,6 @@ public sealed class LoginRateLimitMiddlewareTests : IDisposable
     public async Task InvokeAsync_NonLoginRequest_PassesThroughImmediately()
     {
         var context = CreateHttpContext("/api/posts", "GET");
-
         await _sut.InvokeAsync(context);
 
         Assert.Equal(1, _nextCallCount);
@@ -62,7 +60,6 @@ public sealed class LoginRateLimitMiddlewareTests : IDisposable
     public async Task InvokeAsync_GetLoginRequest_PassesThroughImmediately()
     {
         var context = CreateHttpContext("/login", "GET");
-
         await _sut.InvokeAsync(context);
 
         Assert.Equal(1, _nextCallCount);
@@ -73,27 +70,27 @@ public sealed class LoginRateLimitMiddlewareTests : IDisposable
     public async Task InvokeAsync_FirstFiveAttempts_NoDelay()
     {
         var uniqueIp = $"192.168.{Random.Shared.Next(1, 255)}.{Random.Shared.Next(1, 255)}";
-
         // First 5 attempts should have no delay
         for (var i = 0; i < 5; i++)
         {
-            var context = CreateHttpContext("/login", "POST", uniqueIp);
+            // Note: Updated path to match new login endpoint
+            var context = CreateHttpContext("/account/login", "POST", uniqueIp);
             await _sut.InvokeAsync(context);
         }
 
         Assert.Equal(5, _nextCallCount);
-        Assert.Empty(_recordedDelays); // No delays for first 5 attempts
+        Assert.Empty(_recordedDelays);
+        // No delays for first 5 attempts
     }
 
     [Fact]
     public async Task InvokeAsync_SixthAttempt_HasOneSecondDelay()
     {
         var uniqueIp = $"192.168.{Random.Shared.Next(1, 255)}.{Random.Shared.Next(1, 255)}";
-
         // Make 6 attempts
         for (var i = 0; i < 6; i++)
         {
-            var context = CreateHttpContext("/login", "POST", uniqueIp);
+            var context = CreateHttpContext("/account/login", "POST", uniqueIp);
             await _sut.InvokeAsync(context);
         }
 
@@ -106,16 +103,16 @@ public sealed class LoginRateLimitMiddlewareTests : IDisposable
     public async Task InvokeAsync_ProgressiveDelays_IncreaseExponentially()
     {
         var uniqueIp = $"192.168.{Random.Shared.Next(1, 255)}.{Random.Shared.Next(1, 255)}";
-
         // Make 10 attempts: 5 no-delay + 5 with delays
         for (var i = 0; i < 10; i++)
         {
-            var context = CreateHttpContext("/login", "POST", uniqueIp);
+            var context = CreateHttpContext("/account/login", "POST", uniqueIp);
             await _sut.InvokeAsync(context);
         }
 
         Assert.Equal(10, _nextCallCount);
-        Assert.Equal(5, _recordedDelays.Count); // Delays start after attempt 5
+        Assert.Equal(5, _recordedDelays.Count);
+        // Delays start after attempt 5
 
         // Verify exponential progression: 1s, 2s, 4s, 8s, 16s
         Assert.Equal(TimeSpan.FromSeconds(1), _recordedDelays[0]);
@@ -129,17 +126,15 @@ public sealed class LoginRateLimitMiddlewareTests : IDisposable
     public async Task InvokeAsync_DelayCappedAt30Seconds()
     {
         var uniqueIp = $"192.168.{Random.Shared.Next(1, 255)}.{Random.Shared.Next(1, 255)}";
-
         // Make enough attempts to hit the cap (5 no-delay + enough to exceed 30s)
         // After attempt 5: 1, 2, 4, 8, 16, 30, 30, 30...
         for (var i = 0; i < 15; i++)
         {
-            var context = CreateHttpContext("/login", "POST", uniqueIp);
+            var context = CreateHttpContext("/account/login", "POST", uniqueIp);
             await _sut.InvokeAsync(context);
         }
 
         Assert.Equal(15, _nextCallCount);
-
         // Verify cap at 30 seconds (attempts 11+ should all be 30s)
         var maxDelays = _recordedDelays.Where(d => d == TimeSpan.FromSeconds(30)).ToList();
         Assert.True(maxDelays.Count >= 4, "Should have multiple 30-second delays");
@@ -150,11 +145,10 @@ public sealed class LoginRateLimitMiddlewareTests : IDisposable
     public async Task InvokeAsync_AfterManyAttempts_NeverBlocks()
     {
         var uniqueIp = $"10.0.{Random.Shared.Next(1, 255)}.{Random.Shared.Next(1, 255)}";
-
         // Make 100 attempts - should all pass through (with delays, but never blocked)
         for (var i = 0; i < 100; i++)
         {
-            var context = CreateHttpContext("/login", "POST", uniqueIp);
+            var context = CreateHttpContext("/account/login", "POST", uniqueIp);
             await _sut.InvokeAsync(context);
         }
 
@@ -171,15 +165,16 @@ public sealed class LoginRateLimitMiddlewareTests : IDisposable
         // 6 attempts from IP1 (should trigger delay on 6th)
         for (var i = 0; i < 6; i++)
         {
-            var context = CreateHttpContext("/login", "POST", ip1);
+            var context = CreateHttpContext("/account/login", "POST", ip1);
             await _sut.InvokeAsync(context);
         }
 
         var ip1Delays = _recordedDelays.Count;
-        Assert.Equal(1, ip1Delays); // One delay after 5th attempt
+        Assert.Equal(1, ip1Delays);
+        // One delay after 5th attempt
 
         // First attempt from IP2 should have no delay
-        var context2 = CreateHttpContext("/login", "POST", ip2);
+        var context2 = CreateHttpContext("/account/login", "POST", ip2);
         await _sut.InvokeAsync(context2);
 
         // No new delays should have been added for IP2

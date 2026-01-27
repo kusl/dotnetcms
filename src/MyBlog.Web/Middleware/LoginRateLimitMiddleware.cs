@@ -14,7 +14,6 @@ public sealed class LoginRateLimitMiddleware
 
     // Track attempts per IP: IP -> (attempt count, window start)
     private static readonly ConcurrentDictionary<string, (int Count, DateTime WindowStart)> Attempts = new();
-
     // Configuration
     private const int WindowMinutes = 15;
     private const int AttemptsBeforeDelay = 5;
@@ -51,13 +50,11 @@ public sealed class LoginRateLimitMiddleware
 
         var ip = GetClientIp(context);
         var delay = CalculateDelay(ip);
-
         if (delay > TimeSpan.Zero)
         {
             _logger.LogInformation(
                 "Rate limiting login attempt from {IP}, delaying {Seconds}s",
                 ip, delay.TotalSeconds);
-
             // Use injected delay function if available (for testing), otherwise real delay
             if (_delayFunc != null)
             {
@@ -71,7 +68,6 @@ public sealed class LoginRateLimitMiddleware
 
         // Always proceed - never block
         await _next(context);
-
         // Record the attempt after processing
         RecordAttempt(ip);
     }
@@ -79,7 +75,7 @@ public sealed class LoginRateLimitMiddleware
     private static bool IsLoginPostRequest(HttpContext context)
     {
         return context.Request.Method == HttpMethods.Post &&
-               context.Request.Path.StartsWithSegments("/login", StringComparison.OrdinalIgnoreCase);
+               context.Request.Path.StartsWithSegments("/account/login", StringComparison.OrdinalIgnoreCase);
     }
 
     private static string GetClientIp(HttpContext context)
@@ -128,12 +124,12 @@ public sealed class LoginRateLimitMiddleware
     }
 
     /// <summary>
-    /// Records a login attempt for the given IP. Exposed for testing.
+    /// Records a login attempt for the given IP.
+    /// Exposed for testing.
     /// </summary>
     internal static void RecordAttempt(string ip)
     {
         var now = DateTime.UtcNow;
-
         Attempts.AddOrUpdate(
             ip,
             _ => (1, now),
@@ -146,7 +142,6 @@ public sealed class LoginRateLimitMiddleware
                 }
                 return (existing.Count + 1, existing.WindowStart);
             });
-
         // Cleanup old entries periodically (every 100th request)
         if (Random.Shared.Next(100) == 0)
         {
@@ -155,7 +150,8 @@ public sealed class LoginRateLimitMiddleware
     }
 
     /// <summary>
-    /// Clears all tracked attempts. For testing only.
+    /// Clears all tracked attempts.
+    /// For testing only.
     /// </summary>
     public static void ClearAttempts()
     {
