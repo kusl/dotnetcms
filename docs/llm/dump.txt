@@ -1,6 +1,6 @@
 ===============================================================================
 PROJECT EXPORT
-Generated: Tue Jan 27 08:46:20 AM EST 2026
+Generated: Tue Jan 27 08:59:40 AM EST 2026
 Project Path: /home/kushal/src/dotnet/MyBlog
 ===============================================================================
 
@@ -52,7 +52,8 @@ DIRECTORY STRUCTURE:
 │   │   │   ├── 0040.txt
 │   │   │   ├── 0041.txt
 │   │   │   ├── 0042.txt
-│   │   │   └── 0043.txt
+│   │   │   ├── 0043.txt
+│   │   │   └── 0044.txt
 │   │   ├── chatgpt.md
 │   │   ├── claude.md
 │   │   ├── command.md
@@ -3307,8 +3308,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ================================================================================
 FILE: run-e2e.sh
-SIZE: 3.12 KB
-MODIFIED: 2026-01-26 09:56:37
+SIZE: 3.41 KB
+MODIFIED: 2026-01-27 08:58:09
 ================================================================================
 
 #!/bin/bash
@@ -3362,7 +3363,7 @@ for arg in "$@"; do
     esac
 done
 
-# Clean up if requested
+# Clean up if requested (manual clean only)
 if [ "$CLEAN_FLAG" == "true" ]; then
     log_info "Cleaning up containers and volumes..."
     podman-compose -f docker-compose.e2e.yml down -v --remove-orphans 2>/dev/null || true
@@ -3380,6 +3381,11 @@ if command -v chcon &> /dev/null && getenforce 2>/dev/null | grep -q "Enforcing"
 fi
 
 log_info "Starting E2E test environment..."
+
+# Always ensure a clean start for tests to prevent stale DB state
+# This fixes issues where the admin password might be different in an old volume
+log_info "Ensuring clean environment..."
+podman-compose -f docker-compose.e2e.yml down -v --remove-orphans 2>/dev/null || true
 
 # Build and start services
 log_info "Building containers..."
@@ -12526,8 +12532,8 @@ MODIFIED: 2026-01-16 20:29:40
 
 ================================================================================
 FILE: src/MyBlog.Web/Program.cs
-SIZE: 5.35 KB
-MODIFIED: 2026-01-26 20:32:10
+SIZE: 5.46 KB
+MODIFIED: 2026-01-27 08:57:52
 ================================================================================
 
 using System.Security.Claims;
@@ -12549,6 +12555,7 @@ using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 
 var builder = WebApplication.CreateBuilder(args);
+
 // Add services
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
@@ -12574,6 +12581,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
             ? CookieSecurePolicy.Always
             : CookieSecurePolicy.SameAsRequest;
     });
+
 builder.Services.AddAuthorization();
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddHttpContextAccessor();
@@ -12581,6 +12589,7 @@ builder.Services.AddHttpContextAccessor();
 // Configure OpenTelemetry
 var serviceName = "MyBlog";
 var serviceVersion = typeof(Program).Assembly.GetName().Version?.ToString() ?? "1.0.0";
+
 builder.Services.AddOpenTelemetry()
     .ConfigureResource(resource => resource.AddService(serviceName, serviceVersion))
     .WithTracing(tracing => tracing
@@ -12591,6 +12600,7 @@ builder.Services.AddOpenTelemetry()
         .AddAspNetCoreInstrumentation()
         .AddHttpClientInstrumentation()
         .AddConsoleExporter());
+
 // Configure logging with OpenTelemetry
 builder.Logging.AddOpenTelemetry(logging =>
 {
@@ -12598,6 +12608,7 @@ builder.Logging.AddOpenTelemetry(logging =>
     logging.IncludeScopes = true;
     logging.AddConsoleExporter();
 });
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline
@@ -12607,6 +12618,7 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseStaticFiles();
+
 // Rate limiting for login attempts
 app.UseLoginRateLimit();
 
@@ -12616,6 +12628,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseAntiforgery();
+
 // Minimal API endpoints
 app.MapPost("/account/login", async (HttpContext context, IAuthService authService) =>
 {
@@ -12649,12 +12662,14 @@ app.MapPost("/account/login", async (HttpContext context, IAuthService authServi
     await context.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
 
     return Results.Redirect(string.IsNullOrWhiteSpace(returnUrl) ? "/admin" : returnUrl);
-});
+}).DisableAntiforgery(); // Explicitly disable antiforgery for this endpoint to prevent validation issues
+
 app.MapPost("/logout", async (HttpContext context) =>
 {
     await context.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
     return Results.Redirect("/");
 }).RequireAuthorization();
+
 app.MapGet("/api/images/{id:guid}", async (Guid id, IImageRepository imageRepository) =>
 {
     var image = await imageRepository.GetByIdAsync(id);
@@ -12664,6 +12679,7 @@ app.MapGet("/api/images/{id:guid}", async (Guid id, IImageRepository imageReposi
     }
     return Results.File(image.Data, image.ContentType);
 });
+
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
@@ -12680,6 +12696,7 @@ using (var scope = app.Services.CreateScope())
 
     var authService = scope.ServiceProvider.GetRequiredService<IAuthService>();
     await authService.EnsureAdminUserAsync();
+
     // Register telemetry exporters with the service provider
     var logExporter = scope.ServiceProvider.GetService<FileLogExporter>();
     var dbExporter = scope.ServiceProvider.GetService<DatabaseLogExporter>();
@@ -13759,7 +13776,7 @@ window.themeManager = {
 
 
 ===============================================================================
-EXPORT COMPLETED: Tue Jan 27 08:46:21 AM EST 2026
+EXPORT COMPLETED: Tue Jan 27 08:59:41 AM EST 2026
 Total Files Found: 115
 Files Exported: 115
 Files Skipped: 0 (binary or large files)
