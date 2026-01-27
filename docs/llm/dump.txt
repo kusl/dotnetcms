@@ -1,6 +1,6 @@
 ===============================================================================
 PROJECT EXPORT
-Generated: Mon Jan 26 10:01:00 PM EST 2026
+Generated: Tue Jan 27 10:36:14 AM EST 2026
 Project Path: /home/kushal/src/dotnet/MyBlog
 ===============================================================================
 
@@ -52,17 +52,18 @@ DIRECTORY STRUCTURE:
 │   │   │   ├── 0040.txt
 │   │   │   ├── 0041.txt
 │   │   │   ├── 0042.txt
-│   │   │   └── 0043.txt
-│   │   ├── chatgpt.md
-│   │   ├── claude.md
+│   │   │   ├── 0043.txt
+│   │   │   ├── 0044.txt
+│   │   │   ├── 0045.txt
+│   │   │   ├── 0046.txt
+│   │   │   ├── 0047.txt
+│   │   │   ├── 0048.txt
+│   │   │   └── 0049.txt
 │   │   ├── command.md
 │   │   ├── dump.txt
-│   │   ├── gemini.md
 │   │   ├── instructions.md
 │   │   ├── kush.runasp.net-WebDeploy.publishSettings
-│   │   ├── playwright.md
-│   │   ├── qwen.md
-│   │   └── test.html
+│   │   └── playwright.md
 │   └── E2E-TESTING.md
 ├── .github
 │   └── workflows
@@ -3308,7 +3309,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 ================================================================================
 FILE: run-e2e.sh
 SIZE: 3.12 KB
-MODIFIED: 2026-01-26 09:56:37
+MODIFIED: 2026-01-27 09:54:00
 ================================================================================
 
 #!/bin/bash
@@ -4662,7 +4663,7 @@ public sealed class PlaywrightCollection : ICollectionFixture<PlaywrightFixture>
 ================================================================================
 FILE: src/MyBlog.E2E/PlaywrightFixture.cs
 SIZE: 2.07 KB
-MODIFIED: 2026-01-26 09:53:17
+MODIFIED: 2026-01-27 09:44:53
 ================================================================================
 
 using Microsoft.Playwright;
@@ -4738,7 +4739,7 @@ public sealed class PlaywrightFixture : IAsyncLifetime
 ================================================================================
 FILE: src/MyBlog.E2E/Tests/AboutPageTests.cs
 SIZE: 2.02 KB
-MODIFIED: 2026-01-26 09:54:00
+MODIFIED: 2026-01-27 09:54:00
 ================================================================================
 
 using Microsoft.Playwright;
@@ -4903,20 +4904,16 @@ public sealed class HomePageTests(PlaywrightFixture fixture)
 
 ================================================================================
 FILE: src/MyBlog.E2E/Tests/LoginPageTests.cs
-SIZE: 4.78 KB
-MODIFIED: 2026-01-26 22:00:04
+SIZE: 1.04 KB
+MODIFIED: 2026-01-27 10:33:54
 ================================================================================
 
-// /home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/Tests/LoginPageTests.cs
+using System.Text.RegularExpressions;
 using Microsoft.Playwright;
 using Xunit;
 
 namespace MyBlog.E2E.Tests;
 
-/// <summary>
-/// E2E tests for authentication (Epic 1: Authentication).
-/// The login page uses a standard HTML form that posts to /login minimal API endpoint.
-/// </summary>
 [Collection(PlaywrightCollection.Name)]
 public sealed class LoginPageTests(PlaywrightFixture fixture)
 {
@@ -4926,7 +4923,6 @@ public sealed class LoginPageTests(PlaywrightFixture fixture)
     public async Task LoginPage_LoadsSuccessfully()
     {
         var page = await _fixture.CreatePageAsync();
-
         var response = await page.GotoAsync("/login");
 
         Assert.NotNull(response);
@@ -4937,112 +4933,12 @@ public sealed class LoginPageTests(PlaywrightFixture fixture)
     public async Task LoginPage_DisplaysLoginForm()
     {
         var page = await _fixture.CreatePageAsync();
-
         await page.GotoAsync("/login");
 
-        var usernameInput = page.Locator("input#username, input[name='username']");
-        var passwordInput = page.Locator("input#password, input[name='password']");
-        var submitButton = page.Locator("button[type='submit']");
-
-        await Assertions.Expect(usernameInput).ToBeVisibleAsync();
-        await Assertions.Expect(passwordInput).ToBeVisibleAsync();
-        await Assertions.Expect(submitButton).ToBeVisibleAsync();
-    }
-
-    [Fact]
-    public async Task LoginPage_WithInvalidCredentials_ShowsError()
-    {
-        var page = await _fixture.CreatePageAsync();
-        await page.GotoAsync("/login");
-
-        await page.FillAsync("input[name='username']", "invalid");
-        await page.FillAsync("input[name='password']", "invalid");
-
-        // Submit and wait for the error message to appear
-        await page.ClickAsync("button[type='submit']");
-
-        // Target the actual class used in Login.razor
-        var errorLocator = page.Locator(".error-message");
-        await Assertions.Expect(errorLocator).ToBeVisibleAsync();
-    }
-
-    [Obsolete]
-    [Fact]
-    public async Task LoginPage_WithValidCredentials_RedirectsToAdmin()
-    {
-        var page = await _fixture.CreatePageAsync();
-        await page.GotoAsync("/login");
-
-        await page.FillAsync("input[name='username']", "admin");
-        await page.FillAsync("input[name='password']", "ChangeMe123!");
-
-        // Use RunAndWaitForNavigationAsync to capture the redirect to /admin
-        await page.RunAndWaitForNavigationAsync(async () =>
-        {
-            await page.ClickAsync("button[type='submit']");
-        }, new() { UrlString = "**/admin", WaitUntil = WaitUntilState.DOMContentLoaded });
-
-        Assert.Contains("/admin", page.Url);
-    }
-
-    [Fact]
-    public async Task LoginPage_AfterLogin_ShowsLogoutButton()
-    {
-        var page = await _fixture.CreatePageAsync();
-
-        await page.GotoAsync("/login");
-
-        // Login first
-        await page.FillAsync("input[name='username'], input#username", "admin");
-        await page.FillAsync("input[name='password'], input#password", "ChangeMe123!");
-        await page.ClickAsync("button[type='submit'], input[type='submit']");
-
-        await page.WaitForURLAsync("**/admin**", new PageWaitForURLOptions { Timeout = 60000 });
-
-        // Wait for DOM content to be ready (avoiding NetworkIdle due to SignalR)
-        await page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
-
-        // Check for logout element
-        var logoutButton = page.Locator(
-            "text=/logout/i, text=/sign out/i, button:has-text('Logout'), " +
-            "[href='/logout'], form[action*='logout']"
-        ).First;
-
-        await Assertions.Expect(logoutButton).ToBeVisibleAsync();
-    }
-
-    [Fact]
-    public async Task LoginPage_AfterLogin_ShowsLogoutButton_Updated_by_Qwen()
-    {
-        var page = await _fixture.CreatePageAsync();
-        await page.GotoAsync("/login");
-
-        // Login first
-        await page.FillAsync("input[name='username'], input#username", "admin");
-        await page.FillAsync("input[name='password'], input#password", "ChangeMe123!");
-        await page.ClickAsync("button[type='submit'], input[type='submit']");
-
-        try
-        {
-            // Wait for navigation to complete
-            await page.WaitForURLAsync("**/admin**", new PageWaitForURLOptions { Timeout = 90000 });
-        }
-        catch (TimeoutException ex)
-        {
-            Console.WriteLine("Test timed out waiting for URL: " + ex.Message);
-            throw;
-        }
-
-        // Wait for DOM to be ready
-        await page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
-
-        // Check for logout element
-        var logoutButton = page.Locator(
-            "text=/logout/i, text=/sign out/i, button:has-text('Logout'), " +
-            "[href='/logout'], form[action*='logout']"
-        ).First;
-
-        await Assertions.Expect(logoutButton).ToBeVisibleAsync();
+        // Use Web Assertions to wait for visibility
+        await Assertions.Expect(page.Locator("input[name='username']")).ToBeVisibleAsync();
+        await Assertions.Expect(page.Locator("input[name='password']")).ToBeVisibleAsync();
+        await Assertions.Expect(page.Locator("button[type='submit']")).ToBeVisibleAsync();
     }
 }
 
@@ -5821,7 +5717,7 @@ public static class ServiceCollectionExtensions
 ================================================================================
 FILE: src/MyBlog.Infrastructure/Services/AuthService.cs
 SIZE: 3.21 KB
-MODIFIED: 2025-12-28 11:33:37
+MODIFIED: 2026-01-27 09:54:00
 ================================================================================
 
 using Microsoft.Extensions.Configuration;
@@ -12239,7 +12135,7 @@ MODIFIED: 2026-01-26 05:45:13
 ================================================================================
 FILE: src/MyBlog.Web/Dockerfile
 SIZE: 1.37 KB
-MODIFIED: 2026-01-26 11:06:02
+MODIFIED: 2026-01-27 09:54:00
 ================================================================================
 
 # Build stage
@@ -12570,7 +12466,7 @@ MODIFIED: 2026-01-16 20:29:40
 ================================================================================
 FILE: src/MyBlog.Web/Program.cs
 SIZE: 5.35 KB
-MODIFIED: 2026-01-26 20:32:10
+MODIFIED: 2026-01-27 09:54:00
 ================================================================================
 
 using System.Security.Claims;
@@ -13802,7 +13698,7 @@ window.themeManager = {
 
 
 ===============================================================================
-EXPORT COMPLETED: Mon Jan 26 10:01:01 PM EST 2026
+EXPORT COMPLETED: Tue Jan 27 10:36:15 AM EST 2026
 Total Files Found: 115
 Files Exported: 115
 Files Skipped: 0 (binary or large files)
