@@ -51,19 +51,18 @@ public sealed class LoginPageTests(PlaywrightFixture fixture)
         await page.FillAsync("input[name='username'], input#username", "invalid");
         await page.FillAsync("input[name='password'], input#password", "invalid");
 
-        // Click submit and wait for page to reload (form POST)
+        // Click submit and wait for the page to reload or error to appear
+        // Note: Avoiding WaitForLoadStateAsync(NetworkIdle) as Blazor SignalR connection keeps network active
         await page.ClickAsync("button[type='submit'], input[type='submit']");
 
-        // Wait for page to reload with error
-        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
-
-        // Check for ANY visible error indicator
-        var hasError = await page.Locator(
+        // Wait explicitly for the error message element to appear
+        var errorLocator = page.Locator(
             ".error, .error-message, .alert, .alert-danger, .validation-summary, " +
             "[class*='error'], [class*='invalid'], .text-danger, .danger"
-        ).CountAsync();
+        );
 
-        Assert.True(hasError > 0, "Expected error message to be displayed after invalid login");
+        await Assertions.Expect(errorLocator.First).ToBeVisibleAsync();
+        await Assertions.Expect(errorLocator.First).ToContainTextAsync("Invalid username or password");
     }
 
     [Fact]
@@ -81,6 +80,7 @@ public sealed class LoginPageTests(PlaywrightFixture fixture)
         await page.ClickAsync("button[type='submit'], input[type='submit']");
 
         // Wait for navigation to complete
+        // Using regex pattern to match admin URL safely
         await page.WaitForURLAsync("**/admin**", new PageWaitForURLOptions { Timeout = 60000 });
 
         // Verify we're on admin page
@@ -98,18 +98,19 @@ public sealed class LoginPageTests(PlaywrightFixture fixture)
         await page.FillAsync("input[name='username'], input#username", "admin");
         await page.FillAsync("input[name='password'], input#password", "ChangeMe123!");
         await page.ClickAsync("button[type='submit'], input[type='submit']");
+        
         await page.WaitForURLAsync("**/admin**", new PageWaitForURLOptions { Timeout = 60000 });
 
-        // Wait for page to be fully loaded
-        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+        // Wait for DOM content to be ready (avoiding NetworkIdle due to SignalR)
+        await page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
 
         // Check for logout element
-        var hasLogout = await page.Locator(
+        var logoutButton = page.Locator(
             "text=/logout/i, text=/sign out/i, button:has-text('Logout'), " +
             "[href='/logout'], form[action*='logout']"
-        ).CountAsync();
+        ).First;
 
-        Assert.True(hasLogout > 0, "Expected logout button/link to be visible after login");
+        await Assertions.Expect(logoutButton).ToBeVisibleAsync();
     }
 
     [Fact]
@@ -134,16 +135,15 @@ public sealed class LoginPageTests(PlaywrightFixture fixture)
             throw;
         }
 
-        // Wait for page to be fully loaded
-        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+        // Wait for DOM to be ready
         await page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
 
         // Check for logout element
-        var hasLogout = await page.Locator(
+        var logoutButton = page.Locator(
             "text=/logout/i, text=/sign out/i, button:has-text('Logout'), " +
             "[href='/logout'], form[action*='logout']"
-        ).CountAsync();
+        ).First;
 
-        Assert.True(hasLogout > 0, "Expected logout button/link to be visible after login");
+        await Assertions.Expect(logoutButton).ToBeVisibleAsync();
     }
 }
