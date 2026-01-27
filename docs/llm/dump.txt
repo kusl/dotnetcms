@@ -1,6 +1,6 @@
 ===============================================================================
 PROJECT EXPORT
-Generated: Tue Jan 27 01:01:42 PM EST 2026
+Generated: Tue Jan 27 01:31:48 PM EST 2026
 Project Path: /home/kushal/src/dotnet/MyBlog
 ===============================================================================
 
@@ -58,7 +58,9 @@ DIRECTORY STRUCTURE:
 │   │   │   ├── 0046.txt
 │   │   │   ├── 0047.txt
 │   │   │   ├── 0048.txt
-│   │   │   └── 0049.txt
+│   │   │   ├── 0049.txt
+│   │   │   ├── 0050.txt
+│   │   │   └── 0051.txt
 │   │   ├── command.md
 │   │   ├── dump.txt
 │   │   ├── instructions.md
@@ -646,8 +648,8 @@ echo ""
 
 ================================================================================
 FILE: .github/workflows/build-deploy.yml
-SIZE: 5.09 KB
-MODIFIED: 2026-01-27 12:56:00
+SIZE: 5.11 KB
+MODIFIED: 2026-01-27 13:29:41
 ================================================================================
 
 name: Build, Test, and Deploy
@@ -708,7 +710,7 @@ jobs:
 
       - name: Start MyBlog application
         run: |
-          dotnet run --project src/MyBlog.Web/MyBlog.Web.csproj -c Release --no-build > app.log 2>&1 &
+          dotnet run --project src/MyBlog.Web/MyBlog.Web.csproj -c Release --no-build --no-launch-profile > app.log 2>&1 &
           echo $! > app.pid
         env:
           ASPNETCORE_URLS: http://localhost:5000
@@ -13719,7 +13721,7 @@ window.themeManager = {
 
 
 ===============================================================================
-EXPORT COMPLETED: Tue Jan 27 01:01:43 PM EST 2026
+EXPORT COMPLETED: Tue Jan 27 01:31:49 PM EST 2026
 Total Files Found: 115
 Files Exported: 115
 Files Skipped: 0 (binary or large files)
