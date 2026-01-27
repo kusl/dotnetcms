@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.DataProtection; // Add this namespace
 using Microsoft.EntityFrameworkCore;
 using MyBlog.Core.Constants;
 using MyBlog.Core.Interfaces;
@@ -26,6 +27,12 @@ builder.Services.AddRazorComponents()
 builder.Services.AddSignalR();
 
 builder.Services.AddInfrastructure(builder.Configuration);
+
+// CONFIGURATION FIX 1: Persist Data Protection keys to the mounted volume.
+// This prevents "Login Loop" issues where cookies issued cannot be decrypted 
+// because keys were lost/rotated in the container.
+builder.Services.AddDataProtection()
+    .PersistKeysToFileSystem(new DirectoryInfo(Path.Combine(builder.Environment.ContentRootPath, "data", "keys")));
 
 // Configure authentication
 var sessionTimeout = builder.Configuration.GetValue("Authentication:SessionTimeoutMinutes", 30);
@@ -92,6 +99,8 @@ app.UseAuthorization();
 app.UseAntiforgery();
 
 // Minimal API endpoints
+// CONFIGURATION FIX 2: Explicitly DisableAntiforgery() for the login endpoint.
+// This prevents 400 Bad Request errors when the client submits the form.
 app.MapPost("/account/login", async (HttpContext context, IAuthService authService) =>
 {
     var form = await context.Request.ReadFormAsync();
@@ -124,7 +133,7 @@ app.MapPost("/account/login", async (HttpContext context, IAuthService authServi
     await context.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
 
     return Results.Redirect(string.IsNullOrWhiteSpace(returnUrl) ? "/admin" : returnUrl);
-}).DisableAntiforgery(); // Explicitly disable antiforgery for this endpoint to prevent validation issues
+}).DisableAntiforgery();
 
 app.MapPost("/logout", async (HttpContext context) =>
 {
