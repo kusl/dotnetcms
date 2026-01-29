@@ -1,6 +1,6 @@
 ===============================================================================
 PROJECT EXPORT
-Generated: Thu Jan 29 02:59:29 AM EST 2026
+Generated: Thu Jan 29 03:13:20 AM EST 2026
 Project Path: /home/kushal/src/dotnet/MyBlog
 ===============================================================================
 
@@ -5570,8 +5570,8 @@ public sealed class LoginPageTests(PlaywrightFixture fixture)
 
 ================================================================================
 FILE: src/MyBlog.E2E/Tests/NavigationTests.cs
-SIZE: 6.45 KB
-MODIFIED: 2026-01-29 01:45:28
+SIZE: 6.72 KB
+MODIFIED: 2026-01-29 03:11:28
 ================================================================================
 
 using Microsoft.Playwright;
@@ -5651,12 +5651,12 @@ public sealed class NavigationTests(PlaywrightFixture fixture)
     {
         var page = await _fixture.CreatePageAsync();
 
-        // Check home page
+        // Check home page - use the main site footer
         await page.GotoAsync("/");
-        var footer = page.Locator("footer");
+        var footer = page.Locator("footer.footer");
         await Assertions.Expect(footer).ToBeVisibleAsync();
 
-        // Check about page
+        // Check about page - the about page may have multiple footers, use the main site footer
         await page.GotoAsync("/about");
         await Assertions.Expect(footer).ToBeVisibleAsync();
 
@@ -5741,8 +5741,12 @@ public sealed class NavigationTests(PlaywrightFixture fixture)
 
         await page.GotoAsync("/post/this-post-definitely-does-not-exist-12345");
 
+        // Wait for the page to load and Blazor to initialize
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+
         // Should show "Post Not Found" or similar message
-        var notFoundIndicator = page.Locator("text=Not Found, text=not found, text=doesn't exist");
+        // Use GetByText with regex to match case-insensitively
+        var notFoundIndicator = page.GetByText("Not Found", new() { Exact = false });
         await Assertions.Expect(notFoundIndicator.First).ToBeVisibleAsync(new() { Timeout = 10000 });
     }
 
@@ -13382,8 +13386,8 @@ public class ReaderHub : Hub
 
 ================================================================================
 FILE: src/MyBlog.Web/Middleware/LoginRateLimitMiddleware.cs
-SIZE: 5.55 KB
-MODIFIED: 2026-01-29 02:48:35
+SIZE: 5.59 KB
+MODIFIED: 2026-01-29 03:11:17
 ================================================================================
 
 using System.Collections.Concurrent;
@@ -13454,6 +13458,8 @@ public sealed class LoginRateLimitMiddleware
         }
 
         var ip = GetClientIp(context);
+        // Record the attempt FIRST, then calculate delay based on the new count
+        RecordAttempt(ip);
         var delay = CalculateDelay(ip);
         if (delay > TimeSpan.Zero)
         {
@@ -13473,8 +13479,6 @@ public sealed class LoginRateLimitMiddleware
 
         // Always proceed - never block
         await _next(context);
-        // Record the attempt after processing
-        RecordAttempt(ip);
     }
 
     private static bool IsLoginPostRequest(HttpContext context)
@@ -14827,7 +14831,7 @@ window.themeManager = {
 
 
 ===============================================================================
-EXPORT COMPLETED: Thu Jan 29 02:59:30 AM EST 2026
+EXPORT COMPLETED: Thu Jan 29 03:13:22 AM EST 2026
 Total Files Found: 119
 Files Exported: 119
 Files Skipped: 0 (binary or large files)
