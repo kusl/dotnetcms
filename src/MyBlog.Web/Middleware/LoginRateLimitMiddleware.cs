@@ -66,6 +66,8 @@ public sealed class LoginRateLimitMiddleware
         }
 
         var ip = GetClientIp(context);
+        // Record the attempt FIRST, then calculate delay based on the new count
+        RecordAttempt(ip);
         var delay = CalculateDelay(ip);
         if (delay > TimeSpan.Zero)
         {
@@ -85,8 +87,6 @@ public sealed class LoginRateLimitMiddleware
 
         // Always proceed - never block
         await _next(context);
-        // Record the attempt after processing
-        RecordAttempt(ip);
     }
 
     private static bool IsLoginPostRequest(HttpContext context)

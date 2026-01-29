@@ -75,12 +75,12 @@ public sealed class NavigationTests(PlaywrightFixture fixture)
     {
         var page = await _fixture.CreatePageAsync();
 
-        // Check home page
+        // Check home page - use the main site footer
         await page.GotoAsync("/");
-        var footer = page.Locator("footer");
+        var footer = page.Locator("footer.footer");
         await Assertions.Expect(footer).ToBeVisibleAsync();
 
-        // Check about page
+        // Check about page - the about page may have multiple footers, use the main site footer
         await page.GotoAsync("/about");
         await Assertions.Expect(footer).ToBeVisibleAsync();
 
@@ -165,8 +165,12 @@ public sealed class NavigationTests(PlaywrightFixture fixture)
 
         await page.GotoAsync("/post/this-post-definitely-does-not-exist-12345");
 
+        // Wait for the page to load and Blazor to initialize
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+
         // Should show "Post Not Found" or similar message
-        var notFoundIndicator = page.Locator("text=Not Found, text=not found, text=doesn't exist");
+        // Use GetByText with regex to match case-insensitively
+        var notFoundIndicator = page.GetByText("Not Found", new() { Exact = false });
         await Assertions.Expect(notFoundIndicator.First).ToBeVisibleAsync(new() { Timeout = 10000 });
     }
 
