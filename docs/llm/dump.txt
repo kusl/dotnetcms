@@ -1,6 +1,6 @@
 ===============================================================================
 PROJECT EXPORT
-Generated: Thu Jan 29 02:54:02 AM EST 2026
+Generated: Thu Jan 29 02:59:29 AM EST 2026
 Project Path: /home/kushal/src/dotnet/MyBlog
 ===============================================================================
 
@@ -9788,7 +9788,7 @@ MODIFIED: 2026-01-26 05:44:15
 ================================================================================
 FILE: src/MyBlog.Web/Components/Pages/About.razor
 SIZE: 31.12 KB
-MODIFIED: 2026-01-26 06:25:44
+MODIFIED: 2026-01-29 02:57:38
 ================================================================================
 
 @page "/about"
@@ -10459,7 +10459,7 @@ dotnet run</code></pre>
         </p>
     </section>
 
-    <footer class="about-footer">
+    <section class="about-footer">
         <p>
             Built with ❤️ using .NET 10 and Blazor Server
         </p>
@@ -10469,7 +10469,7 @@ dotnet run</code></pre>
                 OS: @System.Runtime.InteropServices.RuntimeInformation.OSDescription
             </small>
         </p>
-    </footer>
+    </section>
 </article>
 
 @code {
@@ -14827,7 +14827,7 @@ window.themeManager = {
 
 
 ===============================================================================
-EXPORT COMPLETED: Thu Jan 29 02:54:03 AM EST 2026
+EXPORT COMPLETED: Thu Jan 29 02:59:30 AM EST 2026
 Total Files Found: 119
 Files Exported: 119
 Files Skipped: 0 (binary or large files)
