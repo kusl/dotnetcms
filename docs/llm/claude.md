@@ -779,8 +779,8 @@ The key changes:
 
 
 usage statistics 
-current:  37% 
-week:     16%
+current:  43% 
+week:     17%
 
 
 
