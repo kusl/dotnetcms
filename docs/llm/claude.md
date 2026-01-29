@@ -88,3 +88,23 @@ The two lines that were fixed:
 
 
 
+I have updated the project files to add the updated dump.txt and the new log file as 0055.txt 
+Can you please fix all the tests or change the code as needed to pass the tests? 
+here is what you should find in the logs
+[myblog-e2e] | === TEST EXECUTION SUMMARY ===
+[myblog-e2e] |    MyBlog.E2E  Total: 78, Errors: 0, Failed: 78, Skipped: 0, Not Run: 0, Time: 0.358s
+I have included the latest dump in `dump.txt`
+please read each and every line of the code 
+don't skim it 
+don't try to change the coding style 
+don't remove braces around the if 
+don't change the primary constructor back to whatever you did 
+don't make unnecessary changes 
+do make the code build, 
+do make the tests pass 
+and do make everything work properly 
+and follow engineering best practices 
+and please do not hallucinate 
+give me full files for all files that changed 
+
+
