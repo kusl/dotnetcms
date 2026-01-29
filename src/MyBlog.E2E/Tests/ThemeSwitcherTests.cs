@@ -58,7 +58,7 @@ public sealed class ThemeSwitcherTests(PlaywrightFixture fixture)
 
         // Wait for the menu to be visible (CSS transition)
         var themeMenu = page.Locator(".theme-menu.open");
-        await Assertions.Expect(themeMenu).ToBeVisibleAsync(new() { Timeout = 5000 });
+        await Assertions.Expect(themeMenu).ToBeVisibleAsync(new LocatorAssertionsToBeVisibleOptions { Timeout = 5000 });
     }
 
     [Fact]
@@ -78,7 +78,7 @@ public sealed class ThemeSwitcherTests(PlaywrightFixture fixture)
 
         // Wait for the menu to be visible (CSS transition)
         var themeMenu = page.Locator(".theme-menu.open");
-        await Assertions.Expect(themeMenu).ToBeVisibleAsync(new() { Timeout = 5000 });
+        await Assertions.Expect(themeMenu).ToBeVisibleAsync(new LocatorAssertionsToBeVisibleOptions { Timeout = 5000 });
 
         // Count the theme options (buttons with class .theme-option)
         var options = page.Locator(".theme-option");
@@ -104,7 +104,7 @@ public sealed class ThemeSwitcherTests(PlaywrightFixture fixture)
 
         // Wait for the menu to be visible
         var themeMenu = page.Locator(".theme-menu.open");
-        await Assertions.Expect(themeMenu).ToBeVisibleAsync(new() { Timeout = 5000 });
+        await Assertions.Expect(themeMenu).ToBeVisibleAsync(new LocatorAssertionsToBeVisibleOptions { Timeout = 5000 });
 
         // Click on the "dark" theme option
         var darkOption = page.Locator(".theme-option:has-text('Dark')");
@@ -113,7 +113,8 @@ public sealed class ThemeSwitcherTests(PlaywrightFixture fixture)
         // Wait for theme attribute to change
         await page.WaitForFunctionAsync(
             "() => document.documentElement.getAttribute('data-theme') === 'dark'",
-            new() { Timeout = 5000 });
+            null,
+            new PageWaitForFunctionOptions { Timeout = 5000 });
 
         // Verify theme changed to dark
         var newTheme = await page.EvaluateAsync<string>("document.documentElement.getAttribute('data-theme')");
@@ -137,7 +138,7 @@ public sealed class ThemeSwitcherTests(PlaywrightFixture fixture)
 
         // Wait for the menu to be visible
         var themeMenu = page.Locator(".theme-menu.open");
-        await Assertions.Expect(themeMenu).ToBeVisibleAsync(new() { Timeout = 5000 });
+        await Assertions.Expect(themeMenu).ToBeVisibleAsync(new LocatorAssertionsToBeVisibleOptions { Timeout = 5000 });
 
         // Click on the "dark" theme option
         var darkOption = page.Locator(".theme-option:has-text('Dark')");
@@ -146,7 +147,8 @@ public sealed class ThemeSwitcherTests(PlaywrightFixture fixture)
         // Wait for theme attribute to change
         await page.WaitForFunctionAsync(
             "() => document.documentElement.getAttribute('data-theme') === 'dark'",
-            new() { Timeout = 5000 });
+            null,
+            new PageWaitForFunctionOptions { Timeout = 5000 });
 
         // Refresh the page
         await page.ReloadAsync();
@@ -189,12 +191,12 @@ public sealed class ThemeSwitcherTests(PlaywrightFixture fixture)
 
         // Wait for the menu to be visible
         var themeMenu = page.Locator(".theme-menu.open");
-        await Assertions.Expect(themeMenu).ToBeVisibleAsync(new() { Timeout = 5000 });
+        await Assertions.Expect(themeMenu).ToBeVisibleAsync(new LocatorAssertionsToBeVisibleOptions { Timeout = 5000 });
 
         // Click outside the menu (on the main content area)
         await page.Locator("main, .main").First.ClickAsync();
 
         // Menu should close
-        await Assertions.Expect(themeMenu).Not.ToBeVisibleAsync(new() { Timeout = 5000 });
+        await Assertions.Expect(themeMenu).Not.ToBeVisibleAsync(new LocatorAssertionsToBeVisibleOptions { Timeout = 5000 });
     }
 }

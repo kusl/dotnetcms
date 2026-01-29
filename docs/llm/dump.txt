@@ -1,6 +1,6 @@
 ===============================================================================
 PROJECT EXPORT
-Generated: Thu Jan 29 01:41:07 AM EST 2026
+Generated: Thu Jan 29 01:52:11 AM EST 2026
 Project Path: /home/kushal/src/dotnet/MyBlog
 ===============================================================================
 
@@ -61,7 +61,8 @@ DIRECTORY STRUCTURE:
 │   │   │   ├── 0049.txt
 │   │   │   ├── 0050.txt
 │   │   │   ├── 0051.txt
-│   │   │   └── 0052.txt
+│   │   │   ├── 0052.txt
+│   │   │   └── 0054.txt
 │   │   ├── claude.md
 │   │   ├── command.md
 │   │   ├── dump.txt
@@ -104,8 +105,12 @@ DIRECTORY STRUCTURE:
 │   ├── MyBlog.E2E
 │   │   ├── Tests
 │   │   │   ├── AboutPageTests.cs
+│   │   │   ├── AdminPageTests.cs
+│   │   │   ├── AuthenticationTests.cs
 │   │   │   ├── HomePageTests.cs
 │   │   │   ├── LoginPageTests.cs
+│   │   │   ├── NavigationTests.cs
+│   │   │   ├── SeoTests.cs
 │   │   │   └── ThemeSwitcherTests.cs
 │   │   ├── Dockerfile
 │   │   ├── MyBlog.E2E.csproj
@@ -4555,59 +4560,27 @@ public sealed partial class SlugService : ISlugService
 
 ================================================================================
 FILE: src/MyBlog.E2E/Dockerfile
-SIZE: 2.31 KB
-MODIFIED: 2026-01-26 11:05:48
+SIZE: 1.75 KB
+MODIFIED: 2026-01-29 01:47:03
 ================================================================================
 
-# E2E Test Runner with Playwright
-# Single stage using .NET 10 SDK for both build and run
-FROM mcr.microsoft.com/dotnet/sdk:10.0-noble
-
+# E2E Test Runner Dockerfile
+# Uses Playwright to run E2E tests against the MyBlog application
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 
-# Install Playwright browser dependencies (Chromium) for Ubuntu Noble
-# PowerShell needs to be installed from Microsoft's repo
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-    wget \
-    curl \
-    gnupg \
-    ca-certificates \
-    fonts-liberation \
-    libasound2t64 \
-    libatk-bridge2.0-0 \
-    libatk1.0-0 \
-    libatspi2.0-0 \
-    libcairo2 \
-    libcups2 \
-    libdbus-1-3 \
-    libdrm2 \
-    libgbm1 \
-    libglib2.0-0 \
-    libgtk-3-0 \
-    libnspr4 \
-    libnss3 \
-    libpango-1.0-0 \
-    libx11-6 \
-    libxcb1 \
-    libxcomposite1 \
-    libxdamage1 \
-    libxext6 \
-    libxfixes3 \
-    libxkbcommon0 \
-    libxrandr2 \
-    xdg-utils \
-    && rm -rf /var/lib/apt/lists/*
+# Install Node.js for Playwright browser management
+RUN apt-get update && apt-get install -y nodejs npm && rm -rf /var/lib/apt/lists/*
 
-# Install PowerShell from Microsoft repo
-RUN wget -q https://packages.microsoft.com/config/ubuntu/24.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb && \
+# Install PowerShell (required for Playwright browser installation)
+RUN apt-get update && apt-get install -y wget && \
+    wget -q https://packages.microsoft.com/config/debian/12/packages-microsoft-prod.deb && \
     dpkg -i packages-microsoft-prod.deb && \
     rm packages-microsoft-prod.deb && \
-    apt-get update && \
-    apt-get install -y --no-install-recommends powershell && \
+    apt-get update && apt-get install -y powershell && \
     rm -rf /var/lib/apt/lists/*
 
-# Copy all project files first for restore
+# Copy project files for restore
 COPY Directory.Build.props .
 COPY Directory.Packages.props .
 COPY MyBlog.Core/MyBlog.Core.csproj MyBlog.Core/
@@ -4643,7 +4616,7 @@ ENTRYPOINT ["dotnet", "run", "-c", "Release", "--no-build"]
 ================================================================================
 FILE: src/MyBlog.E2E/MyBlog.E2E.csproj
 SIZE: .44 KB
-MODIFIED: 2026-01-26 10:23:36
+MODIFIED: 2026-01-29 01:46:49
 ================================================================================
 
 <Project Sdk="Microsoft.NET.Sdk">
@@ -4667,7 +4640,7 @@ MODIFIED: 2026-01-26 10:23:36
 ================================================================================
 FILE: src/MyBlog.E2E/PlaywrightCollection.cs
 SIZE: .35 KB
-MODIFIED: 2026-01-26 09:53:31
+MODIFIED: 2026-01-29 01:46:21
 ================================================================================
 
 using Xunit;
@@ -4688,7 +4661,7 @@ public sealed class PlaywrightCollection : ICollectionFixture<PlaywrightFixture>
 ================================================================================
 FILE: src/MyBlog.E2E/PlaywrightFixture.cs
 SIZE: 2.07 KB
-MODIFIED: 2026-01-27 09:44:53
+MODIFIED: 2026-01-29 01:46:08
 ================================================================================
 
 using Microsoft.Playwright;
@@ -4763,8 +4736,8 @@ public sealed class PlaywrightFixture : IAsyncLifetime
 
 ================================================================================
 FILE: src/MyBlog.E2E/Tests/AboutPageTests.cs
-SIZE: 2.02 KB
-MODIFIED: 2026-01-27 09:54:00
+SIZE: 2.92 KB
+MODIFIED: 2026-01-29 01:44:13
 ================================================================================
 
 using Microsoft.Playwright;
@@ -4773,7 +4746,7 @@ using Xunit;
 namespace MyBlog.E2E.Tests;
 
 /// <summary>
-/// E2E tests for the about page (Epic 1: Public Content Viewing).
+/// E2E tests for the about page (Epic 4: Public Browsing).
 /// </summary>
 [Collection(PlaywrightCollection.Name)]
 public sealed class AboutPageTests(PlaywrightFixture fixture)
@@ -4838,13 +4811,47 @@ public sealed class AboutPageTests(PlaywrightFixture fixture)
         var readerBadge = page.Locator(".reader-badge, .reader-info");
         await Assertions.Expect(readerBadge.First).ToBeVisibleAsync(new() { Timeout = 10000 });
     }
+
+    [Fact]
+    public async Task AboutPage_HasNavigationBackToHome()
+    {
+        var page = await _fixture.CreatePageAsync();
+
+        await page.GotoAsync("/about");
+
+        // Should have navigation links
+        var homeLink = page.Locator("nav a[href='/']");
+        await Assertions.Expect(homeLink).ToBeVisibleAsync();
+    }
+
+    [Fact]
+    public async Task AboutPage_DisplaysOverviewSection()
+    {
+        var page = await _fixture.CreatePageAsync();
+
+        await page.GotoAsync("/about");
+
+        var overviewSection = page.Locator("text=Overview");
+        await Assertions.Expect(overviewSection.First).ToBeVisibleAsync();
+    }
+
+    [Fact]
+    public async Task AboutPage_MentionsCleanArchitecture()
+    {
+        var page = await _fixture.CreatePageAsync();
+
+        await page.GotoAsync("/about");
+
+        var content = await page.ContentAsync();
+        Assert.Contains("Clean Architecture", content);
+    }
 }
 
 
 ================================================================================
-FILE: src/MyBlog.E2E/Tests/HomePageTests.cs
-SIZE: 2.15 KB
-MODIFIED: 2026-01-26 09:53:45
+FILE: src/MyBlog.E2E/Tests/AdminPageTests.cs
+SIZE: 6.38 KB
+MODIFIED: 2026-01-29 01:45:49
 ================================================================================
 
 using Microsoft.Playwright;
@@ -4853,7 +4860,435 @@ using Xunit;
 namespace MyBlog.E2E.Tests;
 
 /// <summary>
-/// E2E tests for the homepage (Epic 1: Public Content Viewing).
+/// E2E tests for admin pages (Epic 2: User Management, Epic 3: Content Management).
+/// </summary>
+[Collection(PlaywrightCollection.Name)]
+public sealed class AdminPageTests(PlaywrightFixture fixture)
+{
+    private readonly PlaywrightFixture _fixture = fixture;
+
+    /// <summary>
+    /// Helper method to login with default admin credentials.
+    /// </summary>
+    private async Task LoginAsAdminAsync(IPage page)
+    {
+        await page.GotoAsync("/login");
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+
+        await page.FillAsync("input[name='username']", "admin");
+        await page.FillAsync("input[name='password']", "ChangeMe123!");
+        await page.Locator("button[type='submit']").ClickAsync();
+
+        await page.WaitForURLAsync("**/admin**", new() { Timeout = 15000 });
+    }
+
+    [Fact]
+    public async Task AdminDashboard_DisplaysStatistics()
+    {
+        var page = await _fixture.CreatePageAsync();
+        await LoginAsAdminAsync(page);
+
+        // Dashboard should show post count or statistics
+        var statCard = page.Locator(".stat-card, .dashboard-stats, text=Total Posts");
+        await Assertions.Expect(statCard.First).ToBeVisibleAsync(new() { Timeout = 10000 });
+    }
+
+    [Fact]
+    public async Task AdminDashboard_HasManagePostsLink()
+    {
+        var page = await _fixture.CreatePageAsync();
+        await LoginAsAdminAsync(page);
+
+        var managePostsLink = page.Locator("a[href='/admin/posts']");
+        await Assertions.Expect(managePostsLink).ToBeVisibleAsync(new() { Timeout = 10000 });
+    }
+
+    [Fact]
+    public async Task AdminDashboard_HasNewPostLink()
+    {
+        var page = await _fixture.CreatePageAsync();
+        await LoginAsAdminAsync(page);
+
+        var newPostLink = page.Locator("a[href='/admin/posts/new']");
+        await Assertions.Expect(newPostLink).ToBeVisibleAsync(new() { Timeout = 10000 });
+    }
+
+    [Fact]
+    public async Task AdminDashboard_HasManageImagesLink()
+    {
+        var page = await _fixture.CreatePageAsync();
+        await LoginAsAdminAsync(page);
+
+        var manageImagesLink = page.Locator("a[href='/admin/images']");
+        await Assertions.Expect(manageImagesLink).ToBeVisibleAsync(new() { Timeout = 10000 });
+    }
+
+    [Fact]
+    public async Task AdminPosts_LoadsSuccessfully()
+    {
+        var page = await _fixture.CreatePageAsync();
+        await LoginAsAdminAsync(page);
+
+        await page.ClickAsync("a[href='/admin/posts']");
+        await page.WaitForURLAsync("**/admin/posts");
+
+        // Should show posts management heading or table
+        var heading = page.Locator("h1");
+        await Assertions.Expect(heading).ToBeVisibleAsync(new() { Timeout = 10000 });
+    }
+
+    [Fact]
+    public async Task AdminNewPost_LoadsSuccessfully()
+    {
+        var page = await _fixture.CreatePageAsync();
+        await LoginAsAdminAsync(page);
+
+        await page.ClickAsync("a[href='/admin/posts/new']");
+        await page.WaitForURLAsync("**/admin/posts/new");
+
+        // Should show post editor form
+        var heading = page.Locator("h1");
+        await Assertions.Expect(heading).ToBeVisibleAsync(new() { Timeout = 10000 });
+
+        // Should have title input
+        var titleInput = page.Locator("input[id='title'], input[name='title'], #title");
+        await Assertions.Expect(titleInput.First).ToBeVisibleAsync(new() { Timeout = 10000 });
+    }
+
+    [Fact]
+    public async Task AdminImages_LoadsSuccessfully()
+    {
+        var page = await _fixture.CreatePageAsync();
+        await LoginAsAdminAsync(page);
+
+        await page.ClickAsync("a[href='/admin/images']");
+        await page.WaitForURLAsync("**/admin/images");
+
+        // Should show image manager
+        var heading = page.Locator("h1");
+        await Assertions.Expect(heading).ToBeVisibleAsync(new() { Timeout = 10000 });
+    }
+
+    [Fact]
+    public async Task ChangePassword_LoadsSuccessfully()
+    {
+        var page = await _fixture.CreatePageAsync();
+        await LoginAsAdminAsync(page);
+
+        await page.GotoAsync("/admin/change-password");
+
+        // Should show change password form
+        var heading = page.Locator("h1");
+        await Assertions.Expect(heading).ToContainTextAsync("Change Password");
+
+        // Should have password fields
+        var currentPasswordInput = page.Locator("input[id='currentPassword'], #currentPassword");
+        var newPasswordInput = page.Locator("input[id='newPassword'], #newPassword");
+        var confirmPasswordInput = page.Locator("input[id='confirmPassword'], #confirmPassword");
+
+        await Assertions.Expect(currentPasswordInput.First).ToBeVisibleAsync(new() { Timeout = 10000 });
+        await Assertions.Expect(newPasswordInput.First).ToBeVisibleAsync(new() { Timeout = 10000 });
+        await Assertions.Expect(confirmPasswordInput.First).ToBeVisibleAsync(new() { Timeout = 10000 });
+    }
+
+    [Fact]
+    public async Task ChangePassword_RequiresCurrentPassword()
+    {
+        var page = await _fixture.CreatePageAsync();
+        await LoginAsAdminAsync(page);
+
+        await page.GotoAsync("/admin/change-password");
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+
+        // The current password field should have required attribute
+        var currentPasswordInput = page.Locator("#currentPassword");
+        await Assertions.Expect(currentPasswordInput).ToHaveAttributeAsync("required", "");
+    }
+
+    [Fact]
+    public async Task AdminNavigation_CanNavigateBetweenPages()
+    {
+        var page = await _fixture.CreatePageAsync();
+        await LoginAsAdminAsync(page);
+
+        // Navigate to posts
+        await page.ClickAsync("a[href='/admin/posts']");
+        await page.WaitForURLAsync("**/admin/posts");
+
+        // Navigate back to dashboard via admin link
+        await page.ClickAsync("nav a[href='/admin']");
+        await page.WaitForURLAsync("**/admin");
+
+        // Navigate to images
+        await page.ClickAsync("a[href='/admin/images']");
+        await page.WaitForURLAsync("**/admin/images");
+    }
+
+    [Fact]
+    public async Task AdminDashboard_ShowsRecentPosts()
+    {
+        var page = await _fixture.CreatePageAsync();
+        await LoginAsAdminAsync(page);
+
+        // Dashboard should have a section for recent posts
+        var recentPostsSection = page.Locator("text=Recent Posts, h2:has-text('Recent')");
+        await Assertions.Expect(recentPostsSection.First).ToBeVisibleAsync(new() { Timeout = 10000 });
+    }
+}
+
+
+================================================================================
+FILE: src/MyBlog.E2E/Tests/AuthenticationTests.cs
+SIZE: 8.24 KB
+MODIFIED: 2026-01-29 01:45:13
+================================================================================
+
+using Microsoft.Playwright;
+using Xunit;
+
+namespace MyBlog.E2E.Tests;
+
+/// <summary>
+/// E2E tests for authentication flows (Epic 1: Authentication Journey).
+/// Tests the complete authentication lifecycle including login, logout, and protected routes.
+/// </summary>
+[Collection(PlaywrightCollection.Name)]
+public sealed class AuthenticationTests(PlaywrightFixture fixture)
+{
+    private readonly PlaywrightFixture _fixture = fixture;
+
+    [Fact]
+    public async Task ProtectedRoute_RedirectsToLogin_WhenNotAuthenticated()
+    {
+        var page = await _fixture.CreatePageAsync();
+
+        // Try to access admin page directly
+        await page.GotoAsync("/admin");
+
+        // Should be redirected to login
+        await page.WaitForURLAsync("**/login**", new() { Timeout = 10000 });
+
+        // Verify we're on the login page
+        var heading = page.Locator("h1");
+        await Assertions.Expect(heading).ToContainTextAsync("Login");
+    }
+
+    [Fact]
+    public async Task ProtectedRoute_IncludesReturnUrl_WhenRedirected()
+    {
+        var page = await _fixture.CreatePageAsync();
+
+        // Try to access admin posts page directly
+        await page.GotoAsync("/admin/posts");
+
+        // Should be redirected to login with return URL
+        await page.WaitForURLAsync("**/login**", new() { Timeout = 10000 });
+
+        // Check the URL contains returnUrl parameter
+        var url = page.Url;
+        Assert.Contains("returnUrl", url, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public async Task Login_WithDefaultCredentials_Succeeds()
+    {
+        var page = await _fixture.CreatePageAsync();
+
+        await page.GotoAsync("/login");
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+
+        // Fill in default admin credentials
+        await page.FillAsync("input[name='username']", "admin");
+        await page.FillAsync("input[name='password']", "ChangeMe123!");
+
+        // Submit the form
+        await page.Locator("button[type='submit']").ClickAsync();
+
+        // Wait for redirect to admin dashboard
+        await page.WaitForURLAsync("**/admin**", new() { Timeout = 15000 });
+
+        // Verify we're authenticated
+        var adminHeading = page.Locator("h1");
+        await Assertions.Expect(adminHeading).ToContainTextAsync("Admin", new() { Timeout = 10000 });
+    }
+
+    [Fact]
+    public async Task Login_ShowsAdminLink_WhenAuthenticated()
+    {
+        var page = await _fixture.CreatePageAsync();
+
+        await page.GotoAsync("/login");
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+
+        // Fill in credentials and submit
+        await page.FillAsync("input[name='username']", "admin");
+        await page.FillAsync("input[name='password']", "ChangeMe123!");
+        await page.Locator("button[type='submit']").ClickAsync();
+
+        // Wait for redirect
+        await page.WaitForURLAsync("**/admin**", new() { Timeout = 15000 });
+
+        // Navigate to home page
+        await page.GotoAsync("/");
+
+        // Admin link should be visible
+        var adminLink = page.Locator("nav a[href='/admin']");
+        await Assertions.Expect(adminLink).ToBeVisibleAsync(new() { Timeout = 10000 });
+    }
+
+    [Fact]
+    public async Task Logout_RedirectsToHome()
+    {
+        var page = await _fixture.CreatePageAsync();
+
+        // First, login
+        await page.GotoAsync("/login");
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+
+        await page.FillAsync("input[name='username']", "admin");
+        await page.FillAsync("input[name='password']", "ChangeMe123!");
+        await page.Locator("button[type='submit']").ClickAsync();
+
+        // Wait for redirect to admin
+        await page.WaitForURLAsync("**/admin**", new() { Timeout = 15000 });
+
+        // Find and click the logout button
+        var logoutButton = page.Locator("button:has-text('Logout'), form[action='/logout'] button");
+        await Assertions.Expect(logoutButton.First).ToBeVisibleAsync(new() { Timeout = 10000 });
+        await logoutButton.First.ClickAsync();
+
+        // Should be redirected to home
+        await page.WaitForURLAsync("**/", new() { Timeout = 10000 });
+
+        // Login link should be visible instead of Admin link
+        var loginLink = page.Locator("nav a[href='/login']");
+        await Assertions.Expect(loginLink).ToBeVisibleAsync(new() { Timeout = 10000 });
+    }
+
+    [Fact]
+    public async Task Logout_RemovesAdminLink()
+    {
+        var page = await _fixture.CreatePageAsync();
+
+        // First, login
+        await page.GotoAsync("/login");
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+
+        await page.FillAsync("input[name='username']", "admin");
+        await page.FillAsync("input[name='password']", "ChangeMe123!");
+        await page.Locator("button[type='submit']").ClickAsync();
+
+        // Wait for redirect to admin
+        await page.WaitForURLAsync("**/admin**", new() { Timeout = 15000 });
+
+        // Click logout
+        var logoutButton = page.Locator("button:has-text('Logout'), form[action='/logout'] button");
+        await logoutButton.First.ClickAsync();
+
+        // Should be redirected to home
+        await page.WaitForURLAsync("**/", new() { Timeout = 10000 });
+
+        // Admin link should not be visible
+        var adminLink = page.Locator("nav a[href='/admin']");
+        await Assertions.Expect(adminLink).Not.ToBeVisibleAsync(new() { Timeout = 5000 });
+    }
+
+    [Fact]
+    public async Task Login_WithInvalidPassword_ShowsError()
+    {
+        var page = await _fixture.CreatePageAsync();
+
+        await page.GotoAsync("/login");
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+
+        // Fill in invalid credentials
+        await page.FillAsync("input[name='username']", "admin");
+        await page.FillAsync("input[name='password']", "WrongPassword!");
+
+        // Submit the form
+        await page.Locator("button[type='submit']").ClickAsync();
+
+        // Should stay on login page with error
+        await page.WaitForURLAsync("**/login**", new() { Timeout = 10000 });
+
+        // Either URL has error param or page shows error message
+        var url = page.Url;
+        var errorMessage = page.Locator(".error-message");
+
+        var hasErrorInUrl = url.Contains("error=");
+        var hasErrorMessage = await errorMessage.CountAsync() > 0;
+
+        Assert.True(hasErrorInUrl || hasErrorMessage, "Expected error indication after invalid login");
+    }
+
+    [Fact]
+    public async Task Login_WithInvalidUsername_ShowsError()
+    {
+        var page = await _fixture.CreatePageAsync();
+
+        await page.GotoAsync("/login");
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+
+        // Fill in non-existent user
+        await page.FillAsync("input[name='username']", "nonexistentuser");
+        await page.FillAsync("input[name='password']", "SomePassword123!");
+
+        // Submit the form
+        await page.Locator("button[type='submit']").ClickAsync();
+
+        // Should stay on login page with error
+        await page.WaitForURLAsync("**/login**", new() { Timeout = 10000 });
+
+        // Check for error
+        var url = page.Url;
+        var errorMessage = page.Locator(".error-message");
+
+        var hasErrorInUrl = url.Contains("error=");
+        var hasErrorMessage = await errorMessage.CountAsync() > 0;
+
+        Assert.True(hasErrorInUrl || hasErrorMessage, "Expected error indication after invalid login");
+    }
+
+    [Fact]
+    public async Task AdminDashboard_LoadsSuccessfully_WhenAuthenticated()
+    {
+        var page = await _fixture.CreatePageAsync();
+
+        // Login first
+        await page.GotoAsync("/login");
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+
+        await page.FillAsync("input[name='username']", "admin");
+        await page.FillAsync("input[name='password']", "ChangeMe123!");
+        await page.Locator("button[type='submit']").ClickAsync();
+
+        // Wait for redirect to admin
+        await page.WaitForURLAsync("**/admin**", new() { Timeout = 15000 });
+
+        // Verify dashboard content
+        var heading = page.Locator("h1");
+        await Assertions.Expect(heading).ToContainTextAsync("Admin");
+
+        // Should have links to manage posts
+        var managePostsLink = page.Locator("a[href='/admin/posts'], a:has-text('Posts')");
+        await Assertions.Expect(managePostsLink.First).ToBeVisibleAsync(new() { Timeout = 10000 });
+    }
+}
+
+
+================================================================================
+FILE: src/MyBlog.E2E/Tests/HomePageTests.cs
+SIZE: 3.09 KB
+MODIFIED: 2026-01-29 01:44:25
+================================================================================
+
+using Microsoft.Playwright;
+using Xunit;
+
+namespace MyBlog.E2E.Tests;
+
+/// <summary>
+/// E2E tests for the homepage (Epic 4: Public Content Viewing).
 /// </summary>
 [Collection(PlaywrightCollection.Name)]
 public sealed class HomePageTests(PlaywrightFixture fixture)
@@ -4924,21 +5359,59 @@ public sealed class HomePageTests(PlaywrightFixture fixture)
         var heading = page.Locator("h1");
         await Assertions.Expect(heading).ToContainTextAsync("About");
     }
+
+    [Fact]
+    public async Task HomePage_NavigationToLogin_Works()
+    {
+        var page = await _fixture.CreatePageAsync();
+
+        await page.GotoAsync("/");
+
+        await page.ClickAsync("nav a[href='/login']");
+
+        await page.WaitForURLAsync("**/login");
+        var heading = page.Locator("h1");
+        await Assertions.Expect(heading).ToContainTextAsync("Login");
+    }
+
+    [Fact]
+    public async Task HomePage_HasThemeSwitcher()
+    {
+        var page = await _fixture.CreatePageAsync();
+
+        await page.GotoAsync("/");
+
+        var themeSwitcher = page.Locator(".theme-switcher");
+        await Assertions.Expect(themeSwitcher).ToBeVisibleAsync();
+    }
+
+    [Fact]
+    public async Task HomePage_HasMainContentArea()
+    {
+        var page = await _fixture.CreatePageAsync();
+
+        await page.GotoAsync("/");
+
+        var mainContent = page.Locator("main, .main");
+        await Assertions.Expect(mainContent.First).ToBeVisibleAsync();
+    }
 }
 
 
 ================================================================================
 FILE: src/MyBlog.E2E/Tests/LoginPageTests.cs
-SIZE: 1.04 KB
-MODIFIED: 2026-01-27 10:33:54
+SIZE: 5.79 KB
+MODIFIED: 2026-01-29 01:44:35
 ================================================================================
 
-using System.Text.RegularExpressions;
 using Microsoft.Playwright;
 using Xunit;
 
 namespace MyBlog.E2E.Tests;
 
+/// <summary>
+/// E2E tests for the login page (Epic 1: Authentication).
+/// </summary>
 [Collection(PlaywrightCollection.Name)]
 public sealed class LoginPageTests(PlaywrightFixture fixture)
 {
@@ -4965,13 +5438,148 @@ public sealed class LoginPageTests(PlaywrightFixture fixture)
         await Assertions.Expect(page.Locator("input[name='password']")).ToBeVisibleAsync();
         await Assertions.Expect(page.Locator("button[type='submit']")).ToBeVisibleAsync();
     }
+
+    [Fact]
+    public async Task LoginPage_DisplaysLoginHeading()
+    {
+        var page = await _fixture.CreatePageAsync();
+        await page.GotoAsync("/login");
+
+        var heading = page.Locator("h1");
+        await Assertions.Expect(heading).ToBeVisibleAsync();
+        await Assertions.Expect(heading).ToContainTextAsync("Login");
+    }
+
+    [Fact]
+    public async Task LoginPage_HasRequiredFieldAttributes()
+    {
+        var page = await _fixture.CreatePageAsync();
+        await page.GotoAsync("/login");
+
+        var usernameInput = page.Locator("input[name='username']");
+        var passwordInput = page.Locator("input[name='password']");
+
+        // Check required attributes
+        await Assertions.Expect(usernameInput).ToHaveAttributeAsync("required", "");
+        await Assertions.Expect(passwordInput).ToHaveAttributeAsync("required", "");
+    }
+
+    [Fact]
+    public async Task LoginPage_PasswordFieldIsTypePassword()
+    {
+        var page = await _fixture.CreatePageAsync();
+        await page.GotoAsync("/login");
+
+        var passwordInput = page.Locator("input[name='password']");
+        await Assertions.Expect(passwordInput).ToHaveAttributeAsync("type", "password");
+    }
+
+    [Fact]
+    public async Task LoginPage_HasAntiforgeryToken()
+    {
+        var page = await _fixture.CreatePageAsync();
+        await page.GotoAsync("/login");
+
+        // Blazor forms should have an antiforgery token
+        var antiforgeryInput = page.Locator("input[name='__RequestVerificationToken']");
+        await Assertions.Expect(antiforgeryInput).ToBeAttachedAsync();
+    }
+
+    [Fact]
+    public async Task LoginPage_FormHasCorrectAction()
+    {
+        var page = await _fixture.CreatePageAsync();
+        await page.GotoAsync("/login");
+
+        var form = page.Locator("form[action='/account/login']");
+        await Assertions.Expect(form).ToBeVisibleAsync();
+    }
+
+    [Fact]
+    public async Task LoginPage_InvalidCredentials_ShowsError()
+    {
+        var page = await _fixture.CreatePageAsync();
+        await page.GotoAsync("/login");
+
+        // Wait for form to be ready
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+
+        // Fill in invalid credentials
+        await page.FillAsync("input[name='username']", "invaliduser");
+        await page.FillAsync("input[name='password']", "invalidpassword");
+
+        // Submit the form and wait for navigation
+        await page.Locator("button[type='submit']").ClickAsync();
+
+        // Wait for the error message to appear (redirects back to login with error)
+        await page.WaitForURLAsync("**/login*");
+
+        // Check for error indicator in URL or on page
+        var url = page.Url;
+        var hasErrorParam = url.Contains("error=");
+        var errorMessage = page.Locator(".error-message");
+        var hasErrorMessage = await errorMessage.CountAsync() > 0;
+
+        Assert.True(hasErrorParam || hasErrorMessage, "Expected error indication after invalid login");
+    }
+
+    [Fact]
+    public async Task LoginPage_SuccessfulLogin_RedirectsToAdmin()
+    {
+        var page = await _fixture.CreatePageAsync();
+        await page.GotoAsync("/login");
+
+        // Wait for form to be ready
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+
+        // Fill in default admin credentials
+        await page.FillAsync("input[name='username']", "admin");
+        await page.FillAsync("input[name='password']", "ChangeMe123!");
+
+        // Submit the form
+        await page.Locator("button[type='submit']").ClickAsync();
+
+        // Wait for redirect to admin dashboard
+        await page.WaitForURLAsync("**/admin**", new() { Timeout = 15000 });
+
+        // Verify we're on the admin page
+        var adminHeading = page.Locator("h1");
+        await Assertions.Expect(adminHeading).ToContainTextAsync("Admin", new() { Timeout = 10000 });
+    }
+
+    [Fact]
+    public async Task LoginPage_WithReturnUrl_PreservesReturnUrl()
+    {
+        var page = await _fixture.CreatePageAsync();
+
+        // Navigate to login with a return URL
+        await page.GotoAsync("/login?returnUrl=%2Fadmin%2Fposts");
+
+        // Check that the hidden input has the return URL
+        var returnUrlInput = page.Locator("input[name='returnUrl']");
+        await Assertions.Expect(returnUrlInput).ToHaveValueAsync("/admin/posts");
+    }
+
+    [Fact]
+    public async Task LoginPage_HasNavigationLinks()
+    {
+        var page = await _fixture.CreatePageAsync();
+        await page.GotoAsync("/login");
+
+        // Should still have navigation to home and about
+        var homeLink = page.Locator("nav a[href='/']");
+        var aboutLink = page.Locator("nav a[href='/about']");
+
+        await Assertions.Expect(homeLink).ToBeVisibleAsync();
+        await Assertions.Expect(aboutLink).ToBeVisibleAsync();
+    }
 }
 
 
 ================================================================================
-FILE: src/MyBlog.E2E/Tests/ThemeSwitcherTests.cs
-SIZE: 2.98 KB
-MODIFIED: 2026-01-26 11:44:49
+FILE: src/MyBlog.E2E/Tests/NavigationTests.cs
+SIZE: 6.45 KB
+MODIFIED: 2026-01-29 01:45:28
 ================================================================================
 
 using Microsoft.Playwright;
@@ -4980,7 +5588,399 @@ using Xunit;
 namespace MyBlog.E2E.Tests;
 
 /// <summary>
-/// E2E tests for the theme switcher (Epic 1: UI/UX).
+/// E2E tests for site navigation (Epic 4: Public Browsing).
+/// </summary>
+[Collection(PlaywrightCollection.Name)]
+public sealed class NavigationTests(PlaywrightFixture fixture)
+{
+    private readonly PlaywrightFixture _fixture = fixture;
+
+    [Fact]
+    public async Task Navigation_HomeToAbout_Works()
+    {
+        var page = await _fixture.CreatePageAsync();
+
+        await page.GotoAsync("/");
+        await page.ClickAsync("nav a[href='/about']");
+
+        await page.WaitForURLAsync("**/about");
+
+        var heading = page.Locator("h1");
+        await Assertions.Expect(heading).ToContainTextAsync("About");
+    }
+
+    [Fact]
+    public async Task Navigation_AboutToHome_Works()
+    {
+        var page = await _fixture.CreatePageAsync();
+
+        await page.GotoAsync("/about");
+        await page.ClickAsync("nav a[href='/']");
+
+        await page.WaitForURLAsync("**/");
+
+        var heading = page.Locator("h1");
+        await Assertions.Expect(heading).ToContainTextAsync("Welcome");
+    }
+
+    [Fact]
+    public async Task Navigation_HomeToLogin_Works()
+    {
+        var page = await _fixture.CreatePageAsync();
+
+        await page.GotoAsync("/");
+        await page.ClickAsync("nav a[href='/login']");
+
+        await page.WaitForURLAsync("**/login");
+
+        var heading = page.Locator("h1");
+        await Assertions.Expect(heading).ToContainTextAsync("Login");
+    }
+
+    [Fact]
+    public async Task Navigation_AllMainLinks_Present()
+    {
+        var page = await _fixture.CreatePageAsync();
+
+        await page.GotoAsync("/");
+
+        // Check all main navigation links are present
+        var homeLink = page.Locator("nav a[href='/']");
+        var aboutLink = page.Locator("nav a[href='/about']");
+        var loginLink = page.Locator("nav a[href='/login']");
+
+        await Assertions.Expect(homeLink).ToBeVisibleAsync();
+        await Assertions.Expect(aboutLink).ToBeVisibleAsync();
+        await Assertions.Expect(loginLink).ToBeVisibleAsync();
+    }
+
+    [Fact]
+    public async Task Navigation_FooterIsPresent_OnAllPages()
+    {
+        var page = await _fixture.CreatePageAsync();
+
+        // Check home page
+        await page.GotoAsync("/");
+        var footer = page.Locator("footer");
+        await Assertions.Expect(footer).ToBeVisibleAsync();
+
+        // Check about page
+        await page.GotoAsync("/about");
+        await Assertions.Expect(footer).ToBeVisibleAsync();
+
+        // Check login page
+        await page.GotoAsync("/login");
+        await Assertions.Expect(footer).ToBeVisibleAsync();
+    }
+
+    [Fact]
+    public async Task Navigation_HeaderIsPresent_OnAllPages()
+    {
+        var page = await _fixture.CreatePageAsync();
+
+        // Check home page
+        await page.GotoAsync("/");
+        var header = page.Locator("header, .header");
+        await Assertions.Expect(header.First).ToBeVisibleAsync();
+
+        // Check about page
+        await page.GotoAsync("/about");
+        await Assertions.Expect(header.First).ToBeVisibleAsync();
+
+        // Check login page
+        await page.GotoAsync("/login");
+        await Assertions.Expect(header.First).ToBeVisibleAsync();
+    }
+
+    [Fact]
+    public async Task Navigation_LogoLinksToHome()
+    {
+        var page = await _fixture.CreatePageAsync();
+
+        await page.GotoAsync("/about");
+
+        // Click on the logo/brand link
+        var logoLink = page.Locator("header a.logo, .header a.logo, header a:has-text('MyBlog')");
+        if (await logoLink.CountAsync() > 0)
+        {
+            await logoLink.First.ClickAsync();
+            await page.WaitForURLAsync("**/");
+
+            var heading = page.Locator("h1");
+            await Assertions.Expect(heading).ToContainTextAsync("Welcome");
+        }
+        else
+        {
+            // If no logo link, just verify home link works
+            await page.ClickAsync("nav a[href='/']");
+            await page.WaitForURLAsync("**/");
+        }
+    }
+
+    [Fact]
+    public async Task NonExistentPage_ShowsNotFound_OrRedirects()
+    {
+        var page = await _fixture.CreatePageAsync();
+
+        var response = await page.GotoAsync("/this-page-does-not-exist-12345");
+
+        // Should either return 404 or redirect to a not found page
+        Assert.NotNull(response);
+
+        // Either 404 status OR a page showing "not found" content
+        if (response.Status == 404)
+        {
+            Assert.Equal(404, response.Status);
+        }
+        else
+        {
+            // If redirected, check for not found content
+            var content = await page.ContentAsync();
+            var hasNotFoundIndicator = content.Contains("not found", StringComparison.OrdinalIgnoreCase) ||
+                                        content.Contains("404", StringComparison.OrdinalIgnoreCase);
+            Assert.True(response.Ok || hasNotFoundIndicator);
+        }
+    }
+
+    [Fact]
+    public async Task PostNotFound_ShowsError()
+    {
+        var page = await _fixture.CreatePageAsync();
+
+        await page.GotoAsync("/post/this-post-definitely-does-not-exist-12345");
+
+        // Should show "Post Not Found" or similar message
+        var notFoundIndicator = page.Locator("text=Not Found, text=not found, text=doesn't exist");
+        await Assertions.Expect(notFoundIndicator.First).ToBeVisibleAsync(new() { Timeout = 10000 });
+    }
+
+    [Fact]
+    public async Task Navigation_MobileViewport_HasNavigation()
+    {
+        // Create a page with mobile viewport
+        var context = await _fixture.Browser.NewContextAsync(new BrowserNewContextOptions
+        {
+            BaseURL = _fixture.BaseUrl,
+            ViewportSize = new ViewportSize { Width = 375, Height = 667 }
+        });
+        var page = await context.NewPageAsync();
+
+        await page.GotoAsync("/");
+
+        // Navigation should still be accessible (might be in hamburger menu or visible)
+        var nav = page.Locator("nav");
+        await Assertions.Expect(nav).ToBeAttachedAsync();
+    }
+
+    [Fact]
+    public async Task Navigation_TabletViewport_HasNavigation()
+    {
+        // Create a page with tablet viewport
+        var context = await _fixture.Browser.NewContextAsync(new BrowserNewContextOptions
+        {
+            BaseURL = _fixture.BaseUrl,
+            ViewportSize = new ViewportSize { Width = 768, Height = 1024 }
+        });
+        var page = await context.NewPageAsync();
+
+        await page.GotoAsync("/");
+
+        // Navigation should be accessible
+        var nav = page.Locator("nav");
+        await Assertions.Expect(nav).ToBeVisibleAsync();
+    }
+}
+
+
+================================================================================
+FILE: src/MyBlog.E2E/Tests/SeoTests.cs
+SIZE: 4.72 KB
+MODIFIED: 2026-01-29 01:46:40
+================================================================================
+
+using Microsoft.Playwright;
+using Xunit;
+
+namespace MyBlog.E2E.Tests;
+
+/// <summary>
+/// E2E tests for SEO and accessibility features.
+/// </summary>
+[Collection(PlaywrightCollection.Name)]
+public sealed class SeoTests(PlaywrightFixture fixture)
+{
+    private readonly PlaywrightFixture _fixture = fixture;
+
+    [Fact]
+    public async Task HomePage_HasPageTitle()
+    {
+        var page = await _fixture.CreatePageAsync();
+
+        await page.GotoAsync("/");
+
+        var title = await page.TitleAsync();
+        Assert.False(string.IsNullOrWhiteSpace(title), "Page should have a title");
+    }
+
+    [Fact]
+    public async Task AboutPage_HasPageTitle()
+    {
+        var page = await _fixture.CreatePageAsync();
+
+        await page.GotoAsync("/about");
+
+        var title = await page.TitleAsync();
+        Assert.Contains("About", title, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public async Task LoginPage_HasPageTitle()
+    {
+        var page = await _fixture.CreatePageAsync();
+
+        await page.GotoAsync("/login");
+
+        var title = await page.TitleAsync();
+        Assert.Contains("Login", title, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public async Task HomePage_HasMainLandmark()
+    {
+        var page = await _fixture.CreatePageAsync();
+
+        await page.GotoAsync("/");
+
+        // Check for main content area with proper role
+        var main = page.Locator("main, [role='main']");
+        await Assertions.Expect(main.First).ToBeVisibleAsync();
+    }
+
+    [Fact]
+    public async Task HomePage_HasNavigationLandmark()
+    {
+        var page = await _fixture.CreatePageAsync();
+
+        await page.GotoAsync("/");
+
+        var nav = page.Locator("nav, [role='navigation']");
+        await Assertions.Expect(nav.First).ToBeVisibleAsync();
+    }
+
+    [Fact]
+    public async Task AboutPage_HasProperHeadingHierarchy()
+    {
+        var page = await _fixture.CreatePageAsync();
+
+        await page.GotoAsync("/about");
+
+        // Should have exactly one h1
+        var h1Count = await page.Locator("h1").CountAsync();
+        Assert.Equal(1, h1Count);
+    }
+
+    [Fact]
+    public async Task Pages_HaveViewportMeta()
+    {
+        var page = await _fixture.CreatePageAsync();
+
+        await page.GotoAsync("/");
+
+        // Check for viewport meta tag (important for mobile)
+        var viewportMeta = page.Locator("meta[name='viewport']");
+        await Assertions.Expect(viewportMeta).ToBeAttachedAsync();
+    }
+
+    [Fact]
+    public async Task Links_HaveVisibleText()
+    {
+        var page = await _fixture.CreatePageAsync();
+
+        await page.GotoAsync("/");
+
+        // Main navigation links should have visible text
+        var homeLink = page.Locator("nav a[href='/']");
+        var homeLinkText = await homeLink.TextContentAsync();
+        Assert.False(string.IsNullOrWhiteSpace(homeLinkText), "Home link should have visible text");
+    }
+
+    [Fact]
+    public async Task Buttons_HaveAccessibleNames()
+    {
+        var page = await _fixture.CreatePageAsync();
+
+        await page.GotoAsync("/");
+
+        // Theme switcher button should have aria-label
+        var themeSwitcherBtn = page.Locator(".theme-switcher-btn");
+        if (await themeSwitcherBtn.CountAsync() > 0)
+        {
+            await Assertions.Expect(themeSwitcherBtn).ToHaveAttributeAsync("aria-label", "Change theme");
+        }
+    }
+
+    [Fact]
+    public async Task LoginForm_HasLabels()
+    {
+        var page = await _fixture.CreatePageAsync();
+
+        await page.GotoAsync("/login");
+
+        // Form inputs should have associated labels
+        var usernameLabel = page.Locator("label[for='username']");
+        var passwordLabel = page.Locator("label[for='password']");
+
+        await Assertions.Expect(usernameLabel).ToBeVisibleAsync();
+        await Assertions.Expect(passwordLabel).ToBeVisibleAsync();
+    }
+
+    [Fact]
+    public async Task Images_HaveAltText()
+    {
+        var page = await _fixture.CreatePageAsync();
+
+        await page.GotoAsync("/about");
+
+        // If there are any images, they should have alt text
+        var images = page.Locator("img");
+        var imageCount = await images.CountAsync();
+
+        for (int i = 0; i < imageCount; i++)
+        {
+            var img = images.Nth(i);
+            var alt = await img.GetAttributeAsync("alt");
+            // Images should have alt attribute (can be empty for decorative images)
+            Assert.NotNull(alt);
+        }
+    }
+
+    [Fact]
+    public async Task Page_HasLanguageAttribute()
+    {
+        var page = await _fixture.CreatePageAsync();
+
+        await page.GotoAsync("/");
+
+        // HTML element should have lang attribute
+        var lang = await page.Locator("html").GetAttributeAsync("lang");
+        Assert.False(string.IsNullOrWhiteSpace(lang), "HTML should have lang attribute");
+    }
+}
+
+
+================================================================================
+FILE: src/MyBlog.E2E/Tests/ThemeSwitcherTests.cs
+SIZE: 7.18 KB
+MODIFIED: 2026-01-29 01:51:02
+================================================================================
+
+using Microsoft.Playwright;
+using Xunit;
+
+namespace MyBlog.E2E.Tests;
+
+/// <summary>
+/// E2E tests for the theme switcher (Epic 4: UI/UX).
 /// The ThemeSwitcher is a button-based dropdown menu, not a select element.
 /// </summary>
 [Collection(PlaywrightCollection.Name)]
@@ -5001,7 +6001,22 @@ public sealed class ThemeSwitcherTests(PlaywrightFixture fixture)
     }
 
     [Fact]
-    public async Task ThemeSwitcher_ChangesTheme()
+    public async Task ThemeSwitcher_ButtonIsClickable()
+    {
+        var page = await _fixture.CreatePageAsync();
+
+        await page.GotoAsync("/");
+
+        // Wait for Blazor to be fully ready
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+
+        var themeSwitcherBtn = page.Locator(".theme-switcher-btn");
+        await Assertions.Expect(themeSwitcherBtn).ToBeVisibleAsync();
+        await Assertions.Expect(themeSwitcherBtn).ToBeEnabledAsync();
+    }
+
+    [Fact]
+    public async Task ThemeSwitcher_OpensMenuOnClick()
     {
         var page = await _fixture.CreatePageAsync();
 
@@ -5009,26 +6024,17 @@ public sealed class ThemeSwitcherTests(PlaywrightFixture fixture)
 
         // Wait for Blazor to be fully ready (SignalR connection and JS interop initialized)
         await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
-        await page.WaitForTimeoutAsync(1000);
+
+        // Wait for theme manager to initialize by checking for the button
+        var themeSwitcherBtn = page.Locator(".theme-switcher-btn");
+        await Assertions.Expect(themeSwitcherBtn).ToBeVisibleAsync();
 
         // Click the theme switcher button to open the menu
-        var themeSwitcherBtn = page.Locator(".theme-switcher-btn");
         await themeSwitcherBtn.ClickAsync();
 
         // Wait for the menu to be visible (CSS transition)
         var themeMenu = page.Locator(".theme-menu.open");
-        await Assertions.Expect(themeMenu).ToBeVisibleAsync(new LocatorAssertionsToBeVisibleOptions { Timeout = 5000 });
-
-        // Click on the "dark" theme option
-        var darkOption = page.Locator(".theme-option:has-text('Dark')");
-        await darkOption.ClickAsync();
-
-        // Wait a moment for the theme to apply
-        await page.WaitForTimeoutAsync(500);
-
-        // Check that theme changed to dark
-        var newTheme = await page.EvaluateAsync<string>("document.documentElement.getAttribute('data-theme')");
-        Assert.Equal("dark", newTheme);
+        await Assertions.Expect(themeMenu).ToBeVisibleAsync(new() { Timeout = 5000 });
     }
 
     [Fact]
@@ -5038,23 +6044,134 @@ public sealed class ThemeSwitcherTests(PlaywrightFixture fixture)
 
         await page.GotoAsync("/");
 
-        // Wait for Blazor to be fully ready (SignalR connection and JS interop initialized)
+        // Wait for Blazor to be fully ready
         await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
-        await page.WaitForTimeoutAsync(1000);
 
         // Click the theme switcher button to open the menu
         var themeSwitcherBtn = page.Locator(".theme-switcher-btn");
+        await Assertions.Expect(themeSwitcherBtn).ToBeVisibleAsync();
         await themeSwitcherBtn.ClickAsync();
 
         // Wait for the menu to be visible (CSS transition)
         var themeMenu = page.Locator(".theme-menu.open");
-        await Assertions.Expect(themeMenu).ToBeVisibleAsync(new LocatorAssertionsToBeVisibleOptions { Timeout = 5000 });
+        await Assertions.Expect(themeMenu).ToBeVisibleAsync(new() { Timeout = 5000 });
 
         // Count the theme options (buttons with class .theme-option)
         var options = page.Locator(".theme-option");
         var count = await options.CountAsync();
 
         Assert.True(count >= 2, $"Expected at least 2 theme options, got {count}");
+    }
+
+    [Fact]
+    public async Task ThemeSwitcher_ChangesToDarkTheme()
+    {
+        var page = await _fixture.CreatePageAsync();
+
+        await page.GotoAsync("/");
+
+        // Wait for Blazor to be fully ready
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+
+        // Click the theme switcher button to open the menu
+        var themeSwitcherBtn = page.Locator(".theme-switcher-btn");
+        await Assertions.Expect(themeSwitcherBtn).ToBeVisibleAsync();
+        await themeSwitcherBtn.ClickAsync();
+
+        // Wait for the menu to be visible
+        var themeMenu = page.Locator(".theme-menu.open");
+        await Assertions.Expect(themeMenu).ToBeVisibleAsync(new() { Timeout = 5000 });
+
+        // Click on the "dark" theme option
+        var darkOption = page.Locator(".theme-option:has-text('Dark')");
+        await darkOption.ClickAsync();
+
+        // Wait for theme attribute to change
+        await page.WaitForFunctionAsync(
+            "() => document.documentElement.getAttribute('data-theme') === 'dark'",
+            new() { Timeout = 5000 });
+
+        // Verify theme changed to dark
+        var newTheme = await page.EvaluateAsync<string>("document.documentElement.getAttribute('data-theme')");
+        Assert.Equal("dark", newTheme);
+    }
+
+    [Fact]
+    public async Task ThemeSwitcher_ThemePersistsOnRefresh()
+    {
+        var page = await _fixture.CreatePageAsync();
+
+        await page.GotoAsync("/");
+
+        // Wait for Blazor to be fully ready
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+
+        // Click the theme switcher button to open the menu
+        var themeSwitcherBtn = page.Locator(".theme-switcher-btn");
+        await Assertions.Expect(themeSwitcherBtn).ToBeVisibleAsync();
+        await themeSwitcherBtn.ClickAsync();
+
+        // Wait for the menu to be visible
+        var themeMenu = page.Locator(".theme-menu.open");
+        await Assertions.Expect(themeMenu).ToBeVisibleAsync(new() { Timeout = 5000 });
+
+        // Click on the "dark" theme option
+        var darkOption = page.Locator(".theme-option:has-text('Dark')");
+        await darkOption.ClickAsync();
+
+        // Wait for theme attribute to change
+        await page.WaitForFunctionAsync(
+            "() => document.documentElement.getAttribute('data-theme') === 'dark'",
+            new() { Timeout = 5000 });
+
+        // Refresh the page
+        await page.ReloadAsync();
+        await page.WaitForLoadStateAsync(LoadState.DOMContentLoaded);
+
+        // Verify theme is still dark after refresh
+        var themeAfterRefresh = await page.EvaluateAsync<string>("document.documentElement.getAttribute('data-theme')");
+        Assert.Equal("dark", themeAfterRefresh);
+    }
+
+    [Fact]
+    public async Task ThemeSwitcher_HasAccessibilityAttributes()
+    {
+        var page = await _fixture.CreatePageAsync();
+
+        await page.GotoAsync("/");
+
+        var themeSwitcherBtn = page.Locator(".theme-switcher-btn");
+        await Assertions.Expect(themeSwitcherBtn).ToBeVisibleAsync();
+
+        // Check accessibility attributes
+        await Assertions.Expect(themeSwitcherBtn).ToHaveAttributeAsync("aria-label", "Change theme");
+        await Assertions.Expect(themeSwitcherBtn).ToHaveAttributeAsync("aria-haspopup", "true");
+    }
+
+    [Fact]
+    public async Task ThemeSwitcher_MenuClosesOnOutsideClick()
+    {
+        var page = await _fixture.CreatePageAsync();
+
+        await page.GotoAsync("/");
+
+        // Wait for Blazor to be fully ready
+        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+
+        // Click the theme switcher button to open the menu
+        var themeSwitcherBtn = page.Locator(".theme-switcher-btn");
+        await Assertions.Expect(themeSwitcherBtn).ToBeVisibleAsync();
+        await themeSwitcherBtn.ClickAsync();
+
+        // Wait for the menu to be visible
+        var themeMenu = page.Locator(".theme-menu.open");
+        await Assertions.Expect(themeMenu).ToBeVisibleAsync(new() { Timeout = 5000 });
+
+        // Click outside the menu (on the main content area)
+        await page.Locator("main, .main").First.ClickAsync();
+
+        // Menu should close
+        await Assertions.Expect(themeMenu).Not.ToBeVisibleAsync(new() { Timeout = 5000 });
     }
 }
 
@@ -13723,9 +14840,9 @@ window.themeManager = {
 
 
 ===============================================================================
-EXPORT COMPLETED: Thu Jan 29 01:41:09 AM EST 2026
-Total Files Found: 115
-Files Exported: 115
+EXPORT COMPLETED: Thu Jan 29 01:52:12 AM EST 2026
+Total Files Found: 119
+Files Exported: 119
 Files Skipped: 0 (binary or large files)
 Output File: /home/kushal/src/dotnet/MyBlog/docs/llm/dump.txt
 ===============================================================================

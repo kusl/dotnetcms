@@ -58,3 +58,33 @@ These tests cover:
 
 
 
+Theme Switcher Tests `/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/Tests/ThemeSwitcherTests.cs` has errors 
+can you generate this file again resolving ALL the errors? 
+  MyBlog.Core net10.0 succeeded (2.9s) → MyBlog.Core/bin/Debug/net10.0/MyBlog.Core.dll
+  MyBlog.Infrastructure net10.0 succeeded (0.3s) → MyBlog.Infrastructure/bin/Debug/net10.0/MyBlog.Infrastructure.dll
+  MyBlog.Web net10.0 succeeded (2.3s) → MyBlog.Web/bin/Debug/net10.0/MyBlog.Web.dll
+  MyBlog.E2E net10.0 failed with 2 error(s) (0.4s)
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/Tests/ThemeSwitcherTests.cs(116,21): error CS0117: 'object' does not contain a definition for 'Timeout'
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/Tests/ThemeSwitcherTests.cs(149,21): error CS0117: 'object' does not contain a definition for 'Timeout'
+  MyBlog.Tests net10.0 succeeded (0.4s) → MyBlog.Tests/bin/Debug/net10.0/MyBlog.Tests.dll
+
+Build failed with 2 error(s) in 6.7s
+
+
+
+
+
+
+
+
+
+I see the issue - the `WaitForFunctionAsync` method needs the explicit `PageWaitForFunctionOptions` type, not an anonymous object. Let me fix that:The fix was changing the anonymous object `new() { Timeout = 5000 }` to the explicit type `new PageWaitForFunctionOptions { Timeout = 5000 }` for the `WaitForFunctionAsync` calls, and adding the required `null` argument for the second parameter.
+
+The two lines that were fixed:
+- Line 116: `new PageWaitForFunctionOptions { Timeout = 5000 }` with `null` as the second argument
+- Line 149: Same fix
+
+
+
+
+
