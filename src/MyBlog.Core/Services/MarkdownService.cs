@@ -1,6 +1,5 @@
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Web;
 using Microsoft.Extensions.Logging;
 using MyBlog.Core.Interfaces;
 
@@ -41,7 +40,7 @@ public sealed partial class MarkdownService(
                 if (inCodeBlock)
                 {
                     result.Append("<pre><code>");
-                    result.Append(HttpUtility.HtmlEncode(codeBlockContent.ToString().TrimEnd()));
+                    result.Append(HtmlEncode(codeBlockContent.ToString().TrimEnd()));
                     result.AppendLine("</code></pre>");
                     codeBlockContent.Clear();
                     inCodeBlock = false;
@@ -113,6 +112,7 @@ public sealed partial class MarkdownService(
                     result.AppendLine("<ol>");
                     currentListType = ListType.Ordered;
                 }
+
                 var itemText = await ProcessInlineAsync(orderedMatch.Groups[1].Value);
                 result.AppendLine($"<li>{itemText}</li>");
                 continue;
@@ -143,7 +143,7 @@ public sealed partial class MarkdownService(
         if (inCodeBlock)
         {
             result.Append("<pre><code>");
-            result.Append(HttpUtility.HtmlEncode(codeBlockContent.ToString().TrimEnd()));
+            result.Append(HtmlEncode(codeBlockContent.ToString().TrimEnd()));
             result.AppendLine("</code></pre>");
         }
 
@@ -162,10 +162,46 @@ public sealed partial class MarkdownService(
         return result;
     }
 
+    /// <summary>
+    /// HTML-encodes only the essential characters (&lt;, &gt;, &amp;, &quot;) 
+    /// while preserving Unicode characters like emojis.
+    /// </summary>
+    private static string HtmlEncode(string text)
+    {
+        if (string.IsNullOrEmpty(text))
+        {
+            return text;
+        }
+
+        var sb = new StringBuilder(text.Length);
+        foreach (var c in text)
+        {
+            switch (c)
+            {
+                case '<':
+                    sb.Append("&lt;");
+                    break;
+                case '>':
+                    sb.Append("&gt;");
+                    break;
+                case '&':
+                    sb.Append("&amp;");
+                    break;
+                case '"':
+                    sb.Append("&quot;");
+                    break;
+                default:
+                    sb.Append(c);
+                    break;
+            }
+        }
+        return sb.ToString();
+    }
+
     private async Task<string> ProcessInlineAsync(string text)
     {
         // Escape HTML first
-        text = HttpUtility.HtmlEncode(text);
+        text = HtmlEncode(text);
 
         // Process inline code
         text = InlineCodePattern().Replace(text, "<code>$1</code>");
@@ -189,7 +225,8 @@ public sealed partial class MarkdownService(
                     // This is wrapped in try-catch to ensure we never fail rendering
                     var dimensions = await imageDimensionService.GetDimensionsAsync(url);
 
-                    imgTag = dimensions.HasValue ? $"<img src=\"{url}\" alt=\"{alt}\" width=\"{dimensions.Value.Width}\" height=\"{dimensions.Value.Height}\" />" :
+                    imgTag = dimensions.HasValue ?
+                        $"<img src=\"{url}\" alt=\"{alt}\" width=\"{dimensions.Value.Width}\" height=\"{dimensions.Value.Height}\" />" :
                         // No dimensions available - render without width/height
                         $"<img src=\"{url}\" alt=\"{alt}\" />";
                 }
@@ -208,11 +245,21 @@ public sealed partial class MarkdownService(
         // Process links
         text = LinkPattern().Replace(text, "<a href=\"$2\">$1</a>");
 
-        // Process bold
-        text = BoldPattern().Replace(text, "<strong>$1</strong>");
+        // Process bold (must come before italic to handle nested cases like **bold with *italic* inside**)
+        text = BoldPattern().Replace(text, match =>
+        {
+            // Group 1 is for ** style, Group 2 is for __ style
+            var content = match.Groups[1].Success ? match.Groups[1].Value : match.Groups[2].Value;
+            return $"<strong>{content}</strong>";
+        });
 
         // Process italic
-        text = ItalicPattern().Replace(text, "<em>$1</em>");
+        text = ItalicPattern().Replace(text, match =>
+        {
+            // Group 1 is for * style, Group 2 is for _ style
+            var content = match.Groups[1].Success ? match.Groups[1].Value : match.Groups[2].Value;
+            return $"<em>{content}</em>";
+        });
 
         return text;
     }
@@ -239,9 +286,11 @@ public sealed partial class MarkdownService(
     [GeneratedRegex(@"\[([^\]]+)\]\(([^)]+)\)")]
     private static partial Regex LinkPattern();
 
-    [GeneratedRegex(@"\*\*([^*]+)\*\*|__([^_]+)__")]
+    // Bold pattern: matches **content** or __content__ where content can contain single * or _
+    [GeneratedRegex(@"\*\*(.+?)\*\*|__(.+?)__")]
     private static partial Regex BoldPattern();
 
-    [GeneratedRegex(@"(?<!\*)\*(?!\*)([^*]+)(?<!\*)\*(?!\*)|(?<!_)_(?!_)([^_]+)(?<!_)_(?!_)")]
+    // Italic pattern: matches *content* or _content_ (not preceded/followed by same char)
+    [GeneratedRegex(@"(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)|(?<!_)_(?!_)(.+?)(?<!_)_(?!_)")]
     private static partial Regex ItalicPattern();
 }

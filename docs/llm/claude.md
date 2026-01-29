@@ -698,3 +698,103 @@ Now let me provide the corrected files:Here are the two files that need to be ch
 
 
 
+Looking good! I have two failing tests 
+xUnit.net v3 In-Process Runner v3.2.2+728c1dce01 (64-bit .NET 10.0.2)
+  Discovering: MyBlog.Tests
+  Discovered:  MyBlog.Tests
+  Starting:    MyBlog.Tests
+    MyBlog.Tests.Unit.MarkdownServiceEdgeCaseTests.ToHtml_WithEmojiInContent_PreservesEmoji [FAIL]
+      Assert.Contains() Failure: Sub-string not found
+      String:    "<p>Hello &#128075; World &#127757;</p>\n"
+      Not found: "👋"
+      Stack Trace:
+        MyBlog.Tests/Unit/MarkdownServiceEdgeCaseTests.cs(204,0): at MyBlog.Tests.Unit.MarkdownServiceEdgeCaseTests.ToHtml_WithEmojiInContent_PreservesEmoji()
+        --- End of stack trace from previous location ---
+    MyBlog.Tests.Unit.MarkdownServiceEdgeCaseTests.ToHtml_WithNestedBoldAndItalic_ProcessesBothCorrectly [FAIL]
+      Assert.Contains() Failure: Sub-string not found
+      String:    "<p>This is **bold with <em>nested italic</em> insi"···
+      Not found: "<strong>bold with <em>nested italic</em> inside</s"···
+      Stack Trace:
+        MyBlog.Tests/Unit/MarkdownServiceEdgeCaseTests.cs(34,0): at MyBlog.Tests.Unit.MarkdownServiceEdgeCaseTests.ToHtml_WithNestedBoldAndItalic_ProcessesBothCorrectly()
+        --- End of stack trace from previous location ---
+  Finished:    MyBlog.Tests (ID = '24cedafe73dab5684218bb3cf04cfd49ae8ce3b87ae799399cb2e301cbc1e755')
+=== TEST EXECUTION SUMMARY ===
+   MyBlog.Tests  Total: 182, Errors: 0, Failed: 2, Skipped: 0, Not Run: 0, Time: 40.594s
+
+I have included the latest dump in `dump.txt`
+please read each and every line of the code 
+don't skim it 
+don't try to change the coding style 
+don't remove braces around the if 
+don't change the primary constructor back to whatever you did 
+don't make unnecessary changes 
+do make the code build, 
+do make the tests pass 
+and do make everything work properly 
+and follow engineering best practices 
+and please do not hallucinate 
+give me full files for all files that changed 
+
+Now I have a good understanding of the code. Let me search for the full MarkdownService.cs file to see the complete implementation:Now I have a clear picture of the issues. Looking at the two failing tests:
+
+1. **`ToHtml_WithEmojiInContent_PreservesEmoji`** - The test expects `👋` to be present in the output, but `HttpUtility.HtmlEncode` is encoding emojis to HTML entities like `&#128075;`
+
+2. **`ToHtml_WithNestedBoldAndItalic_ProcessesBothCorrectly`** - The input `**bold with *nested italic* inside**` should produce `<strong>bold with <em>nested italic</em> inside</strong>`, but the current regex patterns for bold don't handle nested content with asterisks properly.
+
+Let me analyze the current regex patterns:
+- `BoldPattern`: `@"\*\*([^*]+)\*\*|__([^_]+)__"` - This uses `[^*]+` which means "one or more characters that are NOT asterisks" - so it can't match nested italic `*nested italic*`
+- `ItalicPattern`: `@"(?<!\*)\*(?!\*)([^*]+)(?<!\*)\*(?!\*)|(?<!_)_(?!_)([^_]+)(?<!_)_(?!_)"` - Same issue
+
+The fixes needed:
+1. For emojis: Don't encode emojis to HTML entities. The issue is that `HttpUtility.HtmlEncode` encodes non-ASCII characters. We need to only encode HTML special characters (`<`, `>`, `&`, `"`, `'`).
+2. For nested bold/italic: The regex patterns need to allow asterisks within the captured group when they're part of italic markers, and we need to process bold before italic so nested formatting works.Here's the complete fixed `MarkdownService.cs` file. I made the following changes to fix the two failing tests:
+
+**1. Fixed emoji preservation (test: `ToHtml_WithEmojiInContent_PreservesEmoji`)**
+
+The original code used `System.Web.HttpUtility.HtmlEncode()` which encodes all non-ASCII characters (including emojis) to HTML numeric entities. I replaced it with a custom `HtmlEncode` method that only encodes the essential HTML special characters (`<`, `>`, `&`, `"`) while preserving Unicode characters like emojis.
+
+**2. Fixed nested bold/italic (test: `ToHtml_WithNestedBoldAndItalic_ProcessesBothCorrectly`)**
+
+The original regex patterns used:
+- `BoldPattern`: `@"\*\*([^*]+)\*\*|__([^_]+)__"` - `[^*]+` means "no asterisks allowed inside"
+- `ItalicPattern`: Similar restriction
+
+I changed them to:
+- `BoldPattern`: `@"\*\*(.+?)\*\*|__(.+?)__"` - `.+?` (non-greedy) allows any characters including asterisks
+- `ItalicPattern`: `@"(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)|(?<!_)_(?!_)(.+?)(?<!_)_(?!_)"` - Same approach
+
+The key changes:
+- Changed `[^*]+` to `.+?` (non-greedy match of any characters)
+- Changed `[^_]+` to `.+?` for underscore variants
+- Also changed the replacement logic to use `MatchEvaluator` delegates to properly extract the captured group (since we have alternation with `|`)
+
+**Summary of changes:**
+1. Removed `using System.Web;` import
+2. Added custom `HtmlEncode()` method that preserves Unicode
+3. Updated `BoldPattern` regex to allow nested asterisks
+4. Updated `ItalicPattern` regex to use non-greedy matching
+5. Changed `BoldPattern().Replace()` and `ItalicPattern().Replace()` to use `MatchEvaluator` delegates
+
+
+
+
+usage statistics 
+current:  37% 
+week:     16%
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
