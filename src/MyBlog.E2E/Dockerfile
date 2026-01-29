@@ -1,52 +1,20 @@
-# E2E Test Runner with Playwright
-# Single stage using .NET 10 SDK for both build and run
-FROM mcr.microsoft.com/dotnet/sdk:10.0-noble
-
+# E2E Test Runner Dockerfile
+# Uses Playwright to run E2E tests against the MyBlog application
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 
-# Install Playwright browser dependencies (Chromium) for Ubuntu Noble
-# PowerShell needs to be installed from Microsoft's repo
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-    wget \
-    curl \
-    gnupg \
-    ca-certificates \
-    fonts-liberation \
-    libasound2t64 \
-    libatk-bridge2.0-0 \
-    libatk1.0-0 \
-    libatspi2.0-0 \
-    libcairo2 \
-    libcups2 \
-    libdbus-1-3 \
-    libdrm2 \
-    libgbm1 \
-    libglib2.0-0 \
-    libgtk-3-0 \
-    libnspr4 \
-    libnss3 \
-    libpango-1.0-0 \
-    libx11-6 \
-    libxcb1 \
-    libxcomposite1 \
-    libxdamage1 \
-    libxext6 \
-    libxfixes3 \
-    libxkbcommon0 \
-    libxrandr2 \
-    xdg-utils \
-    && rm -rf /var/lib/apt/lists/*
+# Install Node.js for Playwright browser management
+RUN apt-get update && apt-get install -y nodejs npm && rm -rf /var/lib/apt/lists/*
 
-# Install PowerShell from Microsoft repo
-RUN wget -q https://packages.microsoft.com/config/ubuntu/24.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb && \
+# Install PowerShell (required for Playwright browser installation)
+RUN apt-get update && apt-get install -y wget && \
+    wget -q https://packages.microsoft.com/config/debian/12/packages-microsoft-prod.deb && \
     dpkg -i packages-microsoft-prod.deb && \
     rm packages-microsoft-prod.deb && \
-    apt-get update && \
-    apt-get install -y --no-install-recommends powershell && \
+    apt-get update && apt-get install -y powershell && \
     rm -rf /var/lib/apt/lists/*
 
-# Copy all project files first for restore
+# Copy project files for restore
 COPY Directory.Build.props .
 COPY Directory.Packages.props .
 COPY MyBlog.Core/MyBlog.Core.csproj MyBlog.Core/

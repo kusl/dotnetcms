@@ -4,7 +4,7 @@ using Xunit;
 namespace MyBlog.E2E.Tests;
 
 /// <summary>
-/// E2E tests for the homepage (Epic 1: Public Content Viewing).
+/// E2E tests for the homepage (Epic 4: Public Content Viewing).
 /// </summary>
 [Collection(PlaywrightCollection.Name)]
 public sealed class HomePageTests(PlaywrightFixture fixture)
@@ -74,5 +74,41 @@ public sealed class HomePageTests(PlaywrightFixture fixture)
         await page.WaitForURLAsync("**/about");
         var heading = page.Locator("h1");
         await Assertions.Expect(heading).ToContainTextAsync("About");
+    }
+
+    [Fact]
+    public async Task HomePage_NavigationToLogin_Works()
+    {
+        var page = await _fixture.CreatePageAsync();
+
+        await page.GotoAsync("/");
+
+        await page.ClickAsync("nav a[href='/login']");
+
+        await page.WaitForURLAsync("**/login");
+        var heading = page.Locator("h1");
+        await Assertions.Expect(heading).ToContainTextAsync("Login");
+    }
+
+    [Fact]
+    public async Task HomePage_HasThemeSwitcher()
+    {
+        var page = await _fixture.CreatePageAsync();
+
+        await page.GotoAsync("/");
+
+        var themeSwitcher = page.Locator(".theme-switcher");
+        await Assertions.Expect(themeSwitcher).ToBeVisibleAsync();
+    }
+
+    [Fact]
+    public async Task HomePage_HasMainContentArea()
+    {
+        var page = await _fixture.CreatePageAsync();
+
+        await page.GotoAsync("/");
+
+        var mainContent = page.Locator("main, .main");
+        await Assertions.Expect(mainContent.First).ToBeVisibleAsync();
     }
 }
