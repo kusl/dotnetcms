@@ -1,0 +1,620 @@
+kushal@fedora:~/src/dotnet/MyBlog$ cd ~/src/dotnet/MyBlog/ && export DOTNET_CLI_TELEMETRY_OPTOUT=1 && (cd src && time dotnet format; time dotnet restore; time dotnet clean; time dotnet build; time dotnet run --project MyBlog.Tests/MyBlog.Tests.csproj; time dotnet list package; time dotnet list package --outdated); cd ~/src/dotnet/MyBlog/ && time bash export.sh; cat run-e2e.sh; time bash run-e2e.sh --clean; time bash run-e2e.sh;
+
+real	0m8.846s
+user	0m14.092s
+sys	0m1.077s
+Restore complete (0.4s)
+
+Build succeeded in 0.5s
+
+real	0m0.708s
+user	0m0.793s
+sys	0m0.166s
+
+Build succeeded in 0.5s
+
+real	0m0.688s
+user	0m0.768s
+sys	0m0.171s
+Restore complete (0.5s)
+  MyBlog.Core net10.0 succeeded (3.0s) → MyBlog.Core/bin/Debug/net10.0/MyBlog.Core.dll
+  MyBlog.Infrastructure net10.0 succeeded (0.5s) → MyBlog.Infrastructure/bin/Debug/net10.0/MyBlog.Infrastructure.dll
+  MyBlog.Web net10.0 succeeded (2.5s) → MyBlog.Web/bin/Debug/net10.0/MyBlog.Web.dll
+  MyBlog.Tests net10.0 succeeded (0.6s) → MyBlog.Tests/bin/Debug/net10.0/MyBlog.Tests.dll
+  MyBlog.E2E net10.0 succeeded (0.6s) → MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll
+
+Build succeeded in 7.3s
+
+real	0m7.443s
+user	0m2.670s
+sys	0m0.510s
+xUnit.net v3 In-Process Runner v3.2.2+728c1dce01 (64-bit .NET 10.0.2)
+  Discovering: MyBlog.Tests
+  Discovered:  MyBlog.Tests
+  Starting:    MyBlog.Tests
+  Finished:    MyBlog.Tests (ID = '24cedafe73dab5684218bb3cf04cfd49ae8ce3b87ae799399cb2e301cbc1e755')
+=== TEST EXECUTION SUMMARY ===
+   MyBlog.Tests  Total: 77, Errors: 0, Failed: 0, Skipped: 0, Not Run: 0, Time: 41.172s
+
+real	0m43.133s
+user	0m45.835s
+sys	0m0.691s
+Restore complete (0.4s)
+
+Build succeeded in 0.5s
+Project 'MyBlog.Core' has the following package references
+   [net10.0]: 
+   Top-level Package                   Requested   Resolved
+   > Microsoft.Extensions.Logging      10.0.2      10.0.2  
+
+Project 'MyBlog.E2E' has the following package references
+   [net10.0]: 
+   Top-level Package             Requested   Resolved
+   > Microsoft.NET.Test.Sdk      18.0.1      18.0.1  
+   > Microsoft.Playwright        1.57.0      1.57.0  
+   > xunit.v3                    3.2.2       3.2.2   
+
+Project 'MyBlog.Infrastructure' has the following package references
+   [net10.0]: 
+   Top-level Package                           Requested   Resolved
+   > Microsoft.AspNetCore.Identity             2.3.9       2.3.9   
+   > Microsoft.EntityFrameworkCore.Sqlite      10.0.2      10.0.2  
+   > Microsoft.Extensions.Http                 10.0.2      10.0.2  
+   > OpenTelemetry                             1.15.0      1.15.0  
+
+Project 'MyBlog.Tests' has the following package references
+   [net10.0]: 
+   Top-level Package                             Requested   Resolved
+   > Microsoft.EntityFrameworkCore.Sqlite        10.0.2      10.0.2  
+   > Microsoft.NET.Test.Sdk                      18.0.1      18.0.1  
+   > Microsoft.Testing.Extensions.TrxReport      2.0.2       2.0.2   
+   > xunit.v3                                    3.2.2       3.2.2   
+
+Project 'MyBlog.Web' has the following package references
+   [net10.0]: 
+   Top-level Package                                  Requested    Resolved
+   > Microsoft.AspNetCore.App.Internal.Assets   (A)   [10.0.2, )   10.0.2  
+   > Microsoft.AspNetCore.SignalR.Client              10.0.2       10.0.2  
+   > OpenTelemetry.Exporter.Console                   1.15.0       1.15.0  
+   > OpenTelemetry.Extensions.Hosting                 1.15.0       1.15.0  
+   > OpenTelemetry.Instrumentation.AspNetCore         1.15.0       1.15.0  
+   > OpenTelemetry.Instrumentation.Http               1.15.0       1.15.0  
+
+(A) : Auto-referenced package.
+
+real	0m1.530s
+user	0m1.574s
+sys	0m0.350s
+Restore complete (0.4s)
+
+Build succeeded in 0.5s
+
+The following sources were used:
+   https://api.nuget.org/v3/index.json
+
+The given project `MyBlog.Core` has no updates given the current sources.
+The given project `MyBlog.E2E` has no updates given the current sources.
+The given project `MyBlog.Infrastructure` has no updates given the current sources.
+The given project `MyBlog.Tests` has no updates given the current sources.
+The given project `MyBlog.Web` has no updates given the current sources.
+
+real	0m2.990s
+user	0m2.103s
+sys	0m0.460s
+==============================================
+  Project Export for LLM Analysis
+==============================================
+
+Project Path: /home/kushal/src/dotnet/MyBlog
+Output File:  docs/llm/dump.txt
+
+Generating directory structure...
+Collecting files...
+Found 115 files to export
+
+Processing (1/115): docker-compose.e2e.yml
+Processing (2/115): docker-compose.yml
+Processing (3/115): .editorconfig
+Processing (4/115): export.sh
+Processing (5/115): .github/workflows/build-deploy.yml
+Processing (6/115): .gitignore
+Processing (7/115): README.md
+Processing (8/115): run-e2e.sh
+Processing (9/115): src/Directory.Build.props
+Processing (10/115): src/Directory.Packages.props
+Processing (11/115): src/.github/workflows/build-deploy.yml
+Processing (12/115): src/global.json
+Processing (13/115): src/MyBlog.Core/Constants/AppConstants.cs
+Processing (14/115): src/MyBlog.Core/Interfaces/IAuthService.cs
+Processing (15/115): src/MyBlog.Core/Interfaces/IImageDimensionService.cs
+Processing (16/115): src/MyBlog.Core/Interfaces/IImageRepository.cs
+Processing (17/115): src/MyBlog.Core/Interfaces/IMarkdownService.cs
+Processing (18/115): src/MyBlog.Core/Interfaces/IPasswordService.cs
+Processing (19/115): src/MyBlog.Core/Interfaces/IPostRepository.cs
+Processing (20/115): src/MyBlog.Core/Interfaces/IReaderTrackingService.cs
+Processing (21/115): src/MyBlog.Core/Interfaces/ISlugService.cs
+Processing (22/115): src/MyBlog.Core/Interfaces/ITelemetryLogRepository.cs
+Processing (23/115): src/MyBlog.Core/Interfaces/IUserRepository.cs
+Processing (24/115): src/MyBlog.Core/Models/Image.cs
+Processing (25/115): src/MyBlog.Core/Models/ImageDimensionCache.cs
+Processing (26/115): src/MyBlog.Core/Models/Post.cs
+Processing (27/115): src/MyBlog.Core/Models/PostDto.cs
+Processing (28/115): src/MyBlog.Core/Models/TelemetryLog.cs
+Processing (29/115): src/MyBlog.Core/Models/User.cs
+Processing (30/115): src/MyBlog.Core/MyBlog.Core.csproj
+Processing (31/115): src/MyBlog.Core/Services/MarkdownService.cs
+Processing (32/115): src/MyBlog.Core/Services/SlugService.cs
+Processing (33/115): src/MyBlog.E2E/Dockerfile
+Processing (34/115): src/MyBlog.E2E/MyBlog.E2E.csproj
+Processing (35/115): src/MyBlog.E2E/PlaywrightCollection.cs
+Processing (36/115): src/MyBlog.E2E/PlaywrightFixture.cs
+Processing (37/115): src/MyBlog.E2E/Tests/AboutPageTests.cs
+Processing (38/115): src/MyBlog.E2E/Tests/HomePageTests.cs
+Processing (39/115): src/MyBlog.E2E/Tests/LoginPageTests.cs
+Processing (40/115): src/MyBlog.E2E/Tests/ThemeSwitcherTests.cs
+Processing (41/115): src/MyBlog.Infrastructure/Data/BlogDbContext.cs
+Processing (42/115): src/MyBlog.Infrastructure/Data/DatabasePathResolver.cs
+Processing (43/115): src/MyBlog.Infrastructure/Data/DatabaseSchemaUpdater.cs
+Processing (44/115): src/MyBlog.Infrastructure/MyBlog.Infrastructure.csproj
+Processing (45/115): src/MyBlog.Infrastructure/Repositories/ImageRepository.cs
+Processing (46/115): src/MyBlog.Infrastructure/Repositories/PostRepository.cs
+Processing (47/115): src/MyBlog.Infrastructure/Repositories/TelemetryLogRepository.cs
+Processing (48/115): src/MyBlog.Infrastructure/Repositories/UserRepository.cs
+Processing (49/115): src/MyBlog.Infrastructure/ServiceCollectionExtensions.cs
+Processing (50/115): src/MyBlog.Infrastructure/Services/AuthService.cs
+Processing (51/115): src/MyBlog.Infrastructure/Services/ImageCacheWarmerService.cs
+Processing (52/115): src/MyBlog.Infrastructure/Services/ImageDimensionService.cs
+Processing (53/115): src/MyBlog.Infrastructure/Services/PasswordService.cs
+Processing (54/115): src/MyBlog.Infrastructure/Services/ReaderTrackingService.cs
+Processing (55/115): src/MyBlog.Infrastructure/Services/TelemetryCleanupService.cs
+Processing (56/115): src/MyBlog.Infrastructure/Telemetry/DatabaseLogExporter.cs
+Processing (57/115): src/MyBlog.Infrastructure/Telemetry/FileLogExporter.cs
+Processing (58/115): src/MyBlog.Infrastructure/Telemetry/TelemetryPathResolver.cs
+Processing (59/115): src/MyBlog.slnx
+Processing (60/115): src/MyBlog.Tests/Integration/AuthServiceLongPasswordTests.cs
+Processing (61/115): src/MyBlog.Tests/Integration/AuthServiceTests.cs
+Processing (62/115): src/MyBlog.Tests/Integration/PasswordChangeTests.cs
+Processing (63/115): src/MyBlog.Tests/Integration/PostRepositoryTests.cs
+Processing (64/115): src/MyBlog.Tests/Integration/TelemetryCleanupTests.cs
+Processing (65/115): src/MyBlog.Tests/MyBlog.Tests.csproj
+Processing (66/115): src/MyBlog.Tests/Unit/LoginRateLimitMiddlewareTests.cs
+Processing (67/115): src/MyBlog.Tests/Unit/MarkdownServiceTests.cs
+Processing (68/115): src/MyBlog.Tests/Unit/PasswordServiceTests.cs
+Processing (69/115): src/MyBlog.Tests/Unit/SlugServiceTests.cs
+Processing (70/115): src/MyBlog.Web/appsettings.Development.json
+Processing (71/115): src/MyBlog.Web/appsettings.json
+Processing (72/115): src/MyBlog.Web/Components/App.razor
+Processing (73/115): src/MyBlog.Web/Components/_Imports.razor
+Processing (74/115): src/MyBlog.Web/Components/Layout/MainLayout.razor
+Processing (75/115): src/MyBlog.Web/Components/Pages/About.razor
+Processing (76/115): src/MyBlog.Web/Components/Pages/About.razor.css
+Processing (77/115): src/MyBlog.Web/Components/Pages/AccessDenied.razor
+Processing (78/115): src/MyBlog.Web/Components/Pages/Admin/ChangePassword.razor
+Processing (79/115): src/MyBlog.Web/Components/Pages/Admin/ChangePassword.razor.css
+Processing (80/115): src/MyBlog.Web/Components/Pages/Admin/Dashboard.razor
+Processing (81/115): src/MyBlog.Web/Components/Pages/Admin/Dashboard.razor.css
+Processing (82/115): src/MyBlog.Web/Components/Pages/Admin/ImageManager.razor
+Processing (83/115): src/MyBlog.Web/Components/Pages/Admin/ImageManager.razor.css
+Processing (84/115): src/MyBlog.Web/Components/Pages/Admin/PostEditor.razor
+Processing (85/115): src/MyBlog.Web/Components/Pages/Admin/PostEditor.razor.css
+Processing (86/115): src/MyBlog.Web/Components/Pages/Admin/PostList.razor
+Processing (87/115): src/MyBlog.Web/Components/Pages/Admin/UserEditor.razor
+Processing (88/115): src/MyBlog.Web/Components/Pages/Admin/UserEditor.razor.css
+Processing (89/115): src/MyBlog.Web/Components/Pages/Admin/UserList.razor
+Processing (90/115): src/MyBlog.Web/Components/Pages/Admin/UserList.razor.css
+Processing (91/115): src/MyBlog.Web/Components/Pages/Home.razor
+Processing (92/115): src/MyBlog.Web/Components/Pages/Login.razor
+Processing (93/115): src/MyBlog.Web/Components/Pages/Login.razor.css
+Processing (94/115): src/MyBlog.Web/Components/Pages/PostDetail.razor
+Processing (95/115): src/MyBlog.Web/Components/Pages/PostDetail.razor.css
+Processing (96/115): src/MyBlog.Web/Components/Routes.razor
+Processing (97/115): src/MyBlog.Web/Components/Shared/Footer.razor
+Processing (98/115): src/MyBlog.Web/Components/Shared/Footer.razor.css
+Processing (99/115): src/MyBlog.Web/Components/Shared/MarkdownRenderer.razor
+Processing (100/115): src/MyBlog.Web/Components/Shared/Pagination.razor
+Processing (101/115): src/MyBlog.Web/Components/Shared/PostCard.razor
+Processing (102/115): src/MyBlog.Web/Components/Shared/PostCard.razor.css
+Processing (103/115): src/MyBlog.Web/Components/Shared/ReaderBadge.razor
+Processing (104/115): src/MyBlog.Web/Components/Shared/ReaderBadge.razor.css
+Processing (105/115): src/MyBlog.Web/Components/Shared/RedirectToLogin.razor
+Processing (106/115): src/MyBlog.Web/Components/Shared/ThemeSwitcher.razor
+Processing (107/115): src/MyBlog.Web/Components/Shared/ThemeSwitcher.razor.css
+Processing (108/115): src/MyBlog.Web/Dockerfile
+Processing (109/115): src/MyBlog.Web/Hubs/ReaderHub.cs
+Processing (110/115): src/MyBlog.Web/Middleware/LoginRateLimitMiddleware.cs
+Processing (111/115): src/MyBlog.Web/MyBlog.Web.csproj
+Processing (112/115): src/MyBlog.Web/Program.cs
+Processing (113/115): src/MyBlog.Web/Properties/launchSettings.json
+Processing (114/115): src/MyBlog.Web/wwwroot/css/site.css
+Processing (115/115): src/MyBlog.Web/wwwroot/js/site.js
+
+==============================================
+  Export Complete!
+==============================================
+
+Output file:    docs/llm/dump.txt
+Files exported: 115
+Files skipped:  0
+Output size:    421.82 KB
+
+File types included:
+  • Source code: .cs, .fs, .vb
+  • Blazor/Razor: .razor
+  • UI/XAML: .axaml, .xaml, .paml
+  • Projects: .csproj, .slnx, .sln, .props, .targets
+  • Config: .json, .yaml, .yml, .xml, .config
+  • Docs: .md, .txt
+  • Scripts: .sh, .ps1, .cmd, .bat
+  • Web: .css, .scss, .js, .ts
+  • Other: .sql, .resx, Dockerfile, etc.
+
+
+real	0m1.209s
+user	0m0.719s
+sys	0m0.721s
+#!/bin/bash
+# =============================================================================
+# Run E2E Tests with Podman Compose
+# =============================================================================
+# This script runs Playwright E2E tests against MyBlog using containers.
+# Designed for Fedora with SELinux and Podman.
+#
+# Usage:
+#   ./run-e2e.sh          # Run all E2E tests
+#   ./run-e2e.sh --build  # Force rebuild containers
+#   ./run-e2e.sh --clean  # Clean up and remove volumes
+# =============================================================================
+
+set -e
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$SCRIPT_DIR"
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
+log_info() {
+    echo -e "${GREEN}[INFO]${NC} $1"
+}
+
+log_warn() {
+    echo -e "${YELLOW}[WARN]${NC} $1"
+}
+
+log_error() {
+    echo -e "${RED}[ERROR]${NC} $1"
+}
+
+# Parse arguments
+BUILD_FLAG=""
+CLEAN_FLAG=""
+
+for arg in "$@"; do
+    case $arg in
+        --build)
+            BUILD_FLAG="--build"
+            ;;
+        --clean)
+            CLEAN_FLAG="true"
+            ;;
+    esac
+done
+
+# Clean up if requested
+if [ "$CLEAN_FLAG" == "true" ]; then
+    log_info "Cleaning up containers and volumes..."
+    podman-compose -f docker-compose.e2e.yml down -v --remove-orphans 2>/dev/null || true
+    podman system prune -f 2>/dev/null || true
+    log_info "Cleanup complete"
+    exit 0
+fi
+
+# Create test results directory
+mkdir -p test-results
+# Set SELinux context if on Fedora with SELinux
+if command -v chcon &> /dev/null && getenforce 2>/dev/null | grep -q "Enforcing"; then
+    log_info "Setting SELinux context for test-results directory..."
+    chcon -Rt svirt_sandbox_file_t test-results 2>/dev/null || true
+fi
+
+log_info "Starting E2E test environment..."
+
+# Build and start services
+log_info "Building containers..."
+podman-compose -f docker-compose.e2e.yml build $BUILD_FLAG
+
+log_info "Starting MyBlog web service..."
+podman-compose -f docker-compose.e2e.yml up -d myblog-web
+
+# Wait for web service to be healthy
+log_info "Waiting for MyBlog to be ready..."
+RETRIES=30
+until podman exec myblog-web curl -sf http://localhost:5000/ > /dev/null 2>&1; do
+    RETRIES=$((RETRIES - 1))
+    if [ $RETRIES -eq 0 ]; then
+        log_error "MyBlog failed to start within timeout"
+        podman-compose -f docker-compose.e2e.yml logs myblog-web
+        podman-compose -f docker-compose.e2e.yml down -v
+        exit 1
+    fi
+    echo -n "."
+    sleep 2
+done
+echo ""
+log_info "MyBlog is ready!"
+
+# Run E2E tests
+log_info "Running E2E tests..."
+podman-compose -f docker-compose.e2e.yml up myblog-e2e
+E2E_EXIT_CODE=$?
+
+# Capture logs
+log_info "Capturing logs..."
+podman-compose -f docker-compose.e2e.yml logs myblog-web > test-results/myblog-web.log 2>&1
+podman-compose -f docker-compose.e2e.yml logs myblog-e2e > test-results/myblog-e2e.log 2>&1
+
+# Clean up
+log_info "Cleaning up..."
+podman-compose -f docker-compose.e2e.yml down -v
+
+if [ $E2E_EXIT_CODE -eq 0 ]; then
+    log_info "E2E tests passed! ✓"
+else
+    log_error "E2E tests failed with exit code $E2E_EXIT_CODE"
+    log_info "Check test-results/ directory for logs"
+fi
+
+exit $E2E_EXIT_CODE
+[INFO] Cleaning up containers and volumes...
+Deleted Images
+df96b14a93c251981a2bb3ed1f8d0c74407ce902944300ca923e0e96199b3e21
+cc0fcdc62f57629546deeb32a40e5acef40178328b5fe34a30b930a6f3f88a42
+eda748256b14235dedcf48b5911d77529e004dd495649ca696e5f15a84c06a16
+92f0716b12621dc3824655524b331bdbc81532bae120afe2fa3b80589dcaf02a
+6bbdc03c467a65f13bb7db49f9c1a37288d955fa382d1963b5b3a90b4f52e11c
+25f0976a4b1e12b960ea23eacc498fb4049c8ca4d243b8a3d60e7d18e6ff8d44
+104a2947532bd6d8403ba3cdf591586abda1b657b746407e0ed9ab946a3ff0fa
+d4cb540ec686ce0a91cf5218db2e3ff6b1a6e0f85266ad4299ea1c4cb22b0d7e
+516ca0846198a3880b156fd9c8be712c74406d4a12e99bd0bdab2ad84c56845f
+a3cd694bd94bdf505b485f8894397c65f09999e1ad1f2be56f2a5c54e8640186
+d7bbf4c08a5d7ccc04501c57afe1277b8caa2767846c266ee16ec13cf5e3e8eb
+f2e96efca3d157965eff0303902c33e81259518fb55575e6a08f0e59c60f00ca
+680f7728a075dada377f2dc881c784cee6818f24dcc183474318b1a39f6a4661
+3878cfb2af53e7b0582a4888fc6f625578384ea23c7e8eae0a1d993113b567d1
+f12e29e4e455cff71306ae7132c9bb1181ed0ead71032d2dcadf9c3befe03a5a
+5f4e88b5c3b0dfd1b1b9cf5b62f7213f4bc0ea6eb46e63f8d1d58dbbeffc3186
+e62180f73ff82dea2344a3581d4c929704cafcdf02ff4b6ec757a934575f10f2
+59740533f8f81e503875699237c558a58e2d806d951a9a509418e44be413798d
+cc77dc4ac2df380f77eecc284b83e03297b5b014bb24b7380d10cddc22ce655c
+3b4452315b5ef02cb99f029996be2eb66629fd07c4771a5fc068f89d15506a9c
+463083d46e4a4c60636140996848072e8377e9163461e8f473acf4b2f00d6468
+69de1815941eaeaae60e9fbb0d2a39c6173d310a79cdf8018ef3f7cf56780a71
+57be0a85b224d3a148def0b27a09d1aee28138b35424ef2edadfc825d02f10dc
+b065d783fc14ccb405b320810ba3f1506f1eee56cbaa6b5e4bbb4fc7b202dec1
+29c01b14252069f2fcfcc6d9826ed797b7cb243331a421c1f105c858bd8260bd
+Total reclaimed space: 38.55GB
+[INFO] Cleanup complete
+
+real	0m0.939s
+user	0m0.522s
+sys	0m0.510s
+[INFO] Setting SELinux context for test-results directory...
+[INFO] Starting E2E test environment...
+[INFO] Building containers...
+[1/2] STEP 1/12: FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+STEP 1/18: FROM mcr.microsoft.com/dotnet/sdk:10.0-noble
+STEP 2/18: WORKDIR /src
+--> Using cache 1a780d16107a5473ff68e88b71349c8f166e0a15db185a4d39d77990dcac7ba6
+--> 1a780d16107a
+STEP 3/18: RUN apt-get update &&     apt-get install -y --no-install-recommends     wget     curl     gnupg     ca-certificates     fonts-liberation     libasound2t64     libatk-bridge2.0-0     libatk1.0-0     libatspi2.0-0     libcairo2     libcups2     libdbus-1-3     libdrm2     libgbm1     libglib2.0-0     libgtk-3-0     libnspr4     libnss3     libpango-1.0-0     libx11-6     libxcb1     libxcomposite1     libxdamage1     libxext6     libxfixes3     libxkbcommon0     libxrandr2     xdg-utils     && rm -rf /var/lib/apt/lists/*
+--> Using cache 35dd6a4680b2e84a470a64e7bc1012964c4b139742311026d816ea3cf297c777
+--> 35dd6a4680b2
+STEP 4/18: RUN wget -q https://packages.microsoft.com/config/ubuntu/24.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb &&     dpkg -i packages-microsoft-prod.deb &&     rm packages-microsoft-prod.deb &&     apt-get update &&     apt-get install -y --no-install-recommends powershell &&     rm -rf /var/lib/apt/lists/*
+--> Using cache 9f435cb0092a6e44d88dc2369863fb839a203b7c97f9f70dfc0aad8bd630a111
+--> 9f435cb0092a
+STEP 5/18: COPY Directory.Build.props .
+--> Using cache d2ca33dfcd77dbd49a8a7c64af9d12933c2a10d8c945f0b7f20a464ad989eda8
+--> d2ca33dfcd77
+STEP 6/18: COPY Directory.Packages.props .
+--> Using cache 5410d5936386382118681074c2fee859a37a40abf43236883bc6a99d06caa3d2
+--> 5410d5936386
+STEP 7/18: COPY MyBlog.Core/MyBlog.Core.csproj MyBlog.Core/
+[1/2] STEP 2/12: WORKDIR /src
+--> Using cache 3e796636dcd44934c1aea2efc8fa3083034df9dacb1437f111809dc86ae58224
+--> 3e796636dcd4
+STEP 8/18: COPY MyBlog.Infrastructure/MyBlog.Infrastructure.csproj MyBlog.Infrastructure/
+--> 015965af5c7d
+[1/2] STEP 3/12: COPY Directory.Build.props .
+--> Using cache afc5f754a25bba925873b74f9a59fc474a26c20e4c55a5d27faa4d7fafe800bc
+--> afc5f754a25b
+STEP 9/18: COPY MyBlog.Web/MyBlog.Web.csproj MyBlog.Web/
+--> 0bd398467b39
+[1/2] STEP 4/12: COPY Directory.Packages.props .
+--> Using cache c127eb96fadfe7700443760448c86dd771911eeb8f026d0ed2f641d04e516ed6
+--> c127eb96fadf
+STEP 10/18: COPY MyBlog.E2E/MyBlog.E2E.csproj MyBlog.E2E/
+--> 33e5aefbe841
+--> Using cache fa8071ffb092e2330b1dce46252ddc3b98d13e027c99b23865952bf67cffae32
+--> fa8071ffb092
+[1/2] STEP 5/12: COPY MyBlog.Core/MyBlog.Core.csproj MyBlog.Core/
+STEP 11/18: RUN dotnet restore MyBlog.Core/MyBlog.Core.csproj &&     dotnet restore MyBlog.Infrastructure/MyBlog.Infrastructure.csproj &&     dotnet restore MyBlog.Web/MyBlog.Web.csproj &&     dotnet restore MyBlog.E2E/MyBlog.E2E.csproj
+--> Using cache 24f5bd25ac8947b04485371a978ee117590869a81dd3c22a2baf665a9c47dcd6
+--> 24f5bd25ac89
+STEP 12/18: COPY . .
+--> 4e6cdafc5e7d
+[1/2] STEP 6/12: COPY MyBlog.Infrastructure/MyBlog.Infrastructure.csproj MyBlog.Infrastructure/
+--> c60d98ab6217
+[1/2] STEP 7/12: COPY MyBlog.Web/MyBlog.Web.csproj MyBlog.Web/
+--> d601da1281b6
+[1/2] STEP 8/12: RUN dotnet restore MyBlog.Web/MyBlog.Web.csproj
+  Determining projects to restore...
+--> f6886a56aec7
+STEP 13/18: RUN dotnet build MyBlog.E2E/MyBlog.E2E.csproj -c Release
+  Determining projects to restore...
+  Restored /src/MyBlog.Infrastructure/MyBlog.Infrastructure.csproj (in 334 ms).
+  Restored /src/MyBlog.Core/MyBlog.Core.csproj (in 334 ms).
+  Restored /src/MyBlog.E2E/MyBlog.E2E.csproj (in 342 ms).
+  Restored /src/MyBlog.Web/MyBlog.Web.csproj (in 519 ms).
+  MyBlog.Core -> /src/MyBlog.Core/bin/Release/net10.0/MyBlog.Core.dll
+  Restored /src/MyBlog.Core/MyBlog.Core.csproj (in 6.92 sec).
+  MyBlog.Infrastructure -> /src/MyBlog.Infrastructure/bin/Release/net10.0/MyBlog.Infrastructure.dll
+  Restored /src/MyBlog.Web/MyBlog.Web.csproj (in 7.01 sec).
+  Restored /src/MyBlog.Infrastructure/MyBlog.Infrastructure.csproj (in 7.01 sec).
+--> 71339ba5158a
+[1/2] STEP 9/12: COPY MyBlog.Core/ MyBlog.Core/
+--> a3de8fbbdf1a
+[1/2] STEP 10/12: COPY MyBlog.Infrastructure/ MyBlog.Infrastructure/
+--> 85c4fb3b91c3
+[1/2] STEP 11/12: COPY MyBlog.Web/ MyBlog.Web/
+  MyBlog.Web -> /src/MyBlog.Web/bin/Release/net10.0/MyBlog.Web.dll
+  MyBlog.E2E -> /src/MyBlog.E2E/bin/Release/net10.0/MyBlog.E2E.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:08.37
+--> f349e7922fd9
+[1/2] STEP 12/12: RUN dotnet publish MyBlog.Web/MyBlog.Web.csproj -c Release -o /app/publish
+--> ec20bbc94e7d
+STEP 14/18: RUN pwsh ./MyBlog.E2E/bin/Release/net10.0/playwright.ps1 install chromium
+  Determining projects to restore...
+Downloading Chromium 143.0.7499.4 (playwright build v1200) from https://cdn.playwright.dev/dbazure/download/playwright/builds/chromium/1200/chromium-linux.zip
+(node:34) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+  Restored /src/MyBlog.Core/MyBlog.Core.csproj (in 171 ms).
+  Restored /src/MyBlog.Infrastructure/MyBlog.Infrastructure.csproj (in 172 ms).
+|                                                                                |   0% of 164.7 MiB
+  Restored /src/MyBlog.Web/MyBlog.Web.csproj (in 796 ms).
+|■■■■■■■■                                                                        |  10% of 164.7 MiB
+|■■■■■■■■■■■■■■■■                                                                |  20% of 164.7 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 164.7 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 164.7 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 164.7 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 164.7 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 164.7 MiB
+  MyBlog.Core -> /src/MyBlog.Core/bin/Release/net10.0/MyBlog.Core.dll
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 164.7 MiB
+  MyBlog.Infrastructure -> /src/MyBlog.Infrastructure/bin/Release/net10.0/MyBlog.Infrastructure.dll
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 164.7 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 164.7 MiB
+Chromium 143.0.7499.4 (playwright build v1200) downloaded to /root/.cache/ms-playwright/chromium-1200
+Downloading FFMPEG playwright build v1011 from https://cdn.playwright.dev/dbazure/download/playwright/builds/ffmpeg/1011/ffmpeg-linux.zip
+(node:45) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+|                                                                                |   0% of 2.3 MiB
+|■■■■■■■■                                                                        |  10% of 2.3 MiB
+|■■■■■■■■■■■■■■■■                                                                |  20% of 2.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 2.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 2.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 2.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 2.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 2.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 2.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 2.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 2.3 MiB
+FFMPEG playwright build v1011 downloaded to /root/.cache/ms-playwright/ffmpeg-1011
+Downloading Chromium Headless Shell 143.0.7499.4 (playwright build v1200) from https://cdn.playwright.dev/dbazure/download/playwright/builds/chromium/1200/chromium-headless-shell-linux.zip
+(node:56) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+  MyBlog.Web -> /src/MyBlog.Web/bin/Release/net10.0/MyBlog.Web.dll
+  MyBlog.Web -> /app/publish/
+|                                                                                |   0% of 109.7 MiB
+--> cd2687de58ae
+[2/2] STEP 1/12: FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
+|■■■■■■■■                                                                        |  10% of 109.7 MiB
+[2/2] STEP 2/12: WORKDIR /app
+--> Using cache 7ab200e45b1fba59b74177866b30af0761e035beacbc6a5d1607edc1b649f36a
+--> 7ab200e45b1f
+[2/2] STEP 3/12: RUN apt-get update && apt-get install -y --no-install-recommends curl && rm -rf /var/lib/apt/lists/*
+--> Using cache 1e21b972573d10c4ea9d7b8076e58aed09bb9967e8ee6d5a8c3c77e2cddd1001
+--> 1e21b972573d
+[2/2] STEP 4/12: RUN useradd -m -s /bin/bash appuser
+--> Using cache 7b0ba419cc37495396a1969cd185514b97ee464988ce4bddc954893f0ac664d5
+--> 7b0ba419cc37
+[2/2] STEP 5/12: RUN mkdir -p /app/data && chown appuser:appuser /app/data
+--> Using cache 1a52159880ea26e77195a71342eb88df7e9cb2112f4b48a28ce51dfc69734231
+--> 1a52159880ea
+[2/2] STEP 6/12: COPY --from=build /app/publish .
+|■■■■■■■■■■■■■■■■                                                                |  20% of 109.7 MiB
+--> Using cache 10e243afaeb7959c1dcbf66f853fd534580b2510d1ef4628bc0498e3747a018d
+--> 10e243afaeb7
+[2/2] STEP 7/12: ENV ASPNETCORE_URLS=http://+:5000
+--> Using cache 1457e9f50b7548cfbdf9a9826d95c3f3c80f13d049a406dd25b561c6d4465b69
+--> 1457e9f50b75
+[2/2] STEP 8/12: ENV ASPNETCORE_ENVIRONMENT=Production
+--> Using cache fb17af3b3901dd282255612be809c6653369ae747f84e0c07574e51948269f3a
+--> fb17af3b3901
+[2/2] STEP 9/12: ENV ConnectionStrings__DefaultConnection="Data Source=/app/data/myblog.db"
+--> Using cache 8e44bcb43478b755a9cd967d9423738129d95ddc5172b21505543baabc11350b
+--> 8e44bcb43478
+[2/2] STEP 10/12: USER appuser
+--> Using cache 5241293a113ecc4c5042fd6420ab937360d2d62bc59a55a3cce2878017da8094
+--> 5241293a113e
+[2/2] STEP 11/12: EXPOSE 5000
+|■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 109.7 MiB
+--> Using cache b2b1b1a95d83f759969a88e757424c2d4484495b3413da47a00400fc05229bcf
+--> b2b1b1a95d83
+[2/2] STEP 12/12: ENTRYPOINT ["dotnet", "MyBlog.Web.dll"]
+--> Using cache 7c583327437d9b15b6588c6403a1aabd8f7207507600a96f30047532d1d677f1
+[2/2] COMMIT myblog_myblog-web
+--> 7c583327437d
+Successfully tagged localhost/myblog_myblog-web:latest
+7c583327437d9b15b6588c6403a1aabd8f7207507600a96f30047532d1d677f1
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 109.7 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 109.7 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 109.7 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 109.7 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 109.7 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 109.7 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 109.7 MiB
+Chromium Headless Shell 143.0.7499.4 (playwright build v1200) downloaded to /root/.cache/ms-playwright/chromium_headless_shell-1200
+--> 709dd71a0f46
+STEP 15/18: WORKDIR /src/MyBlog.E2E
+--> cd7612be8a22
+STEP 16/18: ENV MYBLOG_BASE_URL=http://myblog-web:5000
+--> bdf7eaabf5bc
+STEP 17/18: ENV PLAYWRIGHT_HEADLESS=true
+--> 107456cde61a
+STEP 18/18: ENTRYPOINT ["dotnet", "run", "-c", "Release", "--no-build"]
+COMMIT myblog_myblog-e2e
+--> 7f8f581437c5
+Successfully tagged localhost/myblog_myblog-e2e:latest
+7f8f581437c51b4dd071afc6c27eae67765a8bdb645a10decffaa7186a9601f2
+[INFO] Starting MyBlog web service...
+1ce77048e3f4abf88a2794826524bbd39c929962e6cb3f456926f437bd518d51
+279ff42749be96293c390e8a06f7adcfd52377c096130a130ccfaa0d8816bbab
+myblog-web
+[INFO] Waiting for MyBlog to be ready...
+.
+[INFO] MyBlog is ready!
+[INFO] Running E2E tests...
+e0afc4de14aead9ae1ec33c32e16577dee4a62aca174a29fc9b43b13a20448af
+[myblog-web] | cannot open `/run/user/1000/crun/279ff42749be96293c390e8a06f7adcfd52377c096130a130ccfaa0d8816bbab/exec.fifo`: No such file or directory
+[myblog-web] | Error: unable to start container 279ff42749be96293c390e8a06f7adcfd52377c096130a130ccfaa0d8816bbab: `/usr/bin/crun start 279ff42749be96293c390e8a06f7adcfd52377c096130a130ccfaa0d8816bbab` failed: exit status 1
+[myblog-e2e] | xUnit.net v3 In-Process Runner v3.2.2+728c1dce01 (64-bit .NET 10.0.1)
+[myblog-e2e] |   Discovering: MyBlog.E2E
+[myblog-e2e] |   Discovered:  MyBlog.E2E
+[myblog-e2e] |   Starting:    MyBlog.E2E
+[myblog-e2e] |   Finished:    MyBlog.E2E (ID = '4d488734a9156ea8719a93bca3e9cb47dfeac4715a7981582060bf185a1e7bf4')
+[myblog-e2e] | === TEST EXECUTION SUMMARY ===
+[myblog-e2e] |    MyBlog.E2E  Total: 15, Errors: 0, Failed: 0, Skipped: 0, Not Run: 0, Time: 5.909s
+[myblog-e2e] | 
+[INFO] Capturing logs...
+[INFO] Cleaning up...
+myblog-e2e
+myblog-web
+myblog-e2e
+myblog-web
+myblog_myblog-data
+1ce77048e3f4abf88a2794826524bbd39c929962e6cb3f456926f437bd518d51
+myblog_myblog-network
+[INFO] E2E tests passed! ✓
+
+real	0m46.466s
+user	0m31.098s
+sys	0m18.188s
+kushal@fedora:~/src/dotnet/MyBlog$ 
