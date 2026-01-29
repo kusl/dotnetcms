@@ -1,6 +1,6 @@
 ===============================================================================
 PROJECT EXPORT
-Generated: Thu Jan 29 10:19:25 AM EST 2026
+Generated: Thu Jan 29 10:43:52 AM EST 2026
 Project Path: /home/kushal/src/dotnet/MyBlog
 ===============================================================================
 
@@ -64,7 +64,8 @@ DIRECTORY STRUCTURE:
 │   │   │   ├── 0052.txt
 │   │   │   ├── 0054.txt
 │   │   │   ├── 0055.txt
-│   │   │   └── 0056.txt
+│   │   │   ├── 0056.txt
+│   │   │   └── 0057.txt
 │   │   ├── claude.md
 │   │   ├── command.md
 │   │   ├── dump.txt
@@ -146,13 +147,20 @@ DIRECTORY STRUCTURE:
 │   │   ├── Integration
 │   │   │   ├── AuthServiceLongPasswordTests.cs
 │   │   │   ├── AuthServiceTests.cs
+│   │   │   ├── ImageRepositoryTests.cs
 │   │   │   ├── PasswordChangeTests.cs
+│   │   │   ├── PostRepositoryExtendedTests.cs
 │   │   │   ├── PostRepositoryTests.cs
-│   │   │   └── TelemetryCleanupTests.cs
+│   │   │   ├── TelemetryCleanupTests.cs
+│   │   │   ├── TelemetryLogRepositoryTests.cs
+│   │   │   └── UserRepositoryTests.cs
 │   │   ├── Unit
+│   │   │   ├── DatabasePathResolverTests.cs
 │   │   │   ├── LoginRateLimitMiddlewareTests.cs
+│   │   │   ├── MarkdownServiceEdgeCaseTests.cs
 │   │   │   ├── MarkdownServiceTests.cs
 │   │   │   ├── PasswordServiceTests.cs
+│   │   │   ├── ReaderTrackingServiceTests.cs
 │   │   │   └── SlugServiceTests.cs
 │   │   └── MyBlog.Tests.csproj
 │   ├── MyBlog.Web
@@ -8552,6 +8560,227 @@ public class AuthServiceTests : IAsyncDisposable
 
 
 ================================================================================
+FILE: src/MyBlog.Tests/Integration/ImageRepositoryTests.cs
+SIZE: 6.25 KB
+MODIFIED: 2026-01-29 10:37:28
+================================================================================
+
+using Microsoft.EntityFrameworkCore;
+using MyBlog.Core.Models;
+using MyBlog.Infrastructure.Data;
+using MyBlog.Infrastructure.Repositories;
+using Xunit;
+
+namespace MyBlog.Tests.Integration;
+
+/// <summary>
+/// Integration tests for the ImageRepository.
+/// Uses in-memory SQLite for cross-platform compatibility.
+/// </summary>
+public class ImageRepositoryTests : IAsyncDisposable
+{
+    private readonly BlogDbContext _context;
+    private readonly ImageRepository _sut;
+    private readonly User _testUser;
+
+    public ImageRepositoryTests()
+    {
+        var options = new DbContextOptionsBuilder<BlogDbContext>()
+            .UseSqlite("Data Source=:memory:")
+            .Options;
+
+        _context = new BlogDbContext(options);
+        _context.Database.OpenConnection();
+        _context.Database.EnsureCreated();
+
+        _testUser = new User
+        {
+            Id = Guid.NewGuid(),
+            Username = "testuser",
+            PasswordHash = "hash",
+            Email = "test@example.com",
+            DisplayName = "Test User",
+            CreatedAtUtc = DateTime.UtcNow
+        };
+        _context.Users.Add(_testUser);
+        _context.SaveChanges();
+
+        _sut = new ImageRepository(_context);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await _context.DisposeAsync();
+    }
+
+    [Fact]
+    public async Task CreateAsync_AddsImageToDatabase()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var image = CreateTestImage("test-image.png");
+
+        var result = await _sut.CreateAsync(image, ct);
+
+        Assert.NotEqual(Guid.Empty, result.Id);
+        var saved = await _context.Images.FindAsync([result.Id], ct);
+        Assert.NotNull(saved);
+        Assert.Equal("test-image.png", saved.FileName);
+    }
+
+    [Fact]
+    public async Task GetByIdAsync_WithExistingId_ReturnsImage()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var image = CreateTestImage("test-image.png");
+        await _sut.CreateAsync(image, ct);
+
+        var result = await _sut.GetByIdAsync(image.Id, ct);
+
+        Assert.NotNull(result);
+        Assert.Equal("test-image.png", result.FileName);
+    }
+
+    [Fact]
+    public async Task GetByIdAsync_WithNonExistingId_ReturnsNull()
+    {
+        var ct = TestContext.Current.CancellationToken;
+
+        var result = await _sut.GetByIdAsync(Guid.NewGuid(), ct);
+
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public async Task GetAllAsync_ReturnsAllImagesOrderedByUploadDate()
+    {
+        var ct = TestContext.Current.CancellationToken;
+
+        // Create images with different upload times
+        var image1 = CreateTestImage("first.png");
+        image1.UploadedAtUtc = DateTime.UtcNow.AddHours(-2);
+        await _sut.CreateAsync(image1, ct);
+
+        var image2 = CreateTestImage("second.png");
+        image2.UploadedAtUtc = DateTime.UtcNow.AddHours(-1);
+        await _sut.CreateAsync(image2, ct);
+
+        var image3 = CreateTestImage("third.png");
+        image3.UploadedAtUtc = DateTime.UtcNow;
+        await _sut.CreateAsync(image3, ct);
+
+        var result = await _sut.GetAllAsync(ct);
+
+        Assert.Equal(3, result.Count);
+        // Should be ordered by UploadedAtUtc descending (newest first)
+        Assert.Equal("third.png", result[0].FileName);
+        Assert.Equal("second.png", result[1].FileName);
+        Assert.Equal("first.png", result[2].FileName);
+    }
+
+    [Fact]
+    public async Task GetAllAsync_WithNoImages_ReturnsEmptyList()
+    {
+        var ct = TestContext.Current.CancellationToken;
+
+        var result = await _sut.GetAllAsync(ct);
+
+        Assert.Empty(result);
+    }
+
+    [Fact]
+    public async Task DeleteAsync_RemovesImageFromDatabase()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var image = CreateTestImage("to-delete.png");
+        await _sut.CreateAsync(image, ct);
+
+        await _sut.DeleteAsync(image.Id, ct);
+
+        var deleted = await _context.Images.FindAsync([image.Id], ct);
+        Assert.Null(deleted);
+    }
+
+    [Fact]
+    public async Task DeleteAsync_WithNonExistentId_DoesNotThrow()
+    {
+        var ct = TestContext.Current.CancellationToken;
+
+        // Should not throw
+        await _sut.DeleteAsync(Guid.NewGuid(), ct);
+    }
+
+    [Fact]
+    public async Task CreateAsync_StoresImageData()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var imageData = new byte[] { 0x89, 0x50, 0x4E, 0x47 }; // PNG magic bytes
+        var image = CreateTestImage("data-test.png", imageData);
+
+        await _sut.CreateAsync(image, ct);
+
+        var saved = await _sut.GetByIdAsync(image.Id, ct);
+        Assert.NotNull(saved);
+        Assert.Equal(imageData, saved.Data);
+    }
+
+    [Fact]
+    public async Task CreateAsync_PreservesContentType()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var image = CreateTestImage("test.jpg");
+        image.ContentType = "image/jpeg";
+
+        await _sut.CreateAsync(image, ct);
+
+        var saved = await _sut.GetByIdAsync(image.Id, ct);
+        Assert.NotNull(saved);
+        Assert.Equal("image/jpeg", saved.ContentType);
+    }
+
+    [Fact]
+    public async Task CreateAsync_PreservesUserAssociation()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var image = CreateTestImage("user-test.png");
+
+        await _sut.CreateAsync(image, ct);
+
+        var saved = await _sut.GetByIdAsync(image.Id, ct);
+        Assert.NotNull(saved);
+        Assert.Equal(_testUser.Id, saved.UploadedByUserId);
+    }
+
+    [Fact]
+    public async Task GetAllAsync_DoesNotTrackEntities()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var image = CreateTestImage("tracking-test.png");
+        await _sut.CreateAsync(image, ct);
+
+        var result = await _sut.GetAllAsync(ct);
+
+        // AsNoTracking should mean entities are not tracked
+        Assert.Single(result);
+        var entry = _context.Entry(result[0]);
+        Assert.Equal(EntityState.Detached, entry.State);
+    }
+
+    private Image CreateTestImage(string fileName, byte[]? data = null)
+    {
+        return new Image
+        {
+            Id = Guid.NewGuid(),
+            FileName = fileName,
+            ContentType = "image/png",
+            Data = data ?? new byte[] { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A },
+            UploadedByUserId = _testUser.Id,
+            UploadedAtUtc = DateTime.UtcNow
+        };
+    }
+}
+
+
+================================================================================
 FILE: src/MyBlog.Tests/Integration/PasswordChangeTests.cs
 SIZE: 6.10 KB
 MODIFIED: 2025-12-28 11:34:32
@@ -8742,6 +8971,374 @@ public class PasswordChangeTests : IAsyncDisposable
         var ct = TestContext.Current.CancellationToken;
         await Assert.ThrowsAsync<InvalidOperationException>(
             () => _sut.ResetPasswordAsync(Guid.NewGuid(), "password", ct));
+    }
+}
+
+
+================================================================================
+FILE: src/MyBlog.Tests/Integration/PostRepositoryExtendedTests.cs
+SIZE: 10.80 KB
+MODIFIED: 2026-01-29 10:40:40
+================================================================================
+
+using Microsoft.EntityFrameworkCore;
+using MyBlog.Core.Models;
+using MyBlog.Infrastructure.Data;
+using MyBlog.Infrastructure.Repositories;
+using Xunit;
+
+namespace MyBlog.Tests.Integration;
+
+/// <summary>
+/// Extended integration tests for the PostRepository.
+/// Tests pagination, slug collision detection, and additional edge cases.
+/// Uses in-memory SQLite for cross-platform compatibility.
+/// </summary>
+public class PostRepositoryExtendedTests : IAsyncDisposable
+{
+    private readonly BlogDbContext _context;
+    private readonly PostRepository _sut;
+    private readonly User _testUser;
+
+    public PostRepositoryExtendedTests()
+    {
+        var options = new DbContextOptionsBuilder<BlogDbContext>()
+            .UseSqlite("Data Source=:memory:")
+            .Options;
+
+        _context = new BlogDbContext(options);
+        _context.Database.OpenConnection();
+        _context.Database.EnsureCreated();
+
+        _testUser = new User
+        {
+            Id = Guid.NewGuid(),
+            Username = "testuser",
+            PasswordHash = "hash",
+            Email = "test@example.com",
+            DisplayName = "Test User",
+            CreatedAtUtc = DateTime.UtcNow
+        };
+        _context.Users.Add(_testUser);
+        _context.SaveChanges();
+
+        _sut = new PostRepository(_context);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await _context.DisposeAsync();
+    }
+
+    [Fact]
+    public async Task GetPublishedPostsAsync_ReturnsTotalCount()
+    {
+        var ct = TestContext.Current.CancellationToken;
+
+        // Create 5 published posts
+        for (var i = 0; i < 5; i++)
+        {
+            await _sut.CreateAsync(CreateTestPost($"Post {i}", isPublished: true), ct);
+        }
+
+        var (_, totalCount) = await _sut.GetPublishedPostsAsync(1, 2, ct);
+
+        Assert.Equal(5, totalCount);
+    }
+
+    [Fact]
+    public async Task GetPublishedPostsAsync_RespectsPageSize()
+    {
+        var ct = TestContext.Current.CancellationToken;
+
+        // Create 5 published posts
+        for (var i = 0; i < 5; i++)
+        {
+            await _sut.CreateAsync(CreateTestPost($"Post {i}", isPublished: true), ct);
+        }
+
+        var (posts, _) = await _sut.GetPublishedPostsAsync(1, 2, ct);
+
+        Assert.Equal(2, posts.Count);
+    }
+
+    [Fact]
+    public async Task GetPublishedPostsAsync_RespectsPageNumber()
+    {
+        var ct = TestContext.Current.CancellationToken;
+
+        // Create 5 published posts with different dates
+        for (var i = 0; i < 5; i++)
+        {
+            var post = CreateTestPost($"Post {i}", isPublished: true);
+            post.PublishedAtUtc = DateTime.UtcNow.AddDays(-i);
+            await _sut.CreateAsync(post, ct);
+        }
+
+        var (page1, _) = await _sut.GetPublishedPostsAsync(1, 2, ct);
+        var (page2, _) = await _sut.GetPublishedPostsAsync(2, 2, ct);
+
+        Assert.Equal(2, page1.Count);
+        Assert.Equal(2, page2.Count);
+        Assert.NotEqual(page1[0].Title, page2[0].Title);
+    }
+
+    [Fact]
+    public async Task GetPublishedPostsAsync_OrdersByPublishedDateDescending()
+    {
+        var ct = TestContext.Current.CancellationToken;
+
+        var oldPost = CreateTestPost("Old Post", isPublished: true);
+        oldPost.PublishedAtUtc = DateTime.UtcNow.AddDays(-10);
+        await _sut.CreateAsync(oldPost, ct);
+
+        var newPost = CreateTestPost("New Post", isPublished: true);
+        newPost.PublishedAtUtc = DateTime.UtcNow;
+        await _sut.CreateAsync(newPost, ct);
+
+        var (posts, _) = await _sut.GetPublishedPostsAsync(1, 10, ct);
+
+        Assert.Equal("New Post", posts[0].Title);
+        Assert.Equal("Old Post", posts[1].Title);
+    }
+
+    [Fact]
+    public async Task GetPublishedPostsAsync_ExcludesUnpublishedPosts()
+    {
+        var ct = TestContext.Current.CancellationToken;
+
+        await _sut.CreateAsync(CreateTestPost("Published", isPublished: true), ct);
+        await _sut.CreateAsync(CreateTestPost("Draft", isPublished: false), ct);
+
+        var (posts, totalCount) = await _sut.GetPublishedPostsAsync(1, 10, ct);
+
+        Assert.Single(posts);
+        Assert.Equal(1, totalCount);
+        Assert.Equal("Published", posts[0].Title);
+    }
+
+    [Fact]
+    public async Task GetAllPostsAsync_IncludesAllPosts()
+    {
+        var ct = TestContext.Current.CancellationToken;
+
+        await _sut.CreateAsync(CreateTestPost("Published", isPublished: true), ct);
+        await _sut.CreateAsync(CreateTestPost("Draft", isPublished: false), ct);
+
+        var posts = await _sut.GetAllPostsAsync(ct);
+
+        Assert.Equal(2, posts.Count);
+    }
+
+    [Fact]
+    public async Task GetAllPostsAsync_OrdersByUpdatedDateDescending()
+    {
+        var ct = TestContext.Current.CancellationToken;
+
+        var oldPost = CreateTestPost("Old", isPublished: true);
+        oldPost.UpdatedAtUtc = DateTime.UtcNow.AddDays(-5);
+        await _sut.CreateAsync(oldPost, ct);
+
+        var newPost = CreateTestPost("New", isPublished: true);
+        newPost.UpdatedAtUtc = DateTime.UtcNow;
+        await _sut.CreateAsync(newPost, ct);
+
+        var posts = await _sut.GetAllPostsAsync(ct);
+
+        Assert.Equal("New", posts[0].Title);
+        Assert.Equal("Old", posts[1].Title);
+    }
+
+    [Fact]
+    public async Task GetCountAsync_ReturnsCorrectCount()
+    {
+        var ct = TestContext.Current.CancellationToken;
+
+        await _sut.CreateAsync(CreateTestPost("Post 1"), ct);
+        await _sut.CreateAsync(CreateTestPost("Post 2"), ct);
+        await _sut.CreateAsync(CreateTestPost("Post 3"), ct);
+
+        var count = await _sut.GetCountAsync(ct);
+
+        Assert.Equal(3, count);
+    }
+
+    [Fact]
+    public async Task GetCountAsync_IncludesBothPublishedAndDrafts()
+    {
+        var ct = TestContext.Current.CancellationToken;
+
+        await _sut.CreateAsync(CreateTestPost("Published", isPublished: true), ct);
+        await _sut.CreateAsync(CreateTestPost("Draft", isPublished: false), ct);
+
+        var count = await _sut.GetCountAsync(ct);
+
+        Assert.Equal(2, count);
+    }
+
+    [Fact]
+    public async Task GetRecentPostsAsync_ReturnsSpecifiedCount()
+    {
+        var ct = TestContext.Current.CancellationToken;
+
+        for (var i = 0; i < 10; i++)
+        {
+            await _sut.CreateAsync(CreateTestPost($"Post {i}"), ct);
+        }
+
+        var posts = await _sut.GetRecentPostsAsync(5, ct);
+
+        Assert.Equal(5, posts.Count);
+    }
+
+    [Fact]
+    public async Task GetRecentPostsAsync_OrdersByUpdatedDateDescending()
+    {
+        var ct = TestContext.Current.CancellationToken;
+
+        var oldPost = CreateTestPost("Old");
+        oldPost.UpdatedAtUtc = DateTime.UtcNow.AddDays(-5);
+        await _sut.CreateAsync(oldPost, ct);
+
+        var newPost = CreateTestPost("New");
+        newPost.UpdatedAtUtc = DateTime.UtcNow;
+        await _sut.CreateAsync(newPost, ct);
+
+        var posts = await _sut.GetRecentPostsAsync(2, ct);
+
+        Assert.Equal("New", posts[0].Title);
+    }
+
+    [Fact]
+    public async Task IsSlugTakenAsync_WithExistingSlug_ReturnsTrue()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var post = CreateTestPost("Test", slug: "test-slug");
+        await _sut.CreateAsync(post, ct);
+
+        var isTaken = await _sut.IsSlugTakenAsync("test-slug", ct: ct);
+
+        Assert.True(isTaken);
+    }
+
+    [Fact]
+    public async Task IsSlugTakenAsync_WithNonExistentSlug_ReturnsFalse()
+    {
+        var ct = TestContext.Current.CancellationToken;
+
+        var isTaken = await _sut.IsSlugTakenAsync("non-existent-slug", ct: ct);
+
+        Assert.False(isTaken);
+    }
+
+    [Fact]
+    public async Task IsSlugTakenAsync_WithExcludedPostId_ExcludesThatPost()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var post = CreateTestPost("Test", slug: "test-slug");
+        await _sut.CreateAsync(post, ct);
+
+        // Same slug should not be considered taken when excluding the post that has it
+        var isTaken = await _sut.IsSlugTakenAsync("test-slug", post.Id, ct);
+
+        Assert.False(isTaken);
+    }
+
+    [Fact]
+    public async Task IsSlugTakenAsync_WithDifferentExcludedPostId_StillReturnsTrue()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var post = CreateTestPost("Test", slug: "test-slug");
+        await _sut.CreateAsync(post, ct);
+
+        // Different post ID should not affect the result
+        var isTaken = await _sut.IsSlugTakenAsync("test-slug", Guid.NewGuid(), ct);
+
+        Assert.True(isTaken);
+    }
+
+    [Fact]
+    public async Task GetBySlugAsync_IncludesAuthorDisplayName()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var post = CreateTestPost("Test", slug: "test-slug");
+        await _sut.CreateAsync(post, ct);
+
+        var result = await _sut.GetBySlugAsync("test-slug", ct);
+
+        Assert.NotNull(result);
+        Assert.Equal("Test User", result.AuthorDisplayName);
+    }
+
+    [Fact]
+    public async Task GetByIdAsync_IncludesAuthorNavigation()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var post = CreateTestPost("Test");
+        await _sut.CreateAsync(post, ct);
+
+        var result = await _sut.GetByIdAsync(post.Id, ct);
+
+        Assert.NotNull(result);
+        Assert.NotNull(result.Author);
+        Assert.Equal("testuser", result.Author.Username);
+    }
+
+    [Fact]
+    public async Task UpdateAsync_ChangesModifiedFields()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var post = CreateTestPost("Original Title");
+        await _sut.CreateAsync(post, ct);
+
+        post.Title = "Updated Title";
+        post.Content = "Updated Content";
+        post.UpdatedAtUtc = DateTime.UtcNow;
+        await _sut.UpdateAsync(post, ct);
+
+        var updated = await _sut.GetByIdAsync(post.Id, ct);
+        Assert.NotNull(updated);
+        Assert.Equal("Updated Title", updated.Title);
+        Assert.Equal("Updated Content", updated.Content);
+    }
+
+    [Fact]
+    public async Task DeleteAsync_RemovesPost()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var post = CreateTestPost("To Delete");
+        await _sut.CreateAsync(post, ct);
+
+        await _sut.DeleteAsync(post.Id, ct);
+
+        var deleted = await _sut.GetByIdAsync(post.Id, ct);
+        Assert.Null(deleted);
+    }
+
+    [Fact]
+    public async Task DeleteAsync_WithNonExistentId_DoesNotThrow()
+    {
+        var ct = TestContext.Current.CancellationToken;
+
+        // Should not throw
+        await _sut.DeleteAsync(Guid.NewGuid(), ct);
+    }
+
+    private Post CreateTestPost(string title, string? slug = null, bool isPublished = true)
+    {
+        return new Post
+        {
+            Id = Guid.NewGuid(),
+            Title = title,
+            Slug = slug ?? title.ToLower().Replace(" ", "-"),
+            Content = "Test content",
+            Summary = "Test summary",
+            AuthorId = _testUser.Id,
+            CreatedAtUtc = DateTime.UtcNow,
+            UpdatedAtUtc = DateTime.UtcNow,
+            IsPublished = isPublished,
+            PublishedAtUtc = isPublished ? DateTime.UtcNow : null
+        };
     }
 }
 
@@ -9021,6 +9618,514 @@ public class TelemetryCleanupTests : IAsyncDisposable
 
 
 ================================================================================
+FILE: src/MyBlog.Tests/Integration/TelemetryLogRepositoryTests.cs
+SIZE: 6.67 KB
+MODIFIED: 2026-01-29 10:39:41
+================================================================================
+
+using Microsoft.EntityFrameworkCore;
+using MyBlog.Core.Models;
+using MyBlog.Infrastructure.Data;
+using MyBlog.Infrastructure.Repositories;
+using Xunit;
+
+namespace MyBlog.Tests.Integration;
+
+/// <summary>
+/// Integration tests for the TelemetryLogRepository.
+/// Covers WriteAsync and GetRecentAsync methods not covered by TelemetryCleanupTests.
+/// Uses in-memory SQLite for cross-platform compatibility.
+/// </summary>
+public class TelemetryLogRepositoryTests : IAsyncDisposable
+{
+    private readonly BlogDbContext _context;
+    private readonly TelemetryLogRepository _sut;
+
+    public TelemetryLogRepositoryTests()
+    {
+        var options = new DbContextOptionsBuilder<BlogDbContext>()
+            .UseSqlite("Data Source=:memory:")
+            .Options;
+
+        _context = new BlogDbContext(options);
+        _context.Database.OpenConnection();
+        _context.Database.EnsureCreated();
+
+        _sut = new TelemetryLogRepository(_context);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await _context.DisposeAsync();
+    }
+
+    [Fact]
+    public async Task WriteAsync_AddsLogToDatabase()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var log = CreateTestLog("Test message");
+
+        await _sut.WriteAsync(log, ct);
+
+        var saved = await _context.TelemetryLogs.FindAsync([log.Id], ct);
+        Assert.NotNull(saved);
+        Assert.Equal("Test message", saved.Message);
+    }
+
+    [Fact]
+    public async Task WriteAsync_GeneratesId()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var log = CreateTestLog("Auto ID test");
+        log.Id = 0;
+
+        await _sut.WriteAsync(log, ct);
+
+        Assert.NotEqual(0, log.Id);
+    }
+
+    [Fact]
+    public async Task WriteAsync_PreservesAllFields()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var timestamp = DateTime.UtcNow.AddMinutes(-5);
+        var log = new TelemetryLog
+        {
+            TimestampUtc = timestamp,
+            Level = "Warning",
+            Category = "MyBlog.Tests",
+            Message = "Full fields test",
+            Exception = "System.Exception: Test",
+            TraceId = "trace-123",
+            SpanId = "span-456",
+            Properties = "{\"key\":\"value\"}"
+        };
+
+        await _sut.WriteAsync(log, ct);
+
+        var saved = await _context.TelemetryLogs.FindAsync([log.Id], ct);
+        Assert.NotNull(saved);
+        Assert.Equal(timestamp, saved.TimestampUtc);
+        Assert.Equal("Warning", saved.Level);
+        Assert.Equal("MyBlog.Tests", saved.Category);
+        Assert.Equal("Full fields test", saved.Message);
+        Assert.Equal("System.Exception: Test", saved.Exception);
+        Assert.Equal("trace-123", saved.TraceId);
+        Assert.Equal("span-456", saved.SpanId);
+        Assert.Equal("{\"key\":\"value\"}", saved.Properties);
+    }
+
+    [Fact]
+    public async Task GetRecentAsync_ReturnsSpecifiedCount()
+    {
+        var ct = TestContext.Current.CancellationToken;
+
+        // Add 5 logs
+        for (var i = 0; i < 5; i++)
+        {
+            await _sut.WriteAsync(CreateTestLog($"Log {i}"), ct);
+        }
+
+        var result = await _sut.GetRecentAsync(3, ct);
+
+        Assert.Equal(3, result.Count);
+    }
+
+    [Fact]
+    public async Task GetRecentAsync_ReturnsNewestFirst()
+    {
+        var ct = TestContext.Current.CancellationToken;
+
+        var oldLog = CreateTestLog("Old log");
+        oldLog.TimestampUtc = DateTime.UtcNow.AddHours(-2);
+        await _sut.WriteAsync(oldLog, ct);
+
+        var middleLog = CreateTestLog("Middle log");
+        middleLog.TimestampUtc = DateTime.UtcNow.AddHours(-1);
+        await _sut.WriteAsync(middleLog, ct);
+
+        var newLog = CreateTestLog("New log");
+        newLog.TimestampUtc = DateTime.UtcNow;
+        await _sut.WriteAsync(newLog, ct);
+
+        var result = await _sut.GetRecentAsync(3, ct);
+
+        Assert.Equal("New log", result[0].Message);
+        Assert.Equal("Middle log", result[1].Message);
+        Assert.Equal("Old log", result[2].Message);
+    }
+
+    [Fact]
+    public async Task GetRecentAsync_WithFewerLogsThanRequested_ReturnsAllLogs()
+    {
+        var ct = TestContext.Current.CancellationToken;
+
+        await _sut.WriteAsync(CreateTestLog("Only log"), ct);
+
+        var result = await _sut.GetRecentAsync(10, ct);
+
+        Assert.Single(result);
+    }
+
+    [Fact]
+    public async Task GetRecentAsync_WithNoLogs_ReturnsEmptyList()
+    {
+        var ct = TestContext.Current.CancellationToken;
+
+        var result = await _sut.GetRecentAsync(10, ct);
+
+        Assert.Empty(result);
+    }
+
+    [Fact]
+    public async Task GetRecentAsync_DoesNotTrackEntities()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await _sut.WriteAsync(CreateTestLog("Tracking test"), ct);
+
+        var result = await _sut.GetRecentAsync(1, ct);
+
+        Assert.Single(result);
+        var entry = _context.Entry(result[0]);
+        Assert.Equal(EntityState.Detached, entry.State);
+    }
+
+    [Fact]
+    public async Task WriteAsync_AllowsNullOptionalFields()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var log = new TelemetryLog
+        {
+            TimestampUtc = DateTime.UtcNow,
+            Level = "Information",
+            Category = "Test",
+            Message = "Minimal log",
+            Exception = null,
+            TraceId = null,
+            SpanId = null,
+            Properties = null
+        };
+
+        await _sut.WriteAsync(log, ct);
+
+        var saved = await _context.TelemetryLogs.FindAsync([log.Id], ct);
+        Assert.NotNull(saved);
+        Assert.Null(saved.Exception);
+        Assert.Null(saved.TraceId);
+        Assert.Null(saved.SpanId);
+        Assert.Null(saved.Properties);
+    }
+
+    [Fact]
+    public async Task GetRecentAsync_WithDifferentLevels_ReturnsAllLevels()
+    {
+        var ct = TestContext.Current.CancellationToken;
+
+        var infoLog = CreateTestLog("Info");
+        infoLog.Level = "Information";
+        await _sut.WriteAsync(infoLog, ct);
+
+        var warnLog = CreateTestLog("Warning");
+        warnLog.Level = "Warning";
+        await _sut.WriteAsync(warnLog, ct);
+
+        var errorLog = CreateTestLog("Error");
+        errorLog.Level = "Error";
+        await _sut.WriteAsync(errorLog, ct);
+
+        var result = await _sut.GetRecentAsync(10, ct);
+
+        Assert.Equal(3, result.Count);
+        Assert.Contains(result, l => l.Level == "Information");
+        Assert.Contains(result, l => l.Level == "Warning");
+        Assert.Contains(result, l => l.Level == "Error");
+    }
+
+    private static TelemetryLog CreateTestLog(string message)
+    {
+        return new TelemetryLog
+        {
+            TimestampUtc = DateTime.UtcNow,
+            Level = "Information",
+            Category = "MyBlog.Tests",
+            Message = message
+        };
+    }
+}
+
+
+================================================================================
+FILE: src/MyBlog.Tests/Integration/UserRepositoryTests.cs
+SIZE: 7.48 KB
+MODIFIED: 2026-01-29 10:39:30
+================================================================================
+
+using Microsoft.EntityFrameworkCore;
+using MyBlog.Core.Models;
+using MyBlog.Infrastructure.Data;
+using MyBlog.Infrastructure.Repositories;
+using Xunit;
+
+namespace MyBlog.Tests.Integration;
+
+/// <summary>
+/// Integration tests for the UserRepository.
+/// Uses in-memory SQLite for cross-platform compatibility.
+/// </summary>
+public class UserRepositoryTests : IAsyncDisposable
+{
+    private readonly BlogDbContext _context;
+    private readonly UserRepository _sut;
+
+    public UserRepositoryTests()
+    {
+        var options = new DbContextOptionsBuilder<BlogDbContext>()
+            .UseSqlite("Data Source=:memory:")
+            .Options;
+
+        _context = new BlogDbContext(options);
+        _context.Database.OpenConnection();
+        _context.Database.EnsureCreated();
+
+        _sut = new UserRepository(_context);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await _context.DisposeAsync();
+    }
+
+    [Fact]
+    public async Task CreateAsync_AddsUserToDatabase()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var user = CreateTestUser("newuser");
+
+        await _sut.CreateAsync(user, ct);
+
+        var saved = await _context.Users.FindAsync([user.Id], ct);
+        Assert.NotNull(saved);
+        Assert.Equal("newuser", saved.Username);
+    }
+
+    [Fact]
+    public async Task GetByIdAsync_WithExistingId_ReturnsUser()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var user = CreateTestUser("testuser");
+        await _sut.CreateAsync(user, ct);
+
+        var result = await _sut.GetByIdAsync(user.Id, ct);
+
+        Assert.NotNull(result);
+        Assert.Equal("testuser", result.Username);
+    }
+
+    [Fact]
+    public async Task GetByIdAsync_WithNonExistingId_ReturnsNull()
+    {
+        var ct = TestContext.Current.CancellationToken;
+
+        var result = await _sut.GetByIdAsync(Guid.NewGuid(), ct);
+
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public async Task GetByUsernameAsync_WithExistingUsername_ReturnsUser()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var user = CreateTestUser("findme");
+        await _sut.CreateAsync(user, ct);
+
+        var result = await _sut.GetByUsernameAsync("findme", ct);
+
+        Assert.NotNull(result);
+        Assert.Equal("findme", result.Username);
+    }
+
+    [Fact]
+    public async Task GetByUsernameAsync_IsCaseInsensitive()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var user = CreateTestUser("CaseSensitive");
+        await _sut.CreateAsync(user, ct);
+
+        var result = await _sut.GetByUsernameAsync("casesensitive", ct);
+
+        Assert.NotNull(result);
+        Assert.Equal("CaseSensitive", result.Username);
+    }
+
+    [Fact]
+    public async Task GetByUsernameAsync_WithNonExistingUsername_ReturnsNull()
+    {
+        var ct = TestContext.Current.CancellationToken;
+
+        var result = await _sut.GetByUsernameAsync("nonexistent", ct);
+
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public async Task GetAllAsync_ReturnsAllUsersOrderedByUsername()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await _sut.CreateAsync(CreateTestUser("charlie"), ct);
+        await _sut.CreateAsync(CreateTestUser("alice"), ct);
+        await _sut.CreateAsync(CreateTestUser("bob"), ct);
+
+        var result = await _sut.GetAllAsync(ct);
+
+        Assert.Equal(3, result.Count);
+        Assert.Equal("alice", result[0].Username);
+        Assert.Equal("bob", result[1].Username);
+        Assert.Equal("charlie", result[2].Username);
+    }
+
+    [Fact]
+    public async Task GetAllAsync_WithNoUsers_ReturnsEmptyList()
+    {
+        var ct = TestContext.Current.CancellationToken;
+
+        var result = await _sut.GetAllAsync(ct);
+
+        Assert.Empty(result);
+    }
+
+    [Fact]
+    public async Task AnyUsersExistAsync_WithNoUsers_ReturnsFalse()
+    {
+        var ct = TestContext.Current.CancellationToken;
+
+        var result = await _sut.AnyUsersExistAsync(ct);
+
+        Assert.False(result);
+    }
+
+    [Fact]
+    public async Task AnyUsersExistAsync_WithUsers_ReturnsTrue()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await _sut.CreateAsync(CreateTestUser("anyuser"), ct);
+
+        var result = await _sut.AnyUsersExistAsync(ct);
+
+        Assert.True(result);
+    }
+
+    [Fact]
+    public async Task UpdateAsync_ModifiesExistingUser()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var user = CreateTestUser("updateme");
+        await _sut.CreateAsync(user, ct);
+
+        user.DisplayName = "Updated Display Name";
+        user.Email = "updated@example.com";
+        await _sut.UpdateAsync(user, ct);
+
+        var updated = await _sut.GetByIdAsync(user.Id, ct);
+        Assert.NotNull(updated);
+        Assert.Equal("Updated Display Name", updated.DisplayName);
+        Assert.Equal("updated@example.com", updated.Email);
+    }
+
+    [Fact]
+    public async Task UpdateAsync_CanChangePasswordHash()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var user = CreateTestUser("passwordchange");
+        await _sut.CreateAsync(user, ct);
+
+        user.PasswordHash = "newhash";
+        await _sut.UpdateAsync(user, ct);
+
+        var updated = await _sut.GetByIdAsync(user.Id, ct);
+        Assert.NotNull(updated);
+        Assert.Equal("newhash", updated.PasswordHash);
+    }
+
+    [Fact]
+    public async Task DeleteAsync_RemovesUserFromDatabase()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var user = CreateTestUser("deleteme");
+        await _sut.CreateAsync(user, ct);
+
+        await _sut.DeleteAsync(user.Id, ct);
+
+        var deleted = await _context.Users.FindAsync([user.Id], ct);
+        Assert.Null(deleted);
+    }
+
+    [Fact]
+    public async Task DeleteAsync_WithNonExistentId_DoesNotThrow()
+    {
+        var ct = TestContext.Current.CancellationToken;
+
+        // Should not throw
+        await _sut.DeleteAsync(Guid.NewGuid(), ct);
+    }
+
+    [Fact]
+    public async Task DeleteAsync_DecreasesUserCount()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var user1 = CreateTestUser("user1");
+        var user2 = CreateTestUser("user2");
+        await _sut.CreateAsync(user1, ct);
+        await _sut.CreateAsync(user2, ct);
+
+        await _sut.DeleteAsync(user1.Id, ct);
+
+        var allUsers = await _sut.GetAllAsync(ct);
+        Assert.Single(allUsers);
+        Assert.Equal("user2", allUsers[0].Username);
+    }
+
+    [Fact]
+    public async Task CreateAsync_PreservesAllFields()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var createdAt = DateTime.UtcNow.AddDays(-1);
+        var user = new User
+        {
+            Id = Guid.NewGuid(),
+            Username = "fulluser",
+            PasswordHash = "hash123",
+            Email = "full@example.com",
+            DisplayName = "Full User",
+            CreatedAtUtc = createdAt
+        };
+
+        await _sut.CreateAsync(user, ct);
+
+        var saved = await _sut.GetByIdAsync(user.Id, ct);
+        Assert.NotNull(saved);
+        Assert.Equal("fulluser", saved.Username);
+        Assert.Equal("hash123", saved.PasswordHash);
+        Assert.Equal("full@example.com", saved.Email);
+        Assert.Equal("Full User", saved.DisplayName);
+        Assert.Equal(createdAt, saved.CreatedAtUtc);
+    }
+
+    private static User CreateTestUser(string username)
+    {
+        return new User
+        {
+            Id = Guid.NewGuid(),
+            Username = username,
+            PasswordHash = "hash",
+            Email = $"{username}@example.com",
+            DisplayName = $"Display {username}",
+            CreatedAtUtc = DateTime.UtcNow
+        };
+    }
+}
+
+
+================================================================================
 FILE: src/MyBlog.Tests/MyBlog.Tests.csproj
 SIZE: .69 KB
 MODIFIED: 2026-01-11 12:52:12
@@ -9045,6 +10150,119 @@ MODIFIED: 2026-01-11 12:52:12
     <ProjectReference Include="..\MyBlog.Infrastructure\MyBlog.Infrastructure.csproj" />
   </ItemGroup>
 </Project>
+
+
+================================================================================
+FILE: src/MyBlog.Tests/Unit/DatabasePathResolverTests.cs
+SIZE: 2.56 KB
+MODIFIED: 2026-01-29 10:40:00
+================================================================================
+
+using MyBlog.Infrastructure.Data;
+using Xunit;
+
+namespace MyBlog.Tests.Unit;
+
+/// <summary>
+/// Unit tests for the DatabasePathResolver.
+/// Tests XDG-compliant path resolution across platforms.
+/// </summary>
+public class DatabasePathResolverTests
+{
+    [Fact]
+    public void GetDatabasePath_ReturnsNonEmptyPath()
+    {
+        var path = DatabasePathResolver.GetDatabasePath();
+
+        Assert.False(string.IsNullOrEmpty(path));
+    }
+
+    [Fact]
+    public void GetDatabasePath_EndsWithMyblogDb()
+    {
+        var path = DatabasePathResolver.GetDatabasePath();
+
+        Assert.EndsWith("myblog.db", path);
+    }
+
+    [Fact]
+    public void GetDatabasePath_ContainsMyBlogDirectory()
+    {
+        var path = DatabasePathResolver.GetDatabasePath();
+
+        Assert.Contains("MyBlog", path);
+    }
+
+    [Fact]
+    public void GetDataDirectory_ReturnsNonEmptyPath()
+    {
+        var path = DatabasePathResolver.GetDataDirectory();
+
+        Assert.False(string.IsNullOrEmpty(path));
+    }
+
+    [Fact]
+    public void GetDataDirectory_ContainsMyBlogDirectory()
+    {
+        var path = DatabasePathResolver.GetDataDirectory();
+
+        Assert.EndsWith("MyBlog", path);
+    }
+
+    [Fact]
+    public void GetDatabasePath_CreatesDirectoryIfNotExists()
+    {
+        var path = DatabasePathResolver.GetDatabasePath();
+        var directory = Path.GetDirectoryName(path);
+
+        Assert.NotNull(directory);
+        Assert.True(Directory.Exists(directory));
+    }
+
+    [Fact]
+    public void GetDatabasePath_ReturnsAbsolutePath()
+    {
+        var path = DatabasePathResolver.GetDatabasePath();
+
+        Assert.True(Path.IsPathRooted(path));
+    }
+
+    [Fact]
+    public void GetDataDirectory_ReturnsAbsolutePath()
+    {
+        var path = DatabasePathResolver.GetDataDirectory();
+
+        Assert.True(Path.IsPathRooted(path));
+    }
+
+    [Fact]
+    public void GetDatabasePath_ConsistentAcrossMultipleCalls()
+    {
+        var path1 = DatabasePathResolver.GetDatabasePath();
+        var path2 = DatabasePathResolver.GetDatabasePath();
+
+        Assert.Equal(path1, path2);
+    }
+
+    [Fact]
+    public void GetDataDirectory_ConsistentAcrossMultipleCalls()
+    {
+        var path1 = DatabasePathResolver.GetDataDirectory();
+        var path2 = DatabasePathResolver.GetDataDirectory();
+
+        Assert.Equal(path1, path2);
+    }
+
+    [Fact]
+    public void GetDatabasePath_IsInDataDirectory()
+    {
+        var dbPath = DatabasePathResolver.GetDatabasePath();
+        var dataDir = DatabasePathResolver.GetDataDirectory();
+
+        var dbDirectory = Path.GetDirectoryName(dbPath);
+        Assert.Equal(dataDir, dbDirectory);
+    }
+}
 
 
 ================================================================================
@@ -9255,6 +10473,253 @@ public sealed class LoginRateLimitMiddlewareTests : IDisposable
         }
 
         return context;
+    }
+}
+
+
+================================================================================
+FILE: src/MyBlog.Tests/Unit/MarkdownServiceEdgeCaseTests.cs
+SIZE: 7.44 KB
+MODIFIED: 2026-01-29 10:40:22
+================================================================================
+
+using MyBlog.Core.Interfaces;
+using MyBlog.Core.Services;
+using Xunit;
+
+namespace MyBlog.Tests.Unit;
+
+/// <summary>
+/// Mock implementation that always returns null to test no-dimension scenarios.
+/// </summary>
+internal sealed class NullImageDimensionService : IImageDimensionService
+{
+    public Task<(int Width, int Height)?> GetDimensionsAsync(string url, CancellationToken cancellationToken = default)
+    {
+        return Task.FromResult<(int, int)?>(null);
+    }
+}
+
+/// <summary>
+/// Additional edge case tests for the MarkdownService.
+/// Tests complex scenarios not covered by the main MarkdownServiceTests.
+/// </summary>
+public class MarkdownServiceEdgeCaseTests
+{
+    private readonly MarkdownService _sut = new(new NullImageDimensionService());
+
+    // Helper to normalize newlines for cross-platform comparison
+    private static string NormalizeNewlines(string s) => s.Replace("\r\n", "\n");
+
+    [Fact]
+    public async Task ToHtml_WithNestedBoldAndItalic_ProcessesBothCorrectly()
+    {
+        var result = await _sut.ToHtmlAsync("This is **bold with *nested italic* inside**");
+
+        Assert.Contains("<strong>bold with <em>nested italic</em> inside</strong>", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithCodeBlockContainingSpecialCharacters_PreservesContent()
+    {
+        var markdown = "```\n<script>alert('xss')</script>\n```";
+        var result = await _sut.ToHtmlAsync(markdown);
+
+        Assert.Contains("<pre><code>", result);
+        Assert.Contains("&lt;script&gt;", result);
+        Assert.DoesNotContain("<script>", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithHtmlInParagraph_EscapesHtml()
+    {
+        var result = await _sut.ToHtmlAsync("<div>Not allowed</div>");
+
+        Assert.Contains("&lt;div&gt;", result);
+        Assert.DoesNotContain("<div>", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithMixedListTypes_ClosesListsProperly()
+    {
+        var markdown = "- Unordered item\n\n1. Ordered item";
+        var result = NormalizeNewlines(await _sut.ToHtmlAsync(markdown));
+
+        Assert.Contains("</ul>", result);
+        Assert.Contains("<ol>", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithMultipleCodeBlocks_HandlesEachCorrectly()
+    {
+        var markdown = "```\nfirst block\n```\n\nSome text\n\n```\nsecond block\n```";
+        var result = await _sut.ToHtmlAsync(markdown);
+
+        var codeBlockCount = result.Split("<pre><code>").Length - 1;
+        Assert.Equal(2, codeBlockCount);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithUnclosedCodeBlock_ClosesAutomatically()
+    {
+        var markdown = "```\nunclosed code block";
+        var result = await _sut.ToHtmlAsync(markdown);
+
+        Assert.Contains("</code></pre>", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithLinkContainingSpecialCharacters_EncodesCorrectly()
+    {
+        var result = await _sut.ToHtmlAsync("[Link](https://example.com/path?a=1&b=2)");
+
+        Assert.Contains("href=\"https://example.com/path?a=1&amp;b=2\"", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithConsecutiveHeadings_ProcessesAll()
+    {
+        var markdown = "# H1\n## H2\n### H3";
+        var result = await _sut.ToHtmlAsync(markdown);
+
+        Assert.Contains("<h1>H1</h1>", result);
+        Assert.Contains("<h2>H2</h2>", result);
+        Assert.Contains("<h3>H3</h3>", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithMultipleBlockquotes_ProcessesEach()
+    {
+        var markdown = "> Quote 1\n\n> Quote 2";
+        var result = await _sut.ToHtmlAsync(markdown);
+
+        var quoteCount = result.Split("<blockquote>").Length - 1;
+        Assert.Equal(2, quoteCount);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithHorizontalRuleVariations_AllWork()
+    {
+        var markdown1 = await _sut.ToHtmlAsync("---");
+        var markdown2 = await _sut.ToHtmlAsync("***");
+        var markdown3 = await _sut.ToHtmlAsync("___");
+        var markdown4 = await _sut.ToHtmlAsync("----");
+
+        Assert.Contains("<hr />", markdown1);
+        Assert.Contains("<hr />", markdown2);
+        Assert.Contains("<hr />", markdown3);
+        Assert.Contains("<hr />", markdown4);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithUnorderedListVariations_BothWork()
+    {
+        var dashList = await _sut.ToHtmlAsync("- Item 1\n- Item 2");
+        var asteriskList = await _sut.ToHtmlAsync("* Item 1\n* Item 2");
+
+        Assert.Contains("<ul>", dashList);
+        Assert.Contains("<ul>", asteriskList);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithLongOrderedList_MaintainsStructure()
+    {
+        var markdown = "1. First\n2. Second\n3. Third\n4. Fourth\n5. Fifth";
+        var result = await _sut.ToHtmlAsync(markdown);
+
+        var liCount = result.Split("<li>").Length - 1;
+        Assert.Equal(5, liCount);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithInlineCodeInHeading_ProcessesBoth()
+    {
+        var result = await _sut.ToHtmlAsync("# Heading with `code`");
+
+        Assert.Contains("<h1>Heading with <code>code</code></h1>", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithBoldInListItem_ProcessesBoth()
+    {
+        var result = await _sut.ToHtmlAsync("- Item with **bold**");
+
+        Assert.Contains("<li>Item with <strong>bold</strong></li>", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithLinkInListItem_ProcessesBoth()
+    {
+        var result = await _sut.ToHtmlAsync("1. Check [this](https://example.com)");
+
+        Assert.Contains("<li>Check <a href=\"https://example.com\">this</a></li>", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithEmptyLines_HandlesGracefully()
+    {
+        var markdown = "Paragraph 1\n\n\n\nParagraph 2";
+        var result = await _sut.ToHtmlAsync(markdown);
+
+        Assert.Contains("<p>Paragraph 1</p>", result);
+        Assert.Contains("<p>Paragraph 2</p>", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithOnlyWhitespace_ReturnsEmpty()
+    {
+        var result = await _sut.ToHtmlAsync("   \n\n   \t   ");
+
+        Assert.Equal(string.Empty, result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithImageAltTextContainingSpecialChars_EncodesAlt()
+    {
+        var result = await _sut.ToHtmlAsync("![Image with \"quotes\"](https://example.com/img.png)");
+
+        Assert.Contains("alt=\"Image with &quot;quotes&quot;\"", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithEmojiInContent_PreservesEmoji()
+    {
+        var result = await _sut.ToHtmlAsync("Hello 👋 World 🌍");
+
+        Assert.Contains("👋", result);
+        Assert.Contains("🌍", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithVeryLongLine_ProcessesCorrectly()
+    {
+        var longText = new string('a', 10000);
+        var result = await _sut.ToHtmlAsync(longText);
+
+        Assert.Contains($"<p>{longText}</p>", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithHeadingAfterList_ClosesListFirst()
+    {
+        var markdown = "- Item 1\n- Item 2\n# Heading";
+        var result = NormalizeNewlines(await _sut.ToHtmlAsync(markdown));
+
+        // List should close before heading
+        var ulCloseIndex = result.IndexOf("</ul>");
+        var h1Index = result.IndexOf("<h1>");
+        Assert.True(ulCloseIndex < h1Index);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithCodeBlockAfterList_ClosesListFirst()
+    {
+        var markdown = "- Item 1\n- Item 2\n```\ncode\n```";
+        var result = NormalizeNewlines(await _sut.ToHtmlAsync(markdown));
+
+        var ulCloseIndex = result.IndexOf("</ul>");
+        var preIndex = result.IndexOf("<pre>");
+        Assert.True(ulCloseIndex < preIndex);
     }
 }
 
@@ -9533,6 +10998,230 @@ public class PasswordServiceTests
         var result = _sut.VerifyPassword(hash, "");
 
         Assert.False(result);
+    }
+}
+
+
+================================================================================
+FILE: src/MyBlog.Tests/Unit/ReaderTrackingServiceTests.cs
+SIZE: 5.83 KB
+MODIFIED: 2026-01-29 10:43:37
+================================================================================
+
+using MyBlog.Infrastructure.Services;
+using Xunit;
+
+namespace MyBlog.Tests.Unit;
+
+/// <summary>
+/// Unit tests for the ReaderTrackingService.
+/// Verifies thread-safe reader counting with ConcurrentDictionary operations.
+/// </summary>
+public class ReaderTrackingServiceTests
+{
+    private readonly ReaderTrackingService _sut = new();
+
+    [Fact]
+    public void JoinPost_WithNewSlug_ReturnsOne()
+    {
+        var count = _sut.JoinPost("test-slug", "connection-1");
+
+        Assert.Equal(1, count);
+    }
+
+    [Fact]
+    public void JoinPost_WithMultipleConnections_ReturnsIncrementingCount()
+    {
+        var count1 = _sut.JoinPost("test-slug", "connection-1");
+        var count2 = _sut.JoinPost("test-slug", "connection-2");
+        var count3 = _sut.JoinPost("test-slug", "connection-3");
+
+        Assert.Equal(1, count1);
+        Assert.Equal(2, count2);
+        Assert.Equal(3, count3);
+    }
+
+    [Fact]
+    public void JoinPost_WithDifferentSlugs_TracksIndependently()
+    {
+        var count1 = _sut.JoinPost("slug-a", "connection-1");
+        var count2 = _sut.JoinPost("slug-b", "connection-2");
+        var count3 = _sut.JoinPost("slug-a", "connection-3");
+
+        Assert.Equal(1, count1);
+        Assert.Equal(1, count2);
+        Assert.Equal(2, count3);
+    }
+
+    [Fact]
+    public void LeavePost_WithExistingConnection_DecrementsCount()
+    {
+        _sut.JoinPost("test-slug", "connection-1");
+        _sut.JoinPost("test-slug", "connection-2");
+
+        var count = _sut.LeavePost("test-slug", "connection-2");
+
+        Assert.Equal(1, count);
+    }
+
+    [Fact]
+    public void LeavePost_WhenCountIsZero_ReturnsZero()
+    {
+        _sut.JoinPost("test-slug", "connection-1");
+        _sut.LeavePost("test-slug", "connection-1");
+
+        var count = _sut.LeavePost("test-slug", "connection-1");
+
+        Assert.Equal(0, count);
+    }
+
+    [Fact]
+    public void LeavePost_WithNonExistentSlug_ReturnsZero()
+    {
+        var count = _sut.LeavePost("non-existent", "connection-1");
+
+        Assert.Equal(0, count);
+    }
+
+    [Fact]
+    public void Disconnect_WithKnownConnection_ReturnsSlugAndDecrementedCount()
+    {
+        _sut.JoinPost("test-slug", "connection-1");
+        _sut.JoinPost("test-slug", "connection-2");
+
+        var (slug, newCount) = _sut.Disconnect("connection-1");
+
+        Assert.Equal("test-slug", slug);
+        Assert.Equal(1, newCount);
+    }
+
+    [Fact]
+    public void Disconnect_WithUnknownConnection_ReturnsNullSlug()
+    {
+        var (slug, newCount) = _sut.Disconnect("unknown-connection");
+
+        Assert.Null(slug);
+        Assert.Equal(0, newCount);
+    }
+
+    [Fact]
+    public void Disconnect_RemovesConnectionMapping()
+    {
+        _sut.JoinPost("test-slug", "connection-1");
+        _sut.Disconnect("connection-1");
+
+        // Second disconnect should return null since connection is no longer tracked
+        var (slug, _) = _sut.Disconnect("connection-1");
+
+        Assert.Null(slug);
+    }
+
+    [Fact]
+    public void GetReaderCount_WithExistingSlug_ReturnsCorrectCount()
+    {
+        _sut.JoinPost("test-slug", "connection-1");
+        _sut.JoinPost("test-slug", "connection-2");
+
+        var count = _sut.GetReaderCount("test-slug");
+
+        Assert.Equal(2, count);
+    }
+
+    [Fact]
+    public void GetReaderCount_WithNonExistentSlug_ReturnsZero()
+    {
+        var count = _sut.GetReaderCount("non-existent");
+
+        Assert.Equal(0, count);
+    }
+
+    [Fact]
+    public void JoinPost_SameConnectionSwitchingPages_UpdatesMapping()
+    {
+        // Connection joins slug-a
+        _sut.JoinPost("slug-a", "connection-1");
+
+        // Same connection joins slug-b (switching pages)
+        _sut.JoinPost("slug-b", "connection-1");
+
+        // Disconnect should return slug-b (the most recent)
+        var (slug, _) = _sut.Disconnect("connection-1");
+
+        Assert.Equal("slug-b", slug);
+    }
+
+    [Fact]
+    public void ConcurrentJoins_MaintainsAccurateCount()
+    {
+        const int connectionCount = 100;
+        var tasks = new List<Task>();
+
+        for (var i = 0; i < connectionCount; i++)
+        {
+            var connectionId = $"connection-{i}";
+            tasks.Add(Task.Run(() => _sut.JoinPost("test-slug", connectionId)));
+        }
+
+        Task.WaitAll(tasks.ToArray());
+
+        var finalCount = _sut.GetReaderCount("test-slug");
+        Assert.Equal(connectionCount, finalCount);
+    }
+
+    [Fact]
+    public void ConcurrentJoinsAndLeaves_MaintainsAccurateCount()
+    {
+        // First, add 50 connections
+        for (var i = 0; i < 50; i++)
+        {
+            _sut.JoinPost("test-slug", $"connection-{i}");
+        }
+
+        var tasks = new List<Task>();
+
+        // Concurrently add 25 more and remove 25
+        for (var i = 50; i < 75; i++)
+        {
+            var connectionId = $"connection-{i}";
+            tasks.Add(Task.Run(() => _sut.JoinPost("test-slug", connectionId)));
+        }
+
+        for (var i = 0; i < 25; i++)
+        {
+            var connectionId = $"connection-{i}";
+            tasks.Add(Task.Run(() => _sut.LeavePost("test-slug", connectionId)));
+        }
+
+        Task.WaitAll(tasks.ToArray());
+
+        // Should have 50 - 25 + 25 = 50 connections
+        var finalCount = _sut.GetReaderCount("test-slug");
+        Assert.Equal(50, finalCount);
+    }
+
+    [Fact]
+    public void ConcurrentDisconnects_MaintainsAccurateCount()
+    {
+        const int connectionCount = 50;
+
+        // Add connections
+        for (var i = 0; i < connectionCount; i++)
+        {
+            _sut.JoinPost("test-slug", $"connection-{i}");
+        }
+
+        // Disconnect all concurrently
+        var tasks = new List<Task>();
+        for (var i = 0; i < connectionCount; i++)
+        {
+            var connectionId = $"connection-{i}";
+            tasks.Add(Task.Run(() => _sut.Disconnect(connectionId)));
+        }
+
+        Task.WaitAll(tasks.ToArray());
+
+        var finalCount = _sut.GetReaderCount("test-slug");
+        Assert.Equal(0, finalCount);
     }
 }
 
@@ -14831,9 +16520,9 @@ window.themeManager = {
 
 
 ===============================================================================
-EXPORT COMPLETED: Thu Jan 29 10:19:26 AM EST 2026
-Total Files Found: 119
-Files Exported: 119
+EXPORT COMPLETED: Thu Jan 29 10:43:54 AM EST 2026
+Total Files Found: 126
+Files Exported: 126
 Files Skipped: 0 (binary or large files)
 Output File: /home/kushal/src/dotnet/MyBlog/docs/llm/dump.txt
 ===============================================================================
