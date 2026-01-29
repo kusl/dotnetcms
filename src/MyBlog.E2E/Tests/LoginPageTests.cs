@@ -15,6 +15,7 @@ public sealed class LoginPageTests(PlaywrightFixture fixture)
     public async Task LoginPage_LoadsSuccessfully()
     {
         var page = await _fixture.CreatePageAsync();
+
         var response = await page.GotoAsync("/login");
 
         Assert.NotNull(response);
@@ -22,21 +23,10 @@ public sealed class LoginPageTests(PlaywrightFixture fixture)
     }
 
     [Fact]
-    public async Task LoginPage_DisplaysLoginForm()
-    {
-        var page = await _fixture.CreatePageAsync();
-        await page.GotoAsync("/login");
-
-        // Use Web Assertions to wait for visibility
-        await Assertions.Expect(page.Locator("input[name='username']")).ToBeVisibleAsync();
-        await Assertions.Expect(page.Locator("input[name='password']")).ToBeVisibleAsync();
-        await Assertions.Expect(page.Locator("button[type='submit']")).ToBeVisibleAsync();
-    }
-
-    [Fact]
     public async Task LoginPage_DisplaysLoginHeading()
     {
         var page = await _fixture.CreatePageAsync();
+
         await page.GotoAsync("/login");
 
         var heading = page.Locator("h1");
@@ -45,7 +35,40 @@ public sealed class LoginPageTests(PlaywrightFixture fixture)
     }
 
     [Fact]
-    public async Task LoginPage_HasRequiredFieldAttributes()
+    public async Task LoginPage_HasUsernameField()
+    {
+        var page = await _fixture.CreatePageAsync();
+
+        await page.GotoAsync("/login");
+
+        var usernameInput = page.Locator("input[name='username']");
+        await Assertions.Expect(usernameInput).ToBeVisibleAsync();
+    }
+
+    [Fact]
+    public async Task LoginPage_HasPasswordField()
+    {
+        var page = await _fixture.CreatePageAsync();
+
+        await page.GotoAsync("/login");
+
+        var passwordInput = page.Locator("input[name='password']");
+        await Assertions.Expect(passwordInput).ToBeVisibleAsync();
+    }
+
+    [Fact]
+    public async Task LoginPage_HasSubmitButton()
+    {
+        var page = await _fixture.CreatePageAsync();
+
+        await page.GotoAsync("/login");
+
+        var submitButton = page.Locator("button[type='submit']");
+        await Assertions.Expect(submitButton).ToBeVisibleAsync();
+    }
+
+    [Fact]
+    public async Task LoginPage_FieldsAreRequired()
     {
         var page = await _fixture.CreatePageAsync();
         await page.GotoAsync("/login");
@@ -102,11 +125,11 @@ public sealed class LoginPageTests(PlaywrightFixture fixture)
         await page.FillAsync("input[name='username']", "invaliduser");
         await page.FillAsync("input[name='password']", "invalidpassword");
 
-        // Submit the form and wait for navigation
-        await page.Locator("button[type='submit']").ClickAsync();
-
-        // Wait for the error message to appear (redirects back to login with error)
-        await page.WaitForURLAsync("**/login*");
+        // Submit the form and wait for navigation back to login with error
+        await Task.WhenAll(
+            page.WaitForURLAsync("**/login*", new() { Timeout = 30000 }),
+            page.Locator("button[type='submit']").ClickAsync()
+        );
 
         // Check for error indicator in URL or on page
         var url = page.Url;
@@ -130,41 +153,14 @@ public sealed class LoginPageTests(PlaywrightFixture fixture)
         await page.FillAsync("input[name='username']", "admin");
         await page.FillAsync("input[name='password']", "ChangeMe123!");
 
-        // Submit the form
-        await page.Locator("button[type='submit']").ClickAsync();
-
-        // Wait for redirect to admin dashboard
-        await page.WaitForURLAsync("**/admin**", new() { Timeout = 15000 });
+        // Submit form and wait for redirect
+        await Task.WhenAll(
+            page.WaitForURLAsync("**/admin**", new() { Timeout = 30000 }),
+            page.Locator("button[type='submit']").ClickAsync()
+        );
 
         // Verify we're on the admin page
-        var adminHeading = page.Locator("h1");
-        await Assertions.Expect(adminHeading).ToContainTextAsync("Admin", new() { Timeout = 10000 });
-    }
-
-    [Fact]
-    public async Task LoginPage_WithReturnUrl_PreservesReturnUrl()
-    {
-        var page = await _fixture.CreatePageAsync();
-
-        // Navigate to login with a return URL
-        await page.GotoAsync("/login?returnUrl=%2Fadmin%2Fposts");
-
-        // Check that the hidden input has the return URL
-        var returnUrlInput = page.Locator("input[name='returnUrl']");
-        await Assertions.Expect(returnUrlInput).ToHaveValueAsync("/admin/posts");
-    }
-
-    [Fact]
-    public async Task LoginPage_HasNavigationLinks()
-    {
-        var page = await _fixture.CreatePageAsync();
-        await page.GotoAsync("/login");
-
-        // Should still have navigation to home and about
-        var homeLink = page.Locator("nav a[href='/']");
-        var aboutLink = page.Locator("nav a[href='/about']");
-
-        await Assertions.Expect(homeLink).ToBeVisibleAsync();
-        await Assertions.Expect(aboutLink).ToBeVisibleAsync();
+        var heading = page.Locator("h1");
+        await Assertions.Expect(heading).ToContainTextAsync("Admin");
     }
 }

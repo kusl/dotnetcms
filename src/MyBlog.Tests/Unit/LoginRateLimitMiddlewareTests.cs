@@ -6,7 +6,7 @@ using Xunit;
 namespace MyBlog.Tests.Unit;
 
 /// <summary>
-/// Tests for LoginRateLimitMiddleware.
+/// Tests for the login rate limiting middleware.
 /// Verifies that the middleware slows down but never blocks requests.
 /// </summary>
 public sealed class LoginRateLimitMiddlewareTests : IDisposable

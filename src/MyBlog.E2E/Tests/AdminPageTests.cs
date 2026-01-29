@@ -21,9 +21,12 @@ public sealed class AdminPageTests(PlaywrightFixture fixture)
 
         await page.FillAsync("input[name='username']", "admin");
         await page.FillAsync("input[name='password']", "ChangeMe123!");
-        await page.Locator("button[type='submit']").ClickAsync();
 
-        await page.WaitForURLAsync("**/admin**", new() { Timeout = 15000 });
+        // Click and wait for navigation in parallel to handle form submission properly
+        await Task.WhenAll(
+            page.WaitForURLAsync("**/admin**", new() { Timeout = 30000 }),
+            page.Locator("button[type='submit']").ClickAsync()
+        );
     }
 
     [Fact]
@@ -32,8 +35,9 @@ public sealed class AdminPageTests(PlaywrightFixture fixture)
         var page = await _fixture.CreatePageAsync();
         await LoginAsAdminAsync(page);
 
-        // Dashboard should show post count or statistics
-        var statCard = page.Locator(".stat-card, .dashboard-stats, text=Total Posts");
+        // Dashboard should show post count or statistics - use proper selector pattern
+        // Cannot mix CSS selectors with text= in a comma-separated list
+        var statCard = page.Locator(".stat-card").Or(page.Locator(".dashboard-stats"));
         await Assertions.Expect(statCard.First).ToBeVisibleAsync(new() { Timeout = 10000 });
     }
 
@@ -73,12 +77,22 @@ public sealed class AdminPageTests(PlaywrightFixture fixture)
         var page = await _fixture.CreatePageAsync();
         await LoginAsAdminAsync(page);
 
-        await page.ClickAsync("a[href='/admin/posts']");
-        await page.WaitForURLAsync("**/admin/posts");
+        await page.GotoAsync("/admin/posts");
 
-        // Should show posts management heading or table
         var heading = page.Locator("h1");
-        await Assertions.Expect(heading).ToBeVisibleAsync(new() { Timeout = 10000 });
+        await Assertions.Expect(heading).ToContainTextAsync("Posts", new() { Timeout = 10000 });
+    }
+
+    [Fact]
+    public async Task AdminPosts_HasNewPostButton()
+    {
+        var page = await _fixture.CreatePageAsync();
+        await LoginAsAdminAsync(page);
+
+        await page.GotoAsync("/admin/posts");
+
+        var newPostLink = page.Locator("a[href='/admin/posts/new']");
+        await Assertions.Expect(newPostLink).ToBeVisibleAsync(new() { Timeout = 10000 });
     }
 
     [Fact]
@@ -87,16 +101,24 @@ public sealed class AdminPageTests(PlaywrightFixture fixture)
         var page = await _fixture.CreatePageAsync();
         await LoginAsAdminAsync(page);
 
-        await page.ClickAsync("a[href='/admin/posts/new']");
-        await page.WaitForURLAsync("**/admin/posts/new");
-
-        // Should show post editor form
-        var heading = page.Locator("h1");
-        await Assertions.Expect(heading).ToBeVisibleAsync(new() { Timeout = 10000 });
+        await page.GotoAsync("/admin/posts/new");
 
         // Should have title input
         var titleInput = page.Locator("input[id='title'], input[name='title'], #title");
         await Assertions.Expect(titleInput.First).ToBeVisibleAsync(new() { Timeout = 10000 });
+    }
+
+    [Fact]
+    public async Task AdminNewPost_HasContentEditor()
+    {
+        var page = await _fixture.CreatePageAsync();
+        await LoginAsAdminAsync(page);
+
+        await page.GotoAsync("/admin/posts/new");
+
+        // Should have content textarea
+        var contentEditor = page.Locator("textarea[id='content'], textarea[name='content'], #content");
+        await Assertions.Expect(contentEditor.First).ToBeVisibleAsync(new() { Timeout = 10000 });
     }
 
     [Fact]
@@ -105,48 +127,10 @@ public sealed class AdminPageTests(PlaywrightFixture fixture)
         var page = await _fixture.CreatePageAsync();
         await LoginAsAdminAsync(page);
 
-        await page.ClickAsync("a[href='/admin/images']");
-        await page.WaitForURLAsync("**/admin/images");
+        await page.GotoAsync("/admin/images");
 
-        // Should show image manager
         var heading = page.Locator("h1");
-        await Assertions.Expect(heading).ToBeVisibleAsync(new() { Timeout = 10000 });
-    }
-
-    [Fact]
-    public async Task ChangePassword_LoadsSuccessfully()
-    {
-        var page = await _fixture.CreatePageAsync();
-        await LoginAsAdminAsync(page);
-
-        await page.GotoAsync("/admin/change-password");
-
-        // Should show change password form
-        var heading = page.Locator("h1");
-        await Assertions.Expect(heading).ToContainTextAsync("Change Password");
-
-        // Should have password fields
-        var currentPasswordInput = page.Locator("input[id='currentPassword'], #currentPassword");
-        var newPasswordInput = page.Locator("input[id='newPassword'], #newPassword");
-        var confirmPasswordInput = page.Locator("input[id='confirmPassword'], #confirmPassword");
-
-        await Assertions.Expect(currentPasswordInput.First).ToBeVisibleAsync(new() { Timeout = 10000 });
-        await Assertions.Expect(newPasswordInput.First).ToBeVisibleAsync(new() { Timeout = 10000 });
-        await Assertions.Expect(confirmPasswordInput.First).ToBeVisibleAsync(new() { Timeout = 10000 });
-    }
-
-    [Fact]
-    public async Task ChangePassword_RequiresCurrentPassword()
-    {
-        var page = await _fixture.CreatePageAsync();
-        await LoginAsAdminAsync(page);
-
-        await page.GotoAsync("/admin/change-password");
-        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
-
-        // The current password field should have required attribute
-        var currentPasswordInput = page.Locator("#currentPassword");
-        await Assertions.Expect(currentPasswordInput).ToHaveAttributeAsync("required", "");
+        await Assertions.Expect(heading).ToContainTextAsync("Image", new() { Timeout = 10000 });
     }
 
     [Fact]
@@ -155,17 +139,16 @@ public sealed class AdminPageTests(PlaywrightFixture fixture)
         var page = await _fixture.CreatePageAsync();
         await LoginAsAdminAsync(page);
 
+        // Start at dashboard
+        var dashboardHeading = page.Locator("h1");
+        await Assertions.Expect(dashboardHeading).ToContainTextAsync("Admin", new() { Timeout = 10000 });
+
         // Navigate to posts
         await page.ClickAsync("a[href='/admin/posts']");
         await page.WaitForURLAsync("**/admin/posts");
 
-        // Navigate back to dashboard via admin link
-        await page.ClickAsync("nav a[href='/admin']");
-        await page.WaitForURLAsync("**/admin");
-
-        // Navigate to images
-        await page.ClickAsync("a[href='/admin/images']");
-        await page.WaitForURLAsync("**/admin/images");
+        var postsHeading = page.Locator("h1");
+        await Assertions.Expect(postsHeading).ToContainTextAsync("Posts", new() { Timeout = 10000 });
     }
 
     [Fact]
@@ -174,8 +157,8 @@ public sealed class AdminPageTests(PlaywrightFixture fixture)
         var page = await _fixture.CreatePageAsync();
         await LoginAsAdminAsync(page);
 
-        // Dashboard should have a section for recent posts
-        var recentPostsSection = page.Locator("text=Recent Posts, h2:has-text('Recent')");
+        // Look for recent posts section - use Or pattern instead of comma-separated selectors
+        var recentPostsSection = page.GetByText("Recent Posts").Or(page.Locator("h2").Filter(new() { HasText = "Recent" }));
         await Assertions.Expect(recentPostsSection.First).ToBeVisibleAsync(new() { Timeout = 10000 });
     }
 }

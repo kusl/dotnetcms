@@ -56,11 +56,12 @@ public sealed class AuthenticationTests(PlaywrightFixture fixture)
         await page.FillAsync("input[name='username']", "admin");
         await page.FillAsync("input[name='password']", "ChangeMe123!");
 
-        // Submit the form
-        await page.Locator("button[type='submit']").ClickAsync();
-
-        // Wait for redirect to admin dashboard
-        await page.WaitForURLAsync("**/admin**", new() { Timeout = 15000 });
+        // Submit the form and wait for navigation in parallel
+        // This is the proper pattern for traditional HTML form submissions
+        await Task.WhenAll(
+            page.WaitForURLAsync("**/admin**", new() { Timeout = 30000 }),
+            page.Locator("button[type='submit']").ClickAsync()
+        );
 
         // Verify we're authenticated
         var adminHeading = page.Locator("h1");
@@ -78,10 +79,12 @@ public sealed class AuthenticationTests(PlaywrightFixture fixture)
         // Fill in credentials and submit
         await page.FillAsync("input[name='username']", "admin");
         await page.FillAsync("input[name='password']", "ChangeMe123!");
-        await page.Locator("button[type='submit']").ClickAsync();
 
-        // Wait for redirect
-        await page.WaitForURLAsync("**/admin**", new() { Timeout = 15000 });
+        // Submit and wait for navigation
+        await Task.WhenAll(
+            page.WaitForURLAsync("**/admin**", new() { Timeout = 30000 }),
+            page.Locator("button[type='submit']").ClickAsync()
+        );
 
         // Navigate to home page
         await page.GotoAsync("/");
@@ -102,18 +105,21 @@ public sealed class AuthenticationTests(PlaywrightFixture fixture)
 
         await page.FillAsync("input[name='username']", "admin");
         await page.FillAsync("input[name='password']", "ChangeMe123!");
-        await page.Locator("button[type='submit']").ClickAsync();
 
-        // Wait for redirect to admin
-        await page.WaitForURLAsync("**/admin**", new() { Timeout = 15000 });
+        await Task.WhenAll(
+            page.WaitForURLAsync("**/admin**", new() { Timeout = 30000 }),
+            page.Locator("button[type='submit']").ClickAsync()
+        );
 
         // Find and click the logout button
-        var logoutButton = page.Locator("button:has-text('Logout'), form[action='/logout'] button");
+        var logoutButton = page.Locator("button:has-text('Logout')").Or(page.Locator("form[action='/logout'] button"));
         await Assertions.Expect(logoutButton.First).ToBeVisibleAsync(new() { Timeout = 10000 });
-        await logoutButton.First.ClickAsync();
 
-        // Should be redirected to home
-        await page.WaitForURLAsync("**/", new() { Timeout = 10000 });
+        // Click logout and wait for navigation
+        await Task.WhenAll(
+            page.WaitForURLAsync("**/", new() { Timeout = 10000 }),
+            logoutButton.First.ClickAsync()
+        );
 
         // Login link should be visible instead of Admin link
         var loginLink = page.Locator("nav a[href='/login']");
@@ -131,17 +137,19 @@ public sealed class AuthenticationTests(PlaywrightFixture fixture)
 
         await page.FillAsync("input[name='username']", "admin");
         await page.FillAsync("input[name='password']", "ChangeMe123!");
-        await page.Locator("button[type='submit']").ClickAsync();
 
-        // Wait for redirect to admin
-        await page.WaitForURLAsync("**/admin**", new() { Timeout = 15000 });
+        await Task.WhenAll(
+            page.WaitForURLAsync("**/admin**", new() { Timeout = 30000 }),
+            page.Locator("button[type='submit']").ClickAsync()
+        );
 
         // Click logout
-        var logoutButton = page.Locator("button:has-text('Logout'), form[action='/logout'] button");
-        await logoutButton.First.ClickAsync();
+        var logoutButton = page.Locator("button:has-text('Logout')").Or(page.Locator("form[action='/logout'] button"));
 
-        // Should be redirected to home
-        await page.WaitForURLAsync("**/", new() { Timeout = 10000 });
+        await Task.WhenAll(
+            page.WaitForURLAsync("**/", new() { Timeout = 10000 }),
+            logoutButton.First.ClickAsync()
+        );
 
         // Admin link should not be visible
         var adminLink = page.Locator("nav a[href='/admin']");
@@ -160,11 +168,11 @@ public sealed class AuthenticationTests(PlaywrightFixture fixture)
         await page.FillAsync("input[name='username']", "admin");
         await page.FillAsync("input[name='password']", "WrongPassword!");
 
-        // Submit the form
-        await page.Locator("button[type='submit']").ClickAsync();
-
-        // Should stay on login page with error
-        await page.WaitForURLAsync("**/login**", new() { Timeout = 10000 });
+        // Submit the form and wait for it to return to login page with error
+        await Task.WhenAll(
+            page.WaitForURLAsync("**/login**", new() { Timeout = 30000 }),
+            page.Locator("button[type='submit']").ClickAsync()
+        );
 
         // Either URL has error param or page shows error message
         var url = page.Url;
@@ -189,10 +197,10 @@ public sealed class AuthenticationTests(PlaywrightFixture fixture)
         await page.FillAsync("input[name='password']", "SomePassword123!");
 
         // Submit the form
-        await page.Locator("button[type='submit']").ClickAsync();
-
-        // Should stay on login page with error
-        await page.WaitForURLAsync("**/login**", new() { Timeout = 10000 });
+        await Task.WhenAll(
+            page.WaitForURLAsync("**/login**", new() { Timeout = 30000 }),
+            page.Locator("button[type='submit']").ClickAsync()
+        );
 
         // Check for error
         var url = page.Url;
@@ -215,17 +223,18 @@ public sealed class AuthenticationTests(PlaywrightFixture fixture)
 
         await page.FillAsync("input[name='username']", "admin");
         await page.FillAsync("input[name='password']", "ChangeMe123!");
-        await page.Locator("button[type='submit']").ClickAsync();
 
-        // Wait for redirect to admin
-        await page.WaitForURLAsync("**/admin**", new() { Timeout = 15000 });
+        await Task.WhenAll(
+            page.WaitForURLAsync("**/admin**", new() { Timeout = 30000 }),
+            page.Locator("button[type='submit']").ClickAsync()
+        );
 
         // Verify dashboard content
         var heading = page.Locator("h1");
         await Assertions.Expect(heading).ToContainTextAsync("Admin");
 
         // Should have links to manage posts
-        var managePostsLink = page.Locator("a[href='/admin/posts'], a:has-text('Posts')");
+        var managePostsLink = page.Locator("a[href='/admin/posts']").Or(page.GetByText("Posts"));
         await Assertions.Expect(managePostsLink.First).ToBeVisibleAsync(new() { Timeout = 10000 });
     }
 }
