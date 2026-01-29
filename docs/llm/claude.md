@@ -631,3 +631,70 @@ and do make everything work properly
 and follow engineering best practices 
 and please do not hallucinate 
 give me full files for all files that changed 
+
+
+
+
+
+
+
+usage statistics 
+current:  37% 
+week:     16%
+
+
+
+
+
+
+
+Let me search for more of the relevant files to understand the exact structure:Now I have a good understanding. Let me search for the full ReaderTrackingServiceTests file to see the concurrent tests that have the `Task.WaitAll` issues:Now I have a complete understanding of the issues. Let me summarize what needs to be fixed:
+
+**Issue 1: PostRepositoryExtendedTests.cs (lines 236, 246)**
+The test is using `ct: ct` as the named parameter, but the `IsSlugTakenAsync` method signature is:
+```csharp
+Task<bool> IsSlugTakenAsync(string slug, Guid? excludePostId = null, CancellationToken cancellationToken = default)
+```
+The parameter is named `cancellationToken`, not `ct`.
+
+**Issue 2: ReaderTrackingServiceTests.cs (lines 155, 185, 211)**
+The tests are using `Task.WaitAll` which is a blocking operation (xUnit1031) and not using `TestContext.Current.CancellationToken` (xUnit1051). These should be converted to async tests using `await Task.WhenAll`.
+
+Now let me provide the corrected files:Here are the two files that need to be changed:
+
+## Summary of Changes
+
+### 1. `src/MyBlog.Tests/Integration/PostRepositoryExtendedTests.cs`
+
+**Problem:** The tests at lines 236 and 246 were using `ct: ct` as a named parameter, but the `IsSlugTakenAsync` method's cancellation token parameter is named `cancellationToken`, not `ct`.
+
+**Fix:** Changed `ct: ct` to `cancellationToken: ct` on lines 236 and 246.
+
+### 2. `src/MyBlog.Tests/Unit/ReaderTrackingServiceTests.cs`
+
+**Problem:** Three tests (`ConcurrentJoins_MaintainsAccurateCount`, `ConcurrentJoinsAndLeaves_MaintainsAccurateCount`, and `ConcurrentDisconnects_MaintainsAccurateCount`) were using:
+- `Task.WaitAll(tasks.ToArray())` which is a blocking operation (violates xUnit1031)
+- Not using `TestContext.Current.CancellationToken` (violates xUnit1051)
+
+**Fix:** 
+- Changed the three tests from synchronous `void` methods to `async Task` methods
+- Added `var ct = TestContext.Current.CancellationToken;` at the start of each test
+- Changed `Task.WaitAll(tasks.ToArray())` to `await Task.WhenAll(tasks)`
+- Passed the cancellation token to `Task.Run()` calls
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

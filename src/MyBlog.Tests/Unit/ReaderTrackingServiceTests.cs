@@ -141,26 +141,29 @@ public class ReaderTrackingServiceTests
     }
 
     [Fact]
-    public void ConcurrentJoins_MaintainsAccurateCount()
+    public async Task ConcurrentJoins_MaintainsAccurateCount()
     {
+        var ct = TestContext.Current.CancellationToken;
         const int connectionCount = 100;
         var tasks = new List<Task>();
 
         for (var i = 0; i < connectionCount; i++)
         {
             var connectionId = $"connection-{i}";
-            tasks.Add(Task.Run(() => _sut.JoinPost("test-slug", connectionId)));
+            tasks.Add(Task.Run(() => _sut.JoinPost("test-slug", connectionId), ct));
         }
 
-        Task.WaitAll(tasks.ToArray());
+        await Task.WhenAll(tasks);
 
         var finalCount = _sut.GetReaderCount("test-slug");
         Assert.Equal(connectionCount, finalCount);
     }
 
     [Fact]
-    public void ConcurrentJoinsAndLeaves_MaintainsAccurateCount()
+    public async Task ConcurrentJoinsAndLeaves_MaintainsAccurateCount()
     {
+        var ct = TestContext.Current.CancellationToken;
+
         // First, add 50 connections
         for (var i = 0; i < 50; i++)
         {
@@ -173,16 +176,16 @@ public class ReaderTrackingServiceTests
         for (var i = 50; i < 75; i++)
         {
             var connectionId = $"connection-{i}";
-            tasks.Add(Task.Run(() => _sut.JoinPost("test-slug", connectionId)));
+            tasks.Add(Task.Run(() => _sut.JoinPost("test-slug", connectionId), ct));
         }
 
         for (var i = 0; i < 25; i++)
         {
             var connectionId = $"connection-{i}";
-            tasks.Add(Task.Run(() => _sut.LeavePost("test-slug", connectionId)));
+            tasks.Add(Task.Run(() => _sut.LeavePost("test-slug", connectionId), ct));
         }
 
-        Task.WaitAll(tasks.ToArray());
+        await Task.WhenAll(tasks);
 
         // Should have 50 - 25 + 25 = 50 connections
         var finalCount = _sut.GetReaderCount("test-slug");
@@ -190,8 +193,9 @@ public class ReaderTrackingServiceTests
     }
 
     [Fact]
-    public void ConcurrentDisconnects_MaintainsAccurateCount()
+    public async Task ConcurrentDisconnects_MaintainsAccurateCount()
     {
+        var ct = TestContext.Current.CancellationToken;
         const int connectionCount = 50;
 
         // Add connections
@@ -205,10 +209,10 @@ public class ReaderTrackingServiceTests
         for (var i = 0; i < connectionCount; i++)
         {
             var connectionId = $"connection-{i}";
-            tasks.Add(Task.Run(() => _sut.Disconnect(connectionId)));
+            tasks.Add(Task.Run(() => _sut.Disconnect(connectionId), ct));
         }
 
-        Task.WaitAll(tasks.ToArray());
+        await Task.WhenAll(tasks);
 
         var finalCount = _sut.GetReaderCount("test-slug");
         Assert.Equal(0, finalCount);

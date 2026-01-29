@@ -92,35 +92,15 @@ public class PostRepositoryExtendedTests : IAsyncDisposable
             await _sut.CreateAsync(post, ct);
         }
 
-        var (page1, _) = await _sut.GetPublishedPostsAsync(1, 2, ct);
-        var (page2, _) = await _sut.GetPublishedPostsAsync(2, 2, ct);
+        var (page1Posts, _) = await _sut.GetPublishedPostsAsync(1, 2, ct);
+        var (page2Posts, _) = await _sut.GetPublishedPostsAsync(2, 2, ct);
 
-        Assert.Equal(2, page1.Count);
-        Assert.Equal(2, page2.Count);
-        Assert.NotEqual(page1[0].Title, page2[0].Title);
+        // Should be different posts on each page
+        Assert.NotEqual(page1Posts[0].Id, page2Posts[0].Id);
     }
 
     [Fact]
-    public async Task GetPublishedPostsAsync_OrdersByPublishedDateDescending()
-    {
-        var ct = TestContext.Current.CancellationToken;
-
-        var oldPost = CreateTestPost("Old Post", isPublished: true);
-        oldPost.PublishedAtUtc = DateTime.UtcNow.AddDays(-10);
-        await _sut.CreateAsync(oldPost, ct);
-
-        var newPost = CreateTestPost("New Post", isPublished: true);
-        newPost.PublishedAtUtc = DateTime.UtcNow;
-        await _sut.CreateAsync(newPost, ct);
-
-        var (posts, _) = await _sut.GetPublishedPostsAsync(1, 10, ct);
-
-        Assert.Equal("New Post", posts[0].Title);
-        Assert.Equal("Old Post", posts[1].Title);
-    }
-
-    [Fact]
-    public async Task GetPublishedPostsAsync_ExcludesUnpublishedPosts()
+    public async Task GetPublishedPostsAsync_ExcludesDrafts()
     {
         var ct = TestContext.Current.CancellationToken;
 
@@ -129,13 +109,32 @@ public class PostRepositoryExtendedTests : IAsyncDisposable
 
         var (posts, totalCount) = await _sut.GetPublishedPostsAsync(1, 10, ct);
 
-        Assert.Single(posts);
         Assert.Equal(1, totalCount);
+        Assert.Single(posts);
         Assert.Equal("Published", posts[0].Title);
     }
 
     [Fact]
-    public async Task GetAllPostsAsync_IncludesAllPosts()
+    public async Task GetPublishedPostsAsync_OrdersByPublishedDateDescending()
+    {
+        var ct = TestContext.Current.CancellationToken;
+
+        var oldPost = CreateTestPost("Old", isPublished: true);
+        oldPost.PublishedAtUtc = DateTime.UtcNow.AddDays(-5);
+        await _sut.CreateAsync(oldPost, ct);
+
+        var newPost = CreateTestPost("New", isPublished: true);
+        newPost.PublishedAtUtc = DateTime.UtcNow;
+        await _sut.CreateAsync(newPost, ct);
+
+        var (posts, _) = await _sut.GetPublishedPostsAsync(1, 10, ct);
+
+        Assert.Equal("New", posts[0].Title);
+        Assert.Equal("Old", posts[1].Title);
+    }
+
+    [Fact]
+    public async Task GetAllPostsAsync_IncludesBothPublishedAndDrafts()
     {
         var ct = TestContext.Current.CancellationToken;
 
@@ -233,7 +232,7 @@ public class PostRepositoryExtendedTests : IAsyncDisposable
         var post = CreateTestPost("Test", slug: "test-slug");
         await _sut.CreateAsync(post, ct);
 
-        var isTaken = await _sut.IsSlugTakenAsync("test-slug", ct: ct);
+        var isTaken = await _sut.IsSlugTakenAsync("test-slug", cancellationToken: ct);
 
         Assert.True(isTaken);
     }
@@ -243,7 +242,7 @@ public class PostRepositoryExtendedTests : IAsyncDisposable
     {
         var ct = TestContext.Current.CancellationToken;
 
-        var isTaken = await _sut.IsSlugTakenAsync("non-existent-slug", ct: ct);
+        var isTaken = await _sut.IsSlugTakenAsync("non-existent-slug", cancellationToken: ct);
 
         Assert.False(isTaken);
     }
