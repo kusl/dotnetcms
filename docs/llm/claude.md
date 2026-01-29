@@ -108,3 +108,53 @@ and please do not hallucinate
 give me full files for all files that changed 
 
 
+I'll start by searching the project knowledge to read the dump.txt file and understand the current state of the code.Let me search for the complete E2E Dockerfile to see its full content:Now I understand the issue completely. The error shows:
+```
+error while loading shared libraries: libnspr4.so: cannot open shared object file: No such file or directory
+```
+
+This is because the E2E Dockerfile installs Playwright browsers without the `--with-deps` flag that installs system dependencies (like `libnspr4.so` which is part of NSS/NSPR libraries required by Chromium).
+
+Looking at the GitHub Actions workflow, it correctly uses `--with-deps`:
+```yaml
+- name: Install Playwright browsers
+  run: |
+    pwsh src/MyBlog.E2E/bin/Release/net10.0/playwright.ps1 install chromium --with-deps
+```
+
+But the Dockerfile is missing this flag:
+```dockerfile
+RUN pwsh ./MyBlog.E2E/bin/Release/net10.0/playwright.ps1 install chromium
+```
+
+The fix is simple - add `--with-deps` to the Dockerfile command. Here's the corrected file:The issue is that all 78 E2E tests are failing because the Playwright browser cannot launch. The error message clearly shows:
+
+```
+error while loading shared libraries: libnspr4.so: cannot open shared object file: No such file or directory
+```
+
+This happens because the E2E Dockerfile installs the Chromium browser binary but **not** the system dependencies (like `libnspr4.so`, `libnss3.so`, etc.) that Chromium requires to run.
+
+**The fix is simple**: Add `--with-deps` to the Playwright install command in the Dockerfile.
+
+**Summary of changes:**
+
+| File | Change |
+|------|--------|
+| `src/MyBlog.E2E/Dockerfile` | Changed `playwright.ps1 install chromium` to `playwright.ps1 install chromium --with-deps` |
+
+The `--with-deps` flag tells Playwright to run the appropriate `apt-get install` commands to install all required system libraries that Chromium needs (NSS, NSPR, X11 libraries, fonts, etc.).
+
+This is consistent with how the GitHub Actions workflow already does it correctly:
+```yaml
+pwsh src/MyBlog.E2E/bin/Release/net10.0/playwright.ps1 install chromium --with-deps
+```
+
+The full corrected Dockerfile is shown in the artifact above. After this change, run:
+```bash
+bash run-e2e.sh --clean  # Clean up old images
+bash run-e2e.sh          # Run with the fixed Dockerfile
+```
+
+
+
