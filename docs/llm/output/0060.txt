@@ -1,0 +1,971 @@
+kushal@fedora:~/src/dotnet/MyBlog$ cd ~/src/dotnet/MyBlog/ && export DOTNET_CLI_TELEMETRY_OPTOUT=1 && (cd src && time dotnet format; time dotnet restore; time dotnet clean; time dotnet build; time dotnet run --project MyBlog.Tests/MyBlog.Tests.csproj; time dotnet list package; time dotnet list package --outdated); cd ~/src/dotnet/MyBlog/ && time bash export.sh; cat run-e2e.sh; time bash run-e2e.sh --clean; time bash run-e2e.sh;
+
+real	0m8.515s
+user	0m15.307s
+sys	0m1.020s
+Restore complete (0.4s)
+
+Build succeeded in 0.5s
+
+real	0m0.686s
+user	0m0.782s
+sys	0m0.153s
+
+Build succeeded in 0.5s
+
+real	0m0.656s
+user	0m0.735s
+sys	0m0.182s
+Restore complete (0.5s)
+  MyBlog.Core net10.0 succeeded (2.9s) → MyBlog.Core/bin/Debug/net10.0/MyBlog.Core.dll
+  MyBlog.Infrastructure net10.0 succeeded (0.4s) → MyBlog.Infrastructure/bin/Debug/net10.0/MyBlog.Infrastructure.dll
+  MyBlog.Web net10.0 succeeded (2.5s) → MyBlog.Web/bin/Debug/net10.0/MyBlog.Web.dll
+  MyBlog.E2E net10.0 succeeded (0.7s) → MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll
+  MyBlog.Tests net10.0 succeeded (0.7s) → MyBlog.Tests/bin/Debug/net10.0/MyBlog.Tests.dll
+
+Build succeeded in 7.2s
+
+real	0m7.337s
+user	0m2.576s
+sys	0m0.444s
+xUnit.net v3 In-Process Runner v3.2.2+728c1dce01 (64-bit .NET 10.0.2)
+  Discovering: MyBlog.Tests
+  Discovered:  MyBlog.Tests
+  Starting:    MyBlog.Tests
+  Finished:    MyBlog.Tests (ID = '24cedafe73dab5684218bb3cf04cfd49ae8ce3b87ae799399cb2e301cbc1e755')
+=== TEST EXECUTION SUMMARY ===
+   MyBlog.Tests  Total: 182, Errors: 0, Failed: 0, Skipped: 0, Not Run: 0, Time: 40.201s
+
+real	0m42.071s
+user	0m45.330s
+sys	0m0.714s
+Restore complete (0.5s)
+
+Build succeeded in 0.6s
+Project 'MyBlog.Core' has the following package references
+   [net10.0]: 
+   Top-level Package                   Requested   Resolved
+   > Microsoft.Extensions.Logging      10.0.2      10.0.2  
+
+Project 'MyBlog.E2E' has the following package references
+   [net10.0]: 
+   Top-level Package             Requested   Resolved
+   > Microsoft.NET.Test.Sdk      18.0.1      18.0.1  
+   > Microsoft.Playwright        1.57.0      1.57.0  
+   > xunit.v3                    3.2.2       3.2.2   
+
+Project 'MyBlog.Infrastructure' has the following package references
+   [net10.0]: 
+   Top-level Package                           Requested   Resolved
+   > Microsoft.AspNetCore.Identity             2.3.9       2.3.9   
+   > Microsoft.EntityFrameworkCore.Sqlite      10.0.2      10.0.2  
+   > Microsoft.Extensions.Http                 10.0.2      10.0.2  
+   > OpenTelemetry                             1.15.0      1.15.0  
+
+Project 'MyBlog.Tests' has the following package references
+   [net10.0]: 
+   Top-level Package                             Requested   Resolved
+   > Microsoft.EntityFrameworkCore.Sqlite        10.0.2      10.0.2  
+   > Microsoft.NET.Test.Sdk                      18.0.1      18.0.1  
+   > Microsoft.Testing.Extensions.TrxReport      2.0.2       2.0.2   
+   > xunit.v3                                    3.2.2       3.2.2   
+
+Project 'MyBlog.Web' has the following package references
+   [net10.0]: 
+   Top-level Package                                  Requested    Resolved
+   > Microsoft.AspNetCore.App.Internal.Assets   (A)   [10.0.2, )   10.0.2  
+   > Microsoft.AspNetCore.SignalR.Client              10.0.2       10.0.2  
+   > OpenTelemetry.Exporter.Console                   1.15.0       1.15.0  
+   > OpenTelemetry.Extensions.Hosting                 1.15.0       1.15.0  
+   > OpenTelemetry.Instrumentation.AspNetCore         1.15.0       1.15.0  
+   > OpenTelemetry.Instrumentation.Http               1.15.0       1.15.0  
+
+(A) : Auto-referenced package.
+
+real	0m1.551s
+user	0m1.502s
+sys	0m0.382s
+Restore complete (0.4s)
+
+Build succeeded in 0.5s
+
+The following sources were used:
+   https://api.nuget.org/v3/index.json
+
+The given project `MyBlog.Core` has no updates given the current sources.
+The given project `MyBlog.E2E` has no updates given the current sources.
+The given project `MyBlog.Infrastructure` has no updates given the current sources.
+The given project `MyBlog.Tests` has no updates given the current sources.
+The given project `MyBlog.Web` has no updates given the current sources.
+
+real	0m4.836s
+user	0m3.083s
+sys	0m0.430s
+==============================================
+  Project Export for LLM Analysis
+==============================================
+
+Project Path: /home/kushal/src/dotnet/MyBlog
+Output File:  docs/llm/dump.txt
+
+Generating directory structure...
+Collecting files...
+Found 126 files to export
+
+Processing (1/126): docker-compose.e2e.yml
+Processing (2/126): docker-compose.yml
+Processing (3/126): .editorconfig
+Processing (4/126): export.sh
+Processing (5/126): .github/workflows/build-deploy.yml
+Processing (6/126): .gitignore
+Processing (7/126): README.md
+Processing (8/126): run-e2e.sh
+Processing (9/126): src/Directory.Build.props
+Processing (10/126): src/Directory.Packages.props
+Processing (11/126): src/.github/workflows/build-deploy.yml
+Processing (12/126): src/global.json
+Processing (13/126): src/MyBlog.Core/Constants/AppConstants.cs
+Processing (14/126): src/MyBlog.Core/Interfaces/IAuthService.cs
+Processing (15/126): src/MyBlog.Core/Interfaces/IImageDimensionService.cs
+Processing (16/126): src/MyBlog.Core/Interfaces/IImageRepository.cs
+Processing (17/126): src/MyBlog.Core/Interfaces/IMarkdownService.cs
+Processing (18/126): src/MyBlog.Core/Interfaces/IPasswordService.cs
+Processing (19/126): src/MyBlog.Core/Interfaces/IPostRepository.cs
+Processing (20/126): src/MyBlog.Core/Interfaces/IReaderTrackingService.cs
+Processing (21/126): src/MyBlog.Core/Interfaces/ISlugService.cs
+Processing (22/126): src/MyBlog.Core/Interfaces/ITelemetryLogRepository.cs
+Processing (23/126): src/MyBlog.Core/Interfaces/IUserRepository.cs
+Processing (24/126): src/MyBlog.Core/Models/Image.cs
+Processing (25/126): src/MyBlog.Core/Models/ImageDimensionCache.cs
+Processing (26/126): src/MyBlog.Core/Models/Post.cs
+Processing (27/126): src/MyBlog.Core/Models/PostDto.cs
+Processing (28/126): src/MyBlog.Core/Models/TelemetryLog.cs
+Processing (29/126): src/MyBlog.Core/Models/User.cs
+Processing (30/126): src/MyBlog.Core/MyBlog.Core.csproj
+Processing (31/126): src/MyBlog.Core/Services/MarkdownService.cs
+Processing (32/126): src/MyBlog.Core/Services/SlugService.cs
+Processing (33/126): src/MyBlog.E2E/Dockerfile
+Processing (34/126): src/MyBlog.E2E/MyBlog.E2E.csproj
+Processing (35/126): src/MyBlog.E2E/PlaywrightCollection.cs
+Processing (36/126): src/MyBlog.E2E/PlaywrightFixture.cs
+Processing (37/126): src/MyBlog.E2E/Tests/AboutPageTests.cs
+Processing (38/126): src/MyBlog.E2E/Tests/AdminPageTests.cs
+Processing (39/126): src/MyBlog.E2E/Tests/AuthenticationTests.cs
+Processing (40/126): src/MyBlog.E2E/Tests/HomePageTests.cs
+Processing (41/126): src/MyBlog.E2E/Tests/LoginPageTests.cs
+Processing (42/126): src/MyBlog.E2E/Tests/NavigationTests.cs
+Processing (43/126): src/MyBlog.E2E/Tests/SeoTests.cs
+Processing (44/126): src/MyBlog.E2E/Tests/ThemeSwitcherTests.cs
+Processing (45/126): src/MyBlog.Infrastructure/Data/BlogDbContext.cs
+Processing (46/126): src/MyBlog.Infrastructure/Data/DatabasePathResolver.cs
+Processing (47/126): src/MyBlog.Infrastructure/Data/DatabaseSchemaUpdater.cs
+Processing (48/126): src/MyBlog.Infrastructure/MyBlog.Infrastructure.csproj
+Processing (49/126): src/MyBlog.Infrastructure/Repositories/ImageRepository.cs
+Processing (50/126): src/MyBlog.Infrastructure/Repositories/PostRepository.cs
+Processing (51/126): src/MyBlog.Infrastructure/Repositories/TelemetryLogRepository.cs
+Processing (52/126): src/MyBlog.Infrastructure/Repositories/UserRepository.cs
+Processing (53/126): src/MyBlog.Infrastructure/ServiceCollectionExtensions.cs
+Processing (54/126): src/MyBlog.Infrastructure/Services/AuthService.cs
+Processing (55/126): src/MyBlog.Infrastructure/Services/ImageCacheWarmerService.cs
+Processing (56/126): src/MyBlog.Infrastructure/Services/ImageDimensionService.cs
+Processing (57/126): src/MyBlog.Infrastructure/Services/PasswordService.cs
+Processing (58/126): src/MyBlog.Infrastructure/Services/ReaderTrackingService.cs
+Processing (59/126): src/MyBlog.Infrastructure/Services/TelemetryCleanupService.cs
+Processing (60/126): src/MyBlog.Infrastructure/Telemetry/DatabaseLogExporter.cs
+Processing (61/126): src/MyBlog.Infrastructure/Telemetry/FileLogExporter.cs
+Processing (62/126): src/MyBlog.Infrastructure/Telemetry/TelemetryPathResolver.cs
+Processing (63/126): src/MyBlog.slnx
+Processing (64/126): src/MyBlog.Tests/Integration/AuthServiceLongPasswordTests.cs
+Processing (65/126): src/MyBlog.Tests/Integration/AuthServiceTests.cs
+Processing (66/126): src/MyBlog.Tests/Integration/ImageRepositoryTests.cs
+Processing (67/126): src/MyBlog.Tests/Integration/PasswordChangeTests.cs
+Processing (68/126): src/MyBlog.Tests/Integration/PostRepositoryExtendedTests.cs
+Processing (69/126): src/MyBlog.Tests/Integration/PostRepositoryTests.cs
+Processing (70/126): src/MyBlog.Tests/Integration/TelemetryCleanupTests.cs
+Processing (71/126): src/MyBlog.Tests/Integration/TelemetryLogRepositoryTests.cs
+Processing (72/126): src/MyBlog.Tests/Integration/UserRepositoryTests.cs
+Processing (73/126): src/MyBlog.Tests/MyBlog.Tests.csproj
+Processing (74/126): src/MyBlog.Tests/Unit/DatabasePathResolverTests.cs
+Processing (75/126): src/MyBlog.Tests/Unit/LoginRateLimitMiddlewareTests.cs
+Processing (76/126): src/MyBlog.Tests/Unit/MarkdownServiceEdgeCaseTests.cs
+Processing (77/126): src/MyBlog.Tests/Unit/MarkdownServiceTests.cs
+Processing (78/126): src/MyBlog.Tests/Unit/PasswordServiceTests.cs
+Processing (79/126): src/MyBlog.Tests/Unit/ReaderTrackingServiceTests.cs
+Processing (80/126): src/MyBlog.Tests/Unit/SlugServiceTests.cs
+Processing (81/126): src/MyBlog.Web/appsettings.Development.json
+Processing (82/126): src/MyBlog.Web/appsettings.json
+Processing (83/126): src/MyBlog.Web/Components/App.razor
+Processing (84/126): src/MyBlog.Web/Components/_Imports.razor
+Processing (85/126): src/MyBlog.Web/Components/Layout/MainLayout.razor
+Processing (86/126): src/MyBlog.Web/Components/Pages/About.razor
+Processing (87/126): src/MyBlog.Web/Components/Pages/About.razor.css
+Processing (88/126): src/MyBlog.Web/Components/Pages/AccessDenied.razor
+Processing (89/126): src/MyBlog.Web/Components/Pages/Admin/ChangePassword.razor
+Processing (90/126): src/MyBlog.Web/Components/Pages/Admin/ChangePassword.razor.css
+Processing (91/126): src/MyBlog.Web/Components/Pages/Admin/Dashboard.razor
+Processing (92/126): src/MyBlog.Web/Components/Pages/Admin/Dashboard.razor.css
+Processing (93/126): src/MyBlog.Web/Components/Pages/Admin/ImageManager.razor
+Processing (94/126): src/MyBlog.Web/Components/Pages/Admin/ImageManager.razor.css
+Processing (95/126): src/MyBlog.Web/Components/Pages/Admin/PostEditor.razor
+Processing (96/126): src/MyBlog.Web/Components/Pages/Admin/PostEditor.razor.css
+Processing (97/126): src/MyBlog.Web/Components/Pages/Admin/PostList.razor
+Processing (98/126): src/MyBlog.Web/Components/Pages/Admin/UserEditor.razor
+Processing (99/126): src/MyBlog.Web/Components/Pages/Admin/UserEditor.razor.css
+Processing (100/126): src/MyBlog.Web/Components/Pages/Admin/UserList.razor
+Processing (101/126): src/MyBlog.Web/Components/Pages/Admin/UserList.razor.css
+Processing (102/126): src/MyBlog.Web/Components/Pages/Home.razor
+Processing (103/126): src/MyBlog.Web/Components/Pages/Login.razor
+Processing (104/126): src/MyBlog.Web/Components/Pages/Login.razor.css
+Processing (105/126): src/MyBlog.Web/Components/Pages/PostDetail.razor
+Processing (106/126): src/MyBlog.Web/Components/Pages/PostDetail.razor.css
+Processing (107/126): src/MyBlog.Web/Components/Routes.razor
+Processing (108/126): src/MyBlog.Web/Components/Shared/Footer.razor
+Processing (109/126): src/MyBlog.Web/Components/Shared/Footer.razor.css
+Processing (110/126): src/MyBlog.Web/Components/Shared/MarkdownRenderer.razor
+Processing (111/126): src/MyBlog.Web/Components/Shared/Pagination.razor
+Processing (112/126): src/MyBlog.Web/Components/Shared/PostCard.razor
+Processing (113/126): src/MyBlog.Web/Components/Shared/PostCard.razor.css
+Processing (114/126): src/MyBlog.Web/Components/Shared/ReaderBadge.razor
+Processing (115/126): src/MyBlog.Web/Components/Shared/ReaderBadge.razor.css
+Processing (116/126): src/MyBlog.Web/Components/Shared/RedirectToLogin.razor
+Processing (117/126): src/MyBlog.Web/Components/Shared/ThemeSwitcher.razor
+Processing (118/126): src/MyBlog.Web/Components/Shared/ThemeSwitcher.razor.css
+Processing (119/126): src/MyBlog.Web/Dockerfile
+Processing (120/126): src/MyBlog.Web/Hubs/ReaderHub.cs
+Processing (121/126): src/MyBlog.Web/Middleware/LoginRateLimitMiddleware.cs
+Processing (122/126): src/MyBlog.Web/MyBlog.Web.csproj
+Processing (123/126): src/MyBlog.Web/Program.cs
+Processing (124/126): src/MyBlog.Web/Properties/launchSettings.json
+Processing (125/126): src/MyBlog.Web/wwwroot/css/site.css
+Processing (126/126): src/MyBlog.Web/wwwroot/js/site.js
+
+==============================================
+  Export Complete!
+==============================================
+
+Output file:    docs/llm/dump.txt
+Files exported: 126
+Files skipped:  0
+Output size:    512.07 KB
+
+File types included:
+  • Source code: .cs, .fs, .vb
+  • Blazor/Razor: .razor
+  • UI/XAML: .axaml, .xaml, .paml
+  • Projects: .csproj, .slnx, .sln, .props, .targets
+  • Config: .json, .yaml, .yml, .xml, .config
+  • Docs: .md, .txt
+  • Scripts: .sh, .ps1, .cmd, .bat
+  • Web: .css, .scss, .js, .ts
+  • Other: .sql, .resx, Dockerfile, etc.
+
+
+real	0m1.300s
+user	0m0.771s
+sys	0m0.779s
+#!/bin/bash
+# =============================================================================
+# Run E2E Tests with Podman Compose
+# =============================================================================
+# This script runs Playwright E2E tests against MyBlog using containers.
+# Designed for Fedora with SELinux and Podman.
+#
+# Usage:
+#   ./run-e2e.sh          # Run all E2E tests
+#   ./run-e2e.sh --build  # Force rebuild containers
+#   ./run-e2e.sh --clean  # Clean up and remove volumes
+# =============================================================================
+
+set -e
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$SCRIPT_DIR"
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
+log_info() {
+    echo -e "${GREEN}[INFO]${NC} $1"
+}
+
+log_warn() {
+    echo -e "${YELLOW}[WARN]${NC} $1"
+}
+
+log_error() {
+    echo -e "${RED}[ERROR]${NC} $1"
+}
+
+# Parse arguments
+BUILD_FLAG=""
+CLEAN_FLAG=""
+
+for arg in "$@"; do
+    case $arg in
+        --build)
+            BUILD_FLAG="--build"
+            ;;
+        --clean)
+            CLEAN_FLAG="true"
+            ;;
+    esac
+done
+
+# Clean up if requested
+if [ "$CLEAN_FLAG" == "true" ]; then
+    log_info "Cleaning up containers and volumes..."
+    podman-compose -f docker-compose.e2e.yml down -v --remove-orphans 2>/dev/null || true
+    podman system prune -f 2>/dev/null || true
+    log_info "Cleanup complete"
+    exit 0
+fi
+
+# Create test results directory
+mkdir -p test-results
+# Set SELinux context if on Fedora with SELinux
+if command -v chcon &> /dev/null && getenforce 2>/dev/null | grep -q "Enforcing"; then
+    log_info "Setting SELinux context for test-results directory..."
+    chcon -Rt svirt_sandbox_file_t test-results 2>/dev/null || true
+fi
+
+log_info "Starting E2E test environment..."
+
+# Build and start services
+log_info "Building containers..."
+podman-compose -f docker-compose.e2e.yml build $BUILD_FLAG
+
+log_info "Starting MyBlog web service..."
+podman-compose -f docker-compose.e2e.yml up -d myblog-web
+
+# Wait for web service to be healthy
+log_info "Waiting for MyBlog to be ready..."
+RETRIES=30
+until podman exec myblog-web curl -sf http://localhost:5000/ > /dev/null 2>&1; do
+    RETRIES=$((RETRIES - 1))
+    if [ $RETRIES -eq 0 ]; then
+        log_error "MyBlog failed to start within timeout"
+        podman-compose -f docker-compose.e2e.yml logs myblog-web
+        podman-compose -f docker-compose.e2e.yml down -v
+        exit 1
+    fi
+    echo -n "."
+    sleep 2
+done
+echo ""
+log_info "MyBlog is ready!"
+
+# Run E2E tests
+log_info "Running E2E tests..."
+podman-compose -f docker-compose.e2e.yml up myblog-e2e
+E2E_EXIT_CODE=$?
+
+# Capture logs
+log_info "Capturing logs..."
+podman-compose -f docker-compose.e2e.yml logs myblog-web > test-results/myblog-web.log 2>&1
+podman-compose -f docker-compose.e2e.yml logs myblog-e2e > test-results/myblog-e2e.log 2>&1
+
+# Clean up
+log_info "Cleaning up..."
+podman-compose -f docker-compose.e2e.yml down -v
+
+if [ $E2E_EXIT_CODE -eq 0 ]; then
+    log_info "E2E tests passed! ✓"
+else
+    log_error "E2E tests failed with exit code $E2E_EXIT_CODE"
+    log_info "Check test-results/ directory for logs"
+fi
+
+exit $E2E_EXIT_CODE
+[INFO] Cleaning up containers and volumes...
+Deleted Images
+f2d7f8939bdc2ef991404ca512dba32eee2abcb7dc4e09b2c463e28fef9ee388
+b4ef9caefa78caf7cc7f1461325179d0735f7a89bab167da00e39567885b26d6
+e275d5ea6b2337ea59bc3121eb1c39b1eff96fa5369343ddf16c51eb9ffff1e1
+561996c25709d351e37b1718c697f39c1832e0594d2168e70386a6dc5bf5c034
+07b95b4db0fbf5b108c9bfae1541bdb7867212814c3cbfde1f30f2eb83b9d79b
+8a7319ab10abab76077d994becb8a39d1afe3ea3a29a0d85936f02d2f25e8a30
+4d152acf7c9e53762f9da5f402aa1721b4d939422276df04d4bc0fa854efaf76
+526703f5bd957146f8cdb7473851a7cb5e6eb9a3a554e77ff3f0bd921d0c87f8
+7e365638da03f7b3fc1b2d93f77df17c71dbdad8607ab6a7e6156d7c595b99c4
+ec51cdb63361843d18dfbc8cc14a836495137fda26cdbcea6d5450eb385f7122
+3e8105a5096ecf72d9fb134106dae6329182f31f7ced4037eb9c28095a9f3afe
+f2c90f5b380b891ee02adae888f5e4587f7d3d1ebc40ed0036717eecbedeb3b7
+9f4252d53aeee6318ad25d03d2d72fd02174b63930919cc3dfed5f1069f1d59d
+9f9f968dd2e108cee5b34c60e06632a642c0b84ce9870a927ada6da0d9f93ea9
+52156c58968da5f3d2bc40047afa93c484dc55bdc8c440a911e81d6e9a149dcc
+748e77877f858326f891d9e701ea1ddc6aeb0789faaf5b585064935a5533a438
+406b383ef5ac1aef0ed2dd0c56497c8deb2ae83a7285fc3e682ec719eac3187a
+Total reclaimed space: 40.82GB
+[INFO] Cleanup complete
+
+real	0m0.922s
+user	0m0.392s
+sys	0m0.575s
+[INFO] Setting SELinux context for test-results directory...
+[INFO] Starting E2E test environment...
+[INFO] Building containers...
+[1/2] STEP 1/12: FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+STEP 1/18: FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+STEP 2/18: WORKDIR /src
+--> Using cache c0f951cdf7818c25a801d76241c43a519f74913b58ca3c8d68071526ad1473dc
+--> c0f951cdf781
+STEP 3/18: RUN apt-get update && apt-get install -y nodejs npm && rm -rf /var/lib/apt/lists/*
+--> Using cache 7bd3245d151178c6b376f4a7a4b67fe7ecce8ed2c53cb934a8f07a078aa635e8
+--> 7bd3245d1511
+STEP 4/18: RUN apt-get update && apt-get install -y wget &&     wget -q https://packages.microsoft.com/config/debian/12/packages-microsoft-prod.deb &&     dpkg -i packages-microsoft-prod.deb &&     rm packages-microsoft-prod.deb &&     apt-get update && apt-get install -y powershell &&     rm -rf /var/lib/apt/lists/*
+--> Using cache 948346108d6ac93fe878f7bab089dc72f5498ab7a4fa30e51d4df43308391228
+--> 948346108d6a
+STEP 5/18: COPY Directory.Build.props .
+--> Using cache c4a9dc18c3762fdd409b0baae14ef2f48b5f524cbb656d3b110ca4970ddb4ceb
+--> c4a9dc18c376
+STEP 6/18: COPY Directory.Packages.props .
+--> Using cache 6dea2813ee479703c367db1d0ab238785857ce0c0dfd02d46c8e47699f40706a
+--> 6dea2813ee47
+STEP 7/18: COPY MyBlog.Core/MyBlog.Core.csproj MyBlog.Core/
+[1/2] STEP 2/12: WORKDIR /src
+--> Using cache c0f951cdf7818c25a801d76241c43a519f74913b58ca3c8d68071526ad1473dc
+--> c0f951cdf781
+[1/2] STEP 3/12: COPY Directory.Build.props .
+--> Using cache 26b7167e9d33e3adf018ba3f02fa415c50df7db2ea9ef3d3b696a6c25fddeb07
+--> 26b7167e9d33
+STEP 8/18: COPY MyBlog.Infrastructure/MyBlog.Infrastructure.csproj MyBlog.Infrastructure/
+--> Using cache 39fa24c9fb5e73db4ea74e2ea5eba8ab223f1e7b58d032dd3027222d0e3f10c3
+--> 39fa24c9fb5e
+STEP 9/18: COPY MyBlog.Web/MyBlog.Web.csproj MyBlog.Web/
+--> 57d3ddabe64d
+[1/2] STEP 4/12: COPY Directory.Packages.props .
+--> Using cache 0676640a9fb43a68fca885c900e335d76f35378125a1643e488abf4952dc6fbc
+--> 0676640a9fb4
+STEP 10/18: COPY MyBlog.E2E/MyBlog.E2E.csproj MyBlog.E2E/
+--> ac62b5649521
+[1/2] STEP 5/12: COPY MyBlog.Core/MyBlog.Core.csproj MyBlog.Core/
+--> Using cache aaa696cb65b279c939a4b49ed9026de4481280814a6e466076cf0a72f284e18b
+--> aaa696cb65b2
+STEP 11/18: RUN dotnet restore MyBlog.Core/MyBlog.Core.csproj &&     dotnet restore MyBlog.Infrastructure/MyBlog.Infrastructure.csproj &&     dotnet restore MyBlog.Web/MyBlog.Web.csproj &&     dotnet restore MyBlog.E2E/MyBlog.E2E.csproj
+--> Using cache df6530599f3bc2d10e357ab437426be3e28ab5006d07886f20e131fbb2eb339d
+--> df6530599f3b
+STEP 12/18: COPY . .
+--> b81a8e479abf
+[1/2] STEP 6/12: COPY MyBlog.Infrastructure/MyBlog.Infrastructure.csproj MyBlog.Infrastructure/
+--> da3adfc4c674
+[1/2] STEP 7/12: COPY MyBlog.Web/MyBlog.Web.csproj MyBlog.Web/
+--> f1dcaa93252f
+[1/2] STEP 8/12: RUN dotnet restore MyBlog.Web/MyBlog.Web.csproj
+  Determining projects to restore...
+--> 304a60047730
+STEP 13/18: RUN dotnet build MyBlog.E2E/MyBlog.E2E.csproj -c Release
+  Restored /src/MyBlog.Core/MyBlog.Core.csproj (in 1.42 sec).
+  Determining projects to restore...
+  Restored /src/MyBlog.Web/MyBlog.Web.csproj (in 2.5 sec).
+  Restored /src/MyBlog.Core/MyBlog.Core.csproj (in 338 ms).
+  Restored /src/MyBlog.Infrastructure/MyBlog.Infrastructure.csproj (in 339 ms).
+  Restored /src/MyBlog.E2E/MyBlog.E2E.csproj (in 347 ms).
+  Restored /src/MyBlog.Web/MyBlog.Web.csproj (in 497 ms).
+  Restored /src/MyBlog.Infrastructure/MyBlog.Infrastructure.csproj (in 2.98 sec).
+--> d5bae1c8a1c7
+[1/2] STEP 9/12: COPY MyBlog.Core/ MyBlog.Core/
+--> e1c33475e272
+[1/2] STEP 10/12: COPY MyBlog.Infrastructure/ MyBlog.Infrastructure/
+--> f07c8a69d28b
+[1/2] STEP 11/12: COPY MyBlog.Web/ MyBlog.Web/
+  MyBlog.Core -> /src/MyBlog.Core/bin/Release/net10.0/MyBlog.Core.dll
+  MyBlog.Infrastructure -> /src/MyBlog.Infrastructure/bin/Release/net10.0/MyBlog.Infrastructure.dll
+--> 225c0b87d4ac
+[1/2] STEP 12/12: RUN dotnet publish MyBlog.Web/MyBlog.Web.csproj -c Release -o /app/publish
+  Determining projects to restore...
+  Restored /src/MyBlog.Infrastructure/MyBlog.Infrastructure.csproj (in 167 ms).
+  Restored /src/MyBlog.Core/MyBlog.Core.csproj (in 166 ms).
+  Restored /src/MyBlog.Web/MyBlog.Web.csproj (in 499 ms).
+  MyBlog.Web -> /src/MyBlog.Web/bin/Release/net10.0/MyBlog.Web.dll
+  MyBlog.E2E -> /src/MyBlog.E2E/bin/Release/net10.0/MyBlog.E2E.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:07.56
+--> ea1309400e8d
+STEP 14/18: RUN pwsh ./MyBlog.E2E/bin/Release/net10.0/playwright.ps1 install chromium --with-deps
+  MyBlog.Core -> /src/MyBlog.Core/bin/Release/net10.0/MyBlog.Core.dll
+Installing dependencies...
+  MyBlog.Infrastructure -> /src/MyBlog.Infrastructure/bin/Release/net10.0/MyBlog.Infrastructure.dll
+Get:1 http://archive.ubuntu.com/ubuntu noble InRelease [256 kB]
+Get:2 http://security.ubuntu.com/ubuntu noble-security InRelease [126 kB]
+Get:3 http://archive.ubuntu.com/ubuntu noble-updates InRelease [126 kB]
+Get:4 http://archive.ubuntu.com/ubuntu noble-backports InRelease [126 kB]
+Get:5 http://archive.ubuntu.com/ubuntu noble/restricted amd64 Packages [117 kB]
+Get:6 http://archive.ubuntu.com/ubuntu noble/multiverse amd64 Packages [331 kB]
+Get:7 http://archive.ubuntu.com/ubuntu noble/main amd64 Packages [1808 kB]
+Get:8 https://packages.microsoft.com/debian/12/prod bookworm InRelease [3618 B]
+Get:9 https://packages.microsoft.com/debian/12/prod bookworm/main amd64 Packages [150 kB]
+Get:10 https://packages.microsoft.com/debian/12/prod bookworm/main armhf Packages [19.0 kB]
+Get:11 https://packages.microsoft.com/debian/12/prod bookworm/main all Packages [573 B]
+Get:12 https://packages.microsoft.com/debian/12/prod bookworm/main arm64 Packages [57.3 kB]
+  MyBlog.Web -> /src/MyBlog.Web/bin/Release/net10.0/MyBlog.Web.dll
+  MyBlog.Web -> /app/publish/
+--> 8433925f82b0
+[2/2] STEP 1/12: FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
+Get:13 http://security.ubuntu.com/ubuntu noble-security/universe amd64 Packages [1194 kB]
+[2/2] STEP 2/12: WORKDIR /app
+--> Using cache 7ab200e45b1fba59b74177866b30af0761e035beacbc6a5d1607edc1b649f36a
+--> 7ab200e45b1f
+[2/2] STEP 3/12: RUN apt-get update && apt-get install -y --no-install-recommends curl && rm -rf /var/lib/apt/lists/*
+--> Using cache 1e21b972573d10c4ea9d7b8076e58aed09bb9967e8ee6d5a8c3c77e2cddd1001
+--> 1e21b972573d
+[2/2] STEP 4/12: RUN useradd -m -s /bin/bash appuser
+--> Using cache 7b0ba419cc37495396a1969cd185514b97ee464988ce4bddc954893f0ac664d5
+--> 7b0ba419cc37
+[2/2] STEP 5/12: RUN mkdir -p /app/data && chown appuser:appuser /app/data
+--> Using cache 1a52159880ea26e77195a71342eb88df7e9cb2112f4b48a28ce51dfc69734231
+--> 1a52159880ea
+[2/2] STEP 6/12: COPY --from=build /app/publish .
+--> Using cache f0eca6800d6ce4ad1d7121053585ea16042f98aa32b42d3433bc1eee59a903da
+--> f0eca6800d6c
+[2/2] STEP 7/12: ENV ASPNETCORE_URLS=http://+:5000
+--> Using cache 33dffd455140e956567f27cf26f31d055132dd5e2c3483c5e9f68c6b8a38574b
+--> 33dffd455140
+[2/2] STEP 8/12: ENV ASPNETCORE_ENVIRONMENT=Production
+--> Using cache 3d6b463b3ded45fdbb571434305189facd1784f7a13c0c0f4815e1ede1e6c4fa
+--> 3d6b463b3ded
+[2/2] STEP 9/12: ENV ConnectionStrings__DefaultConnection="Data Source=/app/data/myblog.db"
+Get:14 http://archive.ubuntu.com/ubuntu noble/universe amd64 Packages [19.3 MB]
+--> Using cache aa6236a69b48242a4ee19195a08c664655dcd1e98518081bd3ae339d76273c72
+--> aa6236a69b48
+[2/2] STEP 10/12: USER appuser
+--> Using cache 69d72469a1315f7769889981f96e16324ef923642626a6b82c445f8dd3ea8161
+--> 69d72469a131
+[2/2] STEP 11/12: EXPOSE 5000
+--> Using cache b9b9a7ab5a2a167bc089fba8f45b8bf5cf34076789627bcdde4e541a81564380
+--> b9b9a7ab5a2a
+[2/2] STEP 12/12: ENTRYPOINT ["dotnet", "MyBlog.Web.dll"]
+--> Using cache c5deb115f3709c8bb09509ede775d18ecf2ff13118ea28d6ce0d187edc5bfb9f
+[2/2] COMMIT myblog_myblog-web
+--> c5deb115f370
+Successfully tagged localhost/myblog_myblog-web:latest
+c5deb115f3709c8bb09509ede775d18ecf2ff13118ea28d6ce0d187edc5bfb9f
+Get:15 http://security.ubuntu.com/ubuntu noble-security/multiverse amd64 Packages [34.8 kB]
+Get:16 http://security.ubuntu.com/ubuntu noble-security/restricted amd64 Packages [3008 kB]
+Get:17 http://security.ubuntu.com/ubuntu noble-security/main amd64 Packages [1776 kB]
+Get:18 http://archive.ubuntu.com/ubuntu noble-updates/multiverse amd64 Packages [38.1 kB]
+Get:19 http://archive.ubuntu.com/ubuntu noble-updates/restricted amd64 Packages [3219 kB]
+Get:20 http://archive.ubuntu.com/ubuntu noble-updates/universe amd64 Packages [1975 kB]
+Get:21 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 Packages [2171 kB]
+Get:22 http://archive.ubuntu.com/ubuntu noble-backports/universe amd64 Packages [34.6 kB]
+Get:23 http://archive.ubuntu.com/ubuntu noble-backports/main amd64 Packages [49.5 kB]
+Fetched 35.9 MB in 15s (2405 kB/s)
+Reading package lists...
+Reading package lists...
+Building dependency tree...
+Reading state information...
+libdbus-1-3 is already the newest version (1.14.10-4ubuntu4.1).
+libdbus-1-3 set to manually installed.
+libglib2.0-0t64 is already the newest version (2.80.0-6ubuntu3.7).
+libglib2.0-0t64 set to manually installed.
+libx11-6 is already the newest version (2:1.8.7-1build1).
+libx11-6 set to manually installed.
+libxcb1 is already the newest version (1.15-1ubuntu2).
+libxcb1 set to manually installed.
+libxcomposite1 is already the newest version (1:0.4.5-1build3).
+libxcomposite1 set to manually installed.
+libxext6 is already the newest version (2:1.3.4-1build2).
+libxext6 set to manually installed.
+libxfixes3 is already the newest version (1:6.0.0-2build1).
+libxfixes3 set to manually installed.
+libxrandr2 is already the newest version (2:1.5.2-2build1).
+libxrandr2 set to manually installed.
+libfontconfig1 is already the newest version (2.15.0-1.1ubuntu2).
+libfontconfig1 set to manually installed.
+libfreetype6 is already the newest version (2.13.2+dfsg-1build3).
+libfreetype6 set to manually installed.
+The following package was automatically installed and is no longer required:
+  libwayland-server0
+Use 'apt autoremove' to remove it.
+The following additional packages will be installed:
+  at-spi2-common fontconfig libasound2-data libavahi-client3
+  libavahi-common-data libavahi-common3 libdatrie1 libdrm-amdgpu1
+  libdrm-common libdrm-intel1 libegl-mesa0 libfontenc1 libfribidi0
+  libgl1-mesa-dri libglx-mesa0 libgraphite2-3 libharfbuzz0b libpixman-1-0
+  libthai-data libthai0 libunwind8 libxcb-render0 libxfont2 mesa-libgallium
+  mesa-vulkan-drivers x11-xkb-utils xauth xfonts-encodings xfonts-utils
+  xkb-data xserver-common
+Suggested packages:
+  alsa-utils libasound2-plugins cups-common
+Recommended packages:
+  fonts-ipafont-mincho fonts-liberation-sans-narrow fonts-tlwg-loma
+  alsa-ucm-conf alsa-topology-conf at-spi2-core xfonts-base
+The following NEW packages will be installed:
+  at-spi2-common fontconfig fonts-freefont-ttf fonts-ipafont-gothic
+  fonts-liberation fonts-noto-color-emoji fonts-tlwg-loma-otf fonts-unifont
+  fonts-wqy-zenhei libasound2-data libasound2t64 libatk-bridge2.0-0t64
+  libatk1.0-0t64 libatspi2.0-0t64 libavahi-client3 libavahi-common-data
+  libavahi-common3 libcairo2 libcups2t64 libdatrie1 libfontenc1 libfribidi0
+  libgraphite2-3 libharfbuzz0b libnspr4 libnss3 libpango-1.0-0 libpixman-1-0
+  libthai-data libthai0 libunwind8 libxcb-render0 libxdamage1 libxfont2
+  libxkbcommon0 x11-xkb-utils xauth xfonts-cyrillic xfonts-encodings
+  xfonts-scalable xfonts-utils xkb-data xserver-common xvfb
+The following packages will be upgraded:
+  libdrm-amdgpu1 libdrm-common libdrm-intel1 libdrm2 libegl-mesa0 libgbm1
+  libgl1-mesa-dri libglx-mesa0 mesa-libgallium mesa-vulkan-drivers
+10 upgraded, 44 newly installed, 0 to remove and 1 not upgraded.
+Need to get 67.5 MB of archives.
+After this operation, 134 MB of additional disk space will be used.
+Get:1 http://archive.ubuntu.com/ubuntu noble/universe amd64 fonts-ipafont-gothic all 00303-21ubuntu1 [3513 kB]
+Get:2 http://archive.ubuntu.com/ubuntu noble/main amd64 libfribidi0 amd64 1.0.13-3build1 [26.1 kB]
+Get:3 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 xkb-data all 2.41-2ubuntu1.1 [397 kB]
+Get:4 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 libdrm-common all 2.4.125-1ubuntu0.1~24.04.1 [9174 B]
+Get:5 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 libdrm2 amd64 2.4.125-1ubuntu0.1~24.04.1 [41.3 kB]
+Get:6 http://archive.ubuntu.com/ubuntu noble/main amd64 libxkbcommon0 amd64 1.6.0-1build1 [122 kB]
+Get:7 http://archive.ubuntu.com/ubuntu noble/main amd64 xauth amd64 1:1.1.2-1build1 [25.6 kB]
+Get:8 http://archive.ubuntu.com/ubuntu noble/main amd64 at-spi2-common all 2.52.0-1build1 [8674 B]
+Get:9 http://archive.ubuntu.com/ubuntu noble/main amd64 fontconfig amd64 2.15.0-1.1ubuntu2 [180 kB]
+Get:10 http://archive.ubuntu.com/ubuntu noble/main amd64 fonts-freefont-ttf all 20211204+svn4273-2 [5641 kB]
+Get:11 http://archive.ubuntu.com/ubuntu noble/main amd64 fonts-liberation all 1:2.1.5-3 [1603 kB]
+Get:12 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 fonts-noto-color-emoji all 2.047-0ubuntu0.24.04.1 [9764 kB]
+Get:13 http://archive.ubuntu.com/ubuntu noble/universe amd64 fonts-tlwg-loma-otf all 1:0.7.3-1 [107 kB]
+Get:14 http://archive.ubuntu.com/ubuntu noble/universe amd64 fonts-unifont all 1:15.1.01-1build1 [2993 kB]
+Get:15 http://archive.ubuntu.com/ubuntu noble/universe amd64 fonts-wqy-zenhei all 0.9.45-8 [7472 kB]
+Get:16 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 libasound2-data all 1.2.11-1ubuntu0.1 [21.1 kB]
+Get:17 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 libasound2t64 amd64 1.2.11-1ubuntu0.1 [399 kB]
+Get:18 http://archive.ubuntu.com/ubuntu noble/main amd64 libatk1.0-0t64 amd64 2.52.0-1build1 [55.3 kB]
+Get:19 http://archive.ubuntu.com/ubuntu noble/main amd64 libatspi2.0-0t64 amd64 2.52.0-1build1 [80.5 kB]
+Get:20 http://archive.ubuntu.com/ubuntu noble/main amd64 libatk-bridge2.0-0t64 amd64 2.52.0-1build1 [66.0 kB]
+Get:21 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 libavahi-common-data amd64 0.8-13ubuntu6.1 [29.9 kB]
+Get:22 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 libavahi-common3 amd64 0.8-13ubuntu6.1 [23.4 kB]
+Get:23 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 libavahi-client3 amd64 0.8-13ubuntu6.1 [26.8 kB]
+Get:24 http://archive.ubuntu.com/ubuntu noble/main amd64 libpixman-1-0 amd64 0.42.2-1build1 [279 kB]
+Get:25 http://archive.ubuntu.com/ubuntu noble/main amd64 libxcb-render0 amd64 1.15-1ubuntu2 [16.2 kB]
+Get:26 http://archive.ubuntu.com/ubuntu noble/main amd64 libcairo2 amd64 1.18.0-3build1 [566 kB]
+Get:27 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 libcups2t64 amd64 2.4.7-1.2ubuntu7.9 [273 kB]
+Get:28 http://archive.ubuntu.com/ubuntu noble/main amd64 libdatrie1 amd64 0.2.13-3build1 [19.0 kB]
+Get:29 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 libdrm-amdgpu1 amd64 2.4.125-1ubuntu0.1~24.04.1 [21.4 kB]
+Get:30 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 libdrm-intel1 amd64 2.4.125-1ubuntu0.1~24.04.1 [63.8 kB]
+Get:31 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 libgl1-mesa-dri amd64 25.2.8-0ubuntu0.24.04.1 [37.9 kB]
+Get:32 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 libglx-mesa0 amd64 25.2.8-0ubuntu0.24.04.1 [110 kB]
+Get:33 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 libegl-mesa0 amd64 25.2.8-0ubuntu0.24.04.1 [117 kB]
+Get:34 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 libgbm1 amd64 25.2.8-0ubuntu0.24.04.1 [34.2 kB]
+Get:35 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 mesa-libgallium amd64 25.2.8-0ubuntu0.24.04.1 [10.8 MB]
+Get:36 http://archive.ubuntu.com/ubuntu noble/main amd64 libfontenc1 amd64 1:1.1.8-1build1 [14.0 kB]
+Get:37 http://archive.ubuntu.com/ubuntu noble/main amd64 libgraphite2-3 amd64 1.3.14-2build1 [73.0 kB]
+Get:38 http://archive.ubuntu.com/ubuntu noble/main amd64 libharfbuzz0b amd64 8.3.0-2build2 [469 kB]
+Get:39 http://archive.ubuntu.com/ubuntu noble/main amd64 libnspr4 amd64 2:4.35-1.1build1 [117 kB]
+Get:40 http://archive.ubuntu.com/ubuntu noble/main amd64 libnss3 amd64 2:3.98-1build1 [1445 kB]
+Get:41 http://archive.ubuntu.com/ubuntu noble/main amd64 libthai-data all 0.1.29-2build1 [158 kB]
+Get:42 http://archive.ubuntu.com/ubuntu noble/main amd64 libthai0 amd64 0.1.29-2build1 [18.9 kB]
+Get:43 http://archive.ubuntu.com/ubuntu noble/main amd64 libpango-1.0-0 amd64 1.52.1+ds-1build1 [231 kB]
+Get:44 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 libunwind8 amd64 1.6.2-3build1.1 [55.3 kB]
+Get:45 http://archive.ubuntu.com/ubuntu noble/main amd64 libxdamage1 amd64 1:1.1.6-1build1 [6150 B]
+Get:46 http://archive.ubuntu.com/ubuntu noble/main amd64 libxfont2 amd64 1:2.0.6-1build1 [93.0 kB]
+Get:47 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 mesa-vulkan-drivers amd64 25.2.8-0ubuntu0.24.04.1 [17.5 MB]
+Get:48 http://archive.ubuntu.com/ubuntu noble/main amd64 x11-xkb-utils amd64 7.7+8build2 [170 kB]
+Get:49 http://archive.ubuntu.com/ubuntu noble/main amd64 xfonts-encodings all 1:1.0.5-0ubuntu2 [578 kB]
+Get:50 http://archive.ubuntu.com/ubuntu noble/main amd64 xfonts-utils amd64 1:7.7+6build3 [94.4 kB]
+Get:51 http://archive.ubuntu.com/ubuntu noble/universe amd64 xfonts-cyrillic all 1:1.0.5+nmu1 [384 kB]
+Get:52 http://archive.ubuntu.com/ubuntu noble/main amd64 xfonts-scalable all 1:1.0.3-1.3 [304 kB]
+Get:53 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 xserver-common all 2:21.1.12-1ubuntu1.5 [34.6 kB]
+Get:54 http://archive.ubuntu.com/ubuntu noble-updates/universe amd64 xvfb amd64 2:21.1.12-1ubuntu1.5 [877 kB]
+debconf: delaying package configuration, since apt-utils is not installed
+Fetched 67.5 MB in 3s (19.4 MB/s)
+Selecting previously unselected package fonts-ipafont-gothic.
+(Reading database ... 50881 files and directories currently installed.)
+Preparing to unpack .../00-fonts-ipafont-gothic_00303-21ubuntu1_all.deb ...
+Unpacking fonts-ipafont-gothic (00303-21ubuntu1) ...
+Selecting previously unselected package libfribidi0:amd64.
+Preparing to unpack .../01-libfribidi0_1.0.13-3build1_amd64.deb ...
+Unpacking libfribidi0:amd64 (1.0.13-3build1) ...
+Selecting previously unselected package xkb-data.
+Preparing to unpack .../02-xkb-data_2.41-2ubuntu1.1_all.deb ...
+Unpacking xkb-data (2.41-2ubuntu1.1) ...
+Preparing to unpack .../03-libdrm-common_2.4.125-1ubuntu0.1~24.04.1_all.deb ...
+Unpacking libdrm-common (2.4.125-1ubuntu0.1~24.04.1) over (2.4.122-1~ubuntu0.24.04.2) ...
+Preparing to unpack .../04-libdrm2_2.4.125-1ubuntu0.1~24.04.1_amd64.deb ...
+Unpacking libdrm2:amd64 (2.4.125-1ubuntu0.1~24.04.1) over (2.4.122-1~ubuntu0.24.04.2) ...
+Selecting previously unselected package libxkbcommon0:amd64.
+Preparing to unpack .../05-libxkbcommon0_1.6.0-1build1_amd64.deb ...
+Unpacking libxkbcommon0:amd64 (1.6.0-1build1) ...
+Selecting previously unselected package xauth.
+Preparing to unpack .../06-xauth_1%3a1.1.2-1build1_amd64.deb ...
+Unpacking xauth (1:1.1.2-1build1) ...
+Selecting previously unselected package at-spi2-common.
+Preparing to unpack .../07-at-spi2-common_2.52.0-1build1_all.deb ...
+Unpacking at-spi2-common (2.52.0-1build1) ...
+Selecting previously unselected package fontconfig.
+Preparing to unpack .../08-fontconfig_2.15.0-1.1ubuntu2_amd64.deb ...
+Unpacking fontconfig (2.15.0-1.1ubuntu2) ...
+Selecting previously unselected package fonts-freefont-ttf.
+Preparing to unpack .../09-fonts-freefont-ttf_20211204+svn4273-2_all.deb ...
+Unpacking fonts-freefont-ttf (20211204+svn4273-2) ...
+Selecting previously unselected package fonts-liberation.
+Preparing to unpack .../10-fonts-liberation_1%3a2.1.5-3_all.deb ...
+Unpacking fonts-liberation (1:2.1.5-3) ...
+Selecting previously unselected package fonts-noto-color-emoji.
+Preparing to unpack .../11-fonts-noto-color-emoji_2.047-0ubuntu0.24.04.1_all.deb ...
+Unpacking fonts-noto-color-emoji (2.047-0ubuntu0.24.04.1) ...
+Selecting previously unselected package fonts-tlwg-loma-otf.
+Preparing to unpack .../12-fonts-tlwg-loma-otf_1%3a0.7.3-1_all.deb ...
+Unpacking fonts-tlwg-loma-otf (1:0.7.3-1) ...
+Selecting previously unselected package fonts-unifont.
+Preparing to unpack .../13-fonts-unifont_1%3a15.1.01-1build1_all.deb ...
+Unpacking fonts-unifont (1:15.1.01-1build1) ...
+Selecting previously unselected package fonts-wqy-zenhei.
+Preparing to unpack .../14-fonts-wqy-zenhei_0.9.45-8_all.deb ...
+Unpacking fonts-wqy-zenhei (0.9.45-8) ...
+Selecting previously unselected package libasound2-data.
+Preparing to unpack .../15-libasound2-data_1.2.11-1ubuntu0.1_all.deb ...
+Unpacking libasound2-data (1.2.11-1ubuntu0.1) ...
+Selecting previously unselected package libasound2t64:amd64.
+Preparing to unpack .../16-libasound2t64_1.2.11-1ubuntu0.1_amd64.deb ...
+Unpacking libasound2t64:amd64 (1.2.11-1ubuntu0.1) ...
+Selecting previously unselected package libatk1.0-0t64:amd64.
+Preparing to unpack .../17-libatk1.0-0t64_2.52.0-1build1_amd64.deb ...
+Unpacking libatk1.0-0t64:amd64 (2.52.0-1build1) ...
+Selecting previously unselected package libatspi2.0-0t64:amd64.
+Preparing to unpack .../18-libatspi2.0-0t64_2.52.0-1build1_amd64.deb ...
+Unpacking libatspi2.0-0t64:amd64 (2.52.0-1build1) ...
+Selecting previously unselected package libatk-bridge2.0-0t64:amd64.
+Preparing to unpack .../19-libatk-bridge2.0-0t64_2.52.0-1build1_amd64.deb ...
+Unpacking libatk-bridge2.0-0t64:amd64 (2.52.0-1build1) ...
+Selecting previously unselected package libavahi-common-data:amd64.
+Preparing to unpack .../20-libavahi-common-data_0.8-13ubuntu6.1_amd64.deb ...
+Unpacking libavahi-common-data:amd64 (0.8-13ubuntu6.1) ...
+Selecting previously unselected package libavahi-common3:amd64.
+Preparing to unpack .../21-libavahi-common3_0.8-13ubuntu6.1_amd64.deb ...
+Unpacking libavahi-common3:amd64 (0.8-13ubuntu6.1) ...
+Selecting previously unselected package libavahi-client3:amd64.
+Preparing to unpack .../22-libavahi-client3_0.8-13ubuntu6.1_amd64.deb ...
+Unpacking libavahi-client3:amd64 (0.8-13ubuntu6.1) ...
+Selecting previously unselected package libpixman-1-0:amd64.
+Preparing to unpack .../23-libpixman-1-0_0.42.2-1build1_amd64.deb ...
+Unpacking libpixman-1-0:amd64 (0.42.2-1build1) ...
+Selecting previously unselected package libxcb-render0:amd64.
+Preparing to unpack .../24-libxcb-render0_1.15-1ubuntu2_amd64.deb ...
+Unpacking libxcb-render0:amd64 (1.15-1ubuntu2) ...
+Selecting previously unselected package libcairo2:amd64.
+Preparing to unpack .../25-libcairo2_1.18.0-3build1_amd64.deb ...
+Unpacking libcairo2:amd64 (1.18.0-3build1) ...
+Selecting previously unselected package libcups2t64:amd64.
+Preparing to unpack .../26-libcups2t64_2.4.7-1.2ubuntu7.9_amd64.deb ...
+Unpacking libcups2t64:amd64 (2.4.7-1.2ubuntu7.9) ...
+Selecting previously unselected package libdatrie1:amd64.
+Preparing to unpack .../27-libdatrie1_0.2.13-3build1_amd64.deb ...
+Unpacking libdatrie1:amd64 (0.2.13-3build1) ...
+Preparing to unpack .../28-libdrm-amdgpu1_2.4.125-1ubuntu0.1~24.04.1_amd64.deb ...
+Unpacking libdrm-amdgpu1:amd64 (2.4.125-1ubuntu0.1~24.04.1) over (2.4.122-1~ubuntu0.24.04.2) ...
+Preparing to unpack .../29-libdrm-intel1_2.4.125-1ubuntu0.1~24.04.1_amd64.deb ...
+Unpacking libdrm-intel1:amd64 (2.4.125-1ubuntu0.1~24.04.1) over (2.4.122-1~ubuntu0.24.04.2) ...
+Preparing to unpack .../30-libgl1-mesa-dri_25.2.8-0ubuntu0.24.04.1_amd64.deb ...
+Unpacking libgl1-mesa-dri:amd64 (25.2.8-0ubuntu0.24.04.1) over (25.0.7-0ubuntu0.24.04.2) ...
+Preparing to unpack .../31-libglx-mesa0_25.2.8-0ubuntu0.24.04.1_amd64.deb ...
+Unpacking libglx-mesa0:amd64 (25.2.8-0ubuntu0.24.04.1) over (25.0.7-0ubuntu0.24.04.2) ...
+Preparing to unpack .../32-libegl-mesa0_25.2.8-0ubuntu0.24.04.1_amd64.deb ...
+Unpacking libegl-mesa0:amd64 (25.2.8-0ubuntu0.24.04.1) over (25.0.7-0ubuntu0.24.04.2) ...
+Preparing to unpack .../33-libgbm1_25.2.8-0ubuntu0.24.04.1_amd64.deb ...
+Unpacking libgbm1:amd64 (25.2.8-0ubuntu0.24.04.1) over (25.0.7-0ubuntu0.24.04.2) ...
+Preparing to unpack .../34-mesa-libgallium_25.2.8-0ubuntu0.24.04.1_amd64.deb ...
+Unpacking mesa-libgallium:amd64 (25.2.8-0ubuntu0.24.04.1) over (25.0.7-0ubuntu0.24.04.2) ...
+Selecting previously unselected package libfontenc1:amd64.
+Preparing to unpack .../35-libfontenc1_1%3a1.1.8-1build1_amd64.deb ...
+Unpacking libfontenc1:amd64 (1:1.1.8-1build1) ...
+Selecting previously unselected package libgraphite2-3:amd64.
+Preparing to unpack .../36-libgraphite2-3_1.3.14-2build1_amd64.deb ...
+Unpacking libgraphite2-3:amd64 (1.3.14-2build1) ...
+Selecting previously unselected package libharfbuzz0b:amd64.
+Preparing to unpack .../37-libharfbuzz0b_8.3.0-2build2_amd64.deb ...
+Unpacking libharfbuzz0b:amd64 (8.3.0-2build2) ...
+Selecting previously unselected package libnspr4:amd64.
+Preparing to unpack .../38-libnspr4_2%3a4.35-1.1build1_amd64.deb ...
+Unpacking libnspr4:amd64 (2:4.35-1.1build1) ...
+Selecting previously unselected package libnss3:amd64.
+Preparing to unpack .../39-libnss3_2%3a3.98-1build1_amd64.deb ...
+Unpacking libnss3:amd64 (2:3.98-1build1) ...
+Selecting previously unselected package libthai-data.
+Preparing to unpack .../40-libthai-data_0.1.29-2build1_all.deb ...
+Unpacking libthai-data (0.1.29-2build1) ...
+Selecting previously unselected package libthai0:amd64.
+Preparing to unpack .../41-libthai0_0.1.29-2build1_amd64.deb ...
+Unpacking libthai0:amd64 (0.1.29-2build1) ...
+Selecting previously unselected package libpango-1.0-0:amd64.
+Preparing to unpack .../42-libpango-1.0-0_1.52.1+ds-1build1_amd64.deb ...
+Unpacking libpango-1.0-0:amd64 (1.52.1+ds-1build1) ...
+Selecting previously unselected package libunwind8:amd64.
+Preparing to unpack .../43-libunwind8_1.6.2-3build1.1_amd64.deb ...
+Unpacking libunwind8:amd64 (1.6.2-3build1.1) ...
+Selecting previously unselected package libxdamage1:amd64.
+Preparing to unpack .../44-libxdamage1_1%3a1.1.6-1build1_amd64.deb ...
+Unpacking libxdamage1:amd64 (1:1.1.6-1build1) ...
+Selecting previously unselected package libxfont2:amd64.
+Preparing to unpack .../45-libxfont2_1%3a2.0.6-1build1_amd64.deb ...
+Unpacking libxfont2:amd64 (1:2.0.6-1build1) ...
+Preparing to unpack .../46-mesa-vulkan-drivers_25.2.8-0ubuntu0.24.04.1_amd64.deb ...
+Unpacking mesa-vulkan-drivers:amd64 (25.2.8-0ubuntu0.24.04.1) over (25.0.7-0ubuntu0.24.04.2) ...
+Selecting previously unselected package x11-xkb-utils.
+Preparing to unpack .../47-x11-xkb-utils_7.7+8build2_amd64.deb ...
+Unpacking x11-xkb-utils (7.7+8build2) ...
+Selecting previously unselected package xfonts-encodings.
+Preparing to unpack .../48-xfonts-encodings_1%3a1.0.5-0ubuntu2_all.deb ...
+Unpacking xfonts-encodings (1:1.0.5-0ubuntu2) ...
+Selecting previously unselected package xfonts-utils.
+Preparing to unpack .../49-xfonts-utils_1%3a7.7+6build3_amd64.deb ...
+Unpacking xfonts-utils (1:7.7+6build3) ...
+Selecting previously unselected package xfonts-cyrillic.
+Preparing to unpack .../50-xfonts-cyrillic_1%3a1.0.5+nmu1_all.deb ...
+Unpacking xfonts-cyrillic (1:1.0.5+nmu1) ...
+Selecting previously unselected package xfonts-scalable.
+Preparing to unpack .../51-xfonts-scalable_1%3a1.0.3-1.3_all.deb ...
+Unpacking xfonts-scalable (1:1.0.3-1.3) ...
+Selecting previously unselected package xserver-common.
+Preparing to unpack .../52-xserver-common_2%3a21.1.12-1ubuntu1.5_all.deb ...
+Unpacking xserver-common (2:21.1.12-1ubuntu1.5) ...
+Selecting previously unselected package xvfb.
+Preparing to unpack .../53-xvfb_2%3a21.1.12-1ubuntu1.5_amd64.deb ...
+Unpacking xvfb (2:21.1.12-1ubuntu1.5) ...
+Setting up libgraphite2-3:amd64 (1.3.14-2build1) ...
+Setting up libpixman-1-0:amd64 (0.42.2-1build1) ...
+Setting up fontconfig (2.15.0-1.1ubuntu2) ...
+Regenerating fonts cache... done.
+Setting up libxdamage1:amd64 (1:1.1.6-1build1) ...
+Setting up libdatrie1:amd64 (0.2.13-3build1) ...
+Setting up fonts-noto-color-emoji (2.047-0ubuntu0.24.04.1) ...
+Setting up libxcb-render0:amd64 (1.15-1ubuntu2) ...
+Setting up x11-xkb-utils (7.7+8build2) ...
+Setting up fonts-wqy-zenhei (0.9.45-8) ...
+Setting up fonts-freefont-ttf (20211204+svn4273-2) ...
+Setting up xkb-data (2.41-2ubuntu1.1) ...
+Setting up libunwind8:amd64 (1.6.2-3build1.1) ...
+Setting up libcairo2:amd64 (1.18.0-3build1) ...
+Setting up libasound2-data (1.2.11-1ubuntu0.1) ...
+Setting up libfontenc1:amd64 (1:1.1.8-1build1) ...
+Setting up libasound2t64:amd64 (1.2.11-1ubuntu0.1) ...
+Setting up fonts-tlwg-loma-otf (1:0.7.3-1) ...
+Setting up libnspr4:amd64 (2:4.35-1.1build1) ...
+Setting up libavahi-common-data:amd64 (0.8-13ubuntu6.1) ...
+Setting up libatspi2.0-0t64:amd64 (2.52.0-1build1) ...
+Setting up xfonts-encodings (1:1.0.5-0ubuntu2) ...
+Setting up libfribidi0:amd64 (1.0.13-3build1) ...
+Setting up fonts-ipafont-gothic (00303-21ubuntu1) ...
+update-alternatives: using /usr/share/fonts/opentype/ipafont-gothic/ipag.ttf to provide /usr/share/fonts/truetype/fonts-japanese-gothic.ttf (fonts-japanese-gothic.ttf) in auto mode
+Setting up xauth (1:1.1.2-1build1) ...
+Setting up at-spi2-common (2.52.0-1build1) ...
+Setting up fonts-liberation (1:2.1.5-3) ...
+Setting up libharfbuzz0b:amd64 (8.3.0-2build2) ...
+Setting up libthai-data (0.1.29-2build1) ...
+Setting up xserver-common (2:21.1.12-1ubuntu1.5) ...
+Setting up libdrm-common (2.4.125-1ubuntu0.1~24.04.1) ...
+Setting up libxfont2:amd64 (1:2.0.6-1build1) ...
+Setting up fonts-unifont (1:15.1.01-1build1) ...
+Setting up libxkbcommon0:amd64 (1.6.0-1build1) ...
+Setting up libatk1.0-0t64:amd64 (2.52.0-1build1) ...
+Setting up xvfb (2:21.1.12-1ubuntu1.5) ...
+Setting up libavahi-common3:amd64 (0.8-13ubuntu6.1) ...
+Setting up libnss3:amd64 (2:3.98-1build1) ...
+Setting up xfonts-utils (1:7.7+6build3) ...
+Setting up libthai0:amd64 (0.1.29-2build1) ...
+Setting up libdrm2:amd64 (2.4.125-1ubuntu0.1~24.04.1) ...
+Setting up xfonts-cyrillic (1:1.0.5+nmu1) ...
+Setting up libavahi-client3:amd64 (0.8-13ubuntu6.1) ...
+Setting up xfonts-scalable (1:1.0.3-1.3) ...
+Setting up libdrm-amdgpu1:amd64 (2.4.125-1ubuntu0.1~24.04.1) ...
+Setting up libatk-bridge2.0-0t64:amd64 (2.52.0-1build1) ...
+Setting up mesa-vulkan-drivers:amd64 (25.2.8-0ubuntu0.24.04.1) ...
+Setting up libpango-1.0-0:amd64 (1.52.1+ds-1build1) ...
+Setting up libdrm-intel1:amd64 (2.4.125-1ubuntu0.1~24.04.1) ...
+Setting up libcups2t64:amd64 (2.4.7-1.2ubuntu7.9) ...
+Setting up mesa-libgallium:amd64 (25.2.8-0ubuntu0.24.04.1) ...
+Setting up libgbm1:amd64 (25.2.8-0ubuntu0.24.04.1) ...
+Setting up libgl1-mesa-dri:amd64 (25.2.8-0ubuntu0.24.04.1) ...
+Setting up libegl-mesa0:amd64 (25.2.8-0ubuntu0.24.04.1) ...
+Setting up libglx-mesa0:amd64 (25.2.8-0ubuntu0.24.04.1) ...
+Processing triggers for libc-bin (2.39-0ubuntu8.6) ...
+Downloading Chromium 143.0.7499.4 (playwright build v1200) from https://cdn.playwright.dev/dbazure/download/playwright/builds/chromium/1200/chromium-linux.zip
+(node:813) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+|                                                                                |   0% of 164.7 MiB
+|■■■■■■■■                                                                        |  10% of 164.7 MiB
+|■■■■■■■■■■■■■■■■                                                                |  20% of 164.7 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 164.7 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 164.7 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 164.7 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 164.7 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 164.7 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 164.7 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 164.7 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 164.7 MiB
+Chromium 143.0.7499.4 (playwright build v1200) downloaded to /root/.cache/ms-playwright/chromium-1200
+Downloading FFMPEG playwright build v1011 from https://cdn.playwright.dev/dbazure/download/playwright/builds/ffmpeg/1011/ffmpeg-linux.zip
+(node:826) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+|                                                                                |   0% of 2.3 MiB
+|■■■■■■■■                                                                        |  10% of 2.3 MiB
+|■■■■■■■■■■■■■■■■                                                                |  20% of 2.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 2.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 2.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 2.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 2.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 2.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 2.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 2.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 2.3 MiB
+FFMPEG playwright build v1011 downloaded to /root/.cache/ms-playwright/ffmpeg-1011
+Downloading Chromium Headless Shell 143.0.7499.4 (playwright build v1200) from https://cdn.playwright.dev/dbazure/download/playwright/builds/chromium/1200/chromium-headless-shell-linux.zip
+(node:837) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+|                                                                                |   0% of 109.7 MiB
+|■■■■■■■■                                                                        |  10% of 109.7 MiB
+|■■■■■■■■■■■■■■■■                                                                |  20% of 109.7 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 109.7 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 109.7 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 109.7 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 109.7 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 109.7 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 109.7 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 109.7 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 109.7 MiB
+Chromium Headless Shell 143.0.7499.4 (playwright build v1200) downloaded to /root/.cache/ms-playwright/chromium_headless_shell-1200
+--> 132649b260e6
+STEP 15/18: WORKDIR /src/MyBlog.E2E
+--> 1b7fd59300fc
+STEP 16/18: ENV MYBLOG_BASE_URL=http://myblog-web:5000
+--> c2c424cfbbf4
+STEP 17/18: ENV PLAYWRIGHT_HEADLESS=true
+--> abdff81d0a1a
+STEP 18/18: ENTRYPOINT ["dotnet", "run", "-c", "Release", "--no-build"]
+COMMIT myblog_myblog-e2e
+--> 5abd750ab1c2
+Successfully tagged localhost/myblog_myblog-e2e:latest
+5abd750ab1c22f83e16a7f5c3e490e8e76b9c514f19190782c44a3ae44624a76
+[INFO] Starting MyBlog web service...
+1731b7f9df513c1aa3cb5e94e520ba45e2d60b007f09aa6800834a9b0969f3b1
+8da9f9de68f9bd110efd2e46d9925fc22d479e46d4a9b904b9d8185f51500bb4
+myblog-web
+[INFO] Waiting for MyBlog to be ready...
+.
+[INFO] MyBlog is ready!
+[INFO] Running E2E tests...
+16d5a16b85467cb78d87281fbd869dc9ea689fe94cbc8eec5980544a87d13904
+[myblog-web] | cannot open `/run/user/1000/crun/8da9f9de68f9bd110efd2e46d9925fc22d479e46d4a9b904b9d8185f51500bb4/exec.fifo`: No such file or directory
+[myblog-web] | Error: unable to start container 8da9f9de68f9bd110efd2e46d9925fc22d479e46d4a9b904b9d8185f51500bb4: `/usr/bin/crun start 8da9f9de68f9bd110efd2e46d9925fc22d479e46d4a9b904b9d8185f51500bb4` failed: exit status 1
+[myblog-e2e] | xUnit.net v3 In-Process Runner v3.2.2+728c1dce01 (64-bit .NET 10.0.2)
+[myblog-e2e] |   Discovering: MyBlog.E2E
+[myblog-e2e] |   Discovered:  MyBlog.E2E
+[myblog-e2e] |   Starting:    MyBlog.E2E
+[myblog-e2e] |   Finished:    MyBlog.E2E (ID = '4d488734a9156ea8719a93bca3e9cb47dfeac4715a7981582060bf185a1e7bf4')
+[myblog-e2e] | === TEST EXECUTION SUMMARY ===
+[myblog-e2e] |    MyBlog.E2E  Total: 78, Errors: 0, Failed: 0, Skipped: 0, Not Run: 0, Time: 24.535s
+[myblog-e2e] | 
+[INFO] Capturing logs...
+[INFO] Cleaning up...
+myblog-e2e
+myblog-web
+myblog-e2e
+myblog-web
+myblog_myblog-data
+1731b7f9df513c1aa3cb5e94e520ba45e2d60b007f09aa6800834a9b0969f3b1
+myblog_myblog-network
+[INFO] E2E tests passed! ✓
+
+real	1m30.017s
+user	0m34.296s
+sys	0m20.492s
+kushal@fedora:~/src/dotnet/MyBlog$ 
