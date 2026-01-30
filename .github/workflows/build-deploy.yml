@@ -164,3 +164,56 @@ jobs:
           }
           
           Write-Host "Deployment completed successfully!"
+
+  deploynice:
+    needs: [build-test, e2e-tests]
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop'
+    runs-on: windows-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Publish application
+        run: dotnet publish src/MyBlog.Web/MyBlog.Web.csproj -c Release -o ./publish -r win-x86 --self-contained false
+
+      - name: Deploy via WebDeploy
+        shell: pwsh
+        env:
+          DEPLOY_SOURCE: ${{ github.workspace }}\publish
+          DEPLOY_SITE: ${{ secrets.NICE_WEBSITE_NAME }}
+          DEPLOY_HOST: ${{ secrets.NICE_SERVER_COMPUTER_NAME }}
+          DEPLOY_USER: ${{ secrets.NICE_SERVER_USERNAME }}
+          DEPLOY_PASSWORD: ${{ secrets.NICE_SERVER_PASSWORD }}
+        run: |
+          $msdeployPath = "C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe"
+          
+          if (-not (Test-Path $msdeployPath)) {
+            Write-Host "Installing Web Deploy..."
+            choco install webdeploy -y --no-progress
+          }
+          
+          Write-Host "Deploying to $env:DEPLOY_HOST..."
+          Write-Host "Note: Using AppOffline rule to prevent file-in-use errors"
+
+          $sourceArg = "-source:contentPath=$env:DEPLOY_SOURCE"
+          $destArg = "-dest:contentPath=$env:DEPLOY_SITE,computerName=https://$($env:DEPLOY_HOST):8172/MsDeploy.axd?site=$env:DEPLOY_SITE,userName=$env:DEPLOY_USER,password=$env:DEPLOY_PASSWORD,AuthType='Basic'"
+          
+          & $msdeployPath -verb:sync $sourceArg $destArg `
+            -allowUntrusted `
+            -enableRule:DoNotDeleteRule `
+            -enableRule:AppOffline `
+            -retryAttempts:3 `
+            -retryInterval:3000
+          
+          if ($LASTEXITCODE -ne 0) {
+            Write-Error "Deployment failed with exit code $LASTEXITCODE"
+            exit 1
+          }
+          
+          Write-Host "Deployment completed successfully!"
