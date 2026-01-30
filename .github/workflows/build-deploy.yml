@@ -185,11 +185,11 @@ jobs:
       - name: Deploy via WebDeploy
         shell: pwsh
         env:
-          DEPLOY_SOURCE: ${{ github.workspace }}\publish
-          DEPLOY_SITE: ${{ secrets.NICE_WEBSITE_NAME }}
-          DEPLOY_HOST: ${{ secrets.NICE_SERVER_COMPUTER_NAME }}
-          DEPLOY_USER: ${{ secrets.NICE_SERVER_USERNAME }}
-          DEPLOY_PASSWORD: ${{ secrets.NICE_SERVER_PASSWORD }}
+          NICE_DEPLOY_SOURCE: ${{ github.workspace }}\publish
+          NICE_DEPLOY_SITE: ${{ secrets.NICE_WEBSITE_NAME }}
+          NICE_DEPLOY_HOST: ${{ secrets.NICE_SERVER_COMPUTER_NAME }}
+          NICE_DEPLOY_USER: ${{ secrets.NICE_SERVER_USERNAME }}
+          NICE_DEPLOY_PASSWORD: ${{ secrets.NICE_SERVER_PASSWORD }}
         run: |
           $msdeployPath = "C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe"
           
@@ -198,11 +198,11 @@ jobs:
             choco install webdeploy -y --no-progress
           }
           
-          Write-Host "Deploying to $env:DEPLOY_HOST..."
+          Write-Host "Deploying to $env:NICE_DEPLOY_HOST..."
           Write-Host "Note: Using AppOffline rule to prevent file-in-use errors"
 
-          $sourceArg = "-source:contentPath=$env:DEPLOY_SOURCE"
-          $destArg = "-dest:contentPath=$env:DEPLOY_SITE,computerName=https://$($env:DEPLOY_HOST):8172/MsDeploy.axd?site=$env:DEPLOY_SITE,userName=$env:DEPLOY_USER,password=$env:DEPLOY_PASSWORD,AuthType='Basic'"
+          $sourceArg = "-source:contentPath=$env:NICE_DEPLOY_SOURCE"
+          $destArg = "-dest:contentPath=$env:NICE_DEPLOY_SITE,computerName=https://$($env:NICE_DEPLOY_HOST):8172/MsDeploy.axd?site=$env:NICE_DEPLOY_SITE,userName=$env:NICE_DEPLOY_USER,password=$env:NICE_DEPLOY_PASSWORD,AuthType='Basic'"
           
           & $msdeployPath -verb:sync $sourceArg $destArg `
             -allowUntrusted `
