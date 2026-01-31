@@ -760,47 +760,6 @@ a:hover {
     background-color: var(--color-bg-alt);
 }
 
-/* Mobile-friendly admin table */
-@media (max-width: 768px) {
-    .admin-table {
-        display: block;
-    }
-
-    .admin-table thead {
-        display: none;
-    }
-
-    .admin-table tbody {
-        display: block;
-    }
-
-    .admin-table tr {
-        display: block;
-        margin-bottom: var(--spacing);
-        border: 1px solid var(--color-border);
-        border-radius: var(--radius);
-        padding: var(--spacing);
-    }
-
-    .admin-table td {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 0.5rem 0;
-        border-bottom: 1px dashed var(--color-border);
-    }
-
-    .admin-table td:last-child {
-        border-bottom: none;
-    }
-
-    .admin-table td::before {
-        content: attr(data-label);
-        font-weight: 600;
-        margin-right: 1rem;
-    }
-}
-
 /* =============================================================================
    Utility Classes
    ============================================================================= */

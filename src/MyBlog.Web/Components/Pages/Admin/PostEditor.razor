@@ -6,6 +6,7 @@
 @inject ISlugService SlugService
 @inject NavigationManager Navigation
 @inject AuthenticationStateProvider AuthStateProvider
+@inject ILogger<PostEditor> Logger
 @using System.Security.Claims
 
 <PageTitle>@(IsEdit ? "Edit Post" : "New Post")</PageTitle>
@@ -118,7 +119,14 @@ else
 
             if (string.IsNullOrEmpty(userId))
             {
-                _error = "User not authenticated.";
+                _error = "User not authenticated. Please log in again.";
+                return;
+            }
+
+            if (!Guid.TryParse(userId, out var authorId))
+            {
+                _error = "Invalid user ID. Please log in again.";
+                Logger.LogError("Failed to parse user ID from claims: {UserId}", userId);
                 return;
             }
 
@@ -141,6 +149,7 @@ else
                 }
 
                 await PostRepository.UpdateAsync(_existingPost);
+                Logger.LogInformation("Post updated: {PostId} by user {UserId}", _existingPost.Id, authorId);
             }
             else
             {
@@ -152,19 +161,25 @@ else
                     Summary = _summary,
                     Content = _content,
                     IsPublished = _isPublished,
-                    AuthorId = Guid.Parse(userId),
+                    AuthorId = authorId,
                     CreatedAtUtc = DateTime.UtcNow,
                     UpdatedAtUtc = DateTime.UtcNow,
                     PublishedAtUtc = _isPublished ? DateTime.UtcNow : null
                 };
                 await PostRepository.CreateAsync(post);
+                Logger.LogInformation("Post created: {PostId} by user {UserId}", post.Id, authorId);
             }
 
             Navigation.NavigateTo("/admin/posts");
         }
         catch (Exception ex)
         {
-            _error = $"Failed to save: {ex.Message}";
+            // Log the full exception including inner exception
+            Logger.LogError(ex, "Failed to save post. Title: {Title}, IsEdit: {IsEdit}", _title, IsEdit);
+            
+            // Show a more detailed error message
+            var innerMessage = ex.InnerException?.Message ?? ex.Message;
+            _error = $"Failed to save: {innerMessage}";
         }
         finally
         {

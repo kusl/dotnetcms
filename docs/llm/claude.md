@@ -1130,3 +1130,71 @@ do not hallucinate
 usage statistics 
 current:  28% 
 week:     25%
+
+
+
+
+
+
+
+
+Looking at the logs carefully, I can see multiple issues:
+
+1. **Login error**: `The response headers cannot be modified because the response has already started` - This shows there's a `HandleLogin()` method being called from an interactive component trying to set cookies after the response started. The Login.razor form is posting to `/account/login` but the endpoint in Program.cs is at `/login`.
+
+2. **"Failed to save" error**: This is likely a foreign key constraint issue, but we need better error logging to see the inner exception.
+
+3. **Share button not working**: The `sharePost()` function is called but not defined in site.js.
+
+Let me provide the corrected files:## Summary of Changes and Fixes
+
+Here are all the files that need to be updated:
+
+### Issue 1: "Failed to save" Error
+The error "An error occurred while saving the entity changes" was showing a generic message. I've updated **PostEditor.razor** to:
+- Log the full exception including inner exception details
+- Show the inner exception message to the user for better debugging
+- Added `ILogger<PostEditor>` injection for proper logging
+
+### Issue 2: Login Error ("response headers cannot be modified")
+The Login.razor form was posting to `/account/login` but the endpoint in Program.cs is at `/login`. **Login.razor** has been fixed to:
+- Post to the correct endpoint `/login`
+- Added `autocomplete` and `autocapitalize="none"` attributes for better mobile UX
+
+### Issue 3: Share Button Not Working on Chrome/iOS
+The `sharePost()` function was being called but **never defined** in site.js. **site.js** now includes:
+- Complete `sharePost()` function with Web Share API
+- Proper clipboard fallback for browsers without Web Share API
+- iOS-specific clipboard handling with `setSelectionRange`
+- Visual feedback functions (`showShareSuccess`, `showShareError`)
+
+### Issue 4: Mobile UX Improvements
+**site.css** and component CSS files have been updated with:
+- 44px minimum tap targets (Apple's recommended size)
+- `font-size: 16px` on inputs to prevent iOS zoom
+- Safe area insets for notched devices
+- Better responsive breakpoints
+- Touch-friendly form controls
+
+### Files Changed:
+
+| File | Path |
+|------|------|
+| Login.razor | `src/MyBlog.Web/Components/Pages/Login.razor` |
+| Login.razor.css | `src/MyBlog.Web/Components/Pages/Login.razor.css` |
+| PostEditor.razor | `src/MyBlog.Web/Components/Pages/Admin/PostEditor.razor` |
+| PostEditor.razor.css | `src/MyBlog.Web/Components/Pages/Admin/PostEditor.razor.css` |
+| PostDetail.razor.css | `src/MyBlog.Web/Components/Pages/PostDetail.razor.css` |
+| site.js | `src/MyBlog.Web/wwwroot/js/site.js` |
+| site.css | `src/MyBlog.Web/wwwroot/css/site.css` |
+
+### Notes:
+1. **The default publish checkbox** is now `true` for new posts (was `false`)
+2. **Better error logging** - PostEditor now logs full exception details for debugging
+3. **Share button** will now work on Chrome for iOS using the Web Share API
+4. All existing tests should continue to pass as the changes don't affect the repository layer
+
+
+
+
+
