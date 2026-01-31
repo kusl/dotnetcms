@@ -1194,7 +1194,361 @@ The `sharePost()` function was being called but **never defined** in site.js. **
 3. **Share button** will now work on Chrome for iOS using the Web Share API
 4. All existing tests should continue to pass as the changes don't affect the repository layer
 
+usage statistics 
+current:  52% 
+week:     28%
 
-
-
-
+I have tests failing. 
+I have included the latest dump in `dump.txt`
+and output in 0062.txt 
+please read each and every line of the code 
+and every line of the output 
+don't skim it 
+don't try to change the coding style 
+don't remove braces around the if 
+don't change the primary constructor back to whatever you did 
+don't make unnecessary changes 
+do make the code build, 
+do make the tests pass 
+and do make everything work properly 
+and follow engineering best practices 
+and please do not hallucinate 
+give me full files for all files that changed 
+please investigate what is happening there and fix it 
+oh and for everything we change, the unit tests and the integration should still pass 
+remember we don't want to cause any regressions 
+thank you and please take as long as necessary to think 
+do not rush 
+[myblog-e2e] |   Starting:    MyBlog.E2E
+[myblog-e2e] |     MyBlog.E2E.Tests.AdminPageTests.AdminDashboard_ShowsRecentPosts [FAIL]
+[myblog-e2e] |       System.TimeoutException : Timeout 30000ms exceeded.
+[myblog-e2e] |       =========================== logs ===========================
+[myblog-e2e] |       waiting for navigation to "**/admin**" until "Load"
+[myblog-e2e] |         navigated to "http://myblog-web:5000/login"
+[myblog-e2e] |       ============================================================
+[myblog-e2e] |       ---- System.TimeoutException : Timeout 30000ms exceeded.
+[myblog-e2e] |       Stack Trace:
+[myblog-e2e] |         /_/src/Playwright/Core/Waiter.cs(226,0): at Microsoft.Playwright.Core.Waiter.WaitForPromiseAsync[T](Task`1 task, Action dispose)
+[myblog-e2e] |         /_/src/Playwright/Core/Frame.cs(321,0): at Microsoft.Playwright.Core.Frame.WaitForNavigationInternalAsync(Waiter waiter, String urlString, Func`2 urlFunc, Regex urlRegex, Nullable`1 waitUntil)
+[myblog-e2e] |         /_/src/Playwright/Core/Frame.cs(285,0): at Microsoft.Playwright.Core.Frame.RunAndWaitForNavigationAsync(Func`1 action, FrameRunAndWaitForNavigationOptions options)
+[myblog-e2e] |         Tests/AdminPageTests.cs(26,0): at MyBlog.E2E.Tests.AdminPageTests.LoginAsAdminAsync(IPage page)
+[myblog-e2e] |         Tests/AdminPageTests.cs(158,0): at MyBlog.E2E.Tests.AdminPageTests.AdminDashboard_ShowsRecentPosts()
+[myblog-e2e] |         --- End of stack trace from previous location ---
+[myblog-e2e] |         ----- Inner Stack Trace -----
+[myblog-e2e] |         /_/src/Playwright/Helpers/TaskHelper.cs(72,0): at Microsoft.Playwright.Helpers.TaskHelper.<>c__DisplayClass2_0.<WithTimeout>b__0()
+[myblog-e2e] |         /_/src/Playwright/Helpers/TaskHelper.cs(108,0): at Microsoft.Playwright.Helpers.TaskHelper.WithTimeout(Task task, Func`1 timeoutAction, TimeSpan timeout, CancellationToken cancellationToken)
+[myblog-e2e] |         /_/src/Playwright/Core/Waiter.cs(218,0): at Microsoft.Playwright.Core.Waiter.WaitForPromiseAsync[T](Task`1 task, Action dispose)
+[myblog-e2e] |     MyBlog.E2E.Tests.AdminPageTests.AdminPosts_LoadsSuccessfully [FAIL]
+[myblog-e2e] |       System.TimeoutException : Timeout 30000ms exceeded.
+[myblog-e2e] |       =========================== logs ===========================
+[myblog-e2e] |       waiting for navigation to "**/admin**" until "Load"
+[myblog-e2e] |         navigated to "http://myblog-web:5000/login"
+[myblog-e2e] |       ============================================================
+[myblog-e2e] |       ---- System.TimeoutException : Timeout 30000ms exceeded.
+[myblog-e2e] |       Stack Trace:
+[myblog-e2e] |         /_/src/Playwright/Core/Waiter.cs(226,0): at Microsoft.Playwright.Core.Waiter.WaitForPromiseAsync[T](Task`1 task, Action dispose)
+[myblog-e2e] |         /_/src/Playwright/Core/Frame.cs(321,0): at Microsoft.Playwright.Core.Frame.WaitForNavigationInternalAsync(Waiter waiter, String urlString, Func`2 urlFunc, Regex urlRegex, Nullable`1 waitUntil)
+[myblog-e2e] |         /_/src/Playwright/Core/Frame.cs(285,0): at Microsoft.Playwright.Core.Frame.RunAndWaitForNavigationAsync(Func`1 action, FrameRunAndWaitForNavigationOptions options)
+[myblog-e2e] |         Tests/AdminPageTests.cs(26,0): at MyBlog.E2E.Tests.AdminPageTests.LoginAsAdminAsync(IPage page)
+[myblog-e2e] |         Tests/AdminPageTests.cs(78,0): at MyBlog.E2E.Tests.AdminPageTests.AdminPosts_LoadsSuccessfully()
+[myblog-e2e] |         --- End of stack trace from previous location ---
+[myblog-e2e] |         ----- Inner Stack Trace -----
+[myblog-e2e] |         /_/src/Playwright/Helpers/TaskHelper.cs(72,0): at Microsoft.Playwright.Helpers.TaskHelper.<>c__DisplayClass2_0.<WithTimeout>b__0()
+[myblog-e2e] |         /_/src/Playwright/Helpers/TaskHelper.cs(108,0): at Microsoft.Playwright.Helpers.TaskHelper.WithTimeout(Task task, Func`1 timeoutAction, TimeSpan timeout, CancellationToken cancellationToken)
+[myblog-e2e] |         /_/src/Playwright/Core/Waiter.cs(218,0): at Microsoft.Playwright.Core.Waiter.WaitForPromiseAsync[T](Task`1 task, Action dispose)
+[myblog-e2e] |     MyBlog.E2E.Tests.AdminPageTests.AdminDashboard_DisplaysStatistics [FAIL]
+[myblog-e2e] |       System.TimeoutException : Timeout 30000ms exceeded.
+[myblog-e2e] |       =========================== logs ===========================
+[myblog-e2e] |       waiting for navigation to "**/admin**" until "Load"
+[myblog-e2e] |         navigated to "http://myblog-web:5000/login"
+[myblog-e2e] |       ============================================================
+[myblog-e2e] |       ---- System.TimeoutException : Timeout 30000ms exceeded.
+[myblog-e2e] |       Stack Trace:
+[myblog-e2e] |         /_/src/Playwright/Core/Waiter.cs(226,0): at Microsoft.Playwright.Core.Waiter.WaitForPromiseAsync[T](Task`1 task, Action dispose)
+[myblog-e2e] |         /_/src/Playwright/Core/Frame.cs(321,0): at Microsoft.Playwright.Core.Frame.WaitForNavigationInternalAsync(Waiter waiter, String urlString, Func`2 urlFunc, Regex urlRegex, Nullable`1 waitUntil)
+[myblog-e2e] |         /_/src/Playwright/Core/Frame.cs(285,0): at Microsoft.Playwright.Core.Frame.RunAndWaitForNavigationAsync(Func`1 action, FrameRunAndWaitForNavigationOptions options)
+[myblog-e2e] |         Tests/AdminPageTests.cs(26,0): at MyBlog.E2E.Tests.AdminPageTests.LoginAsAdminAsync(IPage page)
+[myblog-e2e] |         Tests/AdminPageTests.cs(36,0): at MyBlog.E2E.Tests.AdminPageTests.AdminDashboard_DisplaysStatistics()
+[myblog-e2e] |         --- End of stack trace from previous location ---
+[myblog-e2e] |         ----- Inner Stack Trace -----
+[myblog-e2e] |         /_/src/Playwright/Helpers/TaskHelper.cs(72,0): at Microsoft.Playwright.Helpers.TaskHelper.<>c__DisplayClass2_0.<WithTimeout>b__0()
+[myblog-e2e] |         /_/src/Playwright/Helpers/TaskHelper.cs(108,0): at Microsoft.Playwright.Helpers.TaskHelper.WithTimeout(Task task, Func`1 timeoutAction, TimeSpan timeout, CancellationToken cancellationToken)
+[myblog-e2e] |         /_/src/Playwright/Core/Waiter.cs(218,0): at Microsoft.Playwright.Core.Waiter.WaitForPromiseAsync[T](Task`1 task, Action dispose)
+[myblog-e2e] |     MyBlog.E2E.Tests.AdminPageTests.AdminDashboard_HasNewPostLink [FAIL]
+[myblog-e2e] |       System.TimeoutException : Timeout 30000ms exceeded.
+[myblog-e2e] |       =========================== logs ===========================
+[myblog-e2e] |       waiting for navigation to "**/admin**" until "Load"
+[myblog-e2e] |         navigated to "http://myblog-web:5000/login"
+[myblog-e2e] |       ============================================================
+[myblog-e2e] |       ---- System.TimeoutException : Timeout 30000ms exceeded.
+[myblog-e2e] |       Stack Trace:
+[myblog-e2e] |         /_/src/Playwright/Core/Waiter.cs(226,0): at Microsoft.Playwright.Core.Waiter.WaitForPromiseAsync[T](Task`1 task, Action dispose)
+[myblog-e2e] |         /_/src/Playwright/Core/Frame.cs(321,0): at Microsoft.Playwright.Core.Frame.WaitForNavigationInternalAsync(Waiter waiter, String urlString, Func`2 urlFunc, Regex urlRegex, Nullable`1 waitUntil)
+[myblog-e2e] |         /_/src/Playwright/Core/Frame.cs(285,0): at Microsoft.Playwright.Core.Frame.RunAndWaitForNavigationAsync(Func`1 action, FrameRunAndWaitForNavigationOptions options)
+[myblog-e2e] |         Tests/AdminPageTests.cs(26,0): at MyBlog.E2E.Tests.AdminPageTests.LoginAsAdminAsync(IPage page)
+[myblog-e2e] |         Tests/AdminPageTests.cs(58,0): at MyBlog.E2E.Tests.AdminPageTests.AdminDashboard_HasNewPostLink()
+[myblog-e2e] |         --- End of stack trace from previous location ---
+[myblog-e2e] |         ----- Inner Stack Trace -----
+[myblog-e2e] |         /_/src/Playwright/Helpers/TaskHelper.cs(72,0): at Microsoft.Playwright.Helpers.TaskHelper.<>c__DisplayClass2_0.<WithTimeout>b__0()
+[myblog-e2e] |         /_/src/Playwright/Helpers/TaskHelper.cs(108,0): at Microsoft.Playwright.Helpers.TaskHelper.WithTimeout(Task task, Func`1 timeoutAction, TimeSpan timeout, CancellationToken cancellationToken)
+[myblog-e2e] |         /_/src/Playwright/Core/Waiter.cs(218,0): at Microsoft.Playwright.Core.Waiter.WaitForPromiseAsync[T](Task`1 task, Action dispose)
+[myblog-e2e] |     MyBlog.E2E.Tests.AdminPageTests.AdminDashboard_HasManageImagesLink [FAIL]
+[myblog-e2e] |       System.TimeoutException : Timeout 30000ms exceeded.
+[myblog-e2e] |       =========================== logs ===========================
+[myblog-e2e] |       waiting for navigation to "**/admin**" until "Load"
+[myblog-e2e] |         navigated to "http://myblog-web:5000/login"
+[myblog-e2e] |       ============================================================
+[myblog-e2e] |       ---- System.TimeoutException : Timeout 30000ms exceeded.
+[myblog-e2e] |       Stack Trace:
+[myblog-e2e] |         /_/src/Playwright/Core/Waiter.cs(226,0): at Microsoft.Playwright.Core.Waiter.WaitForPromiseAsync[T](Task`1 task, Action dispose)
+[myblog-e2e] |         /_/src/Playwright/Core/Frame.cs(321,0): at Microsoft.Playwright.Core.Frame.WaitForNavigationInternalAsync(Waiter waiter, String urlString, Func`2 urlFunc, Regex urlRegex, Nullable`1 waitUntil)
+[myblog-e2e] |         /_/src/Playwright/Core/Frame.cs(285,0): at Microsoft.Playwright.Core.Frame.RunAndWaitForNavigationAsync(Func`1 action, FrameRunAndWaitForNavigationOptions options)
+[myblog-e2e] |         Tests/AdminPageTests.cs(26,0): at MyBlog.E2E.Tests.AdminPageTests.LoginAsAdminAsync(IPage page)
+[myblog-e2e] |         Tests/AdminPageTests.cs(68,0): at MyBlog.E2E.Tests.AdminPageTests.AdminDashboard_HasManageImagesLink()
+[myblog-e2e] |         --- End of stack trace from previous location ---
+[myblog-e2e] |         ----- Inner Stack Trace -----
+[myblog-e2e] |         /_/src/Playwright/Helpers/TaskHelper.cs(72,0): at Microsoft.Playwright.Helpers.TaskHelper.<>c__DisplayClass2_0.<WithTimeout>b__0()
+[myblog-e2e] |         /_/src/Playwright/Helpers/TaskHelper.cs(108,0): at Microsoft.Playwright.Helpers.TaskHelper.WithTimeout(Task task, Func`1 timeoutAction, TimeSpan timeout, CancellationToken cancellationToken)
+[myblog-e2e] |         /_/src/Playwright/Core/Waiter.cs(218,0): at Microsoft.Playwright.Core.Waiter.WaitForPromiseAsync[T](Task`1 task, Action dispose)
+[myblog-e2e] |     MyBlog.E2E.Tests.AdminPageTests.AdminDashboard_HasManagePostsLink [FAIL]
+[myblog-e2e] |       System.TimeoutException : Timeout 30000ms exceeded.
+[myblog-e2e] |       =========================== logs ===========================
+[myblog-e2e] |       waiting for navigation to "**/admin**" until "Load"
+[myblog-e2e] |         navigated to "http://myblog-web:5000/login"
+[myblog-e2e] |       ============================================================
+[myblog-e2e] |       ---- System.TimeoutException : Timeout 30000ms exceeded.
+[myblog-e2e] |       Stack Trace:
+[myblog-e2e] |         /_/src/Playwright/Core/Waiter.cs(226,0): at Microsoft.Playwright.Core.Waiter.WaitForPromiseAsync[T](Task`1 task, Action dispose)
+[myblog-e2e] |         /_/src/Playwright/Core/Frame.cs(321,0): at Microsoft.Playwright.Core.Frame.WaitForNavigationInternalAsync(Waiter waiter, String urlString, Func`2 urlFunc, Regex urlRegex, Nullable`1 waitUntil)
+[myblog-e2e] |         /_/src/Playwright/Core/Frame.cs(285,0): at Microsoft.Playwright.Core.Frame.RunAndWaitForNavigationAsync(Func`1 action, FrameRunAndWaitForNavigationOptions options)
+[myblog-e2e] |         Tests/AdminPageTests.cs(26,0): at MyBlog.E2E.Tests.AdminPageTests.LoginAsAdminAsync(IPage page)
+[myblog-e2e] |         Tests/AdminPageTests.cs(48,0): at MyBlog.E2E.Tests.AdminPageTests.AdminDashboard_HasManagePostsLink()
+[myblog-e2e] |         --- End of stack trace from previous location ---
+[myblog-e2e] |         ----- Inner Stack Trace -----
+[myblog-e2e] |         /_/src/Playwright/Helpers/TaskHelper.cs(72,0): at Microsoft.Playwright.Helpers.TaskHelper.<>c__DisplayClass2_0.<WithTimeout>b__0()
+[myblog-e2e] |         /_/src/Playwright/Helpers/TaskHelper.cs(108,0): at Microsoft.Playwright.Helpers.TaskHelper.WithTimeout(Task task, Func`1 timeoutAction, TimeSpan timeout, CancellationToken cancellationToken)
+[myblog-e2e] |         /_/src/Playwright/Core/Waiter.cs(218,0): at Microsoft.Playwright.Core.Waiter.WaitForPromiseAsync[T](Task`1 task, Action dispose)
+[myblog-e2e] |     MyBlog.E2E.Tests.AdminPageTests.AdminImages_LoadsSuccessfully [FAIL]
+[myblog-e2e] |       System.TimeoutException : Timeout 30000ms exceeded.
+[myblog-e2e] |       =========================== logs ===========================
+[myblog-e2e] |       waiting for navigation to "**/admin**" until "Load"
+[myblog-e2e] |         navigated to "http://myblog-web:5000/login"
+[myblog-e2e] |       ============================================================
+[myblog-e2e] |       ---- System.TimeoutException : Timeout 30000ms exceeded.
+[myblog-e2e] |       Stack Trace:
+[myblog-e2e] |         /_/src/Playwright/Core/Waiter.cs(226,0): at Microsoft.Playwright.Core.Waiter.WaitForPromiseAsync[T](Task`1 task, Action dispose)
+[myblog-e2e] |         /_/src/Playwright/Core/Frame.cs(321,0): at Microsoft.Playwright.Core.Frame.WaitForNavigationInternalAsync(Waiter waiter, String urlString, Func`2 urlFunc, Regex urlRegex, Nullable`1 waitUntil)
+[myblog-e2e] |         /_/src/Playwright/Core/Frame.cs(285,0): at Microsoft.Playwright.Core.Frame.RunAndWaitForNavigationAsync(Func`1 action, FrameRunAndWaitForNavigationOptions options)
+[myblog-e2e] |         Tests/AdminPageTests.cs(26,0): at MyBlog.E2E.Tests.AdminPageTests.LoginAsAdminAsync(IPage page)
+[myblog-e2e] |         Tests/AdminPageTests.cs(128,0): at MyBlog.E2E.Tests.AdminPageTests.AdminImages_LoadsSuccessfully()
+[myblog-e2e] |         --- End of stack trace from previous location ---
+[myblog-e2e] |         ----- Inner Stack Trace -----
+[myblog-e2e] |         /_/src/Playwright/Helpers/TaskHelper.cs(72,0): at Microsoft.Playwright.Helpers.TaskHelper.<>c__DisplayClass2_0.<WithTimeout>b__0()
+[myblog-e2e] |         /_/src/Playwright/Helpers/TaskHelper.cs(108,0): at Microsoft.Playwright.Helpers.TaskHelper.WithTimeout(Task task, Func`1 timeoutAction, TimeSpan timeout, CancellationToken cancellationToken)
+[myblog-e2e] |         /_/src/Playwright/Core/Waiter.cs(218,0): at Microsoft.Playwright.Core.Waiter.WaitForPromiseAsync[T](Task`1 task, Action dispose)
+[myblog-e2e] |     MyBlog.E2E.Tests.AdminPageTests.AdminPosts_HasNewPostButton [FAIL]
+[myblog-e2e] |       System.TimeoutException : Timeout 30000ms exceeded.
+[myblog-e2e] |       =========================== logs ===========================
+[myblog-e2e] |       waiting for navigation to "**/admin**" until "Load"
+[myblog-e2e] |         navigated to "http://myblog-web:5000/login"
+[myblog-e2e] |       ============================================================
+[myblog-e2e] |       ---- System.TimeoutException : Timeout 30000ms exceeded.
+[myblog-e2e] |       Stack Trace:
+[myblog-e2e] |         /_/src/Playwright/Core/Waiter.cs(226,0): at Microsoft.Playwright.Core.Waiter.WaitForPromiseAsync[T](Task`1 task, Action dispose)
+[myblog-e2e] |         /_/src/Playwright/Core/Frame.cs(321,0): at Microsoft.Playwright.Core.Frame.WaitForNavigationInternalAsync(Waiter waiter, String urlString, Func`2 urlFunc, Regex urlRegex, Nullable`1 waitUntil)
+[myblog-e2e] |         /_/src/Playwright/Core/Frame.cs(285,0): at Microsoft.Playwright.Core.Frame.RunAndWaitForNavigationAsync(Func`1 action, FrameRunAndWaitForNavigationOptions options)
+[myblog-e2e] |         Tests/AdminPageTests.cs(26,0): at MyBlog.E2E.Tests.AdminPageTests.LoginAsAdminAsync(IPage page)
+[myblog-e2e] |         Tests/AdminPageTests.cs(90,0): at MyBlog.E2E.Tests.AdminPageTests.AdminPosts_HasNewPostButton()
+[myblog-e2e] |         --- End of stack trace from previous location ---
+[myblog-e2e] |         ----- Inner Stack Trace -----
+[myblog-e2e] |         /_/src/Playwright/Helpers/TaskHelper.cs(72,0): at Microsoft.Playwright.Helpers.TaskHelper.<>c__DisplayClass2_0.<WithTimeout>b__0()
+[myblog-e2e] |         /_/src/Playwright/Helpers/TaskHelper.cs(108,0): at Microsoft.Playwright.Helpers.TaskHelper.WithTimeout(Task task, Func`1 timeoutAction, TimeSpan timeout, CancellationToken cancellationToken)
+[myblog-e2e] |         /_/src/Playwright/Core/Waiter.cs(218,0): at Microsoft.Playwright.Core.Waiter.WaitForPromiseAsync[T](Task`1 task, Action dispose)
+[myblog-e2e] |     MyBlog.E2E.Tests.AdminPageTests.AdminNewPost_LoadsSuccessfully [FAIL]
+[myblog-e2e] |       System.TimeoutException : Timeout 30000ms exceeded.
+[myblog-e2e] |       =========================== logs ===========================
+[myblog-e2e] |       waiting for navigation to "**/admin**" until "Load"
+[myblog-e2e] |         navigated to "http://myblog-web:5000/login"
+[myblog-e2e] |       ============================================================
+[myblog-e2e] |       ---- System.TimeoutException : Timeout 30000ms exceeded.
+[myblog-e2e] |       Stack Trace:
+[myblog-e2e] |         /_/src/Playwright/Core/Waiter.cs(226,0): at Microsoft.Playwright.Core.Waiter.WaitForPromiseAsync[T](Task`1 task, Action dispose)
+[myblog-e2e] |         /_/src/Playwright/Core/Frame.cs(321,0): at Microsoft.Playwright.Core.Frame.WaitForNavigationInternalAsync(Waiter waiter, String urlString, Func`2 urlFunc, Regex urlRegex, Nullable`1 waitUntil)
+[myblog-e2e] |         /_/src/Playwright/Core/Frame.cs(285,0): at Microsoft.Playwright.Core.Frame.RunAndWaitForNavigationAsync(Func`1 action, FrameRunAndWaitForNavigationOptions options)
+[myblog-e2e] |         Tests/AdminPageTests.cs(26,0): at MyBlog.E2E.Tests.AdminPageTests.LoginAsAdminAsync(IPage page)
+[myblog-e2e] |         Tests/AdminPageTests.cs(102,0): at MyBlog.E2E.Tests.AdminPageTests.AdminNewPost_LoadsSuccessfully()
+[myblog-e2e] |         --- End of stack trace from previous location ---
+[myblog-e2e] |         ----- Inner Stack Trace -----
+[myblog-e2e] |         /_/src/Playwright/Helpers/TaskHelper.cs(72,0): at Microsoft.Playwright.Helpers.TaskHelper.<>c__DisplayClass2_0.<WithTimeout>b__0()
+[myblog-e2e] |         /_/src/Playwright/Helpers/TaskHelper.cs(108,0): at Microsoft.Playwright.Helpers.TaskHelper.WithTimeout(Task task, Func`1 timeoutAction, TimeSpan timeout, CancellationToken cancellationToken)
+[myblog-e2e] |         /_/src/Playwright/Core/Waiter.cs(218,0): at Microsoft.Playwright.Core.Waiter.WaitForPromiseAsync[T](Task`1 task, Action dispose)
+[myblog-e2e] |     MyBlog.E2E.Tests.AdminPageTests.AdminNavigation_CanNavigateBetweenPages [FAIL]
+[myblog-e2e] |       System.TimeoutException : Timeout 30000ms exceeded.
+[myblog-e2e] |       =========================== logs ===========================
+[myblog-e2e] |       waiting for navigation to "**/admin**" until "Load"
+[myblog-e2e] |         navigated to "http://myblog-web:5000/login"
+[myblog-e2e] |       ============================================================
+[myblog-e2e] |       ---- System.TimeoutException : Timeout 30000ms exceeded.
+[myblog-e2e] |       Stack Trace:
+[myblog-e2e] |         /_/src/Playwright/Core/Waiter.cs(226,0): at Microsoft.Playwright.Core.Waiter.WaitForPromiseAsync[T](Task`1 task, Action dispose)
+[myblog-e2e] |         /_/src/Playwright/Core/Frame.cs(321,0): at Microsoft.Playwright.Core.Frame.WaitForNavigationInternalAsync(Waiter waiter, String urlString, Func`2 urlFunc, Regex urlRegex, Nullable`1 waitUntil)
+[myblog-e2e] |         /_/src/Playwright/Core/Frame.cs(285,0): at Microsoft.Playwright.Core.Frame.RunAndWaitForNavigationAsync(Func`1 action, FrameRunAndWaitForNavigationOptions options)
+[myblog-e2e] |         Tests/AdminPageTests.cs(26,0): at MyBlog.E2E.Tests.AdminPageTests.LoginAsAdminAsync(IPage page)
+[myblog-e2e] |         Tests/AdminPageTests.cs(140,0): at MyBlog.E2E.Tests.AdminPageTests.AdminNavigation_CanNavigateBetweenPages()
+[myblog-e2e] |         --- End of stack trace from previous location ---
+[myblog-e2e] |         ----- Inner Stack Trace -----
+[myblog-e2e] |         /_/src/Playwright/Helpers/TaskHelper.cs(72,0): at Microsoft.Playwright.Helpers.TaskHelper.<>c__DisplayClass2_0.<WithTimeout>b__0()
+[myblog-e2e] |         /_/src/Playwright/Helpers/TaskHelper.cs(108,0): at Microsoft.Playwright.Helpers.TaskHelper.WithTimeout(Task task, Func`1 timeoutAction, TimeSpan timeout, CancellationToken cancellationToken)
+[myblog-e2e] |         /_/src/Playwright/Core/Waiter.cs(218,0): at Microsoft.Playwright.Core.Waiter.WaitForPromiseAsync[T](Task`1 task, Action dispose)
+[myblog-e2e] |     MyBlog.E2E.Tests.AdminPageTests.AdminNewPost_HasContentEditor [FAIL]
+[myblog-e2e] |       System.TimeoutException : Timeout 30000ms exceeded.
+[myblog-e2e] |       =========================== logs ===========================
+[myblog-e2e] |       waiting for navigation to "**/admin**" until "Load"
+[myblog-e2e] |         navigated to "http://myblog-web:5000/login"
+[myblog-e2e] |       ============================================================
+[myblog-e2e] |       ---- System.TimeoutException : Timeout 30000ms exceeded.
+[myblog-e2e] |       Stack Trace:
+[myblog-e2e] |         /_/src/Playwright/Core/Waiter.cs(226,0): at Microsoft.Playwright.Core.Waiter.WaitForPromiseAsync[T](Task`1 task, Action dispose)
+[myblog-e2e] |         /_/src/Playwright/Core/Frame.cs(321,0): at Microsoft.Playwright.Core.Frame.WaitForNavigationInternalAsync(Waiter waiter, String urlString, Func`2 urlFunc, Regex urlRegex, Nullable`1 waitUntil)
+[myblog-e2e] |         /_/src/Playwright/Core/Frame.cs(285,0): at Microsoft.Playwright.Core.Frame.RunAndWaitForNavigationAsync(Func`1 action, FrameRunAndWaitForNavigationOptions options)
+[myblog-e2e] |         Tests/AdminPageTests.cs(26,0): at MyBlog.E2E.Tests.AdminPageTests.LoginAsAdminAsync(IPage page)
+[myblog-e2e] |         Tests/AdminPageTests.cs(115,0): at MyBlog.E2E.Tests.AdminPageTests.AdminNewPost_HasContentEditor()
+[myblog-e2e] |         --- End of stack trace from previous location ---
+[myblog-e2e] |         ----- Inner Stack Trace -----
+[myblog-e2e] |         /_/src/Playwright/Helpers/TaskHelper.cs(72,0): at Microsoft.Playwright.Helpers.TaskHelper.<>c__DisplayClass2_0.<WithTimeout>b__0()
+[myblog-e2e] |         /_/src/Playwright/Helpers/TaskHelper.cs(108,0): at Microsoft.Playwright.Helpers.TaskHelper.WithTimeout(Task task, Func`1 timeoutAction, TimeSpan timeout, CancellationToken cancellationToken)
+[myblog-e2e] |         /_/src/Playwright/Core/Waiter.cs(218,0): at Microsoft.Playwright.Core.Waiter.WaitForPromiseAsync[T](Task`1 task, Action dispose)
+[myblog-e2e] |     MyBlog.E2E.Tests.LoginPageTests.LoginPage_InvalidCredentials_ShowsError [FAIL]
+[myblog-e2e] |       Expected error indication after invalid login
+[myblog-e2e] |       Stack Trace:
+[myblog-e2e] |         Tests/LoginPageTests.cs(140,0): at MyBlog.E2E.Tests.LoginPageTests.LoginPage_InvalidCredentials_ShowsError()
+[myblog-e2e] |         --- End of stack trace from previous location ---
+[myblog-e2e] |     MyBlog.E2E.Tests.LoginPageTests.LoginPage_FormHasCorrectAction [FAIL]
+[myblog-e2e] |       Microsoft.Playwright.PlaywrightException : Locator expected to be visible
+[myblog-e2e] |       Error: element(s) not found 
+[myblog-e2e] |       Call log:
+[myblog-e2e] |         - Expect "ToBeVisibleAsync" with timeout 5000ms
+[myblog-e2e] |         - waiting for Locator("form[action='/account/login']")
+[myblog-e2e] |       Stack Trace:
+[myblog-e2e] |         /_/src/Playwright/Core/AssertionsBase.cs(90,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+[myblog-e2e] |         /_/src/Playwright/Core/AssertionsBase.cs(66,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+[myblog-e2e] |         Tests/LoginPageTests.cs(112,0): at MyBlog.E2E.Tests.LoginPageTests.LoginPage_FormHasCorrectAction()
+[myblog-e2e] |         --- End of stack trace from previous location ---
+[myblog-e2e] |     MyBlog.E2E.Tests.LoginPageTests.LoginPage_SuccessfulLogin_RedirectsToAdmin [FAIL]
+[myblog-e2e] |       System.TimeoutException : Timeout 30000ms exceeded.
+[myblog-e2e] |       =========================== logs ===========================
+[myblog-e2e] |       waiting for navigation to "**/admin**" until "Load"
+[myblog-e2e] |         navigated to "http://myblog-web:5000/login"
+[myblog-e2e] |       ============================================================
+[myblog-e2e] |       ---- System.TimeoutException : Timeout 30000ms exceeded.
+[myblog-e2e] |       Stack Trace:
+[myblog-e2e] |         /_/src/Playwright/Core/Waiter.cs(226,0): at Microsoft.Playwright.Core.Waiter.WaitForPromiseAsync[T](Task`1 task, Action dispose)
+[myblog-e2e] |         /_/src/Playwright/Core/Frame.cs(321,0): at Microsoft.Playwright.Core.Frame.WaitForNavigationInternalAsync(Waiter waiter, String urlString, Func`2 urlFunc, Regex urlRegex, Nullable`1 waitUntil)
+[myblog-e2e] |         /_/src/Playwright/Core/Frame.cs(285,0): at Microsoft.Playwright.Core.Frame.RunAndWaitForNavigationAsync(Func`1 action, FrameRunAndWaitForNavigationOptions options)
+[myblog-e2e] |         Tests/LoginPageTests.cs(157,0): at MyBlog.E2E.Tests.LoginPageTests.LoginPage_SuccessfulLogin_RedirectsToAdmin()
+[myblog-e2e] |         --- End of stack trace from previous location ---
+[myblog-e2e] |         ----- Inner Stack Trace -----
+[myblog-e2e] |         /_/src/Playwright/Helpers/TaskHelper.cs(72,0): at Microsoft.Playwright.Helpers.TaskHelper.<>c__DisplayClass2_0.<WithTimeout>b__0()
+[myblog-e2e] |         /_/src/Playwright/Helpers/TaskHelper.cs(108,0): at Microsoft.Playwright.Helpers.TaskHelper.WithTimeout(Task task, Func`1 timeoutAction, TimeSpan timeout, CancellationToken cancellationToken)
+[myblog-e2e] |         /_/src/Playwright/Core/Waiter.cs(218,0): at Microsoft.Playwright.Core.Waiter.WaitForPromiseAsync[T](Task`1 task, Action dispose)
+[myblog-e2e] |     MyBlog.E2E.Tests.AuthenticationTests.Login_WithInvalidPassword_ShowsError [FAIL]
+[myblog-e2e] |       Expected error indication after invalid login
+[myblog-e2e] |       Stack Trace:
+[myblog-e2e] |         Tests/AuthenticationTests.cs(184,0): at MyBlog.E2E.Tests.AuthenticationTests.Login_WithInvalidPassword_ShowsError()
+[myblog-e2e] |         --- End of stack trace from previous location ---
+[myblog-e2e] |     MyBlog.E2E.Tests.AuthenticationTests.Login_WithInvalidUsername_ShowsError [FAIL]
+[myblog-e2e] |       Expected error indication after invalid login
+[myblog-e2e] |       Stack Trace:
+[myblog-e2e] |         Tests/AuthenticationTests.cs(212,0): at MyBlog.E2E.Tests.AuthenticationTests.Login_WithInvalidUsername_ShowsError()
+[myblog-e2e] |         --- End of stack trace from previous location ---
+[myblog-e2e] |     MyBlog.E2E.Tests.AuthenticationTests.AdminDashboard_LoadsSuccessfully_WhenAuthenticated [FAIL]
+[myblog-e2e] |       System.TimeoutException : Timeout 30000ms exceeded.
+[myblog-e2e] |       =========================== logs ===========================
+[myblog-e2e] |       waiting for navigation to "**/admin**" until "Load"
+[myblog-e2e] |         navigated to "http://myblog-web:5000/login"
+[myblog-e2e] |       ============================================================
+[myblog-e2e] |       ---- System.TimeoutException : Timeout 30000ms exceeded.
+[myblog-e2e] |       Stack Trace:
+[myblog-e2e] |         /_/src/Playwright/Core/Waiter.cs(226,0): at Microsoft.Playwright.Core.Waiter.WaitForPromiseAsync[T](Task`1 task, Action dispose)
+[myblog-e2e] |         /_/src/Playwright/Core/Frame.cs(321,0): at Microsoft.Playwright.Core.Frame.WaitForNavigationInternalAsync(Waiter waiter, String urlString, Func`2 urlFunc, Regex urlRegex, Nullable`1 waitUntil)
+[myblog-e2e] |         /_/src/Playwright/Core/Frame.cs(285,0): at Microsoft.Playwright.Core.Frame.RunAndWaitForNavigationAsync(Func`1 action, FrameRunAndWaitForNavigationOptions options)
+[myblog-e2e] |         Tests/AuthenticationTests.cs(227,0): at MyBlog.E2E.Tests.AuthenticationTests.AdminDashboard_LoadsSuccessfully_WhenAuthenticated()
+[myblog-e2e] |         --- End of stack trace from previous location ---
+[myblog-e2e] |         ----- Inner Stack Trace -----
+[myblog-e2e] |         /_/src/Playwright/Helpers/TaskHelper.cs(72,0): at Microsoft.Playwright.Helpers.TaskHelper.<>c__DisplayClass2_0.<WithTimeout>b__0()
+[myblog-e2e] |         /_/src/Playwright/Helpers/TaskHelper.cs(108,0): at Microsoft.Playwright.Helpers.TaskHelper.WithTimeout(Task task, Func`1 timeoutAction, TimeSpan timeout, CancellationToken cancellationToken)
+[myblog-e2e] |         /_/src/Playwright/Core/Waiter.cs(218,0): at Microsoft.Playwright.Core.Waiter.WaitForPromiseAsync[T](Task`1 task, Action dispose)
+[myblog-e2e] |     MyBlog.E2E.Tests.AuthenticationTests.Logout_RedirectsToHome [FAIL]
+[myblog-e2e] |       System.TimeoutException : Timeout 30000ms exceeded.
+[myblog-e2e] |       =========================== logs ===========================
+[myblog-e2e] |       waiting for navigation to "**/admin**" until "Load"
+[myblog-e2e] |         navigated to "http://myblog-web:5000/login"
+[myblog-e2e] |       ============================================================
+[myblog-e2e] |       ---- System.TimeoutException : Timeout 30000ms exceeded.
+[myblog-e2e] |       Stack Trace:
+[myblog-e2e] |         /_/src/Playwright/Core/Waiter.cs(226,0): at Microsoft.Playwright.Core.Waiter.WaitForPromiseAsync[T](Task`1 task, Action dispose)
+[myblog-e2e] |         /_/src/Playwright/Core/Frame.cs(321,0): at Microsoft.Playwright.Core.Frame.WaitForNavigationInternalAsync(Waiter waiter, String urlString, Func`2 urlFunc, Regex urlRegex, Nullable`1 waitUntil)
+[myblog-e2e] |         /_/src/Playwright/Core/Frame.cs(285,0): at Microsoft.Playwright.Core.Frame.RunAndWaitForNavigationAsync(Func`1 action, FrameRunAndWaitForNavigationOptions options)
+[myblog-e2e] |         Tests/AuthenticationTests.cs(109,0): at MyBlog.E2E.Tests.AuthenticationTests.Logout_RedirectsToHome()
+[myblog-e2e] |         --- End of stack trace from previous location ---
+[myblog-e2e] |         ----- Inner Stack Trace -----
+[myblog-e2e] |         /_/src/Playwright/Helpers/TaskHelper.cs(72,0): at Microsoft.Playwright.Helpers.TaskHelper.<>c__DisplayClass2_0.<WithTimeout>b__0()
+[myblog-e2e] |         /_/src/Playwright/Helpers/TaskHelper.cs(108,0): at Microsoft.Playwright.Helpers.TaskHelper.WithTimeout(Task task, Func`1 timeoutAction, TimeSpan timeout, CancellationToken cancellationToken)
+[myblog-e2e] |         /_/src/Playwright/Core/Waiter.cs(218,0): at Microsoft.Playwright.Core.Waiter.WaitForPromiseAsync[T](Task`1 task, Action dispose)
+[myblog-e2e] |     MyBlog.E2E.Tests.AuthenticationTests.Login_WithDefaultCredentials_Succeeds [FAIL]
+[myblog-e2e] |       System.TimeoutException : Timeout 30000ms exceeded.
+[myblog-e2e] |       =========================== logs ===========================
+[myblog-e2e] |       waiting for navigation to "**/admin**" until "Load"
+[myblog-e2e] |         navigated to "http://myblog-web:5000/login"
+[myblog-e2e] |       ============================================================
+[myblog-e2e] |       ---- System.TimeoutException : Timeout 30000ms exceeded.
+[myblog-e2e] |       Stack Trace:
+[myblog-e2e] |         /_/src/Playwright/Core/Waiter.cs(226,0): at Microsoft.Playwright.Core.Waiter.WaitForPromiseAsync[T](Task`1 task, Action dispose)
+[myblog-e2e] |         /_/src/Playwright/Core/Frame.cs(321,0): at Microsoft.Playwright.Core.Frame.WaitForNavigationInternalAsync(Waiter waiter, String urlString, Func`2 urlFunc, Regex urlRegex, Nullable`1 waitUntil)
+[myblog-e2e] |         /_/src/Playwright/Core/Frame.cs(285,0): at Microsoft.Playwright.Core.Frame.RunAndWaitForNavigationAsync(Func`1 action, FrameRunAndWaitForNavigationOptions options)
+[myblog-e2e] |         Tests/AuthenticationTests.cs(61,0): at MyBlog.E2E.Tests.AuthenticationTests.Login_WithDefaultCredentials_Succeeds()
+[myblog-e2e] |         --- End of stack trace from previous location ---
+[myblog-e2e] |         ----- Inner Stack Trace -----
+[myblog-e2e] |         /_/src/Playwright/Helpers/TaskHelper.cs(72,0): at Microsoft.Playwright.Helpers.TaskHelper.<>c__DisplayClass2_0.<WithTimeout>b__0()
+[myblog-e2e] |         /_/src/Playwright/Helpers/TaskHelper.cs(108,0): at Microsoft.Playwright.Helpers.TaskHelper.WithTimeout(Task task, Func`1 timeoutAction, TimeSpan timeout, CancellationToken cancellationToken)
+[myblog-e2e] |         /_/src/Playwright/Core/Waiter.cs(218,0): at Microsoft.Playwright.Core.Waiter.WaitForPromiseAsync[T](Task`1 task, Action dispose)
+[myblog-e2e] |     MyBlog.E2E.Tests.AuthenticationTests.Logout_RemovesAdminLink [FAIL]
+[myblog-e2e] |       System.TimeoutException : Timeout 30000ms exceeded.
+[myblog-e2e] |       =========================== logs ===========================
+[myblog-e2e] |       waiting for navigation to "**/admin**" until "Load"
+[myblog-e2e] |         navigated to "http://myblog-web:5000/login"
+[myblog-e2e] |       ============================================================
+[myblog-e2e] |       ---- System.TimeoutException : Timeout 30000ms exceeded.
+[myblog-e2e] |       Stack Trace:
+[myblog-e2e] |         /_/src/Playwright/Core/Waiter.cs(226,0): at Microsoft.Playwright.Core.Waiter.WaitForPromiseAsync[T](Task`1 task, Action dispose)
+[myblog-e2e] |         /_/src/Playwright/Core/Frame.cs(321,0): at Microsoft.Playwright.Core.Frame.WaitForNavigationInternalAsync(Waiter waiter, String urlString, Func`2 urlFunc, Regex urlRegex, Nullable`1 waitUntil)
+[myblog-e2e] |         /_/src/Playwright/Core/Frame.cs(285,0): at Microsoft.Playwright.Core.Frame.RunAndWaitForNavigationAsync(Func`1 action, FrameRunAndWaitForNavigationOptions options)
+[myblog-e2e] |         Tests/AuthenticationTests.cs(141,0): at MyBlog.E2E.Tests.AuthenticationTests.Logout_RemovesAdminLink()
+[myblog-e2e] |         --- End of stack trace from previous location ---
+[myblog-e2e] |         ----- Inner Stack Trace -----
+[myblog-e2e] |         /_/src/Playwright/Helpers/TaskHelper.cs(72,0): at Microsoft.Playwright.Helpers.TaskHelper.<>c__DisplayClass2_0.<WithTimeout>b__0()
+[myblog-e2e] |         /_/src/Playwright/Helpers/TaskHelper.cs(108,0): at Microsoft.Playwright.Helpers.TaskHelper.WithTimeout(Task task, Func`1 timeoutAction, TimeSpan timeout, CancellationToken cancellationToken)
+[myblog-e2e] |         /_/src/Playwright/Core/Waiter.cs(218,0): at Microsoft.Playwright.Core.Waiter.WaitForPromiseAsync[T](Task`1 task, Action dispose)
+[myblog-e2e] |     MyBlog.E2E.Tests.AuthenticationTests.Login_ShowsAdminLink_WhenAuthenticated [FAIL]
+[myblog-e2e] |       System.TimeoutException : Timeout 30000ms exceeded.
+[myblog-e2e] |       =========================== logs ===========================
+[myblog-e2e] |       waiting for navigation to "**/admin**" until "Load"
+[myblog-e2e] |         navigated to "http://myblog-web:5000/login"
+[myblog-e2e] |       ============================================================
+[myblog-e2e] |       ---- System.TimeoutException : Timeout 30000ms exceeded.
+[myblog-e2e] |       Stack Trace:
+[myblog-e2e] |         /_/src/Playwright/Core/Waiter.cs(226,0): at Microsoft.Playwright.Core.Waiter.WaitForPromiseAsync[T](Task`1 task, Action dispose)
+[myblog-e2e] |         /_/src/Playwright/Core/Frame.cs(321,0): at Microsoft.Playwright.Core.Frame.WaitForNavigationInternalAsync(Waiter waiter, String urlString, Func`2 urlFunc, Regex urlRegex, Nullable`1 waitUntil)
+[myblog-e2e] |         /_/src/Playwright/Core/Frame.cs(285,0): at Microsoft.Playwright.Core.Frame.RunAndWaitForNavigationAsync(Func`1 action, FrameRunAndWaitForNavigationOptions options)
+[myblog-e2e] |         Tests/AuthenticationTests.cs(84,0): at MyBlog.E2E.Tests.AuthenticationTests.Login_ShowsAdminLink_WhenAuthenticated()
+[myblog-e2e] |         --- End of stack trace from previous location ---
+[myblog-e2e] |         ----- Inner Stack Trace -----
+[myblog-e2e] |         /_/src/Playwright/Helpers/TaskHelper.cs(72,0): at Microsoft.Playwright.Helpers.TaskHelper.<>c__DisplayClass2_0.<WithTimeout>b__0()
+[myblog-e2e] |         /_/src/Playwright/Helpers/TaskHelper.cs(108,0): at Microsoft.Playwright.Helpers.TaskHelper.WithTimeout(Task task, Func`1 timeoutAction, TimeSpan timeout, CancellationToken cancellationToken)
+[myblog-e2e] |         /_/src/Playwright/Core/Waiter.cs(218,0): at Microsoft.Playwright.Core.Waiter.WaitForPromiseAsync[T](Task`1 task, Action dispose)
+[myblog-e2e] |   Finished:    MyBlog.E2E (ID = '4d488734a9156ea8719a93bca3e9cb47dfeac4715a7981582060bf185a1e7bf4')
+[myblog-e2e] | === TEST EXECUTION SUMMARY ===
+[myblog-e2e] |    MyBlog.E2E  Total: 78, Errors: 0, Failed: 21, Skipped: 0, Not Run: 0, Time: 538.292s
+usage statistics 
+current:  52% 
+week:     28%

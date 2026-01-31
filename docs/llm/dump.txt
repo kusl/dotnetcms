@@ -1,6 +1,6 @@
 ===============================================================================
 PROJECT EXPORT
-Generated: Sat Jan 31 10:22:23 AM EST 2026
+Generated: Sat Jan 31 11:25:47 AM EST 2026
 Project Path: /home/kushal/src/dotnet/MyBlog
 ===============================================================================
 
@@ -68,13 +68,18 @@ DIRECTORY STRUCTURE:
 │   │   │   ├── 0057.txt
 │   │   │   ├── 0058.txt
 │   │   │   ├── 0059.txt
-│   │   │   └── 0060.txt
+│   │   │   ├── 0060.txt
+│   │   │   └── 0061.txt
 │   │   ├── claude.md
 │   │   ├── command.md
 │   │   ├── dump.txt
 │   │   ├── instructions.md
 │   │   ├── kush.runasp.net-WebDeploy.publishSettings
+│   │   ├── logs_20260126_133617.json
+│   │   ├── logs_20260126_152857.json
+│   │   ├── logs_20260127_010505.json
 │   │   ├── memory.md
+│   │   ├── mftp_zip_2026_01_31_16_12_18.zip
 │   │   ├── nice.runasp.net-WebDeploy.publishSettings
 │   │   ├── playwright.md
 │   │   └── secret.log
@@ -13392,8 +13397,8 @@ MODIFIED: 2026-01-26 08:41:34
 
 ================================================================================
 FILE: src/MyBlog.Web/Components/Pages/Admin/PostEditor.razor
-SIZE: 5.33 KB
-MODIFIED: 2026-01-31 10:19:08
+SIZE: 6.14 KB
+MODIFIED: 2026-01-31 11:22:32
 ================================================================================
 
 @page "/admin/posts/new"
@@ -13404,6 +13409,7 @@ MODIFIED: 2026-01-31 10:19:08
 @inject ISlugService SlugService
 @inject NavigationManager Navigation
 @inject AuthenticationStateProvider AuthStateProvider
+@inject ILogger<PostEditor> Logger
 @using System.Security.Claims
 
 <PageTitle>@(IsEdit ? "Edit Post" : "New Post")</PageTitle>
@@ -13516,7 +13522,14 @@ else
 
             if (string.IsNullOrEmpty(userId))
             {
-                _error = "User not authenticated.";
+                _error = "User not authenticated. Please log in again.";
+                return;
+            }
+
+            if (!Guid.TryParse(userId, out var authorId))
+            {
+                _error = "Invalid user ID. Please log in again.";
+                Logger.LogError("Failed to parse user ID from claims: {UserId}", userId);
                 return;
             }
 
@@ -13539,6 +13552,7 @@ else
                 }
 
                 await PostRepository.UpdateAsync(_existingPost);
+                Logger.LogInformation("Post updated: {PostId} by user {UserId}", _existingPost.Id, authorId);
             }
             else
             {
@@ -13550,19 +13564,25 @@ else
                     Summary = _summary,
                     Content = _content,
                     IsPublished = _isPublished,
-                    AuthorId = Guid.Parse(userId),
+                    AuthorId = authorId,
                     CreatedAtUtc = DateTime.UtcNow,
                     UpdatedAtUtc = DateTime.UtcNow,
                     PublishedAtUtc = _isPublished ? DateTime.UtcNow : null
                 };
                 await PostRepository.CreateAsync(post);
+                Logger.LogInformation("Post created: {PostId} by user {UserId}", post.Id, authorId);
             }
 
             Navigation.NavigateTo("/admin/posts");
         }
         catch (Exception ex)
         {
-            _error = $"Failed to save: {ex.Message}";
+            // Log the full exception including inner exception
+            Logger.LogError(ex, "Failed to save post. Title: {Title}, IsEdit: {IsEdit}", _title, IsEdit);
+            
+            // Show a more detailed error message
+            var innerMessage = ex.InnerException?.Message ?? ex.Message;
+            _error = $"Failed to save: {innerMessage}";
         }
         finally
         {
@@ -13575,7 +13595,7 @@ else
 ================================================================================
 FILE: src/MyBlog.Web/Components/Pages/Admin/PostEditor.razor.css
 SIZE: 2.64 KB
-MODIFIED: 2026-01-31 10:19:19
+MODIFIED: 2026-01-31 11:23:04
 ================================================================================
 
 /* PostEditor.razor.css - Component-scoped styles */
@@ -14207,8 +14227,8 @@ else
 
 ================================================================================
 FILE: src/MyBlog.Web/Components/Pages/Login.razor
-SIZE: 1.25 KB
-MODIFIED: 2026-01-26 20:32:23
+SIZE: 1.32 KB
+MODIFIED: 2026-01-31 11:22:23
 ================================================================================
 
 @page "/login"
@@ -14224,18 +14244,18 @@ MODIFIED: 2026-01-26 20:32:23
         <div class="error-message">@_error</div>
     }
 
-    <form method="post" action="/account/login" data-enhance="false">
+    <form method="post" action="/login" data-enhance="false">
         <AntiforgeryToken />
         <input type="hidden" name="returnUrl" value="@ReturnUrl" />
 
         <div class="form-group">
             <label for="username">Username</label>
-            <input type="text" id="username" name="username" required />
+            <input type="text" id="username" name="username" required autocomplete="username" autocapitalize="none" />
         </div>
 
         <div class="form-group">
             <label for="password">Password</label>
-            <input type="password" id="password" name="password" required />
+            <input type="password" id="password" name="password" required autocomplete="current-password" />
         </div>
 
         <button type="submit" class="btn btn-primary">Login</button>
@@ -14266,7 +14286,7 @@ MODIFIED: 2026-01-26 20:32:23
 ================================================================================
 FILE: src/MyBlog.Web/Components/Pages/Login.razor.css
 SIZE: .46 KB
-MODIFIED: 2026-01-31 10:20:09
+MODIFIED: 2026-01-31 11:23:21
 ================================================================================
 
 /* Login.razor.css - Component-scoped styles */
@@ -14491,7 +14511,7 @@ else
 ================================================================================
 FILE: src/MyBlog.Web/Components/Pages/PostDetail.razor.css
 SIZE: 1.13 KB
-MODIFIED: 2026-01-31 10:19:58
+MODIFIED: 2026-01-31 11:23:13
 ================================================================================
 
 /* PostDetail.razor.css - Component-scoped styles */
@@ -15696,8 +15716,8 @@ MODIFIED: 2026-01-21 11:47:46
 
 ================================================================================
 FILE: src/MyBlog.Web/wwwroot/css/site.css
-SIZE: 23.73 KB
-MODIFIED: 2026-01-31 10:19:45
+SIZE: 22.92 KB
+MODIFIED: 2026-01-31 11:23:32
 ================================================================================
 
 /* =============================================================================
@@ -16462,47 +16482,6 @@ a:hover {
     background-color: var(--color-bg-alt);
 }
 
-/* Mobile-friendly admin table */
-@media (max-width: 768px) {
-    .admin-table {
-        display: block;
-    }
-
-    .admin-table thead {
-        display: none;
-    }
-
-    .admin-table tbody {
-        display: block;
-    }
-
-    .admin-table tr {
-        display: block;
-        margin-bottom: var(--spacing);
-        border: 1px solid var(--color-border);
-        border-radius: var(--radius);
-        padding: var(--spacing);
-    }
-
-    .admin-table td {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 0.5rem 0;
-        border-bottom: 1px dashed var(--color-border);
-    }
-
-    .admin-table td:last-child {
-        border-bottom: none;
-    }
-
-    .admin-table td::before {
-        content: attr(data-label);
-        font-weight: 600;
-        margin-right: 1rem;
-    }
-}
-
 /* =============================================================================
    Utility Classes
    ============================================================================= */
@@ -16673,8 +16652,8 @@ a:hover {
 
 ================================================================================
 FILE: src/MyBlog.Web/wwwroot/js/site.js
-SIZE: 9.91 KB
-MODIFIED: 2026-01-31 10:19:31
+SIZE: 10.60 KB
+MODIFIED: 2026-01-31 11:22:52
 ================================================================================
 
 /**
@@ -16853,40 +16832,35 @@ window.themeManager = {
 
 /**
  * Share post using Web Share API with clipboard fallback
- * Works on mobile browsers including Chrome on iOS
+ * Compatible with Chrome on iOS, Safari, and other mobile browsers
  * @param {string} title - The post title to share
  */
-async function sharePost(title) {
+function sharePost(title) {
     var url = window.location.href;
-    var shareData = {
-        title: title,
-        text: title,
-        url: url
-    };
-
-    // Find the share button to update its state
     var shareBtn = document.querySelector('.share-btn');
 
-    // Check if Web Share API is available and we're in a secure context
-    if (navigator.share && window.isSecureContext) {
-        try {
-            // Web Share API requires user activation, which we have from the click
-            await navigator.share(shareData);
-            // Success - the share dialog was shown
+    // Web Share API requires secure context (HTTPS) and user activation
+    // Check if we can use the native share dialog
+    if (typeof navigator.share === 'function' && window.isSecureContext) {
+        navigator.share({
+            title: title,
+            text: title,
+            url: url
+        }).then(function() {
+            // Share was successful
             showShareSuccess(shareBtn, 'Shared!');
-        } catch (err) {
+        }).catch(function(err) {
             // User cancelled or share failed
-            if (err.name === 'AbortError') {
-                // User cancelled - this is fine, no need to show error
-                return;
+            if (err.name !== 'AbortError') {
+                // AbortError means user cancelled, which is fine
+                // For other errors, fall back to clipboard
+                console.warn('Share failed, falling back to clipboard:', err.message);
+                copyToClipboard(url, shareBtn);
             }
-            // For other errors, fall back to clipboard
-            console.warn('Web Share API failed, falling back to clipboard:', err);
-            await copyToClipboard(url, shareBtn);
-        }
+        });
     } else {
         // Web Share API not available, use clipboard fallback
-        await copyToClipboard(url, shareBtn);
+        copyToClipboard(url, shareBtn);
     }
 }
 
@@ -16895,34 +16869,61 @@ async function sharePost(title) {
  * @param {string} url - The URL to copy
  * @param {Element} shareBtn - The share button element for visual feedback
  */
-async function copyToClipboard(url, shareBtn) {
-    try {
-        // Modern clipboard API
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-            await navigator.clipboard.writeText(url);
+function copyToClipboard(url, shareBtn) {
+    // Try modern clipboard API first
+    if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+        navigator.clipboard.writeText(url).then(function() {
             showShareSuccess(shareBtn, 'Link copied!');
-        } else {
-            // Fallback for older browsers
-            var textArea = document.createElement('textarea');
-            textArea.value = url;
-            textArea.style.position = 'fixed';
-            textArea.style.left = '-999999px';
-            textArea.style.top = '-999999px';
-            document.body.appendChild(textArea);
-            textArea.focus();
-            textArea.select();
+        }).catch(function(err) {
+            console.error('Clipboard API failed:', err);
+            // Fall back to execCommand
+            fallbackCopyToClipboard(url, shareBtn);
+        });
+    } else {
+        // Use fallback for older browsers
+        fallbackCopyToClipboard(url, shareBtn);
+    }
+}
 
-            var successful = document.execCommand('copy');
-            document.body.removeChild(textArea);
+/**
+ * Fallback clipboard copy using execCommand (for older browsers)
+ * @param {string} url - The URL to copy
+ * @param {Element} shareBtn - The share button element for visual feedback
+ */
+function fallbackCopyToClipboard(url, shareBtn) {
+    var textArea = document.createElement('textarea');
+    textArea.value = url;
+    
+    // Avoid scrolling to bottom on iOS
+    textArea.style.cssText = 'position:fixed;top:0;left:0;width:2em;height:2em;padding:0;border:none;outline:none;box-shadow:none;background:transparent;';
+    
+    document.body.appendChild(textArea);
+    
+    // iOS specific handling
+    if (navigator.userAgent.match(/ipad|iphone/i)) {
+        var range = document.createRange();
+        range.selectNodeContents(textArea);
+        var selection = window.getSelection();
+        selection.removeAllRanges();
+        selection.addRange(range);
+        textArea.setSelectionRange(0, 999999);
+    } else {
+        textArea.focus();
+        textArea.select();
+    }
 
-            if (successful) {
-                showShareSuccess(shareBtn, 'Link copied!');
-            } else {
-                showShareError(shareBtn, 'Copy failed');
-            }
-        }
+    var successful = false;
+    try {
+        successful = document.execCommand('copy');
     } catch (err) {
-        console.error('Failed to copy to clipboard:', err);
+        console.error('execCommand copy failed:', err);
+    }
+
+    document.body.removeChild(textArea);
+
+    if (successful) {
+        showShareSuccess(shareBtn, 'Link copied!');
+    } else {
         showShareError(shareBtn, 'Copy failed');
     }
 }
@@ -16935,13 +16936,13 @@ async function copyToClipboard(url, shareBtn) {
 function showShareSuccess(shareBtn, message) {
     if (!shareBtn) return;
 
-    var originalText = shareBtn.innerHTML;
+    var originalHTML = shareBtn.innerHTML;
     shareBtn.classList.add('success');
     shareBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> ' + message;
 
     setTimeout(function() {
         shareBtn.classList.remove('success');
-        shareBtn.innerHTML = originalText;
+        shareBtn.innerHTML = originalHTML;
     }, 2000);
 }
 
@@ -16953,13 +16954,13 @@ function showShareSuccess(shareBtn, message) {
 function showShareError(shareBtn, message) {
     if (!shareBtn) return;
 
-    var originalText = shareBtn.innerHTML;
+    var originalHTML = shareBtn.innerHTML;
     shareBtn.classList.add('error');
     shareBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg> ' + message;
 
     setTimeout(function() {
         shareBtn.classList.remove('error');
-        shareBtn.innerHTML = originalText;
+        shareBtn.innerHTML = originalHTML;
     }, 2000);
 }
 
@@ -16984,7 +16985,7 @@ function showShareError(shareBtn, message) {
 
 
 ===============================================================================
-EXPORT COMPLETED: Sat Jan 31 10:22:24 AM EST 2026
+EXPORT COMPLETED: Sat Jan 31 11:25:49 AM EST 2026
 Total Files Found: 126
 Files Exported: 126
 Files Skipped: 0 (binary or large files)
