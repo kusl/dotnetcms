@@ -1,6 +1,6 @@
 ===============================================================================
 PROJECT EXPORT
-Generated: Sat Jan 31 11:25:47 AM EST 2026
+Generated: Sat Jan 31 12:15:39 PM EST 2026
 Project Path: /home/kushal/src/dotnet/MyBlog
 ===============================================================================
 
@@ -69,7 +69,8 @@ DIRECTORY STRUCTURE:
 │   │   │   ├── 0058.txt
 │   │   │   ├── 0059.txt
 │   │   │   ├── 0060.txt
-│   │   │   └── 0061.txt
+│   │   │   ├── 0061.txt
+│   │   │   └── 0062.txt
 │   │   ├── claude.md
 │   │   ├── command.md
 │   │   ├── dump.txt
@@ -14227,8 +14228,8 @@ else
 
 ================================================================================
 FILE: src/MyBlog.Web/Components/Pages/Login.razor
-SIZE: 1.32 KB
-MODIFIED: 2026-01-31 11:22:23
+SIZE: 1.33 KB
+MODIFIED: 2026-01-31 12:14:09
 ================================================================================
 
 @page "/login"
@@ -14244,7 +14245,7 @@ MODIFIED: 2026-01-31 11:22:23
         <div class="error-message">@_error</div>
     }
 
-    <form method="post" action="/login" data-enhance="false">
+    <form method="post" action="/account/login" data-enhance="false">
         <AntiforgeryToken />
         <input type="hidden" name="returnUrl" value="@ReturnUrl" />
 
@@ -16985,7 +16986,7 @@ function showShareError(shareBtn, message) {
 
 
 ===============================================================================
-EXPORT COMPLETED: Sat Jan 31 11:25:49 AM EST 2026
+EXPORT COMPLETED: Sat Jan 31 12:15:40 PM EST 2026
 Total Files Found: 126
 Files Exported: 126
 Files Skipped: 0 (binary or large files)
