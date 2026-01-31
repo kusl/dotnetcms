@@ -6,6 +6,21 @@
     gap: calc(var(--spacing) * 2);
 }
 
+.editor-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.editor-form .form-group input[type="text"],
+.editor-form .form-group textarea {
+    font-size: 16px; /* Prevents iOS zoom on focus */
+}
+
+.editor-form .form-group textarea#content {
+    font-family: ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    line-height: 1.5;
+}
+
 .editor-preview {
     border: 1px solid var(--color-border);
     border-radius: var(--radius-lg);
@@ -25,13 +40,74 @@
     letter-spacing: 0.05em;
 }
 
+/* Tablet: Side-by-side but with adjusted proportions */
+@media (max-width: 1024px) {
+    .post-editor {
+        grid-template-columns: 1fr 1fr;
+        gap: var(--spacing);
+    }
+}
+
+/* Mobile: Stack vertically with preview first (collapsed) */
 @media (max-width: 768px) {
     .post-editor {
         grid-template-columns: 1fr;
+        gap: var(--spacing);
     }
 
     .editor-preview {
         order: -1;
-        max-height: 300px;
+        max-height: 200px;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        margin-bottom: var(--spacing);
+    }
+
+    .editor-form .form-group textarea#content {
+        min-height: 300px;
+        /* Improves touch scrolling on iOS */
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .editor-form .form-group textarea#summary {
+        min-height: 80px;
+    }
+
+    /* Make the checkbox easier to tap on mobile */
+    .editor-form .form-group.checkbox label {
+        padding: 0.75rem 0;
+        min-height: 44px; /* iOS recommended tap target */
+    }
+
+    .editor-form .form-group.checkbox input[type="checkbox"] {
+        width: 20px;
+        height: 20px;
+        min-width: 20px;
+    }
+
+    /* Stack form actions on very narrow screens */
+    .editor-form .form-actions {
+        flex-direction: column;
+    }
+
+    .editor-form .form-actions .btn {
+        width: 100%;
+        justify-content: center;
+        min-height: 44px; /* iOS recommended tap target */
+    }
+}
+
+/* Extra small screens */
+@media (max-width: 480px) {
+    .editor-preview {
+        max-height: 150px;
+        padding: calc(var(--spacing) * 0.75);
+    }
+
+    .editor-preview h3 {
+        font-size: 0.75rem;
+        margin-bottom: calc(var(--spacing) * 0.5);
+        padding-bottom: 0.25rem;
     }
 }

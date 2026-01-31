@@ -173,6 +173,118 @@ window.themeManager = {
 };
 
 /**
+ * Share post using Web Share API with clipboard fallback
+ * Works on mobile browsers including Chrome on iOS
+ * @param {string} title - The post title to share
+ */
+async function sharePost(title) {
+    var url = window.location.href;
+    var shareData = {
+        title: title,
+        text: title,
+        url: url
+    };
+
+    // Find the share button to update its state
+    var shareBtn = document.querySelector('.share-btn');
+
+    // Check if Web Share API is available and we're in a secure context
+    if (navigator.share && window.isSecureContext) {
+        try {
+            // Web Share API requires user activation, which we have from the click
+            await navigator.share(shareData);
+            // Success - the share dialog was shown
+            showShareSuccess(shareBtn, 'Shared!');
+        } catch (err) {
+            // User cancelled or share failed
+            if (err.name === 'AbortError') {
+                // User cancelled - this is fine, no need to show error
+                return;
+            }
+            // For other errors, fall back to clipboard
+            console.warn('Web Share API failed, falling back to clipboard:', err);
+            await copyToClipboard(url, shareBtn);
+        }
+    } else {
+        // Web Share API not available, use clipboard fallback
+        await copyToClipboard(url, shareBtn);
+    }
+}
+
+/**
+ * Copy URL to clipboard with visual feedback
+ * @param {string} url - The URL to copy
+ * @param {Element} shareBtn - The share button element for visual feedback
+ */
+async function copyToClipboard(url, shareBtn) {
+    try {
+        // Modern clipboard API
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            await navigator.clipboard.writeText(url);
+            showShareSuccess(shareBtn, 'Link copied!');
+        } else {
+            // Fallback for older browsers
+            var textArea = document.createElement('textarea');
+            textArea.value = url;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-999999px';
+            textArea.style.top = '-999999px';
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+
+            var successful = document.execCommand('copy');
+            document.body.removeChild(textArea);
+
+            if (successful) {
+                showShareSuccess(shareBtn, 'Link copied!');
+            } else {
+                showShareError(shareBtn, 'Copy failed');
+            }
+        }
+    } catch (err) {
+        console.error('Failed to copy to clipboard:', err);
+        showShareError(shareBtn, 'Copy failed');
+    }
+}
+
+/**
+ * Show success state on share button
+ * @param {Element} shareBtn - The share button element
+ * @param {string} message - Success message to display
+ */
+function showShareSuccess(shareBtn, message) {
+    if (!shareBtn) return;
+
+    var originalText = shareBtn.innerHTML;
+    shareBtn.classList.add('success');
+    shareBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> ' + message;
+
+    setTimeout(function() {
+        shareBtn.classList.remove('success');
+        shareBtn.innerHTML = originalText;
+    }, 2000);
+}
+
+/**
+ * Show error state on share button
+ * @param {Element} shareBtn - The share button element
+ * @param {string} message - Error message to display
+ */
+function showShareError(shareBtn, message) {
+    if (!shareBtn) return;
+
+    var originalText = shareBtn.innerHTML;
+    shareBtn.classList.add('error');
+    shareBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg> ' + message;
+
+    setTimeout(function() {
+        shareBtn.classList.remove('error');
+        shareBtn.innerHTML = originalText;
+    }, 2000);
+}
+
+/**
  * Initialize theme immediately to prevent flash of wrong theme
  * This runs before Blazor initializes
  */

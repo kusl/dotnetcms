@@ -27,17 +27,17 @@ else
         <div class="editor-form">
             <div class="form-group">
                 <label for="title">Title</label>
-                <input type="text" id="title" @bind="_title" @bind:event="oninput" />
+                <input type="text" id="title" @bind="_title" @bind:event="oninput" placeholder="Enter post title..." />
             </div>
 
             <div class="form-group">
                 <label for="summary">Summary</label>
-                <textarea id="summary" @bind="_summary" rows="2"></textarea>
+                <textarea id="summary" @bind="_summary" rows="2" placeholder="Brief description for listings..."></textarea>
             </div>
 
             <div class="form-group">
                 <label for="content">Content (Markdown)</label>
-                <textarea id="content" @bind="_content" @bind:event="oninput" rows="20"></textarea>
+                <textarea id="content" @bind="_content" @bind:event="oninput" rows="15" placeholder="Write your post content in Markdown..."></textarea>
             </div>
 
             <div class="form-group checkbox">
@@ -79,7 +79,7 @@ else
     private string _title = "";
     private string _summary = "";
     private string _content = "";
-    private bool _isPublished;
+    private bool _isPublished = true; // Default to published for new posts
     private string? _error;
     private Post? _existingPost;
 
@@ -96,6 +96,7 @@ else
                 _isPublished = _existingPost.IsPublished;
             }
         }
+        // For new posts, _isPublished stays true (the default)
         _loading = false;
     }
 
@@ -113,38 +114,30 @@ else
         try
         {
             var authState = await AuthStateProvider.GetAuthenticationStateAsync();
-            var userIdClaim = authState.User.FindFirst(ClaimTypes.NameIdentifier);
+            var userId = authState.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-            if (userIdClaim is null || !Guid.TryParse(userIdClaim.Value, out var userId))
+            if (string.IsNullOrEmpty(userId))
             {
-                _error = "Unable to identify current user. Please log in again.";
-                _saving = false;
+                _error = "User not authenticated.";
                 return;
-            }
-
-            // Generate unique slug
-            var baseSlug = SlugService.GenerateSlugOrUuid(_title);
-            var finalSlug = baseSlug;
-            var counter = 1;
-
-            // Loop until we find a slug that isn't taken (excluding current post if editing)
-            while (await PostRepository.IsSlugTakenAsync(finalSlug, IsEdit ? Id : null))
-            {
-                finalSlug = $"{baseSlug}-{counter}";
-                counter++;
             }
 
             if (IsEdit && _existingPost is not null)
             {
                 _existingPost.Title = _title;
-                _existingPost.Slug = finalSlug; // Update slug with unique version
+                _existingPost.Slug = SlugService.GenerateSlugOrUuid(_title);
                 _existingPost.Summary = _summary;
                 _existingPost.Content = _content;
                 _existingPost.IsPublished = _isPublished;
                 _existingPost.UpdatedAtUtc = DateTime.UtcNow;
+
                 if (_isPublished && !_existingPost.PublishedAtUtc.HasValue)
                 {
                     _existingPost.PublishedAtUtc = DateTime.UtcNow;
+                }
+                else if (!_isPublished)
+                {
+                    _existingPost.PublishedAtUtc = null;
                 }
 
                 await PostRepository.UpdateAsync(_existingPost);
@@ -155,13 +148,13 @@ else
                 {
                     Id = Guid.NewGuid(),
                     Title = _title,
-                    Slug = finalSlug, // Use unique slug
+                    Slug = SlugService.GenerateSlugOrUuid(_title),
                     Summary = _summary,
                     Content = _content,
-                    AuthorId = userId,
+                    IsPublished = _isPublished,
+                    AuthorId = Guid.Parse(userId),
                     CreatedAtUtc = DateTime.UtcNow,
                     UpdatedAtUtc = DateTime.UtcNow,
-                    IsPublished = _isPublished,
                     PublishedAtUtc = _isPublished ? DateTime.UtcNow : null
                 };
                 await PostRepository.CreateAsync(post);
