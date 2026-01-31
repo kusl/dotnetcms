@@ -1552,3 +1552,149 @@ do not rush
 usage statistics 
 current:  52% 
 week:     28%
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+I'll search the project knowledge to understand the current login implementation and identify what's causing these E2E test failures.I've identified the issue. Looking at the code carefully:
+
+1. **`Program.cs`** maps the login POST endpoint to `/account/login`:
+   ```csharp
+   app.MapPost("/account/login", async (HttpContext context, IAuthService authService) =>
+   ```
+
+2. **`Login.razor`** has the form posting to `/login`:
+   ```razor
+   <form method="post" action="/login" data-enhance="false">
+   ```
+
+3. **`LoginRateLimitMiddleware`** checks for `/account/login`:
+   ```csharp
+   context.Request.Path.StartsWithSegments("/account/login", StringComparison.OrdinalIgnoreCase);
+   ```
+
+4. **E2E tests** expect `form[action='/account/login']`
+
+The form action in `Login.razor` is incorrect - it should be `/account/login` to match the actual endpoint in `Program.cs`. This explains why:
+- Login doesn't work (form posts to wrong URL)
+- Tests expecting `/account/login` form action fail
+- After submitting, the page stays on `/login` instead of redirecting to `/admin`
+
+Here's the corrected file:The **only change** is on line 13:
+- **Before:** `action="/login"`
+- **After:** `action="/account/login"`
+
+This single change fixes the mismatch between where the form posts (`/login`) and where the actual login endpoint is mapped in `Program.cs` (`/account/login`).
+
+**Why this fixes all 21 failing tests:**
+
+1. **Login now works** - The form posts to the correct endpoint that actually processes authentication
+2. **`LoginPage_FormHasCorrectAction`** - Now finds `form[action='/account/login']`
+3. **`LoginPage_SuccessfulLogin_RedirectsToAdmin`** - Login actually works and redirects
+4. **All admin tests** - They all call `LoginAsAdminAsync()` which depends on login working
+5. **Invalid credential tests** - The endpoint now processes the request and returns with `?error=invalid` in the URL, which the error handling logic displays
+
+**Summary of the issue:** The form was posting to `/login` (which is just the Blazor page route) instead of `/account/login` (the minimal API endpoint that handles authentication). The login endpoint was never being reached, so authentication never happened, and the page just stayed on `/login`.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
