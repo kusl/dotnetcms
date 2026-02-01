@@ -15,10 +15,16 @@ public sealed partial class SlugService : ISlugService
     {
         var slug = GenerateSlug(title);
 
-        return !string.IsNullOrWhiteSpace(slug) ? slug : $"post-{Guid.CreateVersion7().ToString()}";
+        return !string.IsNullOrWhiteSpace(slug) ? slug : GenerateUuidSlug();
     }
 
-    private string GenerateSlug(string title)
+    /// <inheritdoc />
+    public string GenerateUuidSlug()
+    {
+        return $"post-{Guid.CreateVersion7()}";
+    }
+
+    private static string GenerateSlug(string title)
     {
         // Normalize unicode and convert to lowercase
         var normalized = title.Normalize(NormalizationForm.FormD);

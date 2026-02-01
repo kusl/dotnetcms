@@ -132,8 +132,25 @@ else
 
             if (IsEdit && _existingPost is not null)
             {
+                // Generate slug from the new title
+                var newSlug = SlugService.GenerateSlugOrUuid(_title);
+
+                // Check if slug changed and if the new slug is taken by another post
+                if (newSlug != _existingPost.Slug)
+                {
+                    var isSlugTaken = await PostRepository.IsSlugTakenAsync(newSlug, _existingPost.Id);
+                    if (isSlugTaken)
+                    {
+                        // Use UUIDv7-based slug since the title-based slug is taken
+                        newSlug = SlugService.GenerateUuidSlug();
+                        Logger.LogInformation(
+                            "Slug collision detected for title '{Title}', using UUID slug: {Slug}",
+                            _title, newSlug);
+                    }
+                }
+
                 _existingPost.Title = _title;
-                _existingPost.Slug = SlugService.GenerateSlugOrUuid(_title);
+                _existingPost.Slug = newSlug;
                 _existingPost.Summary = _summary;
                 _existingPost.Content = _content;
                 _existingPost.IsPublished = _isPublished;
@@ -153,11 +170,25 @@ else
             }
             else
             {
+                // Generate slug from title
+                var slug = SlugService.GenerateSlugOrUuid(_title);
+
+                // Check if slug is already taken
+                var isSlugTaken = await PostRepository.IsSlugTakenAsync(slug);
+                if (isSlugTaken)
+                {
+                    // Use UUIDv7-based slug since the title-based slug is taken
+                    slug = SlugService.GenerateUuidSlug();
+                    Logger.LogInformation(
+                        "Slug collision detected for title '{Title}', using UUID slug: {Slug}",
+                        _title, slug);
+                }
+
                 var post = new Post
                 {
                     Id = Guid.NewGuid(),
                     Title = _title,
-                    Slug = SlugService.GenerateSlugOrUuid(_title),
+                    Slug = slug,
                     Summary = _summary,
                     Content = _content,
                     IsPublished = _isPublished,
@@ -176,7 +207,7 @@ else
         {
             // Log the full exception including inner exception
             Logger.LogError(ex, "Failed to save post. Title: {Title}, IsEdit: {IsEdit}", _title, IsEdit);
-            
+
             // Show a more detailed error message
             var innerMessage = ex.InnerException?.Message ?? ex.Message;
             _error = $"Failed to save: {innerMessage}";
