@@ -1778,8 +1778,8 @@ This ensures:
 
 
 
-
-
+current:  15% 
+week:     42%
 
 
 
