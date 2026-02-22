@@ -1,0 +1,1169 @@
+kushal@fedora:~/src/bash$ cd ~/src/dotnet/MyBlog/ && export DOTNET_CLI_TELEMETRY_OPTOUT=1 && (cd src && time dotnet format; time dotnet restore; time dotnet clean; time dotnet build; time dotnet run --project MyBlog.Tests/MyBlog.Tests.csproj; time dotnet list package; time dotnet list package --outdated); cd ~/src/dotnet/MyBlog/ && time bash export.sh; cat run-e2e.sh; time bash run-e2e.sh --clean; time bash run-e2e.sh;
+
+real	0m8.471s
+user	0m15.346s
+sys	0m0.992s
+Restore complete (0.5s)
+
+Build succeeded in 0.5s
+
+real	0m0.689s
+user	0m0.765s
+sys	0m0.161s
+
+Build succeeded in 0.5s
+
+real	0m0.640s
+user	0m0.692s
+sys	0m0.164s
+Restore complete (0.5s)
+  MyBlog.Core net10.0 succeeded (2.8s) → MyBlog.Core/bin/Debug/net10.0/MyBlog.Core.dll
+  MyBlog.Infrastructure net10.0 succeeded (0.4s) → MyBlog.Infrastructure/bin/Debug/net10.0/MyBlog.Infrastructure.dll
+  MyBlog.Web net10.0 succeeded (2.4s) → MyBlog.Web/bin/Debug/net10.0/MyBlog.Web.dll
+  MyBlog.Tests net10.0 succeeded (0.7s) → MyBlog.Tests/bin/Debug/net10.0/MyBlog.Tests.dll
+  MyBlog.E2E net10.0 succeeded (0.7s) → MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll
+
+Build succeeded in 7.0s
+
+real	0m7.198s
+user	0m2.837s
+sys	0m0.558s
+xUnit.net v3 In-Process Runner v3.2.2+728c1dce01 (64-bit .NET 10.0.2)
+  Discovering: MyBlog.Tests
+  Discovered:  MyBlog.Tests
+  Starting:    MyBlog.Tests
+  Finished:    MyBlog.Tests (ID = '24cedafe73dab5684218bb3cf04cfd49ae8ce3b87ae799399cb2e301cbc1e755')
+=== TEST EXECUTION SUMMARY ===
+   MyBlog.Tests  Total: 186, Errors: 0, Failed: 0, Skipped: 0, Not Run: 0, Time: 40.256s
+
+real	0m42.131s
+user	0m45.121s
+sys	0m0.705s
+Restore complete (0.5s)
+
+Build succeeded in 0.6s
+Project 'MyBlog.Core' has the following package references
+   [net10.0]: 
+   Top-level Package                   Requested   Resolved
+   > Microsoft.Extensions.Logging      10.0.2      10.0.2  
+
+Project 'MyBlog.E2E' has the following package references
+   [net10.0]: 
+   Top-level Package             Requested   Resolved
+   > Microsoft.NET.Test.Sdk      18.0.1      18.0.1  
+   > Microsoft.Playwright        1.57.0      1.57.0  
+   > xunit.v3                    3.2.2       3.2.2   
+
+Project 'MyBlog.Infrastructure' has the following package references
+   [net10.0]: 
+   Top-level Package                           Requested   Resolved
+   > Microsoft.AspNetCore.Identity             2.3.9       2.3.9   
+   > Microsoft.EntityFrameworkCore.Sqlite      10.0.2      10.0.2  
+   > Microsoft.Extensions.Http                 10.0.2      10.0.2  
+   > OpenTelemetry                             1.15.0      1.15.0  
+
+Project 'MyBlog.Tests' has the following package references
+   [net10.0]: 
+   Top-level Package                             Requested   Resolved
+   > Microsoft.EntityFrameworkCore.Sqlite        10.0.2      10.0.2  
+   > Microsoft.NET.Test.Sdk                      18.0.1      18.0.1  
+   > Microsoft.Testing.Extensions.TrxReport      2.0.2       2.0.2   
+   > xunit.v3                                    3.2.2       3.2.2   
+
+Project 'MyBlog.Web' has the following package references
+   [net10.0]: 
+   Top-level Package                                  Requested    Resolved
+   > Microsoft.AspNetCore.App.Internal.Assets   (A)   [10.0.2, )   10.0.2  
+   > Microsoft.AspNetCore.SignalR.Client              10.0.2       10.0.2  
+   > OpenTelemetry.Exporter.Console                   1.15.0       1.15.0  
+   > OpenTelemetry.Extensions.Hosting                 1.15.0       1.15.0  
+   > OpenTelemetry.Instrumentation.AspNetCore         1.15.0       1.15.0  
+   > OpenTelemetry.Instrumentation.Http               1.15.0       1.15.0  
+
+(A) : Auto-referenced package.
+
+real	0m1.722s
+user	0m1.763s
+sys	0m0.386s
+Restore complete (0.5s)
+
+Build succeeded in 0.6s
+
+The following sources were used:
+   https://api.nuget.org/v3/index.json
+
+Project `MyBlog.Core` has the following updates to its packages
+   [net10.0]: 
+   Top-level Package                   Requested   Resolved   Latest
+   > Microsoft.Extensions.Logging      10.0.2      10.0.2     10.0.3
+
+Project `MyBlog.E2E` has the following updates to its packages
+   [net10.0]: 
+   Top-level Package           Requested   Resolved   Latest
+   > Microsoft.Playwright      1.57.0      1.57.0     1.58.0
+
+Project `MyBlog.Infrastructure` has the following updates to its packages
+   [net10.0]: 
+   Top-level Package                           Requested   Resolved   Latest
+   > Microsoft.EntityFrameworkCore.Sqlite      10.0.2      10.0.2     10.0.3
+   > Microsoft.Extensions.Http                 10.0.2      10.0.2     10.0.3
+
+Project `MyBlog.Tests` has the following updates to its packages
+   [net10.0]: 
+   Top-level Package                             Requested   Resolved   Latest
+   > Microsoft.EntityFrameworkCore.Sqlite        10.0.2      10.0.2     10.0.3
+   > Microsoft.Testing.Extensions.TrxReport      2.0.2       2.0.2      2.1.0 
+
+Project `MyBlog.Web` has the following updates to its packages
+   [net10.0]: 
+   Top-level Package                          Requested   Resolved   Latest
+   > Microsoft.AspNetCore.SignalR.Client      10.0.2      10.0.2     10.0.3
+
+
+real	0m4.412s
+user	0m2.587s
+sys	0m0.455s
+==============================================
+  Project Export for LLM Analysis
+==============================================
+
+Project Path: /home/kushal/src/dotnet/MyBlog
+Output File:  docs/llm/dump.txt
+
+Generating directory structure...
+Collecting files...
+Found 126 files to export
+
+Processing (1/126): docker-compose.e2e.yml
+Processing (2/126): docker-compose.yml
+Processing (3/126): .editorconfig
+Processing (4/126): export.sh
+Processing (5/126): .github/workflows/build-deploy.yml
+Processing (6/126): .gitignore
+Processing (7/126): README.md
+Processing (8/126): run-e2e.sh
+Processing (9/126): src/Directory.Build.props
+Processing (10/126): src/Directory.Packages.props
+Processing (11/126): src/.github/workflows/build-deploy.yml
+Processing (12/126): src/global.json
+Processing (13/126): src/MyBlog.Core/Constants/AppConstants.cs
+Processing (14/126): src/MyBlog.Core/Interfaces/IAuthService.cs
+Processing (15/126): src/MyBlog.Core/Interfaces/IImageDimensionService.cs
+Processing (16/126): src/MyBlog.Core/Interfaces/IImageRepository.cs
+Processing (17/126): src/MyBlog.Core/Interfaces/IMarkdownService.cs
+Processing (18/126): src/MyBlog.Core/Interfaces/IPasswordService.cs
+Processing (19/126): src/MyBlog.Core/Interfaces/IPostRepository.cs
+Processing (20/126): src/MyBlog.Core/Interfaces/IReaderTrackingService.cs
+Processing (21/126): src/MyBlog.Core/Interfaces/ISlugService.cs
+Processing (22/126): src/MyBlog.Core/Interfaces/ITelemetryLogRepository.cs
+Processing (23/126): src/MyBlog.Core/Interfaces/IUserRepository.cs
+Processing (24/126): src/MyBlog.Core/Models/Image.cs
+Processing (25/126): src/MyBlog.Core/Models/ImageDimensionCache.cs
+Processing (26/126): src/MyBlog.Core/Models/Post.cs
+Processing (27/126): src/MyBlog.Core/Models/PostDto.cs
+Processing (28/126): src/MyBlog.Core/Models/TelemetryLog.cs
+Processing (29/126): src/MyBlog.Core/Models/User.cs
+Processing (30/126): src/MyBlog.Core/MyBlog.Core.csproj
+Processing (31/126): src/MyBlog.Core/Services/MarkdownService.cs
+Processing (32/126): src/MyBlog.Core/Services/SlugService.cs
+Processing (33/126): src/MyBlog.E2E/Dockerfile
+Processing (34/126): src/MyBlog.E2E/MyBlog.E2E.csproj
+Processing (35/126): src/MyBlog.E2E/PlaywrightCollection.cs
+Processing (36/126): src/MyBlog.E2E/PlaywrightFixture.cs
+Processing (37/126): src/MyBlog.E2E/Tests/AboutPageTests.cs
+Processing (38/126): src/MyBlog.E2E/Tests/AdminPageTests.cs
+Processing (39/126): src/MyBlog.E2E/Tests/AuthenticationTests.cs
+Processing (40/126): src/MyBlog.E2E/Tests/HomePageTests.cs
+Processing (41/126): src/MyBlog.E2E/Tests/LoginPageTests.cs
+Processing (42/126): src/MyBlog.E2E/Tests/NavigationTests.cs
+Processing (43/126): src/MyBlog.E2E/Tests/SeoTests.cs
+Processing (44/126): src/MyBlog.E2E/Tests/ThemeSwitcherTests.cs
+Processing (45/126): src/MyBlog.Infrastructure/Data/BlogDbContext.cs
+Processing (46/126): src/MyBlog.Infrastructure/Data/DatabasePathResolver.cs
+Processing (47/126): src/MyBlog.Infrastructure/Data/DatabaseSchemaUpdater.cs
+Processing (48/126): src/MyBlog.Infrastructure/MyBlog.Infrastructure.csproj
+Processing (49/126): src/MyBlog.Infrastructure/Repositories/ImageRepository.cs
+Processing (50/126): src/MyBlog.Infrastructure/Repositories/PostRepository.cs
+Processing (51/126): src/MyBlog.Infrastructure/Repositories/TelemetryLogRepository.cs
+Processing (52/126): src/MyBlog.Infrastructure/Repositories/UserRepository.cs
+Processing (53/126): src/MyBlog.Infrastructure/ServiceCollectionExtensions.cs
+Processing (54/126): src/MyBlog.Infrastructure/Services/AuthService.cs
+Processing (55/126): src/MyBlog.Infrastructure/Services/ImageCacheWarmerService.cs
+Processing (56/126): src/MyBlog.Infrastructure/Services/ImageDimensionService.cs
+Processing (57/126): src/MyBlog.Infrastructure/Services/PasswordService.cs
+Processing (58/126): src/MyBlog.Infrastructure/Services/ReaderTrackingService.cs
+Processing (59/126): src/MyBlog.Infrastructure/Services/TelemetryCleanupService.cs
+Processing (60/126): src/MyBlog.Infrastructure/Telemetry/DatabaseLogExporter.cs
+Processing (61/126): src/MyBlog.Infrastructure/Telemetry/FileLogExporter.cs
+Processing (62/126): src/MyBlog.Infrastructure/Telemetry/TelemetryPathResolver.cs
+Processing (63/126): src/MyBlog.slnx
+Processing (64/126): src/MyBlog.Tests/Integration/AuthServiceLongPasswordTests.cs
+Processing (65/126): src/MyBlog.Tests/Integration/AuthServiceTests.cs
+Processing (66/126): src/MyBlog.Tests/Integration/ImageRepositoryTests.cs
+Processing (67/126): src/MyBlog.Tests/Integration/PasswordChangeTests.cs
+Processing (68/126): src/MyBlog.Tests/Integration/PostRepositoryExtendedTests.cs
+Processing (69/126): src/MyBlog.Tests/Integration/PostRepositoryTests.cs
+Processing (70/126): src/MyBlog.Tests/Integration/TelemetryCleanupTests.cs
+Processing (71/126): src/MyBlog.Tests/Integration/TelemetryLogRepositoryTests.cs
+Processing (72/126): src/MyBlog.Tests/Integration/UserRepositoryTests.cs
+Processing (73/126): src/MyBlog.Tests/MyBlog.Tests.csproj
+Processing (74/126): src/MyBlog.Tests/Unit/DatabasePathResolverTests.cs
+Processing (75/126): src/MyBlog.Tests/Unit/LoginRateLimitMiddlewareTests.cs
+Processing (76/126): src/MyBlog.Tests/Unit/MarkdownServiceEdgeCaseTests.cs
+Processing (77/126): src/MyBlog.Tests/Unit/MarkdownServiceTests.cs
+Processing (78/126): src/MyBlog.Tests/Unit/PasswordServiceTests.cs
+Processing (79/126): src/MyBlog.Tests/Unit/ReaderTrackingServiceTests.cs
+Processing (80/126): src/MyBlog.Tests/Unit/SlugServiceTests.cs
+Processing (81/126): src/MyBlog.Web/appsettings.Development.json
+Processing (82/126): src/MyBlog.Web/appsettings.json
+Processing (83/126): src/MyBlog.Web/Components/App.razor
+Processing (84/126): src/MyBlog.Web/Components/_Imports.razor
+Processing (85/126): src/MyBlog.Web/Components/Layout/MainLayout.razor
+Processing (86/126): src/MyBlog.Web/Components/Pages/About.razor
+Processing (87/126): src/MyBlog.Web/Components/Pages/About.razor.css
+Processing (88/126): src/MyBlog.Web/Components/Pages/AccessDenied.razor
+Processing (89/126): src/MyBlog.Web/Components/Pages/Admin/ChangePassword.razor
+Processing (90/126): src/MyBlog.Web/Components/Pages/Admin/ChangePassword.razor.css
+Processing (91/126): src/MyBlog.Web/Components/Pages/Admin/Dashboard.razor
+Processing (92/126): src/MyBlog.Web/Components/Pages/Admin/Dashboard.razor.css
+Processing (93/126): src/MyBlog.Web/Components/Pages/Admin/ImageManager.razor
+Processing (94/126): src/MyBlog.Web/Components/Pages/Admin/ImageManager.razor.css
+Processing (95/126): src/MyBlog.Web/Components/Pages/Admin/PostEditor.razor
+Processing (96/126): src/MyBlog.Web/Components/Pages/Admin/PostEditor.razor.css
+Processing (97/126): src/MyBlog.Web/Components/Pages/Admin/PostList.razor
+Processing (98/126): src/MyBlog.Web/Components/Pages/Admin/UserEditor.razor
+Processing (99/126): src/MyBlog.Web/Components/Pages/Admin/UserEditor.razor.css
+Processing (100/126): src/MyBlog.Web/Components/Pages/Admin/UserList.razor
+Processing (101/126): src/MyBlog.Web/Components/Pages/Admin/UserList.razor.css
+Processing (102/126): src/MyBlog.Web/Components/Pages/Home.razor
+Processing (103/126): src/MyBlog.Web/Components/Pages/Login.razor
+Processing (104/126): src/MyBlog.Web/Components/Pages/Login.razor.css
+Processing (105/126): src/MyBlog.Web/Components/Pages/PostDetail.razor
+Processing (106/126): src/MyBlog.Web/Components/Pages/PostDetail.razor.css
+Processing (107/126): src/MyBlog.Web/Components/Routes.razor
+Processing (108/126): src/MyBlog.Web/Components/Shared/Footer.razor
+Processing (109/126): src/MyBlog.Web/Components/Shared/Footer.razor.css
+Processing (110/126): src/MyBlog.Web/Components/Shared/MarkdownRenderer.razor
+Processing (111/126): src/MyBlog.Web/Components/Shared/Pagination.razor
+Processing (112/126): src/MyBlog.Web/Components/Shared/PostCard.razor
+Processing (113/126): src/MyBlog.Web/Components/Shared/PostCard.razor.css
+Processing (114/126): src/MyBlog.Web/Components/Shared/ReaderBadge.razor
+Processing (115/126): src/MyBlog.Web/Components/Shared/ReaderBadge.razor.css
+Processing (116/126): src/MyBlog.Web/Components/Shared/RedirectToLogin.razor
+Processing (117/126): src/MyBlog.Web/Components/Shared/ThemeSwitcher.razor
+Processing (118/126): src/MyBlog.Web/Components/Shared/ThemeSwitcher.razor.css
+Processing (119/126): src/MyBlog.Web/Dockerfile
+Processing (120/126): src/MyBlog.Web/Hubs/ReaderHub.cs
+Processing (121/126): src/MyBlog.Web/Middleware/LoginRateLimitMiddleware.cs
+Processing (122/126): src/MyBlog.Web/MyBlog.Web.csproj
+Processing (123/126): src/MyBlog.Web/Program.cs
+Processing (124/126): src/MyBlog.Web/Properties/launchSettings.json
+Processing (125/126): src/MyBlog.Web/wwwroot/css/site.css
+Processing (126/126): src/MyBlog.Web/wwwroot/js/site.js
+
+==============================================
+  Export Complete!
+==============================================
+
+Output file:    docs/llm/dump.txt
+Files exported: 126
+Files skipped:  0
+Output size:    525.32 KB
+
+File types included:
+  • Source code: .cs, .fs, .vb
+  • Blazor/Razor: .razor
+  • UI/XAML: .axaml, .xaml, .paml
+  • Projects: .csproj, .slnx, .sln, .props, .targets
+  • Config: .json, .yaml, .yml, .xml, .config
+  • Docs: .md, .txt
+  • Scripts: .sh, .ps1, .cmd, .bat
+  • Web: .css, .scss, .js, .ts
+  • Other: .sql, .resx, Dockerfile, etc.
+
+
+real	0m1.403s
+user	0m0.779s
+sys	0m0.856s
+#!/bin/bash
+# =============================================================================
+# Run E2E Tests with Podman Compose
+# =============================================================================
+# This script runs Playwright E2E tests against MyBlog using containers.
+# Designed for Fedora with SELinux and Podman.
+#
+# Usage:
+#   ./run-e2e.sh          # Run all E2E tests
+#   ./run-e2e.sh --build  # Force rebuild containers
+#   ./run-e2e.sh --clean  # Clean up and remove volumes
+# =============================================================================
+
+set -e
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$SCRIPT_DIR"
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
+log_info() {
+    echo -e "${GREEN}[INFO]${NC} $1"
+}
+
+log_warn() {
+    echo -e "${YELLOW}[WARN]${NC} $1"
+}
+
+log_error() {
+    echo -e "${RED}[ERROR]${NC} $1"
+}
+
+# Parse arguments
+BUILD_FLAG=""
+CLEAN_FLAG=""
+
+for arg in "$@"; do
+    case $arg in
+        --build)
+            BUILD_FLAG="--build"
+            ;;
+        --clean)
+            CLEAN_FLAG="true"
+            ;;
+    esac
+done
+
+# Clean up if requested
+if [ "$CLEAN_FLAG" == "true" ]; then
+    log_info "Cleaning up containers and volumes..."
+    podman-compose -f docker-compose.e2e.yml down -v --remove-orphans 2>/dev/null || true
+    podman system prune -f 2>/dev/null || true
+    log_info "Cleanup complete"
+    exit 0
+fi
+
+# Create test results directory
+mkdir -p test-results
+# Set SELinux context if on Fedora with SELinux
+if command -v chcon &> /dev/null && getenforce 2>/dev/null | grep -q "Enforcing"; then
+    log_info "Setting SELinux context for test-results directory..."
+    chcon -Rt svirt_sandbox_file_t test-results 2>/dev/null || true
+fi
+
+log_info "Starting E2E test environment..."
+
+# Build and start services
+log_info "Building containers..."
+podman-compose -f docker-compose.e2e.yml build $BUILD_FLAG
+
+log_info "Starting MyBlog web service..."
+podman-compose -f docker-compose.e2e.yml up -d myblog-web
+
+# Wait for web service to be healthy
+log_info "Waiting for MyBlog to be ready..."
+RETRIES=30
+until podman exec myblog-web curl -sf http://localhost:5000/ > /dev/null 2>&1; do
+    RETRIES=$((RETRIES - 1))
+    if [ $RETRIES -eq 0 ]; then
+        log_error "MyBlog failed to start within timeout"
+        podman-compose -f docker-compose.e2e.yml logs myblog-web
+        podman-compose -f docker-compose.e2e.yml down -v
+        exit 1
+    fi
+    echo -n "."
+    sleep 2
+done
+echo ""
+log_info "MyBlog is ready!"
+
+# Run E2E tests
+log_info "Running E2E tests..."
+podman-compose -f docker-compose.e2e.yml up myblog-e2e
+E2E_EXIT_CODE=$?
+
+# Capture logs
+log_info "Capturing logs..."
+podman-compose -f docker-compose.e2e.yml logs myblog-web > test-results/myblog-web.log 2>&1
+podman-compose -f docker-compose.e2e.yml logs myblog-e2e > test-results/myblog-e2e.log 2>&1
+
+# Clean up
+log_info "Cleaning up..."
+podman-compose -f docker-compose.e2e.yml down -v
+
+if [ $E2E_EXIT_CODE -eq 0 ]; then
+    log_info "E2E tests passed! ✓"
+else
+    log_error "E2E tests failed with exit code $E2E_EXIT_CODE"
+    log_info "Check test-results/ directory for logs"
+fi
+
+exit $E2E_EXIT_CODE
+[INFO] Cleaning up containers and volumes...
+myblog
+myblog
+myblog_myblog-data
+9f75e82525f0c3d24d9ecb40759ab4a7081e40e69e5fe22a5f5a553025b92bff
+myblog_default
+Deleted Images
+0dc93935b9419af68be6e20761c780fc7529595ecea2951389b732ea5bb46279
+c4fc8928e64f3592fa7d26e087a3538c3d044792f833191159f0a428e0347465
+5c9dc0b3b8efb7309992e9e1c7f3d5d9c33eb8212b0f39491b32c895b8baa98a
+b60b62a9f14bc3253ce81df8053db27016dd3c944503f25d090b62069735814f
+d446657e62444e03062dd682b5f1fa970e7a3446cdeddee14be1ae84adb3c22c
+1a23ef8fe585e013ad18cf968447e27ecdb3fcdbd4d3862a1cee375487a76669
+5386e085a51725ba57f5120d456be9d533830ebfd776ec08d7ed64f542b7b7a5
+ab867b43e84d4b487a1e47a2c7125f53c5a1e92d7f9817f778ff77232226b2d6
+1d57fd29ee40b56a957bee3b05f2139c73eeefff495141f25faa1ba3d8e25b7b
+743c2dacc43f5f4907bc6ac9ae7bb101a302609c72f4e5ada4152112e46e8b0d
+52a55a5543b96a11d6bd7be8dbc2f235459a8e16c02fb7c663e5221b3d14dd22
+cbe9c26026bab20e18fa6168241d08c1d7ef009239e88644bc80097147d71408
+eec46c0d0918717db314d6e6fca1bcc65e731b6ba589fb25061662eb8620f9e2
+7891220c260646df6eac46f576158d5efafe09a2e249de944954cebe943b79e4
+68b2ec0618a9e0c29a0d38d8cc33047c8aeb322a51e5a54516e48776e5936a5c
+8623720db27e90aca352aef027e5587ba44b818d88004fcf9df2a8b4f8a6567c
+62ca305441f054a755e25ed8b32b4fb1237a1769ef93c4fdbd42b721b9ae00f5
+05f15fa581db91884b5920e662c810df673e49398e629e8c32918e1e8f8575f5
+0e5e8d370b51e9cc37b69a9c758124c0ccad7a748fa92cfd623597fa89fa85a6
+f28f3db2a20b257795b97912901c2d68058d4ad0507da36b130ba131752c300f
+cb8edcc9d745d2d80ea59a80c1c13fe29821a129fc1adf322df95399525b40e2
+b8c3f9c2e3e43bc926bf3fd0e60a53c355deb636facad4017c3ba98c98ac12e0
+9deae17068c79ded44ceaa847d60f0288223a5289693897e3608210cf98bc1b6
+e8b519d64b2540415c8a8329b58244d9305fbd406859637fbe1c6f080aa955f0
+d792521c97e6a314f3bc196247ee19a00ad8ee292a0467b35a952a65836dfb80
+eec4fcbb0f954ceb7cf45d55c6a5baac8d9343a732274ab4ae30b03bf349168c
+0e8862470569ce5a0d6b1a3e7b008e8188c370cca9bf76d405bd6f599a390968
+c2f0f5e4a1bb0e68e24fb6d1441ea518e156ae22c878d518935369bd20249482
+f8d122f661aa155e2fb798e5e5756284f99622467ddf2126af9ee71e7ca285f2
+fddbcfe139419ca8416abbbd69e0b457e0e61c3671094db5db5afd0eee248e15
+546efa7a3c407ead14945e29f51f9c5c3cd6e01f8ab11a6ac7c803f008e3c57e
+49b4ede7a86ba8b21937aee6bd08f3a9c64419b25944a5668b8c035dcf96cad3
+8cd70f31bbbc57d74fbf5865bb9bdbbbb10dea38565eafb6f8db4cf69921d0f9
+d4de989d2cad7913f15a7e449f8ad25f4834d2bf01e9eb369a00ad4a6c6d950d
+4e0cc89ba474f2a0c024fc50974bb59df043a2ade492e02a8b191cba49609ec8
+ecaccd401c4326ba5c13ca6d2bd122efac0ee931f869d2bf5bf633e1d19a42f5
+0fdfb8ce7640bab1f31f0ad096c48598cbc7fee8eff8f3e5e77560cf29ab7551
+22359b89ef03a4bb643eeceac9be63864c874836a9921d3f136acc9acadc9b34
+e3fa4ba62019c59bc783492372ee44d6d3ba83bf419d9ec876d6645f1338da3a
+9a82108b7f533a1da3cc33327b450e176fce5ad1986939877504df311fb66058
+77a2b82bd35098168a7220eaa274ebe76545c62b07925c5d514f3385a7b6f4c4
+6f85d78f00f020b5459f3837335752b066c3203af43210fef0fdc151c406a143
+6413c33205ee7775b1a9e301b23b42918363232305a878ed1946f60a6e0b3ea9
+e9f07071d2311408eec169b0a2beb87fe46f6f00c9bd93c9255c6b9e1db86815
+911c8c3acf0523d044cd22964974cf01cd3fa77045918c35200e8ad1ec6d9571
+cab56f30883e37599496b8adafbdc347a9861cb18de80ad4e2d3e4f19ff86884
+ee5b2a3bf2694d161338fe35b83f6cbcb7ca10c0f9b60e52eb1d500bd76b7b79
+0cb7848a4998845f3c57010ae281534054e17bef9e119aa88859840945a4d573
+7776d44d911171c7a71ee956e456b2dbb7cbd33f5a2884990d389a4034b07bdf
+c67f3f64e82177ae6e9f356c581ee9ac6e760d57696baab195845d12cedb1047
+Total reclaimed space: 123.3GB
+[INFO] Cleanup complete
+
+real	0m5.043s
+user	0m0.974s
+sys	0m3.429s
+[INFO] Setting SELinux context for test-results directory...
+[INFO] Starting E2E test environment...
+[INFO] Building containers...
+[1/2] STEP 1/12: FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+STEP 1/18: FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+STEP 2/18: WORKDIR /src
+--> Using cache c0f951cdf7818c25a801d76241c43a519f74913b58ca3c8d68071526ad1473dc
+--> c0f951cdf781
+STEP 3/18: RUN apt-get update && apt-get install -y nodejs npm && rm -rf /var/lib/apt/lists/*
+--> Using cache 7bd3245d151178c6b376f4a7a4b67fe7ecce8ed2c53cb934a8f07a078aa635e8
+--> 7bd3245d1511
+STEP 4/18: RUN apt-get update && apt-get install -y wget &&     wget -q https://packages.microsoft.com/config/debian/12/packages-microsoft-prod.deb &&     dpkg -i packages-microsoft-prod.deb &&     rm packages-microsoft-prod.deb &&     apt-get update && apt-get install -y powershell &&     rm -rf /var/lib/apt/lists/*
+--> Using cache 948346108d6ac93fe878f7bab089dc72f5498ab7a4fa30e51d4df43308391228
+--> 948346108d6a
+STEP 5/18: COPY Directory.Build.props .
+--> Using cache c4a9dc18c3762fdd409b0baae14ef2f48b5f524cbb656d3b110ca4970ddb4ceb
+--> c4a9dc18c376
+STEP 6/18: COPY Directory.Packages.props .
+--> Using cache 6dea2813ee479703c367db1d0ab238785857ce0c0dfd02d46c8e47699f40706a
+--> 6dea2813ee47
+STEP 7/18: COPY MyBlog.Core/MyBlog.Core.csproj MyBlog.Core/
+Trying to pull mcr.microsoft.com/dotnet/sdk:10.0...
+--> Using cache 26b7167e9d33e3adf018ba3f02fa415c50df7db2ea9ef3d3b696a6c25fddeb07
+--> 26b7167e9d33
+STEP 8/18: COPY MyBlog.Infrastructure/MyBlog.Infrastructure.csproj MyBlog.Infrastructure/
+--> Using cache 39fa24c9fb5e73db4ea74e2ea5eba8ab223f1e7b58d032dd3027222d0e3f10c3
+--> 39fa24c9fb5e
+STEP 9/18: COPY MyBlog.Web/MyBlog.Web.csproj MyBlog.Web/
+--> Using cache 0676640a9fb43a68fca885c900e335d76f35378125a1643e488abf4952dc6fbc
+--> 0676640a9fb4
+STEP 10/18: COPY MyBlog.E2E/MyBlog.E2E.csproj MyBlog.E2E/
+Getting image source signatures
+--> Using cache aaa696cb65b279c939a4b49ed9026de4481280814a6e466076cf0a72f284e18b
+--> aaa696cb65b2
+STEP 11/18: RUN dotnet restore MyBlog.Core/MyBlog.Core.csproj &&     dotnet restore MyBlog.Infrastructure/MyBlog.Infrastructure.csproj &&     dotnet restore MyBlog.Web/MyBlog.Web.csproj &&     dotnet restore MyBlog.E2E/MyBlog.E2E.csproj
+--> Using cache df6530599f3bc2d10e357ab437426be3e28ab5006d07886f20e131fbb2eb339d
+--> df6530599f3b
+STEP 12/18: COPY . .
+Copying blob 40be876054b9 done   | 
+Copying blob f5adb485db00 [==========================>-----------] 11.3MiB / 16.0MiB | 7.8 MiB/s
+Copying blob 40be876054b9 done   | 
+Copying blob 40be876054b9 done   | 
+Copying blob f5adb485db00 done   | 
+Copying blob 2ec1f654a8d3 [======>-------------------------------] 6.5MiB / 34.9MiB | 3.3 MiB/s
+Copying blob 40be876054b9 done   | 
+Copying blob 40be876054b9 done   | 
+Copying blob 40be876054b9 done   | 
+Copying blob 40be876054b9 done   | 
+Copying blob 40be876054b9 done   | 
+Copying blob f5adb485db00 done   | 
+Copying blob 2ec1f654a8d3 done   | 
+Copying blob 01d7766a2e4a done   | 
+Copying blob dd2509e04e54 done   | 
+Copying blob 53857c53a381 done   | 
+Copying blob 49353ec27a35 done   | 
+Copying blob 40be876054b9 done   | 
+Copying blob f5adb485db00 done   | 
+Copying blob 40be876054b9 done   | 
+Copying blob 40be876054b9 done   | 
+Copying blob 40be876054b9 done   | 
+Copying blob f5adb485db00 done   | 
+Copying blob 2ec1f654a8d3 done   | 
+Copying blob 01d7766a2e4a done   | 
+Copying blob dd2509e04e54 done   | 
+Copying blob 53857c53a381 done   | 
+Copying blob 40be876054b9 done   | 
+Copying blob 40be876054b9 done   | 
+Copying blob 40be876054b9 done   | 
+Copying blob 40be876054b9 done   | 
+Copying blob 40be876054b9 done   | 
+Copying blob 40be876054b9 done   | 
+Copying blob 40be876054b9 done   | 
+Copying blob 40be876054b9 done   | 
+Copying blob f5adb485db00 done   | 
+Copying blob 40be876054b9 done   | 
+Copying blob 40be876054b9 done   | 
+Copying blob 40be876054b9 done   | 
+Copying blob 40be876054b9 done   | 
+Copying blob 40be876054b9 done   | 
+Copying blob f5adb485db00 done   | 
+Copying blob 2ec1f654a8d3 done   | 
+Copying blob 01d7766a2e4a done   | 
+Copying blob 40be876054b9 done   | 
+Copying blob 40be876054b9 done   | 
+Copying blob 40be876054b9 dCopying blob 40be876054b9 done   | 
+Copying blob f5adb485db00 done   | 
+Copying blob 40be876054b9 done   | 
+Copying blob f5adb485db00 done   | 
+Copying blob 2ec1f654a8d3 done   | 
+Copying blob 01d7766a2e4a done   | 
+Copying blob dd2509e04e54 done   | 
+Copying blob 53857c53a381 done   | 
+Copying blob 49353ec27a35 done   | 
+Copying blob 7d830fe8a493 [==========================>-----------] 127.4MiB / 180.8MiB | 12.8 MiB/s
+Copying blob 96d68fe10fd2 done   | 
+Copying blob 198bb7165c4e done   | 
+libdbus-1-3 is already the newest version (1.14.10-4ubuntu4.1).
+libdbus-1-3 set to manually installed.
+libx11-6 is already the newest version (2:1.8.7-1build1).
+libx11-6 set to manually installed.
+libxcb1 is already the newest version (1.15-1ubuntu2).
+libxcb1 set to manually installed.
+libxcomposite1 is already the newest version (1:0.4.5-1build3).
+libxcomposite1 set to manually installed.
+libxext6 is already the newest version (2:1.3.4-1build2).
+libxext6 set to manually installed.
+libxfixes3 is already the newest version (1:6.0.0-2build1).
+libxfixes3 set to manually installed.
+libxrandr2 is already the newest version (2:1.5.2-2build1).
+libxrandr2 set to manually installed.
+libfontconfig1 is already the newest version (2.15.0-1.1ubuntu2).
+libfontconfig1 set to manually installed.
+libfreetype6 is already the newest version (2.13.2+dfsg-1build3).
+libfreetype6 set to manually installed.
+The following package was automatically installed and is no longer required:
+  libwayland-server0
+Use 'apt autoremove' to remove it.
+The following additional packages will be installed:
+  at-spi2-common fontconfig libasound2-data libavahi-client3
+  libavahi-common-data libavahi-common3 libdatrie1 libdrm-amdgpu1
+  libdrm-common libdrm-intel1 libegl-mesa0 libfontenc1 libfribidi0
+  libgl1-mesa-dri libglib2.0-data libglx-mesa0 libgraphite2-3 libharfbuzz0b
+  libpixman-1-0 libthai-data libthai0 libunwind8 libxcb-render0 libxfont2
+  mesa-libgallium mesa-vulkan-drivers x11-xkb-utils xauth xfonts-encodings
+  xfonts-utils xkb-data xserver-common
+Suggested packages:
+  alsa-utils libasound2-plugins cups-common low-memory-monitor
+Recommended packages:
+  fonts-ipafont-mincho fonts-liberation-sans-narrow fonts-tlwg-loma
+  alsa-ucm-conf alsa-topology-conf at-spi2-core xfonts-base
+The following NEW packages will be installed:
+  at-spi2-common fontconfig fonts-freefont-ttf fonts-ipafont-gothic
+  fonts-liberation fonts-noto-color-emoji fonts-tlwg-loma-otf fonts-unifont
+  fonts-wqy-zenhei libasound2-data libasound2t64 libatk-bridge2.0-0t64
+Copying blob 40be876054b9 done   | 
+Copying blob f5adb485db00 done   | 
+Copying blob 2ec1f654a8d3 done   | 
+Copying blob 01d7766a2e4a done   | 
+Copying blob 40be876054b9 done   | 
+Copying blob f5adb485db00 done   | 
+Copying blob 40be876054b9 done   | 
+Copying blob f5adb485db00 done   | 
+Copying blob 2ec1f654a8d3 done   | 
+Copying blob 01d7766a2e4a done   | 
+Copying blob dd2509e04e54 done   | 
+Copying blob 53857c53a381 done   | 
+Copying blob 49353ec27a35 done   | 
+Copying blob 7d830fe8a493 [===========================>----------] 132.5MiB / 180.8MiB | 6.0 MiB/s
+Copying blob 96d68fe10fd2 done   | 
+Copying blob 40be876054b9 done   | 
+Copying blob f5adb485db00 done   | 
+Copying blob 40be876054b9 done   | 
+Copying blob f5adb485db00 done   | 
+Copying blob 40be876054b9 done   | 
+Copying blob 40be876054b9 done   | 
+Copying blob f5adb485db00 done   | 
+Copying blob 2ec1f654a8d3 done   | 
+Copying blob 01d7766a2e4a done   | 
+Copying blob dd2509e04e54 done   | 
+Copying blob 53857c53a381 done   | 
+Copying blob 49353ec27a35 done   | 
+Copying blob 7d830fe8a493 [===========================>----------] 133.7MiB / 180.8MiB | 1.3 MiB/s
+Copying blob 96d68fe10fd2 done   | 
+Copying blob 198bb7165c4e done   | 
+Get:18 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 libasound2-data all 1.2.11-1ubuntu0.2 [21.3 kB]
+Get:19 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 libasound2t64 amd64 1.2.11-1ubuntu0.2 [398 kB]
+Get:20 http://archive.ubuntu.com/ubuntu noble/main amd64 libatk1.0-0t64 amd64 2.52.0-1build1 [55.3 kB]
+Get:21 http://archive.ubuntu.com/ubuntu noble/main amd64 libatspi2.0-0t64 amd64 2.52.0-1build1 [80.5 kB]
+Get:22 http://archive.ubuntu.com/ubuntu noble/main amd64 libatk-bridge2.0-0t64 amd64 2.52.0-1build1 [66.0 kB]
+Get:23 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 libavahi-common-data amd64 0.8-13ubuntu6.1 [29.9 kB]
+Get:24 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 libavahi-common3 amd64 0.8-13ubuntu6.1 [23.4 kB]
+Get:25 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 libavahi-client3 amd64 0.8-13ubuntu6.1 [26.8 kB]
+Get:26 http://archive.ubuntu.com/ubuntu noble/main amd64 libpixman-1-0 amd64 0.42.2-1build1 [279 kB]
+Get:27 http://archive.ubuntu.com/ubuntu noble/main amd64 libxcb-render0 amd64 1.15-1ubuntu2 [16.2 kB]
+Copying blob 40be876054b9 done   | 
+Copying blob f5adb485db00 done   | 
+Copying blob 2ec1f654a8d3 done   | 
+Copying blob 01d7766a2e4a done   | 
+Copying blob dd2509e04e54 done   | 
+Copying blob 40be876054b9 done   | 
+Copying blob f5adb485db00 done   | 
+Copying blob 2ec1f654a8d3 done   | 
+Copying blob 01d7766a2e4a done   | 
+Copying blob dd2509e04e54 done   | 
+Copying blob 53857c53a381 done   | 
+Copying blob 49353ec27a35 done   | 
+Copying blob 40be876054b9 done   | 
+Copying blob f5adb485db00 done   | 
+Copying blob 2ec1f654a8d3 done   | 
+Copying blob 01d7766a2e4a done   | 
+Copying blob dd2509e04e54 done   | 
+Copying blob 53857c53a381 done   | 
+Copying blob 49353ec27a35 done   | 
+Copying blob 40be876054b9 done   | 
+Copying blob f5adb485db00 done   | 
+Copying blob 40be876054b9 done   | 
+Copying blob f5adb485db00 done   | 
+Copying blob 2ec1f654a8d3 done   | 
+Copying blob 01d7766a2e4a done   | 
+Copying blob 40be876054b9 done   | 
+Copying blob f5adb485db00 done   | 
+Copying blob 2ec1f654a8d3 done   | 
+Copying blob 01d7766a2e4a done   | 
+Copying blob dd2509e04e54 done   | 
+Copying blob 40be876054b9 done   | 
+Copying blob f5adb485db00 done   | 
+Copying blob 2ec1f654a8d3 done   | 
+Copying blob 01d7766a2e4a done   | 
+Copying blob dd2509e04e54 done   | 
+Copying blob 53857c53a381 done   | 
+Copying blob 49353ec27a35 done   | 
+Copying blob 7d830fe8a493 [============================>---------] 136.0MiB / 180.8MiB | 2.7 MiB/s
+Copying blob 96d68fe10fd2 done   | 
+Copying blob 198bb7165c4e done   | 
+Preparing to unpack .../03-libglib2.0-data_2.80.0-6ubuntu3.8_all.deb ...
+Unpacking libglib2.0-data (2.80.0-6ubuntu3.8) over (2.80.0-6ubuntu3.7) ...
+Selecting previously unselected package xkb-data.
+Preparing to unpack .../04-xkb-data_2.41-2ubuntu1.1_all.deb ...
+Unpacking xkb-data (2.41-2ubuntu1.1) ...
+Copying blob 40be876054b9 done   | 
+Copying blob f5adb485db00 done   | 
+Copying blob 2ec1f654a8d3 done   | 
+Copying blob 01d7766a2e4a done   | 
+Copying blob dd2509e04e54 done   | 
+Copying blob 53857c53a381 done   | 
+Copying blob 49353ec27a35 done   | 
+Copying blob 7d830fe8a493 [============================>---------] 136.5MiB / 180.8MiB | 3.7 MiB/s
+Copying blob 96d68fe10fd2 done   | 
+Copying blob 198bb7165c4e done   | 
+Selecting previously unselected package at-spi2-common.
+Preparing to unpack .../09-at-spi2-common_2.52.0-1build1_all.deb ...
+Copying blob 40be876054b9 done   | 
+Copying blob f5adb485db00 done   | 
+Copying blob 2ec1f654a8d3 done   | 
+Copying blob 01d7766a2e4a done   | 
+Copying blob dd2509e04e54 done   | 
+Copying blob 53857c53a381 done   | 
+Copying blob 49353ec27a35 done   | 
+Copying blob 7d830fe8a493 [============================>---------] 136.9MiB / 180.8MiB | 3.6 MiB/s
+Copying blob 96d68fe10fd2 done   | 
+Copying blob 40be876054b9 done   | 
+Copying blob f5adb485db00 done   | 
+Copying blob 2ec1f654a8d3 done   | 
+Copying blob 40be876054b9 done   | 
+Copying blob f5adb485db00 done   | 
+Copying blob 2ec1f654a8d3 done   | 
+Copying blob 01d7766a2e4a done   | 
+Copying blob dd2509e04e54 done   | 
+Copying blob 53857c53a381 done   | 
+Copying blob 49353ec27a35 done   | 
+Copying blob 7d830fe8a493 [============================>---------] 138.6MiB / 180.8MiB | 4.8 MiB/s
+Copying blob 96d68fe10fd2 done   | 
+Copying blob 198bb7165c4e done   | 
+Selecting previously unselected package libasound2-data.
+Preparing to unpack .../17-libasound2-data_1.2.11-1ubuntu0.2_all.deb ...
+Copying blob 40be876054b9 done   | 
+Copying blob f5adb485db00 done   | 
+Copying blob 2ec1f654a8d3 done   | 
+Copying blob 01d7766a2e4a done   | 
+Copying blob dd2509e04e54 done   | 
+Copying blob 53857c53a381 done   | 
+Copying blob 49353ec27a35 done   | 
+Copying blob 7d830fe8a493 [============================>---------] 139.3MiB / 180.8MiB | 5.5 MiB/s
+Copying blob 96d68fe10fd2 done   | 
+Copying blob 198bb7165c4e done   | 
+Selecting previously unselected package libatk-bridge2.0-0t64:amd64.
+Preparing to unpack .../21-libatk-bridge2.0-0t64_2.52.0-1build1_amd64.deb ...
+Unpacking libatk-bridge2.0-0t64:amd64 (2.52.0-1build1) ...
+Selecting previously unselected package libavahi-common-data:amd64.
+Preparing to unpack .../22-libavahi-common-data_0.8-13ubuntu6.1_amd64.deb ...
+Unpacking libavahi-common-data:amd64 (0.8-13ubuntu6.1) ...
+Selecting previously unselected package libavahi-common3:amd64.
+Preparing to unpack .../23-libavahi-common3_0.8-13ubuntu6.1_amd64.deb ...
+Unpacking libavahi-common3:amd64 (0.8-13ubuntu6.1) ...
+Selecting previously unselected package libavahi-client3:amd64.
+Preparing to unpack .../24-libavahi-client3_0.8-13ubuntu6.1_amd64.deb ...
+Copying blob 40be876054b9 done   | 
+Copying blob f5adb485db00 done   | 
+Copying blob 2ec1f654a8d3 done   | 
+Copying blob 01d7766a2e4a done   | 
+Copying blob dd2509e04e54 done   | 
+Copying blob 53857c53a381 done   | 
+Copying blob 49353ec27a35 done   | 
+Copying blob 7d830fe8a493 [============================>---------] 140.0MiB / 180.8MiB | 5.1 MiB/s
+Copying blob 96d68fe10fd2 done   | 
+Copying blob 198bb7165c4e done   | 
+Selecting previously unselected package libcups2t64:amd64.
+Preparing to unpack .../28-libcups2t64_2.4.7-1.2ubuntu7.9_amd64.deb ...
+Copying blob 40be876054b9 done   | 
+Copying blob f5adb485db00 done   | 
+Copying blob 2ec1f654a8d3 done   | 
+Copying blob 01d7766a2e4a done   | 
+Copying blob dd2509e04e54 done   | 
+Copying blob 53857c53a381 done   | 
+Copying blob 49353ec27a35 done   | 
+Copying blob 7d830fe8a493 [=============================>--------] 140.5MiB / 180.8MiB | 3.5 MiB/s
+Copying blob 40be876054b9 done   | 
+Copying blob f5adb485db00 done   | 
+Copying blob 2ec1f654a8d3 done   | 
+Copying blob 01d7766a2e4a done   | 
+Copying blob dd2509e04e54 done   | 
+Copying blob 53857c53a381 done   | 
+Copying blob 49353ec27a35 done   | 
+Copying blob 7d830fe8a493 [=============================>--------] 141.0MiB / 180.8MiB | 3.9 MiB/s
+Copying blob 96d68fe10fd2 done   | 
+Copying blob 198bb7165c4e done   | 
+Selecting previously unselected package libfontenc1:amd64.
+Preparing to unpack .../37-libfontenc1_1%3a1.1.8-1build1_amd64.deb ...
+Unpacking libfontenc1:amd64 (1:1.1.8-1build1) ...
+Selecting previously unselected package libgraphite2-3:amd64.
+Preparing to unpack .../38-libgraphite2-3_1.3.14-2build1_amd64.deb ...
+Copying blob 40be876054b9 done   | 
+Copying blob f5adb485db00 done   | 
+Copying blob 2ec1f654a8d3 done   | 
+Copying blob 01d7766a2e4a done   | 
+Copying blob dd2509e04e54 done   | 
+Copying blob 53857c53a381 done   | 
+Copying blob 49353ec27a35 done   | 
+Copying blob 7d830fe8a493 [=============================>--------] 141.7MiB / 180.8MiB | 6.3 MiB/s
+Copying blob 96d68fe10fd2 done   | 
+Copying blob 198bb7165c4e done   | 
+Selecting previously unselected package libthai-data.
+Preparing to unpack .../42-libthai-data_0.1.29-2build1_all.deb ...
+Unpacking libthai-data (0.1.29-2build1) ...
+Selecting previously unselected package libthai0:amd64.
+Preparing to unpack .../43-libthai0_0.1.29-2build1_amd64.deb ...
+Unpacking libthai0:amd64 (0.1.29-2build1) ...
+Selecting previously unselected package libpango-1.0-0:amd64.
+Preparing to unpack .../44-libpango-1.0-0_1.52.1+ds-1build1_amd64.deb ...
+Copying blob 40be876054b9 done   | 
+Copying blob f5adb485db00 done   | 
+Copying blob 40be876054b9 done   | 
+Copying blob 40be876054b9 done   | 
+Copying blob f5adb485db00 done   | 
+Copying blob 2ec1f654a8d3 done   | 
+Copying blob 01d7766a2e4a done   | 
+Copying blob dd2509e04e54 done   | 
+Copying blob 53857c53a381 done   | 
+Copying blob 49353ec27a35 done   | 
+Copying blob 7d830fe8a493 [=============================>--------] 144.2MiB / 180.8MiB | 6.9 MiB/s
+Copying blob 96d68fe10fd2 done   | 
+Copying blob 198bb7165c4e done   | 
+Preparing to unpack .../49-x11-xkb-utils_7.7+8build2_amd64.deb ...
+Unpacking x11-xkb-utils (7.7+8build2) ...
+Selecting previously unselected package xfonts-encodings.
+Preparing to unpack .../50-xfonts-encodings_1%3a1.0.5-0ubuntu2_all.deb ...
+Unpacking xfonts-encodings (1:1.0.5-0ubuntu2) ...
+Selecting previously unselected package xfonts-utils.
+Preparing to unpack .../51-xfonts-utils_1%3a7.7+6build3_amd64.deb ...
+Unpacking xfonts-utils (1:7.7+6build3) ...
+Copying blob 40be876054b9 done   | 
+Copying blob f5adb485db00 done   | 
+Copying blob 2ec1f654a8d3 done   | 
+Copying blob 01d7766a2e4a done   | 
+Copying blob dd2509e04e54 done   | 
+Copying blob 40be876054b9 done   | 
+Copying blob f5adb485db00 done   | 
+Copying blob 2ec1f654a8d3 done   | 
+Copying blob 01d7766a2e4a done   | 
+Copying blob dd2509e04e54 done   | 
+Copying blob 53857c53a381 done   | 
+Copying blob 49353ec27a35 done   | 
+Copying blob 7d830fe8a493 [=================================>----] 163.1MiB / 180.8MiB | 14.5 MiB/s
+Copying blob 96d68fe10fd2 done   | 
+Copying blob 198bb7165c4e done   | 
+done.
+Setting up libxdamage1:amd64 (1:1.1.6-1build1) ...
+Setting up libdatrie1:amd64 (0.2.13-3build1) ...
+Setting up fonts-noto-color-emoji (2.047-0ubuntu0.24.04.1) ...
+Setting up libxcb-render0:amd64 (1.15-1ubuntu2) ...
+Setting up x11-xkb-utils (7.7+8build2) ...
+Setting up fonts-wqy-zenhei (0.9.45-8) ...
+Setting up fonts-freefont-ttf (20211204+svn4273-2) ...
+Setting up xkb-data (2.41-2ubuntu1.1) ...
+Setting up libunwind8:amd64 (1.6.2-3build1.1) ...
+Setting up libcairo2:amd64 (1.18.0-3build1) ...
+Setting up libasound2-data (1.2.11-1ubuntu0.2) ...
+Setting up libfontenc1:amd64 (1:1.1.8-1build1) ...
+Setting up libglib2.0-0t64:amd64 (2.80.0-6ubuntu3.8) ...
+No schema files found: doing nothing.
+Setting up libglib2.0-data (2.80.0-6ubuntu3.8) ...
+Setting up libasound2t64:amd64 (1.2.11-1ubuntu0.2) ...
+Setting up fonts-tlwg-loma-otf (1:0.7.3-1) ...
+Setting up libnspr4:amd64 (2:4.35-1.1build1) ...
+Setting up libavahi-common-data:amd64 (0.8-13ubuntu6.1) ...
+Setting up libatspi2.0-0t64:amd64 (2.52.0-1build1) ...
+Setting up xfonts-encodings (1:1.0.5-0ubuntu2) ...
+Setting up libfribidi0:amd64 (1.0.13-3build1) ...
+Setting up fonts-ipafont-gothic (00303-21ubuntu1) ...
+update-alternatives: using /usr/share/fonts/opentype/ipafont-gothic/ipag.ttf to provide /usr/share/fonts/truetype/fonts-japanese-gothic.ttf (fonts-japanese-gothic.ttf) in auto mode
+Setting up xauth (1:1.1.2-1build1) ...
+Setting up at-spi2-common (2.52.0-1build1) ...
+Setting up fonts-liberation (1:2.1.5-3) ...
+Setting up libharfbuzz0b:amd64 (8.3.0-2build2) ...
+Setting up libthai-data (0.1.29-2build1) ...
+Setting up xserver-common (2:21.1.12-1ubuntu1.5) ...
+Setting up libdrm-common (2.4.125-1ubuntu0.1~24.04.1) ...
+Setting up libxfont2:amd64 (1:2.0.6-1build1) ...
+Setting up fonts-unifont (1:15.1.01-1build1) ...
+Setting up libxkbcommon0:amd64 (1.6.0-1build1) ...
+Setting up libatk1.0-0t64:amd64 (2.52.0-1build1) ...
+Setting up xvfb (2:21.1.12-1ubuntu1.5) ...
+Setting up libavahi-common3:amd64 (0.8-13ubuntu6.1) ...
+Setting up libnss3:amd64 (2:3.98-1build1) ...
+Setting up xfonts-utils (1:7.7+6build3) ...
+Setting up libthai0:amd64 (0.1.29-2build1) ...
+Setting up libdrm2:amd64 (2.4.125-1ubuntu0.1~24.04.1) ...
+Setting up xfonts-cyrillic (1:1.0.5+nmu1) ...
+Setting up libavahi-client3:amd64 (0.8-13ubuntu6.1) ...
+Setting up xfonts-scalable (1:1.0.3-1.3) ...
+Setting up libdrm-amdgpu1:amd64 (2.4.125-1ubuntu0.1~24.04.1) ...
+Setting up libatk-bridge2.0-0t64:amd64 (2.52.0-1build1) ...
+Copying blob 40be876054b9 done   | 
+Copying blob 40be876054b9 done   | 
+Copying blob f5adb485db00 done   | 
+Copying blob 2ec1f654a8d3 done   | 
+Copying blob 40be876054b9 done   | 
+Copying blob 40be876054b9 done   | 
+Copying blob 40be876054b9 done   | 
+Copying blob 40be876054b9 done   | 
+Copying blob 40be876054b9 done   | 
+Copying blob 40be876054b9 done   | 
+Copying blob 40be876054b9 done   | 
+Copying blob f5adb485db00 done   | 
+Copying blob 2ec1f654a8d3 done   | 
+Copying blob 01d7766a2e4a done   | 
+Copying blob dd2509e04e54 done   | 
+Copying blob 53857c53a381 done   | 
+Copying blob 49353ec27a35 done   | 
+Copying blob 7d830fe8a493 done   | 
+Copying blob 96d68fe10fd2 done   | 
+Copying blob 198bb7165c4e done   | 
+Copying config 2ccbbe6cf2 done   | 
+Writing manifest to image destination
+[1/2] STEP 2/12: WORKDIR /src
+--> 62ad5c09b966
+[1/2] STEP 3/12: COPY Directory.Build.props .
+--> d5af362c3458
+[1/2] STEP 4/12: COPY Directory.Packages.props .
+--> 9720b107c0c9
+[1/2] STEP 5/12: COPY MyBlog.Core/MyBlog.Core.csproj MyBlog.Core/
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 164.7 MiB
+--> dd6bd91bab18
+[1/2] STEP 6/12: COPY MyBlog.Infrastructure/MyBlog.Infrastructure.csproj MyBlog.Infrastructure/
+--> 57fe5e1530eb
+[1/2] STEP 7/12: COPY MyBlog.Web/MyBlog.Web.csproj MyBlog.Web/
+--> 9e6d92d47c4b
+[1/2] STEP 8/12: RUN dotnet restore MyBlog.Web/MyBlog.Web.csproj
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 164.7 MiB
+  Determining projects to restore...
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 164.7 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 164.7 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 164.7 MiB
+  Restored /src/MyBlog.Core/MyBlog.Core.csproj (in 1.85 sec).
+Chromium 143.0.7499.4 (playwright build v1200) downloaded to /root/.cache/ms-playwright/chromium-1200
+Downloading FFMPEG playwright build v1011 from https://cdn.playwright.dev/dbazure/download/playwright/builds/ffmpeg/1011/ffmpeg-linux.zip
+(node:848) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+|                                                                                |   0% of 2.3 MiB
+|■■■■■■■■                                                                        |  10% of 2.3 MiB
+|■■■■■■■■■■■■■■■■                                                                |  20% of 2.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 2.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 2.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 2.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 2.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 2.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 2.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 2.3 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 2.3 MiB
+FFMPEG playwright build v1011 downloaded to /root/.cache/ms-playwright/ffmpeg-1011
+Downloading Chromium Headless Shell 143.0.7499.4 (playwright build v1200) from https://cdn.playwright.dev/dbazure/download/playwright/builds/chromium/1200/chromium-headless-shell-linux.zip
+(node:860) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+  Restored /src/MyBlog.Web/MyBlog.Web.csproj (in 3.67 sec).
+|                                                                                |   0% of 109.7 MiB
+  Restored /src/MyBlog.Infrastructure/MyBlog.Infrastructure.csproj (in 4.13 sec).
+|■■■■■■■■                                                                        |  10% of 109.7 MiB
+|■■■■■■■■■■■■■■■■                                                                |  20% of 109.7 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■                                                        |  30% of 109.7 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                                |  40% of 109.7 MiB
+--> fcdc26302bbf
+[1/2] STEP 9/12: COPY MyBlog.Core/ MyBlog.Core/
+--> f6bcf542a5cf
+[1/2] STEP 10/12: COPY MyBlog.Infrastructure/ MyBlog.Infrastructure/
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                        |  50% of 109.7 MiB
+--> d906493afe79
+[1/2] STEP 11/12: COPY MyBlog.Web/ MyBlog.Web/
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                                |  60% of 109.7 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                        |  70% of 109.7 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■                |  80% of 109.7 MiB
+--> ad1e3415a275
+[1/2] STEP 12/12: RUN dotnet publish MyBlog.Web/MyBlog.Web.csproj -c Release -o /app/publish
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■        |  90% of 109.7 MiB
+|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■| 100% of 109.7 MiB
+  Determining projects to restore...
+  Restored /src/MyBlog.Core/MyBlog.Core.csproj (in 199 ms).
+  Restored /src/MyBlog.Infrastructure/MyBlog.Infrastructure.csproj (in 201 ms).
+Chromium Headless Shell 143.0.7499.4 (playwright build v1200) downloaded to /root/.cache/ms-playwright/chromium_headless_shell-1200
+  Restored /src/MyBlog.Web/MyBlog.Web.csproj (in 587 ms).
+  MyBlog.Core -> /src/MyBlog.Core/bin/Release/net10.0/MyBlog.Core.dll
+  MyBlog.Infrastructure -> /src/MyBlog.Infrastructure/bin/Release/net10.0/MyBlog.Infrastructure.dll
+--> 291e1e1d6efa
+STEP 15/18: WORKDIR /src/MyBlog.E2E
+--> 7e271268e55b
+STEP 16/18: ENV MYBLOG_BASE_URL=http://myblog-web:5000
+--> 54fb2dac8646
+STEP 17/18: ENV PLAYWRIGHT_HEADLESS=true
+--> 5e553e6534f1
+STEP 18/18: ENTRYPOINT ["dotnet", "run", "-c", "Release", "--no-build"]
+COMMIT myblog_myblog-e2e
+--> 33df271af716
+Successfully tagged localhost/myblog_myblog-e2e:latest
+33df271af716833c4c9b9cfd0a092657392a0ec047ad338738f475dfd08b5137
+  MyBlog.Web -> /src/MyBlog.Web/bin/Release/net10.0/MyBlog.Web.dll
+  MyBlog.Web -> /app/publish/
+--> 61499a6fb2ac
+[2/2] STEP 1/12: FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
+Trying to pull mcr.microsoft.com/dotnet/aspnet:10.0...
+Getting image source signatures
+Copying blob 40be876054b9 skipped: already exists  
+Copying blob dd2509e04e54 skipped: already exists  
+Copying blob f5adb485db00 skipped: already exists  
+Copying blob 2ec1f654a8d3 skipped: already exists  
+Copying blob 53857c53a381 skipped: already exists  
+Copying blob 01d7766a2e4a skipped: already exists  
+Copying config 0b6ec319bf done   | 
+Writing manifest to image destination
+[2/2] STEP 2/12: WORKDIR /app
+--> ff9699da5fa0
+[2/2] STEP 3/12: RUN apt-get update && apt-get install -y --no-install-recommends curl && rm -rf /var/lib/apt/lists/*
+Get:1 http://archive.ubuntu.com/ubuntu noble InRelease [256 kB]
+Get:2 http://archive.ubuntu.com/ubuntu noble-updates InRelease [126 kB]
+Get:3 http://security.ubuntu.com/ubuntu noble-security InRelease [126 kB]
+Get:4 http://archive.ubuntu.com/ubuntu noble-backports InRelease [126 kB]
+Get:5 http://archive.ubuntu.com/ubuntu noble/restricted amd64 Packages [117 kB]
+Get:6 http://archive.ubuntu.com/ubuntu noble/multiverse amd64 Packages [331 kB]
+Get:7 http://archive.ubuntu.com/ubuntu noble/main amd64 Packages [1808 kB]
+Get:8 http://archive.ubuntu.com/ubuntu noble/universe amd64 Packages [19.3 MB]
+Get:9 http://security.ubuntu.com/ubuntu noble-security/restricted amd64 Packages [3196 kB]
+Get:10 http://archive.ubuntu.com/ubuntu noble-updates/universe amd64 Packages [2016 kB]
+Get:11 http://archive.ubuntu.com/ubuntu noble-updates/multiverse amd64 Packages [38.1 kB]
+Get:12 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 Packages [2240 kB]
+Get:13 http://archive.ubuntu.com/ubuntu noble-updates/restricted amd64 Packages [3381 kB]
+Get:14 http://archive.ubuntu.com/ubuntu noble-backports/main amd64 Packages [49.5 kB]
+Get:15 http://archive.ubuntu.com/ubuntu noble-backports/universe amd64 Packages [34.6 kB]
+Get:16 http://security.ubuntu.com/ubuntu noble-security/universe amd64 Packages [1207 kB]
+Get:17 http://security.ubuntu.com/ubuntu noble-security/multiverse amd64 Packages [34.8 kB]
+Get:18 http://security.ubuntu.com/ubuntu noble-security/main amd64 Packages [1857 kB]
+Fetched 36.3 MB in 2s (21.8 MB/s)
+Reading package lists...
+Reading package lists...
+Building dependency tree...
+Reading state information...
+The following additional packages will be installed:
+  libbrotli1 libcurl4t64 libgssapi-krb5-2 libk5crypto3 libkeyutils1 libkrb5-3
+  libkrb5support0 libldap2 libnghttp2-14 libpsl5t64 librtmp1 libsasl2-2
+  libsasl2-modules-db libssh-4
+Suggested packages:
+  krb5-doc krb5-user
+Recommended packages:
+  krb5-locales libldap-common publicsuffix libsasl2-modules
+The following NEW packages will be installed:
+  curl libbrotli1 libcurl4t64 libgssapi-krb5-2 libk5crypto3 libkeyutils1
+  libkrb5-3 libkrb5support0 libldap2 libnghttp2-14 libpsl5t64 librtmp1
+  libsasl2-2 libsasl2-modules-db libssh-4
+0 upgraded, 15 newly installed, 0 to remove and 4 not upgraded.
+Need to get 2163 kB of archives.
+After this operation, 6005 kB of additional disk space will be used.
+Get:1 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 libkrb5support0 amd64 1.20.1-6ubuntu2.6 [34.4 kB]
+Get:2 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 libk5crypto3 amd64 1.20.1-6ubuntu2.6 [82.0 kB]
+Get:3 http://archive.ubuntu.com/ubuntu noble/main amd64 libkeyutils1 amd64 1.6.3-3build1 [9490 B]
+Get:4 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 libkrb5-3 amd64 1.20.1-6ubuntu2.6 [348 kB]
+Get:5 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 libgssapi-krb5-2 amd64 1.20.1-6ubuntu2.6 [143 kB]
+Get:6 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 libnghttp2-14 amd64 1.59.0-1ubuntu0.2 [74.3 kB]
+Get:7 http://archive.ubuntu.com/ubuntu noble/main amd64 libpsl5t64 amd64 0.21.2-1.1build1 [57.1 kB]
+Get:8 http://archive.ubuntu.com/ubuntu noble/main amd64 libbrotli1 amd64 1.1.0-2build2 [331 kB]
+Get:9 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 libsasl2-modules-db amd64 2.1.28+dfsg1-5ubuntu3.1 [20.4 kB]
+Get:10 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 libsasl2-2 amd64 2.1.28+dfsg1-5ubuntu3.1 [53.2 kB]
+Get:11 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 libldap2 amd64 2.6.10+dfsg-0ubuntu0.24.04.1 [198 kB]
+Get:12 http://archive.ubuntu.com/ubuntu noble/main amd64 librtmp1 amd64 2.4+20151223.gitfa8646d.1-2build7 [56.3 kB]
+Get:13 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 libssh-4 amd64 0.10.6-2ubuntu0.3 [190 kB]
+Get:14 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 libcurl4t64 amd64 8.5.0-2ubuntu10.6 [341 kB]
+Get:15 http://archive.ubuntu.com/ubuntu noble-updates/main amd64 curl amd64 8.5.0-2ubuntu10.6 [226 kB]
+debconf: delaying package configuration, since apt-utils is not installed
+Fetched 2163 kB in 0s (6012 kB/s)
+Selecting previously unselected package libkrb5support0:amd64.
+(Reading database ... 6136 files and directories currently installed.)
+Preparing to unpack .../00-libkrb5support0_1.20.1-6ubuntu2.6_amd64.deb ...
+Unpacking libkrb5support0:amd64 (1.20.1-6ubuntu2.6) ...
+Selecting previously unselected package libk5crypto3:amd64.
+Preparing to unpack .../01-libk5crypto3_1.20.1-6ubuntu2.6_amd64.deb ...
+Unpacking libk5crypto3:amd64 (1.20.1-6ubuntu2.6) ...
+Selecting previously unselected package libkeyutils1:amd64.
+Preparing to unpack .../02-libkeyutils1_1.6.3-3build1_amd64.deb ...
+Unpacking libkeyutils1:amd64 (1.6.3-3build1) ...
+Selecting previously unselected package libkrb5-3:amd64.
+Preparing to unpack .../03-libkrb5-3_1.20.1-6ubuntu2.6_amd64.deb ...
+Unpacking libkrb5-3:amd64 (1.20.1-6ubuntu2.6) ...
+Selecting previously unselected package libgssapi-krb5-2:amd64.
+Preparing to unpack .../04-libgssapi-krb5-2_1.20.1-6ubuntu2.6_amd64.deb ...
+Unpacking libgssapi-krb5-2:amd64 (1.20.1-6ubuntu2.6) ...
+Selecting previously unselected package libnghttp2-14:amd64.
+Preparing to unpack .../05-libnghttp2-14_1.59.0-1ubuntu0.2_amd64.deb ...
+Unpacking libnghttp2-14:amd64 (1.59.0-1ubuntu0.2) ...
+Selecting previously unselected package libpsl5t64:amd64.
+Preparing to unpack .../06-libpsl5t64_0.21.2-1.1build1_amd64.deb ...
+Unpacking libpsl5t64:amd64 (0.21.2-1.1build1) ...
+Selecting previously unselected package libbrotli1:amd64.
+Preparing to unpack .../07-libbrotli1_1.1.0-2build2_amd64.deb ...
+Unpacking libbrotli1:amd64 (1.1.0-2build2) ...
+Selecting previously unselected package libsasl2-modules-db:amd64.
+Preparing to unpack .../08-libsasl2-modules-db_2.1.28+dfsg1-5ubuntu3.1_amd64.deb ...
+Unpacking libsasl2-modules-db:amd64 (2.1.28+dfsg1-5ubuntu3.1) ...
+Selecting previously unselected package libsasl2-2:amd64.
+Preparing to unpack .../09-libsasl2-2_2.1.28+dfsg1-5ubuntu3.1_amd64.deb ...
+Unpacking libsasl2-2:amd64 (2.1.28+dfsg1-5ubuntu3.1) ...
+Selecting previously unselected package libldap2:amd64.
+Preparing to unpack .../10-libldap2_2.6.10+dfsg-0ubuntu0.24.04.1_amd64.deb ...
+Unpacking libldap2:amd64 (2.6.10+dfsg-0ubuntu0.24.04.1) ...
+Selecting previously unselected package librtmp1:amd64.
+Preparing to unpack .../11-librtmp1_2.4+20151223.gitfa8646d.1-2build7_amd64.deb ...
+Unpacking librtmp1:amd64 (2.4+20151223.gitfa8646d.1-2build7) ...
+Selecting previously unselected package libssh-4:amd64.
+Preparing to unpack .../12-libssh-4_0.10.6-2ubuntu0.3_amd64.deb ...
+Unpacking libssh-4:amd64 (0.10.6-2ubuntu0.3) ...
+Selecting previously unselected package libcurl4t64:amd64.
+Preparing to unpack .../13-libcurl4t64_8.5.0-2ubuntu10.6_amd64.deb ...
+Unpacking libcurl4t64:amd64 (8.5.0-2ubuntu10.6) ...
+Selecting previously unselected package curl.
+Preparing to unpack .../14-curl_8.5.0-2ubuntu10.6_amd64.deb ...
+Unpacking curl (8.5.0-2ubuntu10.6) ...
+Setting up libkeyutils1:amd64 (1.6.3-3build1) ...
+Setting up libbrotli1:amd64 (1.1.0-2build2) ...
+Setting up libpsl5t64:amd64 (0.21.2-1.1build1) ...
+Setting up libnghttp2-14:amd64 (1.59.0-1ubuntu0.2) ...
+Setting up libkrb5support0:amd64 (1.20.1-6ubuntu2.6) ...
+Setting up libsasl2-modules-db:amd64 (2.1.28+dfsg1-5ubuntu3.1) ...
+Setting up librtmp1:amd64 (2.4+20151223.gitfa8646d.1-2build7) ...
+Setting up libk5crypto3:amd64 (1.20.1-6ubuntu2.6) ...
+Setting up libsasl2-2:amd64 (2.1.28+dfsg1-5ubuntu3.1) ...
+Setting up libkrb5-3:amd64 (1.20.1-6ubuntu2.6) ...
+Setting up libldap2:amd64 (2.6.10+dfsg-0ubuntu0.24.04.1) ...
+Setting up libgssapi-krb5-2:amd64 (1.20.1-6ubuntu2.6) ...
+Setting up libssh-4:amd64 (0.10.6-2ubuntu0.3) ...
+Setting up libcurl4t64:amd64 (8.5.0-2ubuntu10.6) ...
+Setting up curl (8.5.0-2ubuntu10.6) ...
+Processing triggers for libc-bin (2.39-0ubuntu8.7) ...
+--> 41649b82819b
+[2/2] STEP 4/12: RUN useradd -m -s /bin/bash appuser
+--> 1c2ebcb83c24
+[2/2] STEP 5/12: RUN mkdir -p /app/data && chown appuser:appuser /app/data
+--> 440cd61731ac
+[2/2] STEP 6/12: COPY --from=build /app/publish .
+--> 8e13346e40ee
+[2/2] STEP 7/12: ENV ASPNETCORE_URLS=http://+:5000
+--> 17dabd9bf3b2
+[2/2] STEP 8/12: ENV ASPNETCORE_ENVIRONMENT=Production
+--> 3b57bb8a2a3f
+[2/2] STEP 9/12: ENV ConnectionStrings__DefaultConnection="Data Source=/app/data/myblog.db"
+--> 719612591735
+[2/2] STEP 10/12: USER appuser
+--> 611cafcac1b1
+[2/2] STEP 11/12: EXPOSE 5000
+--> fb7c830e4175
+[2/2] STEP 12/12: ENTRYPOINT ["dotnet", "MyBlog.Web.dll"]
+[2/2] COMMIT myblog_myblog-web
+--> 22d4ba968770
+Successfully tagged localhost/myblog_myblog-web:latest
+22d4ba968770eeca038eddb397e7a2918f6593b74de5f1cfd2f65fdf68f25658
+[INFO] Starting MyBlog web service...
+7ff9dcf81db80b8d6c0dbc60bcbb421b0c8341796096708cee124534c2608cbe
+42bcafc6102d5ad5e5b939f25cbc6865f78ca23debaa9c54c12ad002bc41a1ee
+myblog-web
+[INFO] Waiting for MyBlog to be ready...
+.
+[INFO] MyBlog is ready!
+[INFO] Running E2E tests...
+64b078bf96e67d577edeba3b394ada4d872ed211ed3ed9d44c8df5031249d858
+[myblog-web] | cannot open `/run/user/1000/crun/42bcafc6102d5ad5e5b939f25cbc6865f78ca23debaa9c54c12ad002bc41a1ee/exec.fifo`: No such file or directory
+[myblog-web] | Error: unable to start container 42bcafc6102d5ad5e5b939f25cbc6865f78ca23debaa9c54c12ad002bc41a1ee: `/usr/bin/crun start 42bcafc6102d5ad5e5b939f25cbc6865f78ca23debaa9c54c12ad002bc41a1ee` failed: exit status 1
+[myblog-e2e] | xUnit.net v3 In-Process Runner v3.2.2+728c1dce01 (64-bit .NET 10.0.2)
+[myblog-e2e] |   Discovering: MyBlog.E2E
+[myblog-e2e] |   Discovered:  MyBlog.E2E
+[myblog-e2e] |   Starting:    MyBlog.E2E
+[myblog-e2e] |   Finished:    MyBlog.E2E (ID = '4d488734a9156ea8719a93bca3e9cb47dfeac4715a7981582060bf185a1e7bf4')
+[myblog-e2e] | === TEST EXECUTION SUMMARY ===
+[myblog-e2e] |    MyBlog.E2E  Total: 78, Errors: 0, Failed: 0, Skipped: 0, Not Run: 0, Time: 25.176s
+[myblog-e2e] | 
+[INFO] Capturing logs...
+[INFO] Cleaning up...
+myblog-e2e
+myblog-web
+myblog-e2e
+myblog-web
+myblog_myblog-data
+7ff9dcf81db80b8d6c0dbc60bcbb421b0c8341796096708cee124534c2608cbe
+myblog_myblog-network
+[INFO] E2E tests passed! ✓
+
+real	1m37.639s
+user	0m48.518s
+sys	0m25.281s
+kushal@fedora:~/src/dotnet/MyBlog$ cd ~/src/dotnet/MyBlog/ && export DOTNET_CLI_TELEMETRY_OPTOUT=1 && (cd src && time dotnet format; time dotnet restore; time dotnet clean; time dotnet build; time dotnet run --project MyBlog.Tests/MyBlog.Tests.csproj; time dotnet list package; time dotnet list package --outdated); cd ~/src/dotnet/MyBlog/ && time bash export.sh; cat run-e2e.sh; time bash run-e2e.sh --clean; time bash run-e2e.sh;
