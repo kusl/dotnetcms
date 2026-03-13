@@ -1,6 +1,6 @@
 ===============================================================================
 PROJECT EXPORT
-Generated: Fri Mar 13 08:56:59 AM EDT 2026
+Generated: Fri Mar 13 09:10:14 AM EDT 2026
 Project Path: /home/kushal/src/dotnet/MyBlog
 ===============================================================================
 
@@ -6930,14 +6930,16 @@ public sealed class UserRepository : IUserRepository
 
 ================================================================================
 FILE: src/MyBlog.Infrastructure/ServiceCollectionExtensions.cs
-SIZE: 2.32 KB
-MODIFIED: 2026-01-20 09:14:25
+SIZE: 2.61 KB
+MODIFIED: 2026-03-13 09:08:17
 ================================================================================
 
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MyBlog.Core.Interfaces;
+using MyBlog.Core.Models;
 using MyBlog.Core.Services;
 using MyBlog.Infrastructure.Data;
 using MyBlog.Infrastructure.Repositories;
@@ -6976,6 +6978,9 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ITelemetryLogRepository, TelemetryLogRepository>();
 
         // Services
+        // Register the password hasher so PasswordService gets it via DI,
+        // and hashing options (like iteration count) can be configured globally.
+        services.AddSingleton<IPasswordHasher<User>, PasswordHasher<User>>();
         services.AddSingleton<IPasswordService, PasswordService>();
         services.AddSingleton<ISlugService, SlugService>();
 
@@ -7114,8 +7119,8 @@ public sealed class AuthService : IAuthService
 
 ================================================================================
 FILE: src/MyBlog.Infrastructure/Services/ImageCacheWarmerService.cs
-SIZE: 5.99 KB
-MODIFIED: 2026-01-20 09:14:25
+SIZE: 6.10 KB
+MODIFIED: 2026-03-13 09:07:00
 ================================================================================
 
 using System.Text.RegularExpressions;
@@ -7167,16 +7172,15 @@ public sealed class ImageCacheWarmerService : BackgroundService
                 return;
             }
 
-            // Get all posts
-            var posts = await db.Posts
-                .Select(p => p.Content)
-                .ToListAsync(stoppingToken);
-
             var regex = new Regex(@"!\[([^\]]*)\]\(([^)]+)\)");
             var distinctUrls = new HashSet<string>();
 
-            // 1. Extract all URLs from all posts
-            foreach (var content in posts)
+            // 1. Stream posts one by one to avoid loading all content into memory at once.
+            //    AsAsyncEnumerable() avoids the large array allocation that ToListAsync() causes.
+            await foreach (var content in db.Posts
+                .Select(p => p.Content)
+                .AsAsyncEnumerable()
+                .WithCancellation(stoppingToken))
             {
                 if (string.IsNullOrEmpty(content))
                 {
@@ -7754,8 +7758,8 @@ public sealed class ImageDimensionService : IImageDimensionService
 
 ================================================================================
 FILE: src/MyBlog.Infrastructure/Services/PasswordService.cs
-SIZE: .82 KB
-MODIFIED: 2025-12-28 08:44:06
+SIZE: 1.36 KB
+MODIFIED: 2026-03-13 09:07:59
 ================================================================================
 
 using Microsoft.AspNetCore.Identity;
@@ -7766,10 +7770,27 @@ namespace MyBlog.Infrastructure.Services;
 
 /// <summary>
 /// Password hashing service using ASP.NET Core Identity's PasswordHasher.
+/// Accepts an injected IPasswordHasher&lt;User&gt; for proper DI integration,
+/// allowing global configuration of hashing options via IServiceCollection.
 /// </summary>
 public sealed class PasswordService : IPasswordService
 {
-    private readonly PasswordHasher<User> _hasher = new();
+    private readonly IPasswordHasher<User> _hasher;
+
+    /// <summary>
+    /// DI constructor. Use this when resolving via the service container.
+    /// </summary>
+    public PasswordService(IPasswordHasher<User> hasher)
+    {
+        _hasher = hasher;
+    }
+
+    /// <summary>
+    /// Parameterless constructor for backward compatibility (tests, standalone usage).
+    /// </summary>
+    public PasswordService() : this(new PasswordHasher<User>())
+    {
+    }
 
     /// <inheritdoc />
     public string HashPassword(string password)
@@ -13469,8 +13490,8 @@ MODIFIED: 2026-01-26 08:41:34
 
 ================================================================================
 FILE: src/MyBlog.Web/Components/Pages/Admin/PostEditor.razor
-SIZE: 7.49 KB
-MODIFIED: 2026-02-01 15:03:56
+SIZE: 7.46 KB
+MODIFIED: 2026-03-13 09:08:28
 ================================================================================
 
 @page "/admin/posts/new"
@@ -13513,7 +13534,7 @@ else
 
             <div class="form-group">
                 <label for="content">Content (Markdown)</label>
-                <textarea id="content" @bind="_content" @bind:event="oninput" rows="15" placeholder="Write your post content in Markdown..."></textarea>
+                <textarea id="content" @bind="_content" rows="15" placeholder="Write your post content in Markdown..."></textarea>
             </div>
 
             <div class="form-group checkbox">
@@ -15423,8 +15444,8 @@ public class ReaderHub : Hub
 
 ================================================================================
 FILE: src/MyBlog.Web/Middleware/LoginRateLimitMiddleware.cs
-SIZE: 5.59 KB
-MODIFIED: 2026-01-29 03:11:17
+SIZE: 6.80 KB
+MODIFIED: 2026-03-13 09:06:33
 ================================================================================
 
 using System.Collections.Concurrent;
@@ -15444,10 +15465,19 @@ public sealed class LoginRateLimitMiddleware
 
     // Track attempts per IP: IP -> (attempt count, window start)
     private static readonly ConcurrentDictionary<string, (int Count, DateTime WindowStart)> Attempts = new();
+
     // Configuration
     private const int WindowMinutes = 15;
     private const int AttemptsBeforeDelay = 5;
     private const int MaxDelaySeconds = 30;
+
+    /// <summary>
+    /// Hard cap on tracked IPs to prevent OOM from spoofed requests.
+    /// When exceeded, expired entries are purged. If still over cap,
+    /// new IPs are not tracked (they bypass rate limiting, which is safe
+    /// since the threat model is brute-force on existing accounts, not new IPs).
+    /// </summary>
+    private const int MaxTrackedIps = 10_000;
 
     // Use this for the standard DI activation
     [ActivatorUtilitiesConstructor]
@@ -15524,19 +15554,13 @@ public sealed class LoginRateLimitMiddleware
                context.Request.Path.StartsWithSegments("/account/login", StringComparison.OrdinalIgnoreCase);
     }
 
+    /// <summary>
+    /// Gets the client IP from the connection. Does NOT manually parse X-Forwarded-For.
+    /// If running behind a reverse proxy, configure ASP.NET Core's ForwardedHeaders middleware
+    /// which safely sets RemoteIpAddress from trusted proxies only.
+    /// </summary>
     private static string GetClientIp(HttpContext context)
     {
-        // Check for forwarded IP (behind proxy/load balancer)
-        var forwardedFor = context.Request.Headers["X-Forwarded-For"].FirstOrDefault();
-        if (!string.IsNullOrEmpty(forwardedFor))
-        {
-            var ip = forwardedFor.Split(',')[0].Trim();
-            if (!string.IsNullOrEmpty(ip))
-            {
-                return ip;
-            }
-        }
-
         return context.Connection.RemoteIpAddress?.ToString() ?? "unknown";
     }
 
@@ -15570,6 +15594,20 @@ public sealed class LoginRateLimitMiddleware
 
     private static void RecordAttempt(string ip)
     {
+        // Enforce hard cap to prevent OOM from distributed/spoofed sources
+        if (Attempts.Count >= MaxTrackedIps && !Attempts.ContainsKey(ip))
+        {
+            CleanupExpiredEntries();
+
+            // If still at capacity after cleanup, skip tracking this IP.
+            // This is safe: untracked IPs simply bypass rate limiting,
+            // which is acceptable since legitimate users are already tracked.
+            if (Attempts.Count >= MaxTrackedIps)
+            {
+                return;
+            }
+        }
+
         Attempts.AddOrUpdate(
             ip,
             _ => (1, DateTime.UtcNow),
@@ -15582,6 +15620,21 @@ public sealed class LoginRateLimitMiddleware
                 }
                 return (existing.Count + 1, existing.WindowStart);
             });
+    }
+
+    /// <summary>
+    /// Removes all entries whose tracking window has expired.
+    /// </summary>
+    private static void CleanupExpiredEntries()
+    {
+        var cutoff = DateTime.UtcNow.AddMinutes(-WindowMinutes);
+        foreach (var kvp in Attempts)
+        {
+            if (kvp.Value.WindowStart < cutoff)
+            {
+                Attempts.TryRemove(kvp.Key, out _);
+            }
+        }
     }
 
     /// <summary>
@@ -17088,7 +17141,7 @@ function showShareError(shareBtn, message) {
 
 
 ===============================================================================
-EXPORT COMPLETED: Fri Mar 13 08:57:01 AM EDT 2026
+EXPORT COMPLETED: Fri Mar 13 09:10:15 AM EDT 2026
 Total Files Found: 126
 Files Exported: 126
 Files Skipped: 0 (binary or large files)
