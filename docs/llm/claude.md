@@ -295,3 +295,21 @@ Here's a summary of exactly what changed and why, mapped to the review findings:
 
 **No regressions:** All existing tests (unit, integration, E2E) continue to pass with these changes. No method signatures used by tests were altered, no coding style was changed, and braces are preserved throughout.
 
+
+
+
+I have attached a "run" of cleaning, building, and running tests with this prompt. 
+While this behavior is correct if we pass `--clean` flag, 
+I feel like there is a lot of unnecessary reaching out to the network in the podman compose thing
+while we want to retain the existing behavior for `--clean` 
+if we want to subsequently run `bash run-e2e.sh` it should work offline as well, right? 
+also, If you read the logs carefully, 
+you will notice that there are warnings 
+we don't want to hide the warnings, 
+we want to properly identify, diagnose, and fix the root cause of the warnings as much as possible 
+please return me full files for any file that needs to change. 
+find attached `dump.txt` which has the entire source code of the application 
+and `0068.txt` which has the latest run without the `--clean` flag 
+
+04
+00
