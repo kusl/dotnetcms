@@ -6,10 +6,27 @@ namespace MyBlog.Infrastructure.Services;
 
 /// <summary>
 /// Password hashing service using ASP.NET Core Identity's PasswordHasher.
+/// Accepts an injected IPasswordHasher&lt;User&gt; for proper DI integration,
+/// allowing global configuration of hashing options via IServiceCollection.
 /// </summary>
 public sealed class PasswordService : IPasswordService
 {
-    private readonly PasswordHasher<User> _hasher = new();
+    private readonly IPasswordHasher<User> _hasher;
+
+    /// <summary>
+    /// DI constructor. Use this when resolving via the service container.
+    /// </summary>
+    public PasswordService(IPasswordHasher<User> hasher)
+    {
+        _hasher = hasher;
+    }
+
+    /// <summary>
+    /// Parameterless constructor for backward compatibility (tests, standalone usage).
+    /// </summary>
+    public PasswordService() : this(new PasswordHasher<User>())
+    {
+    }
 
     /// <inheritdoc />
     public string HashPassword(string password)

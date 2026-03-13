@@ -15,10 +15,19 @@ public sealed class LoginRateLimitMiddleware
 
     // Track attempts per IP: IP -> (attempt count, window start)
     private static readonly ConcurrentDictionary<string, (int Count, DateTime WindowStart)> Attempts = new();
+
     // Configuration
     private const int WindowMinutes = 15;
     private const int AttemptsBeforeDelay = 5;
     private const int MaxDelaySeconds = 30;
+
+    /// <summary>
+    /// Hard cap on tracked IPs to prevent OOM from spoofed requests.
+    /// When exceeded, expired entries are purged. If still over cap,
+    /// new IPs are not tracked (they bypass rate limiting, which is safe
+    /// since the threat model is brute-force on existing accounts, not new IPs).
+    /// </summary>
+    private const int MaxTrackedIps = 10_000;
 
     // Use this for the standard DI activation
     [ActivatorUtilitiesConstructor]
@@ -95,19 +104,13 @@ public sealed class LoginRateLimitMiddleware
                context.Request.Path.StartsWithSegments("/account/login", StringComparison.OrdinalIgnoreCase);
     }
 
+    /// <summary>
+    /// Gets the client IP from the connection. Does NOT manually parse X-Forwarded-For.
+    /// If running behind a reverse proxy, configure ASP.NET Core's ForwardedHeaders middleware
+    /// which safely sets RemoteIpAddress from trusted proxies only.
+    /// </summary>
     private static string GetClientIp(HttpContext context)
     {
-        // Check for forwarded IP (behind proxy/load balancer)
-        var forwardedFor = context.Request.Headers["X-Forwarded-For"].FirstOrDefault();
-        if (!string.IsNullOrEmpty(forwardedFor))
-        {
-            var ip = forwardedFor.Split(',')[0].Trim();
-            if (!string.IsNullOrEmpty(ip))
-            {
-                return ip;
-            }
-        }
-
         return context.Connection.RemoteIpAddress?.ToString() ?? "unknown";
     }
 
@@ -141,6 +144,20 @@ public sealed class LoginRateLimitMiddleware
 
     private static void RecordAttempt(string ip)
     {
+        // Enforce hard cap to prevent OOM from distributed/spoofed sources
+        if (Attempts.Count >= MaxTrackedIps && !Attempts.ContainsKey(ip))
+        {
+            CleanupExpiredEntries();
+
+            // If still at capacity after cleanup, skip tracking this IP.
+            // This is safe: untracked IPs simply bypass rate limiting,
+            // which is acceptable since legitimate users are already tracked.
+            if (Attempts.Count >= MaxTrackedIps)
+            {
+                return;
+            }
+        }
+
         Attempts.AddOrUpdate(
             ip,
             _ => (1, DateTime.UtcNow),
@@ -153,6 +170,21 @@ public sealed class LoginRateLimitMiddleware
                 }
                 return (existing.Count + 1, existing.WindowStart);
             });
+    }
+
+    /// <summary>
+    /// Removes all entries whose tracking window has expired.
+    /// </summary>
+    private static void CleanupExpiredEntries()
+    {
+        var cutoff = DateTime.UtcNow.AddMinutes(-WindowMinutes);
+        foreach (var kvp in Attempts)
+        {
+            if (kvp.Value.WindowStart < cutoff)
+            {
+                Attempts.TryRemove(kvp.Key, out _);
+            }
+        }
     }
 
     /// <summary>

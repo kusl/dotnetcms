@@ -1,7 +1,9 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MyBlog.Core.Interfaces;
+using MyBlog.Core.Models;
 using MyBlog.Core.Services;
 using MyBlog.Infrastructure.Data;
 using MyBlog.Infrastructure.Repositories;
@@ -40,6 +42,9 @@ public static class ServiceCollectionExtensions
         services.AddScoped<ITelemetryLogRepository, TelemetryLogRepository>();
 
         // Services
+        // Register the password hasher so PasswordService gets it via DI,
+        // and hashing options (like iteration count) can be configured globally.
+        services.AddSingleton<IPasswordHasher<User>, PasswordHasher<User>>();
         services.AddSingleton<IPasswordService, PasswordService>();
         services.AddSingleton<ISlugService, SlugService>();
 

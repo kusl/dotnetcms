@@ -47,16 +47,15 @@ public sealed class ImageCacheWarmerService : BackgroundService
                 return;
             }
 
-            // Get all posts
-            var posts = await db.Posts
-                .Select(p => p.Content)
-                .ToListAsync(stoppingToken);
-
             var regex = new Regex(@"!\[([^\]]*)\]\(([^)]+)\)");
             var distinctUrls = new HashSet<string>();
 
-            // 1. Extract all URLs from all posts
-            foreach (var content in posts)
+            // 1. Stream posts one by one to avoid loading all content into memory at once.
+            //    AsAsyncEnumerable() avoids the large array allocation that ToListAsync() causes.
+            await foreach (var content in db.Posts
+                .Select(p => p.Content)
+                .AsAsyncEnumerable()
+                .WithCancellation(stoppingToken))
             {
                 if (string.IsNullOrEmpty(content))
                 {
