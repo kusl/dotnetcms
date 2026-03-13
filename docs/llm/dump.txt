@@ -1,6 +1,6 @@
 ===============================================================================
 PROJECT EXPORT
-Generated: Fri Mar 13 07:10:18 PM EDT 2026
+Generated: Fri Mar 13 07:23:53 PM EDT 2026
 Project Path: /home/kushal/src/dotnet/MyBlog
 ===============================================================================
 
@@ -164,6 +164,7 @@ DIRECTORY STRUCTURE:
 │   │   ├── Integration
 │   │   │   ├── AuthServiceLongPasswordTests.cs
 │   │   │   ├── AuthServiceTests.cs
+│   │   │   ├── DatabaseSchemaUpdaterTests.cs
 │   │   │   ├── ImageRepositoryTests.cs
 │   │   │   ├── PasswordChangeTests.cs
 │   │   │   ├── PostRepositoryExtendedTests.cs
@@ -3420,8 +3421,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ================================================================================
 FILE: run-e2e.sh
-SIZE: 3.12 KB
-MODIFIED: 2026-01-27 09:54:00
+SIZE: 4.71 KB
+MODIFIED: 2026-03-13 19:21:59
 ================================================================================
 
 #!/bin/bash
@@ -3432,15 +3433,18 @@ MODIFIED: 2026-01-27 09:54:00
 # Designed for Fedora with SELinux and Podman.
 #
 # Usage:
-#   ./run-e2e.sh          # Run all E2E tests
-#   ./run-e2e.sh --build  # Force rebuild containers
-#   ./run-e2e.sh --clean  # Clean up and remove volumes
+#   ./run-e2e.sh              # Run E2E tests (builds only if images missing)
+#   ./run-e2e.sh --build      # Force rebuild containers before running
+#   ./run-e2e.sh --no-build   # Skip build entirely (use existing images)
+#   ./run-e2e.sh --clean      # Clean up and remove volumes
 # =============================================================================
 
 set -e
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$SCRIPT_DIR"
+
+COMPOSE_FILE="docker-compose.e2e.yml"
 
 # Colors for output
 RED='\033[0;31m'
@@ -3462,12 +3466,16 @@ log_error() {
 
 # Parse arguments
 BUILD_FLAG=""
+NO_BUILD_FLAG=""
 CLEAN_FLAG=""
 
 for arg in "$@"; do
     case $arg in
         --build)
-            BUILD_FLAG="--build"
+            BUILD_FLAG="true"
+            ;;
+        --no-build)
+            NO_BUILD_FLAG="true"
             ;;
         --clean)
             CLEAN_FLAG="true"
@@ -3478,7 +3486,7 @@ done
 # Clean up if requested
 if [ "$CLEAN_FLAG" == "true" ]; then
     log_info "Cleaning up containers and volumes..."
-    podman-compose -f docker-compose.e2e.yml down -v --remove-orphans 2>/dev/null || true
+    podman-compose -f "$COMPOSE_FILE" down -v --remove-orphans 2>/dev/null || true
     podman system prune -f 2>/dev/null || true
     log_info "Cleanup complete"
     exit 0
@@ -3494,12 +3502,43 @@ fi
 
 log_info "Starting E2E test environment..."
 
-# Build and start services
-log_info "Building containers..."
-podman-compose -f docker-compose.e2e.yml build $BUILD_FLAG
+# -------------------------------------------------------------------------
+# Ensure clean container state before starting.
+# This prevents crun "exec.fifo: No such file or directory" errors caused
+# by stale container runtime state from a previous run.
+# -------------------------------------------------------------------------
+log_info "Removing any leftover containers from previous runs..."
+podman-compose -f "$COMPOSE_FILE" down --remove-orphans 2>/dev/null || true
+
+# -------------------------------------------------------------------------
+# Build logic:
+#   --build      → always rebuild
+#   --no-build   → never rebuild (fail fast if images missing)
+#   (default)    → rebuild only if images are missing
+# -------------------------------------------------------------------------
+images_exist() {
+    podman image exists localhost/myblog_myblog-web:latest 2>/dev/null && \
+    podman image exists localhost/myblog_myblog-e2e:latest 2>/dev/null
+}
+
+if [ "$BUILD_FLAG" == "true" ]; then
+    log_info "Force rebuilding containers..."
+    podman-compose -f "$COMPOSE_FILE" build
+elif [ "$NO_BUILD_FLAG" == "true" ]; then
+    if ! images_exist; then
+        log_error "Container images not found. Run without --no-build first, or use --build."
+        exit 1
+    fi
+    log_info "Using existing container images (--no-build)..."
+elif ! images_exist; then
+    log_info "Container images not found. Building..."
+    podman-compose -f "$COMPOSE_FILE" build
+else
+    log_info "Using cached container images (pass --build to force rebuild)..."
+fi
 
 log_info "Starting MyBlog web service..."
-podman-compose -f docker-compose.e2e.yml up -d myblog-web
+podman-compose -f "$COMPOSE_FILE" up -d myblog-web
 
 # Wait for web service to be healthy
 log_info "Waiting for MyBlog to be ready..."
@@ -3508,8 +3547,8 @@ until podman exec myblog-web curl -sf http://localhost:5000/ > /dev/null 2>&1; d
     RETRIES=$((RETRIES - 1))
     if [ $RETRIES -eq 0 ]; then
         log_error "MyBlog failed to start within timeout"
-        podman-compose -f docker-compose.e2e.yml logs myblog-web
-        podman-compose -f docker-compose.e2e.yml down -v
+        podman-compose -f "$COMPOSE_FILE" logs myblog-web
+        podman-compose -f "$COMPOSE_FILE" down -v
         exit 1
     fi
     echo -n "."
@@ -3520,17 +3559,17 @@ log_info "MyBlog is ready!"
 
 # Run E2E tests
 log_info "Running E2E tests..."
-podman-compose -f docker-compose.e2e.yml up myblog-e2e
+podman-compose -f "$COMPOSE_FILE" up myblog-e2e
 E2E_EXIT_CODE=$?
 
 # Capture logs
 log_info "Capturing logs..."
-podman-compose -f docker-compose.e2e.yml logs myblog-web > test-results/myblog-web.log 2>&1
-podman-compose -f docker-compose.e2e.yml logs myblog-e2e > test-results/myblog-e2e.log 2>&1
+podman-compose -f "$COMPOSE_FILE" logs myblog-web > test-results/myblog-web.log 2>&1
+podman-compose -f "$COMPOSE_FILE" logs myblog-e2e > test-results/myblog-e2e.log 2>&1
 
 # Clean up
 log_info "Cleaning up..."
-podman-compose -f docker-compose.e2e.yml down -v
+podman-compose -f "$COMPOSE_FILE" down -v
 
 if [ $E2E_EXIT_CODE -eq 0 ]; then
     log_info "E2E tests passed! ✓"
@@ -4710,12 +4749,21 @@ public sealed partial class SlugService : ISlugService
 
 ================================================================================
 FILE: src/MyBlog.E2E/Dockerfile
-SIZE: 1.82 KB
-MODIFIED: 2026-01-29 02:17:06
+SIZE: 3.39 KB
+MODIFIED: 2026-03-13 19:21:50
 ================================================================================
 
 # E2E Test Runner Dockerfile
 # Uses Playwright to run E2E tests against the MyBlog application
+#
+# Layer caching strategy:
+#   1. System tools (Node.js, PowerShell) — rarely changes
+#   2. NuGet restore — changes when .csproj or Directory.Packages.props change
+#   3. Playwright browser install — changes when Microsoft.Playwright version changes
+#   4. Source code copy + build — changes on every source edit
+#
+# This ordering ensures the ~280MB Playwright browser download is cached
+# based on package versions, NOT source code changes.
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 
@@ -4744,15 +4792,35 @@ RUN dotnet restore MyBlog.Core/MyBlog.Core.csproj && \
     dotnet restore MyBlog.Web/MyBlog.Web.csproj && \
     dotnet restore MyBlog.E2E/MyBlog.E2E.csproj
 
+# Install Playwright browsers BEFORE copying source code.
+# The playwright.ps1 script is distributed inside the Microsoft.Playwright NuGet
+# package and can be invoked directly from the NuGet cache after restore.
+# This layer is only rebuilt when the Playwright package version changes
+# (via Directory.Packages.props), saving ~280MB of browser downloads on
+# every source-only change.
+#
+# NOTE: The node:NNN [DEP0169] DeprecationWarning about url.parse() is an
+# upstream issue in Playwright's npm download scripts. It is harmless and
+# cannot be fixed on our side. It will only appear when this layer rebuilds.
+RUN PLAYWRIGHT_SCRIPT=$(find /root/.nuget/packages/microsoft.playwright -name 'playwright.ps1' -print -quit 2>/dev/null) && \
+    if [ -n "$PLAYWRIGHT_SCRIPT" ]; then \
+        pwsh "$PLAYWRIGHT_SCRIPT" install chromium --with-deps; \
+    else \
+        echo "WARNING: playwright.ps1 not found in NuGet cache; browsers will be installed after build"; \
+    fi
+
 # Copy all source code
 COPY . .
 
 # Build the E2E project
 RUN dotnet build MyBlog.E2E/MyBlog.E2E.csproj -c Release
 
-# Install Playwright browsers with system dependencies
-# The --with-deps flag installs required system libraries (libnspr4, libnss3, etc.)
-RUN pwsh ./MyBlog.E2E/bin/Release/net10.0/playwright.ps1 install chromium --with-deps
+# Fallback: if browsers were not installed from the NuGet cache step above
+# (e.g. the package layout changed), install them from the build output.
+RUN if ! ls /root/.cache/ms-playwright/chromium-* 1>/dev/null 2>&1; then \
+        echo "Installing Playwright browsers from build output (fallback)..."; \
+        pwsh ./MyBlog.E2E/bin/Release/net10.0/playwright.ps1 install chromium --with-deps; \
+    fi
 
 WORKDIR /src/MyBlog.E2E
 
@@ -8715,6 +8783,199 @@ public class AuthServiceTests : IAsyncDisposable
 
         var userCount = await _context.Users.CountAsync(ct);
         Assert.Equal(1, userCount);
+    }
+}
+
+
+================================================================================
+FILE: src/MyBlog.Tests/Integration/DatabaseSchemaUpdaterTests.cs
+SIZE: 6.26 KB
+MODIFIED: 2026-03-13 19:22:35
+================================================================================
+
+using Microsoft.EntityFrameworkCore;
+using MyBlog.Core.Models;
+using MyBlog.Infrastructure.Data;
+using Xunit;
+
+namespace MyBlog.Tests.Integration;
+
+/// <summary>
+/// Integration tests for the DatabaseSchemaUpdater.
+/// Verifies that incremental schema updates work correctly for both
+/// fresh databases and existing databases that are missing newer tables.
+/// Uses in-memory SQLite for cross-platform compatibility.
+/// </summary>
+public class DatabaseSchemaUpdaterTests : IAsyncDisposable
+{
+    private readonly BlogDbContext _context;
+
+    public DatabaseSchemaUpdaterTests()
+    {
+        var options = new DbContextOptionsBuilder<BlogDbContext>()
+            .UseSqlite("Data Source=:memory:")
+            .Options;
+
+        _context = new BlogDbContext(options);
+        _context.Database.OpenConnection();
+        _context.Database.EnsureCreated();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await _context.DisposeAsync();
+    }
+
+    [Fact]
+    public async Task ApplyUpdatesAsync_OnFreshDatabase_DoesNotThrow()
+    {
+        var ct = TestContext.Current.CancellationToken;
+
+        // EnsureCreated already created all tables including ImageDimensionCache.
+        // ApplyUpdatesAsync should be safe to call (idempotent).
+        await DatabaseSchemaUpdater.ApplyUpdatesAsync(_context);
+
+        // Verify the table is still usable
+        var count = await _context.ImageDimensionCache.CountAsync(ct);
+        Assert.Equal(0, count);
+    }
+
+    [Fact]
+    public async Task ApplyUpdatesAsync_WhenImageDimensionCacheTableMissing_CreatesIt()
+    {
+        var ct = TestContext.Current.CancellationToken;
+
+        // Simulate an older database that was created before ImageDimensionCache existed
+        await _context.Database.ExecuteSqlRawAsync(
+            "DROP TABLE IF EXISTS \"ImageDimensionCache\"", ct);
+
+        // Verify the table is actually gone
+        var tableExists = await TableExistsAsync("ImageDimensionCache", ct);
+        Assert.False(tableExists);
+
+        // Apply incremental updates
+        await DatabaseSchemaUpdater.ApplyUpdatesAsync(_context);
+
+        // Verify the table was recreated
+        tableExists = await TableExistsAsync("ImageDimensionCache", ct);
+        Assert.True(tableExists);
+    }
+
+    [Fact]
+    public async Task ApplyUpdatesAsync_CalledMultipleTimes_IsIdempotent()
+    {
+        var ct = TestContext.Current.CancellationToken;
+
+        // Call multiple times — should never throw
+        await DatabaseSchemaUpdater.ApplyUpdatesAsync(_context);
+        await DatabaseSchemaUpdater.ApplyUpdatesAsync(_context);
+        await DatabaseSchemaUpdater.ApplyUpdatesAsync(_context);
+
+        // Table should still be usable
+        var count = await _context.ImageDimensionCache.CountAsync(ct);
+        Assert.Equal(0, count);
+    }
+
+    [Fact]
+    public async Task ApplyUpdatesAsync_AfterRecreation_TableIsUsable()
+    {
+        var ct = TestContext.Current.CancellationToken;
+
+        // Drop the table to simulate upgrade scenario
+        await _context.Database.ExecuteSqlRawAsync(
+            "DROP TABLE IF EXISTS \"ImageDimensionCache\"", ct);
+
+        // Apply schema updates to recreate it
+        await DatabaseSchemaUpdater.ApplyUpdatesAsync(_context);
+
+        // Insert a record to prove the table schema is correct
+        _context.ImageDimensionCache.Add(new ImageDimensionCache
+        {
+            Url = "https://example.com/test.png",
+            Width = 800,
+            Height = 600,
+            LastCheckedUtc = DateTime.UtcNow
+        });
+        await _context.SaveChangesAsync(ct);
+
+        // Read it back
+        var cached = await _context.ImageDimensionCache
+            .FirstOrDefaultAsync(x => x.Url == "https://example.com/test.png", ct);
+        Assert.NotNull(cached);
+        Assert.Equal(800, cached.Width);
+        Assert.Equal(600, cached.Height);
+    }
+
+    [Fact]
+    public async Task ApplyUpdatesAsync_PreservesExistingData()
+    {
+        var ct = TestContext.Current.CancellationToken;
+
+        // Insert data into the existing table
+        _context.ImageDimensionCache.Add(new ImageDimensionCache
+        {
+            Url = "https://example.com/existing.png",
+            Width = 1024,
+            Height = 768,
+            LastCheckedUtc = DateTime.UtcNow
+        });
+        await _context.SaveChangesAsync(ct);
+
+        // Run the schema updater (table already exists with data)
+        await DatabaseSchemaUpdater.ApplyUpdatesAsync(_context);
+
+        // Existing data should still be there
+        var cached = await _context.ImageDimensionCache
+            .FirstOrDefaultAsync(x => x.Url == "https://example.com/existing.png", ct);
+        Assert.NotNull(cached);
+        Assert.Equal(1024, cached.Width);
+        Assert.Equal(768, cached.Height);
+    }
+
+    [Fact]
+    public async Task ApplyUpdatesAsync_DoesNotAffectOtherTables()
+    {
+        var ct = TestContext.Current.CancellationToken;
+
+        // Insert a user to have data in another table
+        _context.Users.Add(new User
+        {
+            Id = Guid.NewGuid(),
+            Username = "schema-test-user",
+            PasswordHash = "hash",
+            Email = "schema@example.com",
+            DisplayName = "Schema Test",
+            CreatedAtUtc = DateTime.UtcNow
+        });
+        await _context.SaveChangesAsync(ct);
+
+        // Run schema updates
+        await DatabaseSchemaUpdater.ApplyUpdatesAsync(_context);
+
+        // Other tables should be unaffected
+        var user = await _context.Users
+            .FirstOrDefaultAsync(u => u.Username == "schema-test-user", ct);
+        Assert.NotNull(user);
+        Assert.Equal("Schema Test", user.DisplayName);
+    }
+
+    private async Task<bool> TableExistsAsync(string tableName, CancellationToken ct)
+    {
+        var connection = _context.Database.GetDbConnection();
+        if (connection.State != System.Data.ConnectionState.Open)
+        {
+            await connection.OpenAsync(ct);
+        }
+
+        using var command = connection.CreateCommand();
+        command.CommandText = "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name=@tableName";
+        var parameter = command.CreateParameter();
+        parameter.ParameterName = "@tableName";
+        parameter.Value = tableName;
+        command.Parameters.Add(parameter);
+
+        var result = await command.ExecuteScalarAsync(ct);
+        return Convert.ToInt64(result) > 0;
     }
 }
 
@@ -17144,9 +17405,9 @@ function showShareError(shareBtn, message) {
 
 
 ===============================================================================
-EXPORT COMPLETED: Fri Mar 13 07:10:20 PM EDT 2026
-Total Files Found: 126
-Files Exported: 126
+EXPORT COMPLETED: Fri Mar 13 07:23:54 PM EDT 2026
+Total Files Found: 127
+Files Exported: 127
 Files Skipped: 0 (binary or large files)
 Output File: /home/kushal/src/dotnet/MyBlog/docs/llm/dump.txt
 ===============================================================================
