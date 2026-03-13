@@ -221,8 +221,8 @@ public class MarkdownServiceEdgeCaseTests
         var result = NormalizeNewlines(await _sut.ToHtmlAsync(markdown));
 
         // List should close before heading
-        var ulCloseIndex = result.IndexOf("</ul>");
-        var h1Index = result.IndexOf("<h1>");
+        var ulCloseIndex = result.IndexOf("</ul>", StringComparison.Ordinal);
+        var h1Index = result.IndexOf("<h1>", StringComparison.Ordinal);
         Assert.True(ulCloseIndex < h1Index);
     }
 
@@ -232,8 +232,8 @@ public class MarkdownServiceEdgeCaseTests
         var markdown = "- Item 1\n- Item 2\n```\ncode\n```";
         var result = NormalizeNewlines(await _sut.ToHtmlAsync(markdown));
 
-        var ulCloseIndex = result.IndexOf("</ul>");
-        var preIndex = result.IndexOf("<pre>");
+        var ulCloseIndex = result.IndexOf("</ul>", StringComparison.Ordinal);
+        var preIndex = result.IndexOf("<pre>", StringComparison.Ordinal);
         Assert.True(ulCloseIndex < preIndex);
     }
 }
