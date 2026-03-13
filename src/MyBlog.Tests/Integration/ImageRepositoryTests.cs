@@ -41,10 +41,7 @@ public class ImageRepositoryTests : IAsyncDisposable
         _sut = new ImageRepository(_context);
     }
 
-    public async ValueTask DisposeAsync()
-    {
-        await _context.DisposeAsync();
-    }
+    public async ValueTask DisposeAsync() => await _context.DisposeAsync();
 
     [Fact]
     public async Task CreateAsync_AddsImageToDatabase()
@@ -198,9 +195,8 @@ public class ImageRepositoryTests : IAsyncDisposable
         Assert.Equal(EntityState.Detached, entry.State);
     }
 
-    private Image CreateTestImage(string fileName, byte[]? data = null)
-    {
-        return new Image
+    private Image CreateTestImage(string fileName, byte[]? data = null) =>
+        new()
         {
             Id = Guid.NewGuid(),
             FileName = fileName,
@@ -209,5 +205,4 @@ public class ImageRepositoryTests : IAsyncDisposable
             UploadedByUserId = _testUser.Id,
             UploadedAtUtc = DateTime.UtcNow
         };
-    }
 }

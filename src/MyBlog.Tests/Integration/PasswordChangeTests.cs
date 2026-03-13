@@ -36,10 +36,7 @@ public class PasswordChangeTests : IAsyncDisposable
         _sut = new AuthService(_userRepository, _passwordService, configuration);
     }
 
-    public async ValueTask DisposeAsync()
-    {
-        await _context.DisposeAsync();
-    }
+    public async ValueTask DisposeAsync() => await _context.DisposeAsync();
 
     [Fact]
     public async Task ChangePasswordAsync_WithCorrectCurrentPassword_ReturnsTrue()

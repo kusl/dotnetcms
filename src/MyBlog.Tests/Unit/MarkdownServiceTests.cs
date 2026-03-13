@@ -29,10 +29,7 @@ internal sealed class MockImageDimensionService : IImageDimensionService
 /// </summary>
 internal sealed class ThrowingImageDimensionService : IImageDimensionService
 {
-    public Task<(int Width, int Height)?> GetDimensionsAsync(string url, CancellationToken cancellationToken = default)
-    {
-        throw new InvalidOperationException("Simulated database error");
-    }
+    public Task<(int Width, int Height)?> GetDimensionsAsync(string url, CancellationToken cancellationToken = default) => throw new InvalidOperationException("Simulated database error");
 }
 
 public class MarkdownServiceTests

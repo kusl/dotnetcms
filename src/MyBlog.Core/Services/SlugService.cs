@@ -19,10 +19,7 @@ public sealed partial class SlugService : ISlugService
     }
 
     /// <inheritdoc />
-    public string GenerateUuidSlug()
-    {
-        return $"post-{Guid.CreateVersion7()}";
-    }
+    public string GenerateUuidSlug() => $"post-{Guid.CreateVersion7()}";
 
     private static string GenerateSlug(string title)
     {

@@ -35,10 +35,7 @@ public class AuthServiceTests : IAsyncDisposable
         _sut = new AuthService(userRepository, _passwordService, configuration);
     }
 
-    public async ValueTask DisposeAsync()
-    {
-        await _context.DisposeAsync();
-    }
+    public async ValueTask DisposeAsync() => await _context.DisposeAsync();
 
     [Fact]
     public async Task AuthenticateAsync_WithValidCredentials_ReturnsUser()

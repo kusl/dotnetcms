@@ -40,11 +40,9 @@ public sealed class LoginRateLimitMiddlewareTests : IDisposable
             NoOpDelay);
     }
 
-    public void Dispose()
-    {
+    public void Dispose() =>
         // Clean up after each test
         LoginRateLimitMiddleware.ClearAttempts();
-    }
 
     [Fact]
     public async Task InvokeAsync_NonLoginRequest_PassesThroughImmediately()

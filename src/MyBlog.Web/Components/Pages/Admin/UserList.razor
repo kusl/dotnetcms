@@ -77,10 +77,7 @@
         await LoadUsers();
     }
 
-    private async Task LoadUsers()
-    {
-        _users = await UserRepository.GetAllAsync();
-    }
+    private async Task LoadUsers() => _users = await UserRepository.GetAllAsync();
 
     private async Task DeleteUser(Guid id)
     {

@@ -29,10 +29,7 @@ public sealed class PasswordService : IPasswordService
     }
 
     /// <inheritdoc />
-    public string HashPassword(string password)
-    {
-        return _hasher.HashPassword(null!, password);
-    }
+    public string HashPassword(string password) => _hasher.HashPassword(null!, password);
 
     /// <inheritdoc />
     public bool VerifyPassword(string hashedPassword, string providedPassword)

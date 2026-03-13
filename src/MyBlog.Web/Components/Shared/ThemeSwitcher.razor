@@ -90,10 +90,7 @@
         }
     }
 
-    private void ToggleMenu()
-    {
-        _isOpen = !_isOpen;
-    }
+    private void ToggleMenu() => _isOpen = !_isOpen;
 
     [JSInvokable]
     public void CloseMenu()
@@ -120,13 +117,7 @@
         }
     }
 
-    private static bool IsDarkTheme(string themeId)
-    {
-        return themeId is "dark" or "nord" or "dracula";
-    }
+    private static bool IsDarkTheme(string themeId) => themeId is "dark" or "nord" or "dracula";
 
-    public void Dispose()
-    {
-        _objRef?.Dispose();
-    }
+    public void Dispose() => _objRef?.Dispose();
 }

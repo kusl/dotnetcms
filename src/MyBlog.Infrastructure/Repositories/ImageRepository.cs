@@ -19,19 +19,14 @@ public sealed class ImageRepository : IImageRepository
     }
 
     /// <inheritdoc />
-    public async Task<IReadOnlyList<Image>> GetAllAsync(CancellationToken cancellationToken = default)
-    {
-        return await _context.Images
+    public async Task<IReadOnlyList<Image>> GetAllAsync(CancellationToken cancellationToken = default) =>
+        await _context.Images
             .AsNoTracking()
             .OrderByDescending(i => i.UploadedAtUtc)
             .ToListAsync(cancellationToken);
-    }
 
     /// <inheritdoc />
-    public async Task<Image?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
-    {
-        return await _context.Images.FindAsync([id], cancellationToken);
-    }
+    public async Task<Image?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default) => await _context.Images.FindAsync([id], cancellationToken);
 
     /// <inheritdoc />
     public async Task<Image> CreateAsync(Image image, CancellationToken cancellationToken = default)

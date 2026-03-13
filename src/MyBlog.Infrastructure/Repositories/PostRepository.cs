@@ -48,9 +48,8 @@ public sealed class PostRepository : IPostRepository
 
     /// <inheritdoc />
     public async Task<IReadOnlyList<PostListItemDto>> GetAllPostsAsync(
-        CancellationToken cancellationToken = default)
-    {
-        return await _context.Posts
+        CancellationToken cancellationToken = default) =>
+        await _context.Posts
             .AsNoTracking()
             .OrderByDescending(p => p.UpdatedAtUtc)
             .Include(p => p.Author)
@@ -63,13 +62,11 @@ public sealed class PostRepository : IPostRepository
                 p.PublishedAtUtc,
                 p.IsPublished))
             .ToListAsync(cancellationToken);
-    }
 
     /// <inheritdoc />
     public async Task<PostDetailDto?> GetBySlugAsync(
-        string slug, CancellationToken cancellationToken = default)
-    {
-        return await _context.Posts
+        string slug, CancellationToken cancellationToken = default) =>
+        await _context.Posts
             .AsNoTracking()
             .Where(p => p.Slug == slug)
             .Include(p => p.Author)
@@ -85,15 +82,12 @@ public sealed class PostRepository : IPostRepository
                 p.PublishedAtUtc,
                 p.IsPublished))
             .FirstOrDefaultAsync(cancellationToken);
-    }
 
     /// <inheritdoc />
-    public async Task<Post?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
-    {
-        return await _context.Posts
+    public async Task<Post?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default) =>
+        await _context.Posts
             .Include(p => p.Author)
             .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
-    }
 
     /// <inheritdoc />
     public async Task<Post> CreateAsync(Post post, CancellationToken cancellationToken = default)
@@ -122,16 +116,12 @@ public sealed class PostRepository : IPostRepository
     }
 
     /// <inheritdoc />
-    public async Task<int> GetCountAsync(CancellationToken cancellationToken = default)
-    {
-        return await _context.Posts.CountAsync(cancellationToken);
-    }
+    public async Task<int> GetCountAsync(CancellationToken cancellationToken = default) => await _context.Posts.CountAsync(cancellationToken);
 
     /// <inheritdoc />
     public async Task<IReadOnlyList<PostListItemDto>> GetRecentPostsAsync(
-        int count, CancellationToken cancellationToken = default)
-    {
-        return await _context.Posts
+        int count, CancellationToken cancellationToken = default) =>
+        await _context.Posts
             .AsNoTracking()
             .OrderByDescending(p => p.UpdatedAtUtc)
             .Take(count)
@@ -145,7 +135,6 @@ public sealed class PostRepository : IPostRepository
                 p.PublishedAtUtc,
                 p.IsPublished))
             .ToListAsync(cancellationToken);
-    }
 
     /// <inheritdoc />
     public async Task<bool> IsSlugTakenAsync(string slug, Guid? excludePostId = null, CancellationToken cancellationToken = default)

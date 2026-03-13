@@ -27,21 +27,17 @@ public sealed class TelemetryLogRepository : ITelemetryLogRepository
 
     /// <inheritdoc />
     public async Task<int> DeleteOlderThanAsync(
-        DateTime cutoffUtc, CancellationToken cancellationToken = default)
-    {
-        return await _context.TelemetryLogs
+        DateTime cutoffUtc, CancellationToken cancellationToken = default) =>
+        await _context.TelemetryLogs
             .Where(l => l.TimestampUtc < cutoffUtc)
             .ExecuteDeleteAsync(cancellationToken);
-    }
 
     /// <inheritdoc />
     public async Task<IReadOnlyList<TelemetryLog>> GetRecentAsync(
-        int count, CancellationToken cancellationToken = default)
-    {
-        return await _context.TelemetryLogs
+        int count, CancellationToken cancellationToken = default) =>
+        await _context.TelemetryLogs
             .AsNoTracking()
             .OrderByDescending(l => l.TimestampUtc)
             .Take(count)
             .ToListAsync(cancellationToken);
-    }
 }

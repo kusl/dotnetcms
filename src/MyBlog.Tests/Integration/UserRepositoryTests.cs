@@ -28,10 +28,7 @@ public class UserRepositoryTests : IAsyncDisposable
         _sut = new UserRepository(_context);
     }
 
-    public async ValueTask DisposeAsync()
-    {
-        await _context.DisposeAsync();
-    }
+    public async ValueTask DisposeAsync() => await _context.DisposeAsync();
 
     [Fact]
     public async Task CreateAsync_AddsUserToDatabase()
@@ -248,9 +245,8 @@ public class UserRepositoryTests : IAsyncDisposable
         Assert.Equal(createdAt, saved.CreatedAtUtc);
     }
 
-    private static User CreateTestUser(string username)
-    {
-        return new User
+    private static User CreateTestUser(string username) =>
+        new()
         {
             Id = Guid.NewGuid(),
             Username = username,
@@ -259,5 +255,4 @@ public class UserRepositoryTests : IAsyncDisposable
             DisplayName = $"Display {username}",
             CreatedAtUtc = DateTime.UtcNow
         };
-    }
 }

@@ -24,10 +24,7 @@ public class TelemetryCleanupTests : IAsyncDisposable
         _sut = new TelemetryLogRepository(_context);
     }
 
-    public async ValueTask DisposeAsync()
-    {
-        await _context.DisposeAsync();
-    }
+    public async ValueTask DisposeAsync() => await _context.DisposeAsync();
 
     [Fact]
     public async Task DeleteOlderThanAsync_RemovesOldLogs()

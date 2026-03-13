@@ -38,13 +38,11 @@
     [SupplyParameterFromQuery(Name = "error")]
     public string? Error { get; set; }
 
-    protected override void OnInitialized()
-    {
+    protected override void OnInitialized() =>
         _error = Error switch
         {
             "required" => "Username and password are required",
             "invalid" => "Invalid username or password",
             _ => null
         };
-    }
 }

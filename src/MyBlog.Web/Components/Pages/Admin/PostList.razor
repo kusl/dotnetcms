@@ -50,15 +50,9 @@ else
     private IReadOnlyList<PostListItemDto>? _posts;
     private bool _deleting;
 
-    protected override async Task OnInitializedAsync()
-    {
-        await LoadPosts();
-    }
+    protected override async Task OnInitializedAsync() => await LoadPosts();
 
-    private async Task LoadPosts()
-    {
-        _posts = await PostRepository.GetAllPostsAsync();
-    }
+    private async Task LoadPosts() => _posts = await PostRepository.GetAllPostsAsync();
 
     private async Task DeletePost(Guid id)
     {

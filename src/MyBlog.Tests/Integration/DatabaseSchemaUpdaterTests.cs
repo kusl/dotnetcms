@@ -26,10 +26,7 @@ public class DatabaseSchemaUpdaterTests : IAsyncDisposable
         _context.Database.EnsureCreated();
     }
 
-    public async ValueTask DisposeAsync()
-    {
-        await _context.DisposeAsync();
-    }
+    public async ValueTask DisposeAsync() => await _context.DisposeAsync();
 
     [Fact]
     public async Task ApplyUpdatesAsync_OnFreshDatabase_DoesNotThrow()

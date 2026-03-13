@@ -98,21 +98,16 @@ public sealed class LoginRateLimitMiddleware
         await _next(context);
     }
 
-    private static bool IsLoginPostRequest(HttpContext context)
-    {
-        return context.Request.Method == HttpMethods.Post &&
-               context.Request.Path.StartsWithSegments("/account/login", StringComparison.OrdinalIgnoreCase);
-    }
+    private static bool IsLoginPostRequest(HttpContext context) =>
+        context.Request.Method == HttpMethods.Post &&
+        context.Request.Path.StartsWithSegments("/account/login", StringComparison.OrdinalIgnoreCase);
 
     /// <summary>
     /// Gets the client IP from the connection. Does NOT manually parse X-Forwarded-For.
     /// If running behind a reverse proxy, configure ASP.NET Core's ForwardedHeaders middleware
     /// which safely sets RemoteIpAddress from trusted proxies only.
     /// </summary>
-    private static string GetClientIp(HttpContext context)
-    {
-        return context.Connection.RemoteIpAddress?.ToString() ?? "unknown";
-    }
+    private static string GetClientIp(HttpContext context) => context.Connection.RemoteIpAddress?.ToString() ?? "unknown";
 
     /// <summary>
     /// Calculate delay based on attempt count. Exposed for unit testing.
@@ -190,10 +185,7 @@ public sealed class LoginRateLimitMiddleware
     /// <summary>
     /// Clear all attempt records. Used for testing.
     /// </summary>
-    public static void ClearAttempts()
-    {
-        Attempts.Clear();
-    }
+    public static void ClearAttempts() => Attempts.Clear();
 }
 
 /// <summary>
@@ -205,8 +197,5 @@ public static class LoginRateLimitMiddlewareExtensions
     /// Adds login rate limiting middleware that slows down repeated attempts
     /// but never completely blocks users.
     /// </summary>
-    public static IApplicationBuilder UseLoginRateLimit(this IApplicationBuilder app)
-    {
-        return app.UseMiddleware<LoginRateLimitMiddleware>();
-    }
+    public static IApplicationBuilder UseLoginRateLimit(this IApplicationBuilder app) => app.UseMiddleware<LoginRateLimitMiddleware>();
 }

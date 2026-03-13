@@ -42,8 +42,5 @@ public class ReaderTrackingService : IReaderTrackingService
         return (null, 0);
     }
 
-    public int GetReaderCount(string slug)
-    {
-        return _slugCounts.TryGetValue(slug, out var count) ? count : 0;
-    }
+    public int GetReaderCount(string slug) => _slugCounts.TryGetValue(slug, out var count) ? count : 0;
 }

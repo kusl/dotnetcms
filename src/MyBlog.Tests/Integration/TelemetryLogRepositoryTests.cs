@@ -29,10 +29,7 @@ public class TelemetryLogRepositoryTests : IAsyncDisposable
         _sut = new TelemetryLogRepository(_context);
     }
 
-    public async ValueTask DisposeAsync()
-    {
-        await _context.DisposeAsync();
-    }
+    public async ValueTask DisposeAsync() => await _context.DisposeAsync();
 
     [Fact]
     public async Task WriteAsync_AddsLogToDatabase()
@@ -216,14 +213,12 @@ public class TelemetryLogRepositoryTests : IAsyncDisposable
         Assert.Contains(result, l => l.Level == "Error");
     }
 
-    private static TelemetryLog CreateTestLog(string message)
-    {
-        return new TelemetryLog
+    private static TelemetryLog CreateTestLog(string message) =>
+        new()
         {
             TimestampUtc = DateTime.UtcNow,
             Level = "Information",
             Category = "MyBlog.Tests",
             Message = message
         };
-    }
 }

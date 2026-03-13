@@ -41,10 +41,7 @@ public sealed class AuthServiceLongPasswordTests : IAsyncDisposable
         _sut = new AuthService(userRepository, _passwordService, configuration);
     }
 
-    public async ValueTask DisposeAsync()
-    {
-        await _context.DisposeAsync();
-    }
+    public async ValueTask DisposeAsync() => await _context.DisposeAsync();
 
     // =========================================================================
     // Long Password Tests (128+ characters)

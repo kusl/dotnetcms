@@ -9,10 +9,7 @@ namespace MyBlog.Tests.Unit;
 /// </summary>
 internal sealed class NullImageDimensionService : IImageDimensionService
 {
-    public Task<(int Width, int Height)?> GetDimensionsAsync(string url, CancellationToken cancellationToken = default)
-    {
-        return Task.FromResult<(int, int)?>(null);
-    }
+    public Task<(int Width, int Height)?> GetDimensionsAsync(string url, CancellationToken cancellationToken = default) => Task.FromResult<(int, int)?>(null);
 }
 
 /// <summary>

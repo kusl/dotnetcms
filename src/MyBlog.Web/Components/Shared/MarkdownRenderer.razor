@@ -11,8 +11,5 @@
 
     private string _htmlContent = "";
 
-    protected override async Task OnParametersSetAsync()
-    {
-        _htmlContent = await MarkdownService.ToHtmlAsync(Content ?? "");
-    }
+    protected override async Task OnParametersSetAsync() => _htmlContent = await MarkdownService.ToHtmlAsync(Content ?? "");
 }

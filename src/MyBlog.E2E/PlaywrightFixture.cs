@@ -47,15 +47,13 @@ public sealed class PlaywrightFixture : IAsyncLifetime
     /// <summary>
     /// Creates a new browser context with default settings.
     /// </summary>
-    public async Task<IBrowserContext> CreateContextAsync()
-    {
-        return await Browser.NewContextAsync(new BrowserNewContextOptions
+    public async Task<IBrowserContext> CreateContextAsync() =>
+        await Browser.NewContextAsync(new BrowserNewContextOptions
         {
             BaseURL = BaseUrl,
             IgnoreHTTPSErrors = true,
             ViewportSize = new ViewportSize { Width = 1280, Height = 720 }
         });
-    }
 
     /// <summary>
     /// Creates a new page with a fresh context.

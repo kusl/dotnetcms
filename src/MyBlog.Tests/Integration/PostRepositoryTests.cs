@@ -37,10 +37,7 @@ public class PostRepositoryTests : IAsyncDisposable
         _sut = new PostRepository(_context);
     }
 
-    public async ValueTask DisposeAsync()
-    {
-        await _context.DisposeAsync();
-    }
+    public async ValueTask DisposeAsync() => await _context.DisposeAsync();
 
     [Fact]
     public async Task CreateAsync_AddsPostToDatabase()
@@ -144,9 +141,8 @@ public class PostRepositoryTests : IAsyncDisposable
         Assert.Equal(2, totalCount);
     }
 
-    private Post CreateTestPost(string title, string? slug = null, bool isPublished = true)
-    {
-        return new Post
+    private Post CreateTestPost(string title, string? slug = null, bool isPublished = true) =>
+        new()
         {
             Id = Guid.NewGuid(),
             Title = title,
@@ -159,5 +155,4 @@ public class PostRepositoryTests : IAsyncDisposable
             IsPublished = isPublished,
             PublishedAtUtc = isPublished ? DateTime.UtcNow : null
         };
-    }
 }
