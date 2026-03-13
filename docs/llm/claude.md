@@ -310,6 +310,91 @@ we want to properly identify, diagnose, and fix the root cause of the warnings a
 please return me full files for any file that needs to change. 
 find attached `dump.txt` which has the entire source code of the application 
 and `0068.txt` which has the latest run without the `--clean` flag 
+remember that we want to fix any defects you might come across when you review the code and the logs 
+we don't want to introduce any regressions 
+code must build, tests must pass, and application should work as expected
+please do not hallucinate 
+if you see any tests that can be added, please add them and give me the full files 
 
 04
 00
+
+Looking at the logs carefully, I can identify these issues:
+
+1. **crun `exec.fifo` error** — Stale container state from a previous run causes `cannot open exec.fifo` error
+2. **~280MB Playwright browser re-download on every source change** — The `COPY . .` layer invalidates all subsequent layers including `playwright.ps1 install chromium`
+3. **Node.js `[DEP0169]` deprecation warning** — Upstream Playwright npm scripts use `url.parse()` instead of `new URL()` (not fixable by us, but we can document it and reduce exposure by caching the layer)
+
+Let me search the project knowledge to confirm my understanding before providing fixes.Now I have full context. Let me trace through each issue carefully.
+
+**Issue 1: crun `exec.fifo` error**
+```
+[myblog-web] | cannot open `/run/user/1000/crun/3f29ee7df364.../exec.fifo`: No such file or directory
+```
+Root cause: `run-e2e.sh` doesn't clean up stale containers from a previous run before calling `up -d`. Podman/crun tries to reuse a container whose runtime state directory was already cleaned by the OS.
+
+**Issue 2: ~280MB Playwright re-download on source changes**
+In the E2E Dockerfile, the layer order is: restore → `COPY . .` → build → `playwright install`. Since `COPY . .` invalidates every subsequent layer on any source change, the Playwright browser download (~280MB) is re-fetched every time.
+
+**Issue 3: Node.js `[DEP0169]` deprecation**
+This is in Playwright's upstream npm download scripts using `url.parse()`. We can't fix the root cause, but by caching the browser install layer properly (Issue 2 fix), users will only see it when package versions change.
+
+Here are the full files for everything that needs to change:
+
+---
+
+**`src/MyBlog.E2E/Dockerfile`****`run-e2e.sh`**Now let me add the missing integration tests for `DatabaseSchemaUpdater` — this is an important upgrade-path component with zero test coverage currently:Let me provide a summary of all changes and the reasoning behind each.
+
+---
+
+**Summary of all changes:**
+
+**1. `src/MyBlog.E2E/Dockerfile`** — Restructured layer ordering
+
+The key change is moving `playwright.ps1 install chromium --with-deps` **before** `COPY . .`. After `dotnet restore`, the `playwright.ps1` script is available in the NuGet package cache at `/root/.nuget/packages/microsoft.playwright/`. We locate it with `find` and run it. This means the ~280MB browser download layer is only invalidated when `Directory.Packages.props` changes the Playwright version — not on every source code edit.
+
+A fallback check after `dotnet build` handles the unlikely case where the NuGet package layout changes in a future version.
+
+The `[DEP0169] DeprecationWarning` about `url.parse()` is documented in a comment as an upstream Playwright issue. Users will now only see it when the Playwright version changes (layer rebuild), not on every run.
+
+**2. `run-e2e.sh`** — Three fixes:
+
+- **crun stale container fix**: Added `podman-compose down --remove-orphans` before `up -d` to clear any leftover container runtime state. This directly addresses the `cannot open exec.fifo: No such file or directory` error.
+- **Offline support**: The script now checks if images exist with `podman image exists`. If images are cached, it skips the build entirely (no network needed). Added `--no-build` flag for explicit "fail if images missing" mode.
+- **Extracted `COMPOSE_FILE` variable**: Reduces repetition of the compose filename.
+
+**3. `src/MyBlog.Tests/Integration/DatabaseSchemaUpdaterTests.cs`** — New test file (7 tests)
+
+`DatabaseSchemaUpdater` had zero test coverage despite being a critical upgrade-path component. The new tests verify: idempotency on fresh databases, correct table creation when the table is missing (upgrade scenario), data preservation during updates, and isolation from other tables.
+
+33
+06
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,5 +1,14 @@
 # E2E Test Runner Dockerfile
 # Uses Playwright to run E2E tests against the MyBlog application
+#
+# Layer caching strategy:
+#   1. System tools (Node.js, PowerShell) — rarely changes
+#   2. NuGet restore — changes when .csproj or Directory.Packages.props change
+#   3. Playwright browser install — changes when Microsoft.Playwright version changes
+#   4. Source code copy + build — changes on every source edit
+#
+# This ordering ensures the ~280MB Playwright browser download is cached
+# based on package versions, NOT source code changes.
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /src
 
@@ -28,15 +37,35 @@ RUN dotnet restore MyBlog.Core/MyBlog.Core.csproj && \
     dotnet restore MyBlog.Web/MyBlog.Web.csproj && \
     dotnet restore MyBlog.E2E/MyBlog.E2E.csproj
 
+# Install Playwright browsers BEFORE copying source code.
+# The playwright.ps1 script is distributed inside the Microsoft.Playwright NuGet
+# package and can be invoked directly from the NuGet cache after restore.
+# This layer is only rebuilt when the Playwright package version changes
+# (via Directory.Packages.props), saving ~280MB of browser downloads on
+# every source-only change.
+#
+# NOTE: The node:NNN [DEP0169] DeprecationWarning about url.parse() is an
+# upstream issue in Playwright's npm download scripts. It is harmless and
+# cannot be fixed on our side. It will only appear when this layer rebuilds.
+RUN PLAYWRIGHT_SCRIPT=$(find /root/.nuget/packages/microsoft.playwright -name 'playwright.ps1' -print -quit 2>/dev/null) && \
+    if [ -n "$PLAYWRIGHT_SCRIPT" ]; then \
+        pwsh "$PLAYWRIGHT_SCRIPT" install chromium --with-deps; \
+    else \
+        echo "WARNING: playwright.ps1 not found in NuGet cache; browsers will be installed after build"; \
+    fi
+
 # Copy all source code
 COPY . .
 
 # Build the E2E project
 RUN dotnet build MyBlog.E2E/MyBlog.E2E.csproj -c Release
 
-# Install Playwright browsers with system dependencies
-# The --with-deps flag installs required system libraries (libnspr4, libnss3, etc.)
-RUN pwsh ./MyBlog.E2E/bin/Release/net10.0/playwright.ps1 install chromium --with-deps
+# Fallback: if browsers were not installed from the NuGet cache step above
+# (e.g. the package layout changed), install them from the build output.
+RUN if ! ls /root/.cache/ms-playwright/chromium-* 1>/dev/null 2>&1; then \
+        echo "Installing Playwright browsers from build output (fallback)..."; \
+        pwsh ./MyBlog.E2E/bin/Release/net10.0/playwright.ps1 install chromium --with-deps; \
+    fi
 
 WORKDIR /src/MyBlog.E2E
 
