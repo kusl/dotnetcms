@@ -1,6 +1,6 @@
 ===============================================================================
 PROJECT EXPORT
-Generated: Fri Mar 13 08:45:27 AM EDT 2026
+Generated: Fri Mar 13 08:56:59 AM EDT 2026
 Project Path: /home/kushal/src/dotnet/MyBlog
 ===============================================================================
 
@@ -72,7 +72,8 @@ DIRECTORY STRUCTURE:
 │   │   │   ├── 0061.txt
 │   │   │   ├── 0062.txt
 │   │   │   ├── 0063.txt
-│   │   │   └── 0064.txt
+│   │   │   ├── 0064.txt
+│   │   │   └── 0065.txt
 │   │   ├── chatgpt.md
 │   │   ├── claude.md
 │   │   ├── command.md
@@ -3565,37 +3566,47 @@ MODIFIED: 2026-01-01 22:21:17
 
 ================================================================================
 FILE: src/Directory.Packages.props
-SIZE: 1.71 KB
-MODIFIED: 2026-01-26 11:01:31
+SIZE: 2.18 KB
+MODIFIED: 2026-03-13 08:55:38
 ================================================================================
 
 <Project>
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
     <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
+
+    <!-- Version variables -->
+    <DotNetVersion>10.0.5</DotNetVersion>
+    <OpenTelemetryVersion>1.15.0</OpenTelemetryVersion>
+    <OpenTelemetryInstrumentationAspNetCoreVersion>1.15.1</OpenTelemetryInstrumentationAspNetCoreVersion>
+    <XUnitVersion>3.2.2</XUnitVersion>
+    <TestSdkVersion>18.3.0</TestSdkVersion>
   </PropertyGroup>
   <ItemGroup>
     <!-- Core Framework (.NET 10) -->
-    <PackageVersion Include="Microsoft.AspNetCore.SignalR.Client" Version="10.0.2" />
-    <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.2" />
-    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.1" />
+    <PackageVersion Include="Microsoft.AspNetCore.SignalR.Client" Version="$(DotNetVersion)" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="$(DotNetVersion)" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="$(DotNetVersion)" />
     <PackageVersion Include="Microsoft.AspNetCore.Identity" Version="2.3.9" />
-    <PackageVersion Include="Microsoft.Extensions.Hosting" Version="10.0.1" />
-    <!-- OpenTelemetry (official packages only) -->
-    <PackageVersion Include="Microsoft.Extensions.Http" Version="10.0.2" />
-    <PackageVersion Include="Microsoft.Extensions.Logging" Version="10.0.2" />
-    <PackageVersion Include="OpenTelemetry" Version="1.15.0" />
-    <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="1.15.0" />
-    <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="1.15.0" />
-    <PackageVersion Include="OpenTelemetry.Exporter.Console" Version="1.15.0" />
-    <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="1.15.0" />
+    <PackageVersion Include="Microsoft.Extensions.Hosting" Version="$(DotNetVersion)" />
+    <PackageVersion Include="Microsoft.Extensions.Http" Version="$(DotNetVersion)" />
+    <PackageVersion Include="Microsoft.Extensions.Logging" Version="$(DotNetVersion)" />
+
+    <!-- OpenTelemetry -->
+    <PackageVersion Include="OpenTelemetry" Version="$(OpenTelemetryVersion)" />
+    <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="$(OpenTelemetryVersion)" />
+    <PackageVersion Include="OpenTelemetry.Exporter.Console" Version="$(OpenTelemetryVersion)" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="$(OpenTelemetryVersion)" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="$(OpenTelemetryInstrumentationAspNetCoreVersion)" />
+
     <!-- Testing (xUnit v3) -->
-    <PackageVersion Include="xunit.v3" Version="3.2.2" />
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.0.1" />
+    <PackageVersion Include="xunit.v3" Version="$(XUnitVersion)" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="$(TestSdkVersion)" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
-    <PackageVersion Include="Microsoft.Testing.Extensions.TrxReport" Version="2.0.2" />
+    <PackageVersion Include="Microsoft.Testing.Extensions.TrxReport" Version="2.1.0" />
+
     <!-- E2E Testing (Playwright) -->
-    <PackageVersion Include="Microsoft.Playwright" Version="1.57.0" />
+    <PackageVersion Include="Microsoft.Playwright" Version="1.58.0" />
   </ItemGroup>
 </Project>
 
@@ -17077,7 +17088,7 @@ function showShareError(shareBtn, message) {
 
 
 ===============================================================================
-EXPORT COMPLETED: Fri Mar 13 08:45:29 AM EDT 2026
+EXPORT COMPLETED: Fri Mar 13 08:57:01 AM EDT 2026
 Total Files Found: 126
 Files Exported: 126
 Files Skipped: 0 (binary or large files)

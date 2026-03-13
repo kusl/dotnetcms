@@ -241,3 +241,20 @@ The `PostEditor.razor` debouncing and schema management items are lower priority
 14
 75
 
+
+
+
+
+
+
+
+I have updated the directory packages props
+it looks good, thank you 
+here is the full current dump.txt 
+Please review everything thoroughly. 
+I have also included 0065.txt which includes logs from the test running
+these files are extensive and have a lot of effort put in it
+please review them very carefully 
+also please do not hallucinate
+and complete the task we talked about before 
+
