@@ -1,6 +1,6 @@
 ===============================================================================
 PROJECT EXPORT
-Generated: Fri Mar 13 07:28:32 PM EDT 2026
+Generated: Fri Mar 13 07:39:40 PM EDT 2026
 Project Path: /home/kushal/src/dotnet/MyBlog
 ===============================================================================
 
@@ -6935,8 +6935,8 @@ public sealed class TelemetryLogRepository : ITelemetryLogRepository
 
 ================================================================================
 FILE: src/MyBlog.Infrastructure/Repositories/UserRepository.cs
-SIZE: 2.05 KB
-MODIFIED: 2025-12-30 21:28:12
+SIZE: 1.95 KB
+MODIFIED: 2026-03-13 19:37:58
 ================================================================================
 
 using Microsoft.EntityFrameworkCore;
@@ -6949,51 +6949,47 @@ namespace MyBlog.Infrastructure.Repositories;
 /// <summary>
 /// SQLite implementation of the user repository.
 /// </summary>
-public sealed class UserRepository : IUserRepository
+public sealed class UserRepository(BlogDbContext context) : IUserRepository
 {
-    private readonly BlogDbContext _context;
-
-    public UserRepository(BlogDbContext context) => _context = context;
-
     /// <inheritdoc />
     public async Task<User?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
-        => await _context.Users.FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
+        => await context.Users.FirstOrDefaultAsync(u => u.Id == id, cancellationToken);
 
     /// <inheritdoc />
     public async Task<User?> GetByUsernameAsync(string username, CancellationToken cancellationToken = default)
-        => await _context.Users.FirstOrDefaultAsync(
+        => await context.Users.FirstOrDefaultAsync(
             u => u.Username.ToLower() == username.ToLower(), cancellationToken);
 
     /// <inheritdoc />
     public async Task<IReadOnlyList<User>> GetAllAsync(CancellationToken cancellationToken = default)
-        => await _context.Users.OrderBy(u => u.Username).ToListAsync(cancellationToken);
+        => await context.Users.OrderBy(u => u.Username).ToListAsync(cancellationToken);
 
     /// <inheritdoc />
     public async Task<bool> AnyUsersExistAsync(CancellationToken cancellationToken = default)
-        => await _context.Users.AnyAsync(cancellationToken);
+        => await context.Users.AnyAsync(cancellationToken);
 
     /// <inheritdoc />
     public async Task CreateAsync(User user, CancellationToken cancellationToken = default)
     {
-        _context.Users.Add(user);
-        await _context.SaveChangesAsync(cancellationToken);
+        context.Users.Add(user);
+        await context.SaveChangesAsync(cancellationToken);
     }
 
     /// <inheritdoc />
     public async Task UpdateAsync(User user, CancellationToken cancellationToken = default)
     {
-        _context.Users.Update(user);
-        await _context.SaveChangesAsync(cancellationToken);
+        context.Users.Update(user);
+        await context.SaveChangesAsync(cancellationToken);
     }
 
     /// <inheritdoc />
     public async Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var user = await _context.Users.FindAsync([id], cancellationToken);
+        var user = await context.Users.FindAsync([id], cancellationToken);
         if (user is not null)
         {
-            _context.Users.Remove(user);
-            await _context.SaveChangesAsync(cancellationToken);
+            context.Users.Remove(user);
+            await context.SaveChangesAsync(cancellationToken);
         }
     }
 }
@@ -7190,8 +7186,8 @@ public sealed class AuthService : IAuthService
 
 ================================================================================
 FILE: src/MyBlog.Infrastructure/Services/ImageCacheWarmerService.cs
-SIZE: 6.10 KB
-MODIFIED: 2026-03-13 09:07:00
+SIZE: 5.86 KB
+MODIFIED: 2026-03-13 19:37:58
 ================================================================================
 
 using System.Text.RegularExpressions;
@@ -7209,36 +7205,28 @@ namespace MyBlog.Infrastructure.Services;
 /// Scans all posts for images and pre-fetches their dimensions.
 /// This automates the fix for "past" images.
 /// </summary>
-public sealed class ImageCacheWarmerService : BackgroundService
+public sealed class ImageCacheWarmerService(
+    IServiceScopeFactory scopeFactory,
+    ILogger<ImageCacheWarmerService> logger)
+    : BackgroundService
 {
-    private readonly IServiceScopeFactory _scopeFactory;
-    private readonly ILogger<ImageCacheWarmerService> _logger;
-
-    public ImageCacheWarmerService(
-        IServiceScopeFactory scopeFactory,
-        ILogger<ImageCacheWarmerService> logger)
-    {
-        _scopeFactory = scopeFactory;
-        _logger = logger;
-    }
-
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         // Give the app time to fully start up
         await Task.Delay(TimeSpan.FromSeconds(5), stoppingToken);
 
-        _logger.LogInformation("Image Cache Warmer started. Scanning posts for uncached images...");
+        logger.LogInformation("Image Cache Warmer started. Scanning posts for uncached images...");
 
         try
         {
-            using var scope = _scopeFactory.CreateScope();
+            using var scope = scopeFactory.CreateScope();
             var db = scope.ServiceProvider.GetRequiredService<BlogDbContext>();
             var dimService = scope.ServiceProvider.GetRequiredService<IImageDimensionService>();
 
             // Check if the ImageDimensionCache table exists
             if (!await TableExistsAsync(db, stoppingToken))
             {
-                _logger.LogWarning("Image Cache Warmer: ImageDimensionCache table does not exist. " +
+                logger.LogWarning("Image Cache Warmer: ImageDimensionCache table does not exist. " +
                     "Please apply database migrations. Skipping cache warming.");
                 return;
             }
@@ -7276,7 +7264,7 @@ public sealed class ImageCacheWarmerService : BackgroundService
             }
             catch (Exception ex)
             {
-                _logger.LogWarning(ex, "Image Cache Warmer: Could not read existing cache. Will attempt to cache all URLs.");
+                logger.LogWarning(ex, "Image Cache Warmer: Could not read existing cache. Will attempt to cache all URLs.");
                 existingSet = new HashSet<string>();
             }
 
@@ -7284,11 +7272,11 @@ public sealed class ImageCacheWarmerService : BackgroundService
 
             if (missingUrls.Count == 0)
             {
-                _logger.LogInformation("Image Cache Warmer: All images are already cached.");
+                logger.LogInformation("Image Cache Warmer: All images are already cached.");
                 return;
             }
 
-            _logger.LogInformation("Image Cache Warmer: Found {Count} uncached images. Fetching dimensions...", missingUrls.Count);
+            logger.LogInformation("Image Cache Warmer: Found {Count} uncached images. Fetching dimensions...", missingUrls.Count);
 
             // 3. Process missing (in parallel but throttled)
             var successCount = 0;
@@ -7302,19 +7290,19 @@ public sealed class ImageCacheWarmerService : BackgroundService
                     var dimensions = await dimService.GetDimensionsAsync(url, stoppingToken);
                     if (dimensions.HasValue)
                     {
-                        _logger.LogDebug("Cached dimensions for: {Url} ({Width}x{Height})",
+                        logger.LogDebug("Cached dimensions for: {Url} ({Width}x{Height})",
                             url, dimensions.Value.Width, dimensions.Value.Height);
                         successCount++;
                     }
                     else
                     {
-                        _logger.LogDebug("Could not resolve dimensions for: {Url}", url);
+                        logger.LogDebug("Could not resolve dimensions for: {Url}", url);
                         failCount++;
                     }
                 }
                 catch (Exception ex)
                 {
-                    _logger.LogDebug(ex, "Error warming cache for {Url}", url);
+                    logger.LogDebug(ex, "Error warming cache for {Url}", url);
                     failCount++;
                 }
 
@@ -7322,16 +7310,16 @@ public sealed class ImageCacheWarmerService : BackgroundService
                 await Task.Delay(100, stoppingToken);
             }
 
-            _logger.LogInformation("Image Cache Warmer completed. Cached: {Success}, Failed: {Failed}",
+            logger.LogInformation("Image Cache Warmer completed. Cached: {Success}, Failed: {Failed}",
                 successCount, failCount);
         }
         catch (OperationCanceledException)
         {
-            _logger.LogInformation("Image Cache Warmer was cancelled.");
+            logger.LogInformation("Image Cache Warmer was cancelled.");
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error in Image Cache Warmer. This is non-fatal - the blog will continue to work without cached dimensions.");
+            logger.LogError(ex, "Error in Image Cache Warmer. This is non-fatal - the blog will continue to work without cached dimensions.");
         }
     }
 
@@ -15652,8 +15640,8 @@ ENTRYPOINT ["dotnet", "MyBlog.Web.dll"]
 
 ================================================================================
 FILE: src/MyBlog.Web/Hubs/ReaderHub.cs
-SIZE: 1.39 KB
-MODIFIED: 2026-01-16 20:30:48
+SIZE: 1.25 KB
+MODIFIED: 2026-03-13 19:38:03
 ================================================================================
 
 using Microsoft.AspNetCore.SignalR;
@@ -15661,22 +15649,15 @@ using MyBlog.Core.Interfaces;
 
 namespace MyBlog.Web.Hubs;
 
-public class ReaderHub : Hub
+public class ReaderHub(IReaderTrackingService trackingService) : Hub
 {
-    private readonly IReaderTrackingService _trackingService;
-
-    public ReaderHub(IReaderTrackingService trackingService)
-    {
-        _trackingService = trackingService;
-    }
-
     public async Task JoinPage(string slug)
     {
         // Add this connection to the SignalR group for this slug
         await Groups.AddToGroupAsync(Context.ConnectionId, slug);
 
         // Update state
-        var newCount = _trackingService.JoinPost(slug, Context.ConnectionId);
+        var newCount = trackingService.JoinPost(slug, Context.ConnectionId);
 
         // Broadcast new count to everyone in this group
         await Clients.Group(slug).SendAsync("UpdateCount", newCount);
@@ -15686,7 +15667,7 @@ public class ReaderHub : Hub
     {
         await Groups.RemoveFromGroupAsync(Context.ConnectionId, slug);
 
-        var newCount = _trackingService.LeavePost(slug, Context.ConnectionId);
+        var newCount = trackingService.LeavePost(slug, Context.ConnectionId);
 
         await Clients.Group(slug).SendAsync("UpdateCount", newCount);
     }
@@ -15694,7 +15675,7 @@ public class ReaderHub : Hub
     public override async Task OnDisconnectedAsync(Exception? exception)
     {
         // Handle abrupt disconnects (tab closed, network lost)
-        var (slug, newCount) = _trackingService.Disconnect(Context.ConnectionId);
+        var (slug, newCount) = trackingService.Disconnect(Context.ConnectionId);
 
         if (!string.IsNullOrEmpty(slug))
         {
@@ -17405,7 +17386,7 @@ function showShareError(shareBtn, message) {
 
 
 ===============================================================================
-EXPORT COMPLETED: Fri Mar 13 07:28:34 PM EDT 2026
+EXPORT COMPLETED: Fri Mar 13 07:39:42 PM EDT 2026
 Total Files Found: 127
 Files Exported: 127
 Files Skipped: 0 (binary or large files)
