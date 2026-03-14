@@ -458,3 +458,96 @@ Both exporters are now only registered when their respective config flags are en
 
 16
 09
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+I ran into another problem after fixing this one. 
+An unhandled exception occurred while processing the request.
+InvalidOperationException: The type MyBlog.Web.Components.NotFound does not have a Microsoft.AspNetCore.Components.RouteAttribute applied to it.
+Microsoft.AspNetCore.Components.Routing.Router.SetParametersAsync(ParameterView parameters)
+
+Stack Query Cookies Headers Routing
+InvalidOperationException: The type MyBlog.Web.Components.NotFound does not have a Microsoft.AspNetCore.Components.RouteAttribute applied to it.
+Microsoft.AspNetCore.Components.Routing.Router.SetParametersAsync(ParameterView parameters)
+Microsoft.AspNetCore.Components.ComponentsMetrics.CaptureParametersDuration(Task task, long startTimestamp, string componentType)
+Microsoft.AspNetCore.Components.Rendering.ComponentState.SetDirectParameters(ParameterView parameters)
+Microsoft.AspNetCore.Components.RenderTree.RenderTreeDiffBuilder.InitializeNewComponentFrame(ref DiffContext diffContext, int frameIndex)
+Microsoft.AspNetCore.Components.RenderTree.RenderTreeDiffBuilder.InitializeNewSubtree(ref DiffContext diffContext, int frameIndex)
+Microsoft.AspNetCore.Components.RenderTree.RenderTreeDiffBuilder.InsertNewFrame(ref DiffContext diffContext, int newFrameIndex)
+Microsoft.AspNetCore.Components.RenderTree.RenderTreeDiffBuilder.AppendDiffEntriesForRange(ref DiffContext diffContext, int oldStartIndex, int oldEndIndexExcl, int newStartIndex, int newEndIndexExcl)
+Microsoft.AspNetCore.Components.RenderTree.RenderTreeDiffBuilder.ComputeDiff(Renderer renderer, RenderBatchBuilder batchBuilder, int componentId, ArrayRange<RenderTreeFrame> oldTree, ArrayRange<RenderTreeFrame> newTree)
+Microsoft.AspNetCore.Components.Rendering.ComponentState.RenderIntoBatch(RenderBatchBuilder batchBuilder, RenderFragment renderFragment, out Exception renderFragmentException)
+Microsoft.AspNetCore.Components.RenderTree.Renderer.ProcessRenderQueue()
+Microsoft.AspNetCore.Components.RenderTree.Renderer.ProcessRenderQueue()
+Microsoft.AspNetCore.Components.ComponentBase.StateHasChanged()
+Microsoft.AspNetCore.Components.ComponentBase.CallOnParametersSetAsync()
+Microsoft.AspNetCore.Components.ComponentBase.RunInitAndSetParametersAsync()
+Microsoft.AspNetCore.Components.ComponentsMetrics.CaptureParametersDuration(Task task, long startTimestamp, string componentType)
+Microsoft.AspNetCore.Components.Rendering.ComponentState.SetDirectParameters(ParameterView parameters)
+Microsoft.AspNetCore.Components.RenderTree.Renderer.RenderRootComponentAsync(int componentId, ParameterView initialParameters)
+Microsoft.AspNetCore.Components.HtmlRendering.Infrastructure.StaticHtmlRenderer.BeginRenderingComponent(IComponent component, ParameterView initialParameters)
+Microsoft.AspNetCore.Components.Endpoints.EndpointHtmlRenderer.RenderEndpointComponent(HttpContext httpContext, Type rootComponentType, ParameterView parameters, bool waitForQuiescence)
+System.Runtime.CompilerServices.ValueTaskAwaiter<TResult>.GetResult()
+Microsoft.AspNetCore.Components.Endpoints.RazorComponentEndpointInvoker.RenderComponentCore(HttpContext context)
+Microsoft.AspNetCore.Components.Endpoints.RazorComponentEndpointInvoker.RenderComponentCore(HttpContext context)
+Microsoft.AspNetCore.Components.Rendering.RendererSynchronizationContext+<>c+<<InvokeAsync>b__10_0>d.MoveNext()
+Microsoft.AspNetCore.Builder.ServerRazorComponentsEndpointConventionBuilderExtensions+<>c__DisplayClass1_1+<<AddInteractiveServerRenderMode>b__1>d.MoveNext()
+Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+Microsoft.AspNetCore.Authorization.AuthorizationMiddleware.Invoke(HttpContext context)
+Microsoft.AspNetCore.Authentication.AuthenticationMiddleware.Invoke(HttpContext context)
+MyBlog.Web.Middleware.LoginRateLimitMiddleware.InvokeAsync(HttpContext context) in LoginRateLimitMiddleware.cs
+-
+    public async Task InvokeAsync(HttpContext context)
+    {
+        // Only rate limit POST requests to login endpoint when enabled
+        if (!_isEnabled || !IsLoginPostRequest(context))
+        {
+            await _next(context);
+            return;
+        }
+        var ip = GetClientIp(context);
+        // Record the attempt FIRST, then calculate delay based on the new count
+        RecordAttempt(ip);
+Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(HttpContext context)
+
+Show raw exception details
+
+Please review and fix. 
+Please return full files for all files that changed. 
