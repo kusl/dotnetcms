@@ -442,3 +442,19 @@ Unhandled exception. System.AggregateException: Some services are not able to be
    at Program.<Main>(String[] args)
 kushal@fedora:~/src/dotnet/MyBlog/src/MyBlog.Web$ 
 
+The problem is clear: `FileLogExporter` has a constructor that takes a `string directory` parameter, which DI can't resolve. The `ServiceCollectionExtensions.cs` registers it as `AddHostedService<FileLogExporter>()` without providing the directory argument. Same issue with `DatabaseLogExporter` — it implements both `BaseExporter<LogRecord>` and `IHostedService`, but the registration via `AddHostedService` doesn't wire it up as an exporter.
+
+Looking at the code, these exporters need to be registered with a factory that provides the constructor arguments. Let me fix `ServiceCollectionExtensions.cs`:Here's what was wrong and what I fixed:
+
+The `FileLogExporter` constructor requires a `string directory` parameter, but it was registered with `services.AddHostedService<FileLogExporter>()` — DI can't resolve a bare `string` type, hence the error.
+
+The fix uses a factory-based registration pattern:
+
+1. **`FileLogExporter`** — Registered with a factory lambda that resolves the telemetry directory via `TelemetryPathResolver` and passes it to the constructor. It's registered as a singleton first, then as a hosted service that resolves the same singleton instance. It also respects the `Telemetry:EnableFileLogging` config and gracefully skips registration if no writable directory is found.
+
+2. **`DatabaseLogExporter`** — Same pattern: registered as a singleton first, then as a hosted service via factory. This was working before by coincidence (its constructor only needs `IServiceScopeFactory` which DI can resolve), but the consistent pattern is cleaner.
+
+Both exporters are now only registered when their respective config flags are enabled, which is a small improvement over the previous unconditional registration.
+
+16
+09

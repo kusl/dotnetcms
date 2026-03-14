@@ -63,9 +63,27 @@ public static class ServiceCollectionExtensions
         // Cache Warmer - runs on startup to pre-fetch dimensions for existing images
         services.AddHostedService<ImageCacheWarmerService>();
 
-        // Inside AddInfrastructure or similar registration method
-        services.AddHostedService<FileLogExporter>();
-        services.AddHostedService<DatabaseLogExporter>();
+        // Telemetry log exporters
+        // FileLogExporter requires a directory string in its constructor —
+        // use a factory so DI can construct it with the resolved path.
+        var enableFileLogging = configuration.GetValue("Telemetry:EnableFileLogging", true);
+        if (enableFileLogging)
+        {
+            var telemetryDir = TelemetryPathResolver.GetTelemetryDirectory();
+            if (telemetryDir is not null)
+            {
+                var logsDir = Path.Combine(telemetryDir, "logs");
+                services.AddSingleton<FileLogExporter>(sp => new FileLogExporter(logsDir));
+                services.AddHostedService(sp => sp.GetRequiredService<FileLogExporter>());
+            }
+        }
+
+        var enableDbLogging = configuration.GetValue("Telemetry:EnableDatabaseLogging", true);
+        if (enableDbLogging)
+        {
+            services.AddSingleton<DatabaseLogExporter>();
+            services.AddHostedService(sp => sp.GetRequiredService<DatabaseLogExporter>());
+        }
 
         return services;
     }
