@@ -398,3 +398,47 @@ The `[DEP0169] DeprecationWarning` about `url.parse()` is documented in a commen
 
 
 
+00
+06
+
+I changed some code and now it no longer runs. 
+Please review and fix. 
+Please return full files for all files that changed. 
+kushal@fedora:~/src/dotnet/MyBlog$ cd /home/kushal/src/dotnet/MyBlog/src/MyBlog.Web; time dotnet clean; time dotnet build; dotnet run
+
+Build succeeded in 0.5s
+
+real	0m0.665s
+user	0m0.595s
+sys	0m0.120s
+Restore complete (0.4s)
+  MyBlog.Core net10.0 succeeded (0.1s) → /home/kushal/src/dotnet/MyBlog/src/MyBlog.Core/bin/Debug/net10.0/MyBlog.Core.dll
+  MyBlog.Infrastructure net10.0 succeeded (0.3s) → /home/kushal/src/dotnet/MyBlog/src/MyBlog.Infrastructure/bin/Debug/net10.0/MyBlog.Infrastructure.dll
+  MyBlog.Web net10.0 succeeded (0.8s) → bin/Debug/net10.0/MyBlog.Web.dll
+
+Build succeeded in 2.0s
+
+real	0m2.111s
+user	0m1.549s
+sys	0m0.284s
+Using launch settings from /home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/Properties/launchSettings.json...
+Unhandled exception. System.AggregateException: Some services are not able to be constructed (Error while validating the service descriptor 'ServiceType: Microsoft.Extensions.Hosting.IHostedService Lifetime: Singleton ImplementationType: MyBlog.Infrastructure.Telemetry.FileLogExporter': Unable to resolve service for type 'System.String' while attempting to activate 'MyBlog.Infrastructure.Telemetry.FileLogExporter'.)
+ ---> System.InvalidOperationException: Error while validating the service descriptor 'ServiceType: Microsoft.Extensions.Hosting.IHostedService Lifetime: Singleton ImplementationType: MyBlog.Infrastructure.Telemetry.FileLogExporter': Unable to resolve service for type 'System.String' while attempting to activate 'MyBlog.Infrastructure.Telemetry.FileLogExporter'.
+ ---> System.InvalidOperationException: Unable to resolve service for type 'System.String' while attempting to activate 'MyBlog.Infrastructure.Telemetry.FileLogExporter'.
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.CreateArgumentCallSites(ServiceIdentifier serviceIdentifier, Type implementationType, CallSiteChain callSiteChain, ParameterInfo[] parameters, Boolean throwIfCallSiteNotFound)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.CreateConstructorCallSite(ResultCache lifetime, ServiceIdentifier serviceIdentifier, Type implementationType, CallSiteChain callSiteChain)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.CreateExact(ServiceDescriptor descriptor, ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain, Int32 slot)
+   at Microsoft.Extensions.DependencyInjection.ServiceLookup.CallSiteFactory.GetCallSite(ServiceDescriptor serviceDescriptor, CallSiteChain callSiteChain)
+   at Microsoft.Extensions.DependencyInjection.ServiceProvider.ValidateService(ServiceDescriptor descriptor)
+   --- End of inner exception stack trace ---
+   at Microsoft.Extensions.DependencyInjection.ServiceProvider.ValidateService(ServiceDescriptor descriptor)
+   at Microsoft.Extensions.DependencyInjection.ServiceProvider..ctor(ICollection`1 serviceDescriptors, ServiceProviderOptions options)
+   --- End of inner exception stack trace ---
+   at Microsoft.Extensions.DependencyInjection.ServiceProvider..ctor(ICollection`1 serviceDescriptors, ServiceProviderOptions options)
+   at Microsoft.Extensions.DependencyInjection.ServiceCollectionContainerBuilderExtensions.BuildServiceProvider(IServiceCollection services, ServiceProviderOptions options)
+   at Microsoft.Extensions.Hosting.HostApplicationBuilder.Build()
+   at Microsoft.AspNetCore.Builder.WebApplicationBuilder.Build()
+   at Program.<Main>$(String[] args) in /home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/Program.cs:line 67
+   at Program.<Main>(String[] args)
+kushal@fedora:~/src/dotnet/MyBlog/src/MyBlog.Web$ 
+

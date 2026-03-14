@@ -1,6 +1,6 @@
 ===============================================================================
 PROJECT EXPORT
-Generated: Fri Mar 13 08:13:54 PM EDT 2026
+Generated: Fri Mar 13 08:22:01 PM EDT 2026
 Project Path: /home/kushal/src/dotnet/MyBlog
 ===============================================================================
 
@@ -6973,8 +6973,8 @@ public sealed class UserRepository(BlogDbContext context) : IUserRepository
 
 ================================================================================
 FILE: src/MyBlog.Infrastructure/ServiceCollectionExtensions.cs
-SIZE: 2.61 KB
-MODIFIED: 2026-03-13 09:08:17
+SIZE: 2.82 KB
+MODIFIED: 2026-03-13 20:18:34
 ================================================================================
 
 using Microsoft.AspNetCore.Identity;
@@ -6987,6 +6987,7 @@ using MyBlog.Core.Services;
 using MyBlog.Infrastructure.Data;
 using MyBlog.Infrastructure.Repositories;
 using MyBlog.Infrastructure.Services;
+using MyBlog.Infrastructure.Telemetry;
 
 namespace MyBlog.Infrastructure;
 
@@ -7040,6 +7041,10 @@ public static class ServiceCollectionExtensions
         services.AddHostedService<TelemetryCleanupService>();
         // Cache Warmer - runs on startup to pre-fetch dimensions for existing images
         services.AddHostedService<ImageCacheWarmerService>();
+
+        // Inside AddInfrastructure or similar registration method
+        services.AddHostedService<FileLogExporter>();
+        services.AddHostedService<DatabaseLogExporter>();
 
         return services;
     }
@@ -7965,12 +7970,13 @@ public sealed class TelemetryCleanupService : BackgroundService
 
 ================================================================================
 FILE: src/MyBlog.Infrastructure/Telemetry/DatabaseLogExporter.cs
-SIZE: 2.11 KB
-MODIFIED: 2025-12-28 08:55:11
+SIZE: 2.51 KB
+MODIFIED: 2026-03-13 20:18:04
 ================================================================================
 
 using System.Text.Json;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using MyBlog.Core.Models;
 using MyBlog.Infrastructure.Data;
 using OpenTelemetry;
@@ -7981,7 +7987,7 @@ namespace MyBlog.Infrastructure.Telemetry;
 /// <summary>
 /// OpenTelemetry log exporter that writes to SQLite database.
 /// </summary>
-public sealed class DatabaseLogExporter : BaseExporter<LogRecord>
+public sealed class DatabaseLogExporter : BaseExporter<LogRecord>, IHostedService
 {
     private readonly IServiceScopeFactory _scopeFactory;
 
@@ -8040,17 +8046,27 @@ public sealed class DatabaseLogExporter : BaseExporter<LogRecord>
 
         return dict.Count > 0 ? JsonSerializer.Serialize(dict) : null;
     }
+
+    public Task StartAsync(CancellationToken cancellationToken) =>
+        // If your constructor already handles subscription,
+        // this can just return Task.CompletedTask.
+        Task.CompletedTask;
+
+    public Task StopAsync(CancellationToken cancellationToken) =>
+        // Unsubscribe or clean up resources here
+        Task.CompletedTask;
 }
 
 
 ================================================================================
 FILE: src/MyBlog.Infrastructure/Telemetry/FileLogExporter.cs
-SIZE: 3.61 KB
-MODIFIED: 2025-12-28 08:44:06
+SIZE: 4.00 KB
+MODIFIED: 2026-03-13 20:16:55
 ================================================================================
 
 using System.Text;
 using System.Text.Json;
+using Microsoft.Extensions.Hosting;
 using OpenTelemetry;
 using OpenTelemetry.Logs;
 
@@ -8059,7 +8075,7 @@ namespace MyBlog.Infrastructure.Telemetry;
 /// <summary>
 /// OpenTelemetry log exporter that writes to JSON files.
 /// </summary>
-public sealed class FileLogExporter : BaseExporter<LogRecord>
+public sealed class FileLogExporter : BaseExporter<LogRecord>, IHostedService
 {
     private readonly string _directory;
     private readonly string _runId;
@@ -8182,6 +8198,14 @@ public sealed class FileLogExporter : BaseExporter<LogRecord>
         }
         return true;
     }
+    public Task StartAsync(CancellationToken cancellationToken) =>
+        // If your constructor already handles subscription,
+        // this can just return Task.CompletedTask.
+        Task.CompletedTask;
+
+    public Task StopAsync(CancellationToken cancellationToken) =>
+        // Unsubscribe or clean up resources here
+        Task.CompletedTask;
 }
 
 
@@ -15809,8 +15833,8 @@ MODIFIED: 2026-01-16 20:29:40
 
 ================================================================================
 FILE: src/MyBlog.Web/Program.cs
-SIZE: 5.30 KB
-MODIFIED: 2026-03-13 20:09:19
+SIZE: 5.09 KB
+MODIFIED: 2026-03-13 20:18:56
 ================================================================================
 
 using System.Security.Claims;
@@ -15961,9 +15985,6 @@ using (var scope = app.Services.CreateScope())
 
     var authService = scope.ServiceProvider.GetRequiredService<IAuthService>();
     await authService.EnsureAdminUserAsync();
-    // Register telemetry exporters with the service provider
-    var logExporter = scope.ServiceProvider.GetService<FileLogExporter>();
-    var dbExporter = scope.ServiceProvider.GetService<DatabaseLogExporter>();
 }
 
 app.Run();
@@ -17260,7 +17281,7 @@ function showShareError(shareBtn, message) {
 
 
 ===============================================================================
-EXPORT COMPLETED: Fri Mar 13 08:13:55 PM EDT 2026
+EXPORT COMPLETED: Fri Mar 13 08:22:02 PM EDT 2026
 Total Files Found: 128
 Files Exported: 128
 Files Skipped: 0 (binary or large files)
