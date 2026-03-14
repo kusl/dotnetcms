@@ -13,7 +13,6 @@ public class PasswordChangeTests : IAsyncDisposable
     private readonly BlogDbContext _context;
     private readonly AuthService _sut;
     private readonly PasswordService _passwordService = new();
-    private readonly UserRepository _userRepository;
 
     public PasswordChangeTests()
     {
@@ -25,7 +24,7 @@ public class PasswordChangeTests : IAsyncDisposable
         _context.Database.OpenConnection();
         _context.Database.EnsureCreated();
 
-        _userRepository = new UserRepository(_context);
+        var userRepository = new UserRepository(_context);
         var configuration = new ConfigurationBuilder()
             .AddInMemoryCollection(new Dictionary<string, string?>
             {
@@ -33,7 +32,7 @@ public class PasswordChangeTests : IAsyncDisposable
             })
             .Build();
 
-        _sut = new AuthService(_userRepository, _passwordService, configuration);
+        _sut = new AuthService(userRepository, _passwordService, configuration);
     }
 
     public async ValueTask DisposeAsync() => await _context.DisposeAsync();
