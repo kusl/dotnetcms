@@ -1,6 +1,6 @@
 ===============================================================================
 PROJECT EXPORT
-Generated: Fri Mar 13 08:22:01 PM EDT 2026
+Generated: Fri Mar 13 08:42:02 PM EDT 2026
 Project Path: /home/kushal/src/dotnet/MyBlog
 ===============================================================================
 
@@ -6973,8 +6973,8 @@ public sealed class UserRepository(BlogDbContext context) : IUserRepository
 
 ================================================================================
 FILE: src/MyBlog.Infrastructure/ServiceCollectionExtensions.cs
-SIZE: 2.82 KB
-MODIFIED: 2026-03-13 20:18:34
+SIZE: 3.65 KB
+MODIFIED: 2026-03-13 20:27:50
 ================================================================================
 
 using Microsoft.AspNetCore.Identity;
@@ -7042,9 +7042,27 @@ public static class ServiceCollectionExtensions
         // Cache Warmer - runs on startup to pre-fetch dimensions for existing images
         services.AddHostedService<ImageCacheWarmerService>();
 
-        // Inside AddInfrastructure or similar registration method
-        services.AddHostedService<FileLogExporter>();
-        services.AddHostedService<DatabaseLogExporter>();
+        // Telemetry log exporters
+        // FileLogExporter requires a directory string in its constructor —
+        // use a factory so DI can construct it with the resolved path.
+        var enableFileLogging = configuration.GetValue("Telemetry:EnableFileLogging", true);
+        if (enableFileLogging)
+        {
+            var telemetryDir = TelemetryPathResolver.GetTelemetryDirectory();
+            if (telemetryDir is not null)
+            {
+                var logsDir = Path.Combine(telemetryDir, "logs");
+                services.AddSingleton<FileLogExporter>(sp => new FileLogExporter(logsDir));
+                services.AddHostedService(sp => sp.GetRequiredService<FileLogExporter>());
+            }
+        }
+
+        var enableDbLogging = configuration.GetValue("Telemetry:EnableDatabaseLogging", true);
+        if (enableDbLogging)
+        {
+            services.AddSingleton<DatabaseLogExporter>();
+            services.AddHostedService(sp => sp.GetRequiredService<DatabaseLogExporter>());
+        }
 
         return services;
     }
@@ -11879,13 +11897,18 @@ MODIFIED: 2026-01-26 05:44:15
 
 ================================================================================
 FILE: src/MyBlog.Web/Components/NotFound.razor
-SIZE: .14 KB
-MODIFIED: 2026-03-13 20:07:14
+SIZE: .27 KB
+MODIFIED: 2026-03-13 20:38:54
 ================================================================================
 
+@page "/not-found"
+@using MyBlog.Web.Components.Layout
+
 <LayoutView Layout="typeof(MainLayout)">
+    <PageTitle>Page Not Found</PageTitle>
     <h1>Page Not Found</h1>
     <p>Sorry, the page you requested could not be found.</p>
+    <a href="/">← Back to Home</a>
 </LayoutView>
 
 
@@ -14886,7 +14909,7 @@ article {
 ================================================================================
 FILE: src/MyBlog.Web/Components/Routes.razor
 SIZE: .64 KB
-MODIFIED: 2026-03-13 20:07:14
+MODIFIED: 2026-03-13 20:39:03
 ================================================================================
 
 <Router AppAssembly="typeof(Program).Assembly" NotFoundPage="typeof(NotFound)">
@@ -17281,7 +17304,7 @@ function showShareError(shareBtn, message) {
 
 
 ===============================================================================
-EXPORT COMPLETED: Fri Mar 13 08:22:02 PM EDT 2026
+EXPORT COMPLETED: Fri Mar 13 08:42:03 PM EDT 2026
 Total Files Found: 128
 Files Exported: 128
 Files Skipped: 0 (binary or large files)
