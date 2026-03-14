@@ -598,6 +598,8 @@ The `NotFoundPage` parameter was added in .NET 10 and requires a component with 
 
 
 
+17
+09
 That is not a proper fix. 
 NotFound is deprecated. 
 We must use notfoundpage
@@ -618,3 +620,12 @@ razor
 The Blazor project template now includes a NotFound.razor page by default. This page automatically renders whenever NotFound is called in your app, making it easier to handle missing routes with a consistent user experience.
 Please review and fix. 
 Please return full files for all files that changed. 
+
+You're right — in .NET 10, `NotFoundPage` requires a routable component with a `@page` directive. I need to add `@page` to `NotFound.razor` and update `Routes.razor` to use the `NotFoundPage` parameter properly.Two files changed:
+
+**`NotFound.razor`** — Added `@page "/not-found"` so it's a routable component (which `NotFoundPage` requires). Also added a `<PageTitle>` and a back-to-home link for better UX.
+
+**`Routes.razor`** — Kept `NotFoundPage="typeof(NotFound)"` as you originally had, and removed the old `<NotFound>` render fragment since it's no longer supported in .NET 10.
+
+17
+09
