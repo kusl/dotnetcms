@@ -1,6 +1,6 @@
 ===============================================================================
 PROJECT EXPORT
-Generated: Fri Mar 13 07:39:40 PM EDT 2026
+Generated: Fri Mar 13 07:58:24 PM EDT 2026
 Project Path: /home/kushal/src/dotnet/MyBlog
 ===============================================================================
 
@@ -222,6 +222,7 @@ DIRECTORY STRUCTURE:
 │   │   │   │   └── ThemeSwitcher.razor.css
 │   │   │   ├── App.razor
 │   │   │   ├── _Imports.razor
+│   │   │   ├── NotFound.razor
 │   │   │   └── Routes.razor
 │   │   ├── Hubs
 │   │   │   └── ReaderHub.cs
@@ -4674,8 +4675,8 @@ public sealed partial class MarkdownService(
 
 ================================================================================
 FILE: src/MyBlog.Core/Services/SlugService.cs
-SIZE: 1.83 KB
-MODIFIED: 2026-02-01 15:03:44
+SIZE: 1.81 KB
+MODIFIED: 2026-03-13 19:57:00
 ================================================================================
 
 using System.Globalization;
@@ -4699,10 +4700,7 @@ public sealed partial class SlugService : ISlugService
     }
 
     /// <inheritdoc />
-    public string GenerateUuidSlug()
-    {
-        return $"post-{Guid.CreateVersion7()}";
-    }
+    public string GenerateUuidSlug() => $"post-{Guid.CreateVersion7()}";
 
     private static string GenerateSlug(string title)
     {
@@ -4879,8 +4877,8 @@ public sealed class PlaywrightCollection : ICollectionFixture<PlaywrightFixture>
 
 ================================================================================
 FILE: src/MyBlog.E2E/PlaywrightFixture.cs
-SIZE: 2.07 KB
-MODIFIED: 2026-01-29 01:46:08
+SIZE: 2.05 KB
+MODIFIED: 2026-03-13 19:57:00
 ================================================================================
 
 using Microsoft.Playwright;
@@ -4932,15 +4930,13 @@ public sealed class PlaywrightFixture : IAsyncLifetime
     /// <summary>
     /// Creates a new browser context with default settings.
     /// </summary>
-    public async Task<IBrowserContext> CreateContextAsync()
-    {
-        return await Browser.NewContextAsync(new BrowserNewContextOptions
+    public async Task<IBrowserContext> CreateContextAsync() =>
+        await Browser.NewContextAsync(new BrowserNewContextOptions
         {
             BaseURL = BaseUrl,
             IgnoreHTTPSErrors = true,
             ViewportSize = new ViewportSize { Width = 1280, Height = 720 }
         });
-    }
 
     /// <summary>
     /// Creates a new page with a fresh context.
@@ -6648,8 +6644,8 @@ MODIFIED: 2026-01-16 21:56:40
 
 ================================================================================
 FILE: src/MyBlog.Infrastructure/Repositories/ImageRepository.cs
-SIZE: 1.61 KB
-MODIFIED: 2025-12-28 08:44:06
+SIZE: 1.57 KB
+MODIFIED: 2026-03-13 19:57:00
 ================================================================================
 
 using Microsoft.EntityFrameworkCore;
@@ -6673,19 +6669,14 @@ public sealed class ImageRepository : IImageRepository
     }
 
     /// <inheritdoc />
-    public async Task<IReadOnlyList<Image>> GetAllAsync(CancellationToken cancellationToken = default)
-    {
-        return await _context.Images
+    public async Task<IReadOnlyList<Image>> GetAllAsync(CancellationToken cancellationToken = default) =>
+        await _context.Images
             .AsNoTracking()
             .OrderByDescending(i => i.UploadedAtUtc)
             .ToListAsync(cancellationToken);
-    }
 
     /// <inheritdoc />
-    public async Task<Image?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
-    {
-        return await _context.Images.FindAsync([id], cancellationToken);
-    }
+    public async Task<Image?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default) => await _context.Images.FindAsync([id], cancellationToken);
 
     /// <inheritdoc />
     public async Task<Image> CreateAsync(Image image, CancellationToken cancellationToken = default)
@@ -6710,8 +6701,8 @@ public sealed class ImageRepository : IImageRepository
 
 ================================================================================
 FILE: src/MyBlog.Infrastructure/Repositories/PostRepository.cs
-SIZE: 5.01 KB
-MODIFIED: 2026-01-14 19:57:11
+SIZE: 4.93 KB
+MODIFIED: 2026-03-13 19:57:00
 ================================================================================
 
 using Microsoft.EntityFrameworkCore;
@@ -6764,9 +6755,8 @@ public sealed class PostRepository : IPostRepository
 
     /// <inheritdoc />
     public async Task<IReadOnlyList<PostListItemDto>> GetAllPostsAsync(
-        CancellationToken cancellationToken = default)
-    {
-        return await _context.Posts
+        CancellationToken cancellationToken = default) =>
+        await _context.Posts
             .AsNoTracking()
             .OrderByDescending(p => p.UpdatedAtUtc)
             .Include(p => p.Author)
@@ -6779,13 +6769,11 @@ public sealed class PostRepository : IPostRepository
                 p.PublishedAtUtc,
                 p.IsPublished))
             .ToListAsync(cancellationToken);
-    }
 
     /// <inheritdoc />
     public async Task<PostDetailDto?> GetBySlugAsync(
-        string slug, CancellationToken cancellationToken = default)
-    {
-        return await _context.Posts
+        string slug, CancellationToken cancellationToken = default) =>
+        await _context.Posts
             .AsNoTracking()
             .Where(p => p.Slug == slug)
             .Include(p => p.Author)
@@ -6801,15 +6789,12 @@ public sealed class PostRepository : IPostRepository
                 p.PublishedAtUtc,
                 p.IsPublished))
             .FirstOrDefaultAsync(cancellationToken);
-    }
 
     /// <inheritdoc />
-    public async Task<Post?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
-    {
-        return await _context.Posts
+    public async Task<Post?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default) =>
+        await _context.Posts
             .Include(p => p.Author)
             .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
-    }
 
     /// <inheritdoc />
     public async Task<Post> CreateAsync(Post post, CancellationToken cancellationToken = default)
@@ -6838,16 +6823,12 @@ public sealed class PostRepository : IPostRepository
     }
 
     /// <inheritdoc />
-    public async Task<int> GetCountAsync(CancellationToken cancellationToken = default)
-    {
-        return await _context.Posts.CountAsync(cancellationToken);
-    }
+    public async Task<int> GetCountAsync(CancellationToken cancellationToken = default) => await _context.Posts.CountAsync(cancellationToken);
 
     /// <inheritdoc />
     public async Task<IReadOnlyList<PostListItemDto>> GetRecentPostsAsync(
-        int count, CancellationToken cancellationToken = default)
-    {
-        return await _context.Posts
+        int count, CancellationToken cancellationToken = default) =>
+        await _context.Posts
             .AsNoTracking()
             .OrderByDescending(p => p.UpdatedAtUtc)
             .Take(count)
@@ -6861,7 +6842,6 @@ public sealed class PostRepository : IPostRepository
                 p.PublishedAtUtc,
                 p.IsPublished))
             .ToListAsync(cancellationToken);
-    }
 
     /// <inheritdoc />
     public async Task<bool> IsSlugTakenAsync(string slug, Guid? excludePostId = null, CancellationToken cancellationToken = default)
@@ -6880,8 +6860,8 @@ public sealed class PostRepository : IPostRepository
 
 ================================================================================
 FILE: src/MyBlog.Infrastructure/Repositories/TelemetryLogRepository.cs
-SIZE: 1.43 KB
-MODIFIED: 2025-12-28 08:44:06
+SIZE: 1.40 KB
+MODIFIED: 2026-03-13 19:57:00
 ================================================================================
 
 using Microsoft.EntityFrameworkCore;
@@ -6913,23 +6893,19 @@ public sealed class TelemetryLogRepository : ITelemetryLogRepository
 
     /// <inheritdoc />
     public async Task<int> DeleteOlderThanAsync(
-        DateTime cutoffUtc, CancellationToken cancellationToken = default)
-    {
-        return await _context.TelemetryLogs
+        DateTime cutoffUtc, CancellationToken cancellationToken = default) =>
+        await _context.TelemetryLogs
             .Where(l => l.TimestampUtc < cutoffUtc)
             .ExecuteDeleteAsync(cancellationToken);
-    }
 
     /// <inheritdoc />
     public async Task<IReadOnlyList<TelemetryLog>> GetRecentAsync(
-        int count, CancellationToken cancellationToken = default)
-    {
-        return await _context.TelemetryLogs
+        int count, CancellationToken cancellationToken = default) =>
+        await _context.TelemetryLogs
             .AsNoTracking()
             .OrderByDescending(l => l.TimestampUtc)
             .Take(count)
             .ToListAsync(cancellationToken);
-    }
 }
 
 
@@ -7817,8 +7793,8 @@ public sealed class ImageDimensionService : IImageDimensionService
 
 ================================================================================
 FILE: src/MyBlog.Infrastructure/Services/PasswordService.cs
-SIZE: 1.36 KB
-MODIFIED: 2026-03-13 09:07:59
+SIZE: 1.34 KB
+MODIFIED: 2026-03-13 19:57:00
 ================================================================================
 
 using Microsoft.AspNetCore.Identity;
@@ -7852,10 +7828,7 @@ public sealed class PasswordService : IPasswordService
     }
 
     /// <inheritdoc />
-    public string HashPassword(string password)
-    {
-        return _hasher.HashPassword(null!, password);
-    }
+    public string HashPassword(string password) => _hasher.HashPassword(null!, password);
 
     /// <inheritdoc />
     public bool VerifyPassword(string hashedPassword, string providedPassword)
@@ -7869,8 +7842,8 @@ public sealed class PasswordService : IPasswordService
 
 ================================================================================
 FILE: src/MyBlog.Infrastructure/Services/ReaderTrackingService.cs
-SIZE: 1.57 KB
-MODIFIED: 2026-01-16 20:30:23
+SIZE: 1.54 KB
+MODIFIED: 2026-03-13 19:57:00
 ================================================================================
 
 using System.Collections.Concurrent;
@@ -7917,10 +7890,7 @@ public class ReaderTrackingService : IReaderTrackingService
         return (null, 0);
     }
 
-    public int GetReaderCount(string slug)
-    {
-        return _slugCounts.TryGetValue(slug, out var count) ? count : 0;
-    }
+    public int GetReaderCount(string slug) => _slugCounts.TryGetValue(slug, out var count) ? count : 0;
 }
 
 
@@ -8314,8 +8284,8 @@ MODIFIED: 2026-01-26 09:56:51
 
 ================================================================================
 FILE: src/MyBlog.Tests/Integration/AuthServiceLongPasswordTests.cs
-SIZE: 11.18 KB
-MODIFIED: 2026-01-11 12:56:49
+SIZE: 11.17 KB
+MODIFIED: 2026-03-13 19:57:00
 ================================================================================
 
 using Microsoft.EntityFrameworkCore;
@@ -8361,10 +8331,7 @@ public sealed class AuthServiceLongPasswordTests : IAsyncDisposable
         _sut = new AuthService(userRepository, _passwordService, configuration);
     }
 
-    public async ValueTask DisposeAsync()
-    {
-        await _context.DisposeAsync();
-    }
+    public async ValueTask DisposeAsync() => await _context.DisposeAsync();
 
     // =========================================================================
     // Long Password Tests (128+ characters)
@@ -8643,8 +8610,8 @@ public sealed class AuthServiceLongPasswordTests : IAsyncDisposable
 
 ================================================================================
 FILE: src/MyBlog.Tests/Integration/AuthServiceTests.cs
-SIZE: 3.85 KB
-MODIFIED: 2025-12-28 09:39:37
+SIZE: 3.83 KB
+MODIFIED: 2026-03-13 19:57:00
 ================================================================================
 
 using Microsoft.EntityFrameworkCore;
@@ -8684,10 +8651,7 @@ public class AuthServiceTests : IAsyncDisposable
         _sut = new AuthService(userRepository, _passwordService, configuration);
     }
 
-    public async ValueTask DisposeAsync()
-    {
-        await _context.DisposeAsync();
-    }
+    public async ValueTask DisposeAsync() => await _context.DisposeAsync();
 
     [Fact]
     public async Task AuthenticateAsync_WithValidCredentials_ReturnsUser()
@@ -8777,8 +8741,8 @@ public class AuthServiceTests : IAsyncDisposable
 
 ================================================================================
 FILE: src/MyBlog.Tests/Integration/DatabaseSchemaUpdaterTests.cs
-SIZE: 6.26 KB
-MODIFIED: 2026-03-13 19:22:35
+SIZE: 6.24 KB
+MODIFIED: 2026-03-13 19:57:00
 ================================================================================
 
 using Microsoft.EntityFrameworkCore;
@@ -8809,10 +8773,7 @@ public class DatabaseSchemaUpdaterTests : IAsyncDisposable
         _context.Database.EnsureCreated();
     }
 
-    public async ValueTask DisposeAsync()
-    {
-        await _context.DisposeAsync();
-    }
+    public async ValueTask DisposeAsync() => await _context.DisposeAsync();
 
     [Fact]
     public async Task ApplyUpdatesAsync_OnFreshDatabase_DoesNotThrow()
@@ -8970,8 +8931,8 @@ public class DatabaseSchemaUpdaterTests : IAsyncDisposable
 
 ================================================================================
 FILE: src/MyBlog.Tests/Integration/ImageRepositoryTests.cs
-SIZE: 6.25 KB
-MODIFIED: 2026-01-29 10:37:28
+SIZE: 6.22 KB
+MODIFIED: 2026-03-13 19:57:00
 ================================================================================
 
 using Microsoft.EntityFrameworkCore;
@@ -9017,10 +8978,7 @@ public class ImageRepositoryTests : IAsyncDisposable
         _sut = new ImageRepository(_context);
     }
 
-    public async ValueTask DisposeAsync()
-    {
-        await _context.DisposeAsync();
-    }
+    public async ValueTask DisposeAsync() => await _context.DisposeAsync();
 
     [Fact]
     public async Task CreateAsync_AddsImageToDatabase()
@@ -9174,9 +9132,8 @@ public class ImageRepositoryTests : IAsyncDisposable
         Assert.Equal(EntityState.Detached, entry.State);
     }
 
-    private Image CreateTestImage(string fileName, byte[]? data = null)
-    {
-        return new Image
+    private Image CreateTestImage(string fileName, byte[]? data = null) =>
+        new()
         {
             Id = Guid.NewGuid(),
             FileName = fileName,
@@ -9185,14 +9142,13 @@ public class ImageRepositoryTests : IAsyncDisposable
             UploadedByUserId = _testUser.Id,
             UploadedAtUtc = DateTime.UtcNow
         };
-    }
 }
 
 
 ================================================================================
 FILE: src/MyBlog.Tests/Integration/PasswordChangeTests.cs
-SIZE: 6.10 KB
-MODIFIED: 2025-12-28 11:34:32
+SIZE: 6.08 KB
+MODIFIED: 2026-03-13 19:57:00
 ================================================================================
 
 using Microsoft.EntityFrameworkCore;
@@ -9233,10 +9189,7 @@ public class PasswordChangeTests : IAsyncDisposable
         _sut = new AuthService(_userRepository, _passwordService, configuration);
     }
 
-    public async ValueTask DisposeAsync()
-    {
-        await _context.DisposeAsync();
-    }
+    public async ValueTask DisposeAsync() => await _context.DisposeAsync();
 
     [Fact]
     public async Task ChangePasswordAsync_WithCorrectCurrentPassword_ReturnsTrue()
@@ -9386,8 +9339,8 @@ public class PasswordChangeTests : IAsyncDisposable
 
 ================================================================================
 FILE: src/MyBlog.Tests/Integration/PostRepositoryExtendedTests.cs
-SIZE: 10.80 KB
-MODIFIED: 2026-01-29 10:47:59
+SIZE: 10.77 KB
+MODIFIED: 2026-03-13 19:57:00
 ================================================================================
 
 using Microsoft.EntityFrameworkCore;
@@ -9434,10 +9387,7 @@ public class PostRepositoryExtendedTests : IAsyncDisposable
         _sut = new PostRepository(_context);
     }
 
-    public async ValueTask DisposeAsync()
-    {
-        await _context.DisposeAsync();
-    }
+    public async ValueTask DisposeAsync() => await _context.DisposeAsync();
 
     [Fact]
     public async Task GetPublishedPostsAsync_ReturnsTotalCount()
@@ -9732,9 +9682,8 @@ public class PostRepositoryExtendedTests : IAsyncDisposable
         await _sut.DeleteAsync(Guid.NewGuid(), ct);
     }
 
-    private Post CreateTestPost(string title, string? slug = null, bool isPublished = true)
-    {
-        return new Post
+    private Post CreateTestPost(string title, string? slug = null, bool isPublished = true) =>
+        new()
         {
             Id = Guid.NewGuid(),
             Title = title,
@@ -9747,14 +9696,13 @@ public class PostRepositoryExtendedTests : IAsyncDisposable
             IsPublished = isPublished,
             PublishedAtUtc = isPublished ? DateTime.UtcNow : null
         };
-    }
 }
 
 
 ================================================================================
 FILE: src/MyBlog.Tests/Integration/PostRepositoryTests.cs
-SIZE: 4.88 KB
-MODIFIED: 2025-12-28 09:39:37
+SIZE: 4.85 KB
+MODIFIED: 2026-03-13 19:57:00
 ================================================================================
 
 using Microsoft.EntityFrameworkCore;
@@ -9796,10 +9744,7 @@ public class PostRepositoryTests : IAsyncDisposable
         _sut = new PostRepository(_context);
     }
 
-    public async ValueTask DisposeAsync()
-    {
-        await _context.DisposeAsync();
-    }
+    public async ValueTask DisposeAsync() => await _context.DisposeAsync();
 
     [Fact]
     public async Task CreateAsync_AddsPostToDatabase()
@@ -9903,9 +9848,8 @@ public class PostRepositoryTests : IAsyncDisposable
         Assert.Equal(2, totalCount);
     }
 
-    private Post CreateTestPost(string title, string? slug = null, bool isPublished = true)
-    {
-        return new Post
+    private Post CreateTestPost(string title, string? slug = null, bool isPublished = true) =>
+        new()
         {
             Id = Guid.NewGuid(),
             Title = title,
@@ -9918,14 +9862,13 @@ public class PostRepositoryTests : IAsyncDisposable
             IsPublished = isPublished,
             PublishedAtUtc = isPublished ? DateTime.UtcNow : null
         };
-    }
 }
 
 
 ================================================================================
 FILE: src/MyBlog.Tests/Integration/TelemetryCleanupTests.cs
-SIZE: 2.68 KB
-MODIFIED: 2025-12-28 09:27:55
+SIZE: 2.66 KB
+MODIFIED: 2026-03-13 19:57:00
 ================================================================================
 
 using Microsoft.EntityFrameworkCore;
@@ -9954,10 +9897,7 @@ public class TelemetryCleanupTests : IAsyncDisposable
         _sut = new TelemetryLogRepository(_context);
     }
 
-    public async ValueTask DisposeAsync()
-    {
-        await _context.DisposeAsync();
-    }
+    public async ValueTask DisposeAsync() => await _context.DisposeAsync();
 
     [Fact]
     public async Task DeleteOlderThanAsync_RemovesOldLogs()
@@ -10027,8 +9967,8 @@ public class TelemetryCleanupTests : IAsyncDisposable
 
 ================================================================================
 FILE: src/MyBlog.Tests/Integration/TelemetryLogRepositoryTests.cs
-SIZE: 6.67 KB
-MODIFIED: 2026-01-29 10:39:41
+SIZE: 6.63 KB
+MODIFIED: 2026-03-13 19:57:00
 ================================================================================
 
 using Microsoft.EntityFrameworkCore;
@@ -10062,10 +10002,7 @@ public class TelemetryLogRepositoryTests : IAsyncDisposable
         _sut = new TelemetryLogRepository(_context);
     }
 
-    public async ValueTask DisposeAsync()
-    {
-        await _context.DisposeAsync();
-    }
+    public async ValueTask DisposeAsync() => await _context.DisposeAsync();
 
     [Fact]
     public async Task WriteAsync_AddsLogToDatabase()
@@ -10249,23 +10186,21 @@ public class TelemetryLogRepositoryTests : IAsyncDisposable
         Assert.Contains(result, l => l.Level == "Error");
     }
 
-    private static TelemetryLog CreateTestLog(string message)
-    {
-        return new TelemetryLog
+    private static TelemetryLog CreateTestLog(string message) =>
+        new()
         {
             TimestampUtc = DateTime.UtcNow,
             Level = "Information",
             Category = "MyBlog.Tests",
             Message = message
         };
-    }
 }
 
 
 ================================================================================
 FILE: src/MyBlog.Tests/Integration/UserRepositoryTests.cs
-SIZE: 7.48 KB
-MODIFIED: 2026-01-29 10:39:30
+SIZE: 7.44 KB
+MODIFIED: 2026-03-13 19:57:00
 ================================================================================
 
 using Microsoft.EntityFrameworkCore;
@@ -10298,10 +10233,7 @@ public class UserRepositoryTests : IAsyncDisposable
         _sut = new UserRepository(_context);
     }
 
-    public async ValueTask DisposeAsync()
-    {
-        await _context.DisposeAsync();
-    }
+    public async ValueTask DisposeAsync() => await _context.DisposeAsync();
 
     [Fact]
     public async Task CreateAsync_AddsUserToDatabase()
@@ -10518,9 +10450,8 @@ public class UserRepositoryTests : IAsyncDisposable
         Assert.Equal(createdAt, saved.CreatedAtUtc);
     }
 
-    private static User CreateTestUser(string username)
-    {
-        return new User
+    private static User CreateTestUser(string username) =>
+        new()
         {
             Id = Guid.NewGuid(),
             Username = username,
@@ -10529,7 +10460,6 @@ public class UserRepositoryTests : IAsyncDisposable
             DisplayName = $"Display {username}",
             CreatedAtUtc = DateTime.UtcNow
         };
-    }
 }
 
 
@@ -10676,7 +10606,7 @@ public class DatabasePathResolverTests
 ================================================================================
 FILE: src/MyBlog.Tests/Unit/LoginRateLimitMiddlewareTests.cs
 SIZE: 6.88 KB
-MODIFIED: 2026-01-29 02:51:48
+MODIFIED: 2026-03-13 19:57:00
 ================================================================================
 
 using Microsoft.AspNetCore.Http;
@@ -10721,11 +10651,9 @@ public sealed class LoginRateLimitMiddlewareTests : IDisposable
             NoOpDelay);
     }
 
-    public void Dispose()
-    {
+    public void Dispose() =>
         // Clean up after each test
         LoginRateLimitMiddleware.ClearAttempts();
-    }
 
     [Fact]
     public async Task InvokeAsync_NonLoginRequest_PassesThroughImmediately()
@@ -10887,8 +10815,8 @@ public sealed class LoginRateLimitMiddlewareTests : IDisposable
 
 ================================================================================
 FILE: src/MyBlog.Tests/Unit/MarkdownServiceEdgeCaseTests.cs
-SIZE: 7.44 KB
-MODIFIED: 2026-01-29 10:40:22
+SIZE: 7.52 KB
+MODIFIED: 2026-03-13 19:57:15
 ================================================================================
 
 using MyBlog.Core.Interfaces;
@@ -10902,10 +10830,7 @@ namespace MyBlog.Tests.Unit;
 /// </summary>
 internal sealed class NullImageDimensionService : IImageDimensionService
 {
-    public Task<(int Width, int Height)?> GetDimensionsAsync(string url, CancellationToken cancellationToken = default)
-    {
-        return Task.FromResult<(int, int)?>(null);
-    }
+    public Task<(int Width, int Height)?> GetDimensionsAsync(string url, CancellationToken cancellationToken = default) => Task.FromResult<(int, int)?>(null);
 }
 
 /// <summary>
@@ -11114,8 +11039,8 @@ public class MarkdownServiceEdgeCaseTests
         var result = NormalizeNewlines(await _sut.ToHtmlAsync(markdown));
 
         // List should close before heading
-        var ulCloseIndex = result.IndexOf("</ul>");
-        var h1Index = result.IndexOf("<h1>");
+        var ulCloseIndex = result.IndexOf("</ul>", StringComparison.Ordinal);
+        var h1Index = result.IndexOf("<h1>", StringComparison.Ordinal);
         Assert.True(ulCloseIndex < h1Index);
     }
 
@@ -11125,8 +11050,8 @@ public class MarkdownServiceEdgeCaseTests
         var markdown = "- Item 1\n- Item 2\n```\ncode\n```";
         var result = NormalizeNewlines(await _sut.ToHtmlAsync(markdown));
 
-        var ulCloseIndex = result.IndexOf("</ul>");
-        var preIndex = result.IndexOf("<pre>");
+        var ulCloseIndex = result.IndexOf("</ul>", StringComparison.Ordinal);
+        var preIndex = result.IndexOf("<pre>", StringComparison.Ordinal);
         Assert.True(ulCloseIndex < preIndex);
     }
 }
@@ -11134,8 +11059,8 @@ public class MarkdownServiceEdgeCaseTests
 
 ================================================================================
 FILE: src/MyBlog.Tests/Unit/MarkdownServiceTests.cs
-SIZE: 7.09 KB
-MODIFIED: 2026-01-20 09:14:25
+SIZE: 7.08 KB
+MODIFIED: 2026-03-13 19:57:00
 ================================================================================
 
 using System.Threading;
@@ -11169,10 +11094,7 @@ internal sealed class MockImageDimensionService : IImageDimensionService
 /// </summary>
 internal sealed class ThrowingImageDimensionService : IImageDimensionService
 {
-    public Task<(int Width, int Height)?> GetDimensionsAsync(string url, CancellationToken cancellationToken = default)
-    {
-        throw new InvalidOperationException("Simulated database error");
-    }
+    public Task<(int Width, int Height)?> GetDimensionsAsync(string url, CancellationToken cancellationToken = default) => throw new InvalidOperationException("Simulated database error");
 }
 
 public class MarkdownServiceTests
@@ -11936,6 +11858,18 @@ MODIFIED: 2026-01-26 05:44:15
 
     <Footer />
 </div>
+
+
+================================================================================
+FILE: src/MyBlog.Web/Components/NotFound.razor
+SIZE: .14 KB
+MODIFIED: 2026-03-13 19:53:00
+================================================================================
+
+<LayoutView Layout="typeof(Layout.MainLayout)">
+    <h1>Page Not Found</h1>
+    <p>Sorry, the page you requested could not be found.</p>
+</LayoutView>
 
 
 ================================================================================
@@ -13522,8 +13456,8 @@ MODIFIED: 2026-01-26 08:41:48
 
 ================================================================================
 FILE: src/MyBlog.Web/Components/Pages/Admin/ImageManager.razor
-SIZE: 3.84 KB
-MODIFIED: 2025-12-30 17:48:21
+SIZE: 3.80 KB
+MODIFIED: 2026-03-13 19:57:00
 ================================================================================
 
 @page "/admin/images"
@@ -13583,15 +13517,9 @@ else
     private bool _uploading;
     private bool _deleting;
 
-    protected override async Task OnInitializedAsync()
-    {
-        await LoadImages();
-    }
+    protected override async Task OnInitializedAsync() => await LoadImages();
 
-    private async Task LoadImages()
-    {
-        _images = await ImageRepository.GetAllAsync();
-    }
+    private async Task LoadImages() => _images = await ImageRepository.GetAllAsync();
 
     private async Task HandleFileUpload(InputFileChangeEventArgs e)
     {
@@ -14091,8 +14019,8 @@ MODIFIED: 2026-01-31 11:23:04
 
 ================================================================================
 FILE: src/MyBlog.Web/Components/Pages/Admin/PostList.razor
-SIZE: 1.72 KB
-MODIFIED: 2025-12-30 17:48:21
+SIZE: 1.68 KB
+MODIFIED: 2026-03-13 19:57:00
 ================================================================================
 
 @page "/admin/posts"
@@ -14147,15 +14075,9 @@ else
     private IReadOnlyList<PostListItemDto>? _posts;
     private bool _deleting;
 
-    protected override async Task OnInitializedAsync()
-    {
-        await LoadPosts();
-    }
+    protected override async Task OnInitializedAsync() => await LoadPosts();
 
-    private async Task LoadPosts()
-    {
-        _posts = await PostRepository.GetAllPostsAsync();
-    }
+    private async Task LoadPosts() => _posts = await PostRepository.GetAllPostsAsync();
 
     private async Task DeletePost(Guid id)
     {
@@ -14375,8 +14297,8 @@ MODIFIED: 2026-01-26 08:42:20
 
 ================================================================================
 FILE: src/MyBlog.Web/Components/Pages/Admin/UserList.razor
-SIZE: 3.04 KB
-MODIFIED: 2026-01-16 19:51:23
+SIZE: 3.02 KB
+MODIFIED: 2026-03-13 19:57:00
 ================================================================================
 
 @page "/admin/users"
@@ -14458,10 +14380,7 @@ MODIFIED: 2026-01-16 19:51:23
         await LoadUsers();
     }
 
-    private async Task LoadUsers()
-    {
-        _users = await UserRepository.GetAllAsync();
-    }
+    private async Task LoadUsers() => _users = await UserRepository.GetAllAsync();
 
     private async Task DeleteUser(Guid id)
     {
@@ -14603,8 +14522,8 @@ else
 
 ================================================================================
 FILE: src/MyBlog.Web/Components/Pages/Login.razor
-SIZE: 1.33 KB
-MODIFIED: 2026-01-31 12:14:09
+SIZE: 1.32 KB
+MODIFIED: 2026-03-13 19:57:00
 ================================================================================
 
 @page "/login"
@@ -14647,15 +14566,13 @@ MODIFIED: 2026-01-31 12:14:09
     [SupplyParameterFromQuery(Name = "error")]
     public string? Error { get; set; }
 
-    protected override void OnInitialized()
-    {
+    protected override void OnInitialized() =>
         _error = Error switch
         {
             "required" => "Username and password are required",
             "invalid" => "Invalid username or password",
             _ => null
         };
-    }
 }
 
 
@@ -14951,11 +14868,11 @@ article {
 
 ================================================================================
 FILE: src/MyBlog.Web/Components/Routes.razor
-SIZE: .83 KB
-MODIFIED: 2026-01-26 06:25:15
+SIZE: .65 KB
+MODIFIED: 2026-03-13 19:53:31
 ================================================================================
 
-<Router AppAssembly="typeof(Program).Assembly">
+<Router AppAssembly="typeof(Program).Assembly" NotFoundPage="typeof(NotFound)">
     <Found Context="routeData">
         <AuthorizeRouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)">
             <NotAuthorized>
@@ -14971,12 +14888,6 @@ MODIFIED: 2026-01-26 06:25:15
         </AuthorizeRouteView>
         <FocusOnNavigate RouteData="routeData" Selector="h1" />
     </Found>
-    <NotFound>
-        <LayoutView Layout="typeof(Layout.MainLayout)">
-            <h1>Page Not Found</h1>
-            <p>Sorry, the page you requested could not be found.</p>
-        </LayoutView>
-    </NotFound>
 </Router>
 
 
@@ -15049,8 +14960,8 @@ MODIFIED: 2026-01-13 20:55:51
 
 ================================================================================
 FILE: src/MyBlog.Web/Components/Shared/MarkdownRenderer.razor
-SIZE: .38 KB
-MODIFIED: 2026-01-16 21:47:57
+SIZE: .36 KB
+MODIFIED: 2026-03-13 19:57:00
 ================================================================================
 
 @using MyBlog.Core.Interfaces
@@ -15066,10 +14977,7 @@ MODIFIED: 2026-01-16 21:47:57
 
     private string _htmlContent = "";
 
-    protected override async Task OnParametersSetAsync()
-    {
-        _htmlContent = await MarkdownService.ToHtmlAsync(Content ?? "");
-    }
+    protected override async Task OnParametersSetAsync() => _htmlContent = await MarkdownService.ToHtmlAsync(Content ?? "");
 }
 
 
@@ -15262,24 +15170,21 @@ MODIFIED: 2026-01-13 21:06:07
 
 ================================================================================
 FILE: src/MyBlog.Web/Components/Shared/RedirectToLogin.razor
-SIZE: .20 KB
-MODIFIED: 2025-12-28 08:44:06
+SIZE: .19 KB
+MODIFIED: 2026-03-13 19:57:00
 ================================================================================
 
 @inject NavigationManager Navigation
 
 @code {
-    protected override void OnInitialized()
-    {
-        Navigation.NavigateTo($"/login?returnUrl={Uri.EscapeDataString(Navigation.Uri)}", forceLoad: true);
-    }
+    protected override void OnInitialized() => Navigation.NavigateTo($"/login?returnUrl={Uri.EscapeDataString(Navigation.Uri)}", forceLoad: true);
 }
 
 
 ================================================================================
 FILE: src/MyBlog.Web/Components/Shared/ThemeSwitcher.razor
-SIZE: 4.11 KB
-MODIFIED: 2026-01-26 06:37:10
+SIZE: 4.06 KB
+MODIFIED: 2026-03-13 19:57:04
 ================================================================================
 
 @implements IDisposable
@@ -15374,10 +15279,7 @@ MODIFIED: 2026-01-26 06:37:10
         }
     }
 
-    private void ToggleMenu()
-    {
-        _isOpen = !_isOpen;
-    }
+    private void ToggleMenu() => _isOpen = !_isOpen;
 
     [JSInvokable]
     public void CloseMenu()
@@ -15404,15 +15306,9 @@ MODIFIED: 2026-01-26 06:37:10
         }
     }
 
-    private static bool IsDarkTheme(string themeId)
-    {
-        return themeId is "dark" or "nord" or "dracula";
-    }
+    private static bool IsDarkTheme(string themeId) => themeId is "dark" or "nord" or "dracula";
 
-    public void Dispose()
-    {
-        _objRef?.Dispose();
-    }
+    public void Dispose() => _objRef?.Dispose();
 }
 
 
@@ -15689,8 +15585,8 @@ public class ReaderHub(IReaderTrackingService trackingService) : Hub
 
 ================================================================================
 FILE: src/MyBlog.Web/Middleware/LoginRateLimitMiddleware.cs
-SIZE: 6.80 KB
-MODIFIED: 2026-03-13 09:06:33
+SIZE: 6.71 KB
+MODIFIED: 2026-03-13 19:57:00
 ================================================================================
 
 using System.Collections.Concurrent;
@@ -15793,21 +15689,16 @@ public sealed class LoginRateLimitMiddleware
         await _next(context);
     }
 
-    private static bool IsLoginPostRequest(HttpContext context)
-    {
-        return context.Request.Method == HttpMethods.Post &&
-               context.Request.Path.StartsWithSegments("/account/login", StringComparison.OrdinalIgnoreCase);
-    }
+    private static bool IsLoginPostRequest(HttpContext context) =>
+        context.Request.Method == HttpMethods.Post &&
+        context.Request.Path.StartsWithSegments("/account/login", StringComparison.OrdinalIgnoreCase);
 
     /// <summary>
     /// Gets the client IP from the connection. Does NOT manually parse X-Forwarded-For.
     /// If running behind a reverse proxy, configure ASP.NET Core's ForwardedHeaders middleware
     /// which safely sets RemoteIpAddress from trusted proxies only.
     /// </summary>
-    private static string GetClientIp(HttpContext context)
-    {
-        return context.Connection.RemoteIpAddress?.ToString() ?? "unknown";
-    }
+    private static string GetClientIp(HttpContext context) => context.Connection.RemoteIpAddress?.ToString() ?? "unknown";
 
     /// <summary>
     /// Calculate delay based on attempt count. Exposed for unit testing.
@@ -15885,10 +15776,7 @@ public sealed class LoginRateLimitMiddleware
     /// <summary>
     /// Clear all attempt records. Used for testing.
     /// </summary>
-    public static void ClearAttempts()
-    {
-        Attempts.Clear();
-    }
+    public static void ClearAttempts() => Attempts.Clear();
 }
 
 /// <summary>
@@ -15900,10 +15788,7 @@ public static class LoginRateLimitMiddlewareExtensions
     /// Adds login rate limiting middleware that slows down repeated attempts
     /// but never completely blocks users.
     /// </summary>
-    public static IApplicationBuilder UseLoginRateLimit(this IApplicationBuilder app)
-    {
-        return app.UseMiddleware<LoginRateLimitMiddleware>();
-    }
+    public static IApplicationBuilder UseLoginRateLimit(this IApplicationBuilder app) => app.UseMiddleware<LoginRateLimitMiddleware>();
 }
 
 
@@ -17386,9 +17271,9 @@ function showShareError(shareBtn, message) {
 
 
 ===============================================================================
-EXPORT COMPLETED: Fri Mar 13 07:39:42 PM EDT 2026
-Total Files Found: 127
-Files Exported: 127
+EXPORT COMPLETED: Fri Mar 13 07:58:26 PM EDT 2026
+Total Files Found: 128
+Files Exported: 128
 Files Skipped: 0 (binary or large files)
 Output File: /home/kushal/src/dotnet/MyBlog/docs/llm/dump.txt
 ===============================================================================

@@ -407,7 +407,7 @@ public sealed class ImageDimensionService : IImageDimensionService
                     // VP8 bitstream starts at offset 20
                     // Frame tag at bytes 20-22, then dimensions
                     // Signature bytes: 9D 01 2A
-                    if (bytesRead >= 30 && buffer[23] == 0x9D && buffer[24] == 0x01 && buffer[25] == 0x2A)
+                    if (buffer[23] == 0x9D && buffer[24] == 0x01 && buffer[25] == 0x2A)
                     {
                         // Width at 26-27 (little-endian, 14 bits)
                         // Height at 28-29 (little-endian, 14 bits)
@@ -421,7 +421,7 @@ public sealed class ImageDimensionService : IImageDimensionService
                 {
                     // Lossless WebP
                     // Signature byte at offset 20: 0x2F
-                    if (bytesRead >= 25 && buffer[20] == 0x2F)
+                    if (buffer[20] == 0x2F)
                     {
                         // Dimensions encoded in bytes 21-24
                         // Width: 14 bits starting at bit 0
@@ -441,15 +441,11 @@ public sealed class ImageDimensionService : IImageDimensionService
                 {
                     // Extended WebP
                     // Canvas size at offset 24-29
-                    if (bytesRead >= 30)
-                    {
                         // Width at 24-26 (24-bit little-endian) + 1
                         // Height at 27-29 (24-bit little-endian) + 1
                         var width = (buffer[24] | (buffer[25] << 8) | (buffer[26] << 16)) + 1;
                         var height = (buffer[27] | (buffer[28] << 8) | (buffer[29] << 16)) + 1;
                         return (width, height);
-                    }
-                    break;
                 }
         }
 
