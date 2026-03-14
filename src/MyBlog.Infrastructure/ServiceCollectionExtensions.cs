@@ -8,6 +8,7 @@ using MyBlog.Core.Services;
 using MyBlog.Infrastructure.Data;
 using MyBlog.Infrastructure.Repositories;
 using MyBlog.Infrastructure.Services;
+using MyBlog.Infrastructure.Telemetry;
 
 namespace MyBlog.Infrastructure;
 
@@ -61,6 +62,10 @@ public static class ServiceCollectionExtensions
         services.AddHostedService<TelemetryCleanupService>();
         // Cache Warmer - runs on startup to pre-fetch dimensions for existing images
         services.AddHostedService<ImageCacheWarmerService>();
+
+        // Inside AddInfrastructure or similar registration method
+        services.AddHostedService<FileLogExporter>();
+        services.AddHostedService<DatabaseLogExporter>();
 
         return services;
     }

@@ -1,5 +1,6 @@
 using System.Text.Json;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using MyBlog.Core.Models;
 using MyBlog.Infrastructure.Data;
 using OpenTelemetry;
@@ -10,7 +11,7 @@ namespace MyBlog.Infrastructure.Telemetry;
 /// <summary>
 /// OpenTelemetry log exporter that writes to SQLite database.
 /// </summary>
-public sealed class DatabaseLogExporter : BaseExporter<LogRecord>
+public sealed class DatabaseLogExporter : BaseExporter<LogRecord>, IHostedService
 {
     private readonly IServiceScopeFactory _scopeFactory;
 
@@ -69,4 +70,13 @@ public sealed class DatabaseLogExporter : BaseExporter<LogRecord>
 
         return dict.Count > 0 ? JsonSerializer.Serialize(dict) : null;
     }
+
+    public Task StartAsync(CancellationToken cancellationToken) =>
+        // If your constructor already handles subscription,
+        // this can just return Task.CompletedTask.
+        Task.CompletedTask;
+
+    public Task StopAsync(CancellationToken cancellationToken) =>
+        // Unsubscribe or clean up resources here
+        Task.CompletedTask;
 }

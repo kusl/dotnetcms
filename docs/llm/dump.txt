@@ -1,6 +1,6 @@
 ===============================================================================
 PROJECT EXPORT
-Generated: Fri Mar 13 07:58:24 PM EDT 2026
+Generated: Fri Mar 13 08:13:54 PM EDT 2026
 Project Path: /home/kushal/src/dotnet/MyBlog
 ===============================================================================
 
@@ -363,7 +363,7 @@ volumes:
 ================================================================================
 FILE: .editorconfig
 SIZE: 1.28 KB
-MODIFIED: 2026-01-26 07:27:49
+MODIFIED: 2026-03-13 20:05:11
 ================================================================================
 
 root = true
@@ -7327,8 +7327,8 @@ public sealed class ImageCacheWarmerService(
 
 ================================================================================
 FILE: src/MyBlog.Infrastructure/Services/ImageDimensionService.cs
-SIZE: 16.42 KB
-MODIFIED: 2026-01-21 12:26:50
+SIZE: 16.25 KB
+MODIFIED: 2026-03-13 20:12:55
 ================================================================================
 
 using System.Buffers.Binary;
@@ -7740,7 +7740,7 @@ public sealed class ImageDimensionService : IImageDimensionService
                     // VP8 bitstream starts at offset 20
                     // Frame tag at bytes 20-22, then dimensions
                     // Signature bytes: 9D 01 2A
-                    if (bytesRead >= 30 && buffer[23] == 0x9D && buffer[24] == 0x01 && buffer[25] == 0x2A)
+                    if (buffer[23] == 0x9D && buffer[24] == 0x01 && buffer[25] == 0x2A)
                     {
                         // Width at 26-27 (little-endian, 14 bits)
                         // Height at 28-29 (little-endian, 14 bits)
@@ -7754,7 +7754,7 @@ public sealed class ImageDimensionService : IImageDimensionService
                 {
                     // Lossless WebP
                     // Signature byte at offset 20: 0x2F
-                    if (bytesRead >= 25 && buffer[20] == 0x2F)
+                    if (buffer[20] == 0x2F)
                     {
                         // Dimensions encoded in bytes 21-24
                         // Width: 14 bits starting at bit 0
@@ -7774,15 +7774,11 @@ public sealed class ImageDimensionService : IImageDimensionService
                 {
                     // Extended WebP
                     // Canvas size at offset 24-29
-                    if (bytesRead >= 30)
-                    {
-                        // Width at 24-26 (24-bit little-endian) + 1
-                        // Height at 27-29 (24-bit little-endian) + 1
-                        var width = (buffer[24] | (buffer[25] << 8) | (buffer[26] << 16)) + 1;
-                        var height = (buffer[27] | (buffer[28] << 8) | (buffer[29] << 16)) + 1;
-                        return (width, height);
-                    }
-                    break;
+                    // Width at 24-26 (24-bit little-endian) + 1
+                    // Height at 27-29 (24-bit little-endian) + 1
+                    var width = (buffer[24] | (buffer[25] << 8) | (buffer[26] << 16)) + 1;
+                    var height = (buffer[27] | (buffer[28] << 8) | (buffer[29] << 16)) + 1;
+                    return (width, height);
                 }
         }
 
@@ -9147,8 +9143,8 @@ public class ImageRepositoryTests : IAsyncDisposable
 
 ================================================================================
 FILE: src/MyBlog.Tests/Integration/PasswordChangeTests.cs
-SIZE: 6.08 KB
-MODIFIED: 2026-03-13 19:57:00
+SIZE: 6.03 KB
+MODIFIED: 2026-03-13 20:02:46
 ================================================================================
 
 using Microsoft.EntityFrameworkCore;
@@ -9166,7 +9162,6 @@ public class PasswordChangeTests : IAsyncDisposable
     private readonly BlogDbContext _context;
     private readonly AuthService _sut;
     private readonly PasswordService _passwordService = new();
-    private readonly UserRepository _userRepository;
 
     public PasswordChangeTests()
     {
@@ -9178,7 +9173,7 @@ public class PasswordChangeTests : IAsyncDisposable
         _context.Database.OpenConnection();
         _context.Database.EnsureCreated();
 
-        _userRepository = new UserRepository(_context);
+        var userRepository = new UserRepository(_context);
         var configuration = new ConfigurationBuilder()
             .AddInMemoryCollection(new Dictionary<string, string?>
             {
@@ -9186,7 +9181,7 @@ public class PasswordChangeTests : IAsyncDisposable
             })
             .Build();
 
-        _sut = new AuthService(_userRepository, _passwordService, configuration);
+        _sut = new AuthService(userRepository, _passwordService, configuration);
     }
 
     public async ValueTask DisposeAsync() => await _context.DisposeAsync();
@@ -11059,12 +11054,10 @@ public class MarkdownServiceEdgeCaseTests
 
 ================================================================================
 FILE: src/MyBlog.Tests/Unit/MarkdownServiceTests.cs
-SIZE: 7.08 KB
-MODIFIED: 2026-03-13 19:57:00
+SIZE: 7.02 KB
+MODIFIED: 2026-03-13 20:07:58
 ================================================================================
 
-using System.Threading;
-using System.Threading.Tasks;
 using MyBlog.Core.Interfaces;
 using MyBlog.Core.Services;
 using Xunit;
@@ -11863,10 +11856,10 @@ MODIFIED: 2026-01-26 05:44:15
 ================================================================================
 FILE: src/MyBlog.Web/Components/NotFound.razor
 SIZE: .14 KB
-MODIFIED: 2026-03-13 19:53:00
+MODIFIED: 2026-03-13 20:07:14
 ================================================================================
 
-<LayoutView Layout="typeof(Layout.MainLayout)">
+<LayoutView Layout="typeof(MainLayout)">
     <h1>Page Not Found</h1>
     <p>Sorry, the page you requested could not be found.</p>
 </LayoutView>
@@ -14868,13 +14861,13 @@ article {
 
 ================================================================================
 FILE: src/MyBlog.Web/Components/Routes.razor
-SIZE: .65 KB
-MODIFIED: 2026-03-13 19:53:31
+SIZE: .64 KB
+MODIFIED: 2026-03-13 20:07:14
 ================================================================================
 
 <Router AppAssembly="typeof(Program).Assembly" NotFoundPage="typeof(NotFound)">
     <Found Context="routeData">
-        <AuthorizeRouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)">
+        <AuthorizeRouteView RouteData="routeData" DefaultLayout="typeof(MainLayout)">
             <NotAuthorized>
                 @if (context.User.Identity?.IsAuthenticated != true)
                 {
@@ -14960,11 +14953,10 @@ MODIFIED: 2026-01-13 20:55:51
 
 ================================================================================
 FILE: src/MyBlog.Web/Components/Shared/MarkdownRenderer.razor
-SIZE: .36 KB
-MODIFIED: 2026-03-13 19:57:00
+SIZE: .33 KB
+MODIFIED: 2026-03-13 20:07:46
 ================================================================================
 
-@using MyBlog.Core.Interfaces
 @inject IMarkdownService MarkdownService
 
 <div class="markdown-content">
@@ -15063,11 +15055,10 @@ article {
 
 ================================================================================
 FILE: src/MyBlog.Web/Components/Shared/ReaderBadge.razor
-SIZE: 1.94 KB
-MODIFIED: 2026-01-16 20:40:44
+SIZE: 1.89 KB
+MODIFIED: 2026-03-13 20:07:46
 ================================================================================
 
-@using Microsoft.AspNetCore.SignalR.Client
 @inject NavigationManager Navigation
 @implements IAsyncDisposable
 
@@ -15818,14 +15809,13 @@ MODIFIED: 2026-01-16 20:29:40
 
 ================================================================================
 FILE: src/MyBlog.Web/Program.cs
-SIZE: 5.35 KB
-MODIFIED: 2026-01-27 09:54:00
+SIZE: 5.30 KB
+MODIFIED: 2026-03-13 20:09:19
 ================================================================================
 
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.EntityFrameworkCore;
 using MyBlog.Core.Constants;
 using MyBlog.Core.Interfaces;
 using MyBlog.Infrastructure;
@@ -15834,7 +15824,6 @@ using MyBlog.Infrastructure.Telemetry;
 using MyBlog.Web.Components;
 using MyBlog.Web.Hubs;
 using MyBlog.Web.Middleware;
-using OpenTelemetry;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
@@ -17271,7 +17260,7 @@ function showShareError(shareBtn, message) {
 
 
 ===============================================================================
-EXPORT COMPLETED: Fri Mar 13 07:58:26 PM EDT 2026
+EXPORT COMPLETED: Fri Mar 13 08:13:55 PM EDT 2026
 Total Files Found: 128
 Files Exported: 128
 Files Skipped: 0 (binary or large files)

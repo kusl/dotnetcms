@@ -146,9 +146,6 @@ using (var scope = app.Services.CreateScope())
 
     var authService = scope.ServiceProvider.GetRequiredService<IAuthService>();
     await authService.EnsureAdminUserAsync();
-    // Register telemetry exporters with the service provider
-    var logExporter = scope.ServiceProvider.GetService<FileLogExporter>();
-    var dbExporter = scope.ServiceProvider.GetService<DatabaseLogExporter>();
 }
 
 app.Run();

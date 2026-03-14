@@ -441,11 +441,11 @@ public sealed class ImageDimensionService : IImageDimensionService
                 {
                     // Extended WebP
                     // Canvas size at offset 24-29
-                        // Width at 24-26 (24-bit little-endian) + 1
-                        // Height at 27-29 (24-bit little-endian) + 1
-                        var width = (buffer[24] | (buffer[25] << 8) | (buffer[26] << 16)) + 1;
-                        var height = (buffer[27] | (buffer[28] << 8) | (buffer[29] << 16)) + 1;
-                        return (width, height);
+                    // Width at 24-26 (24-bit little-endian) + 1
+                    // Height at 27-29 (24-bit little-endian) + 1
+                    var width = (buffer[24] | (buffer[25] << 8) | (buffer[26] << 16)) + 1;
+                    var height = (buffer[27] | (buffer[28] << 8) | (buffer[29] << 16)) + 1;
+                    return (width, height);
                 }
         }
 

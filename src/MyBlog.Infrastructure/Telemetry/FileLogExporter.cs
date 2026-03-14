@@ -1,5 +1,6 @@
 using System.Text;
 using System.Text.Json;
+using Microsoft.Extensions.Hosting;
 using OpenTelemetry;
 using OpenTelemetry.Logs;
 
@@ -8,7 +9,7 @@ namespace MyBlog.Infrastructure.Telemetry;
 /// <summary>
 /// OpenTelemetry log exporter that writes to JSON files.
 /// </summary>
-public sealed class FileLogExporter : BaseExporter<LogRecord>
+public sealed class FileLogExporter : BaseExporter<LogRecord>, IHostedService
 {
     private readonly string _directory;
     private readonly string _runId;
@@ -131,4 +132,12 @@ public sealed class FileLogExporter : BaseExporter<LogRecord>
         }
         return true;
     }
+    public Task StartAsync(CancellationToken cancellationToken) =>
+        // If your constructor already handles subscription,
+        // this can just return Task.CompletedTask.
+        Task.CompletedTask;
+
+    public Task StopAsync(CancellationToken cancellationToken) =>
+        // Unsubscribe or clean up resources here
+        Task.CompletedTask;
 }
