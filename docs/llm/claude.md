@@ -498,6 +498,8 @@ Both exporters are now only registered when their respective config flags are en
 
 
 
+16
+09
 I ran into another problem after fixing this one. 
 An unhandled exception occurred while processing the request.
 InvalidOperationException: The type MyBlog.Web.Components.NotFound does not have a Microsoft.AspNetCore.Components.RouteAttribute applied to it.
@@ -549,5 +551,70 @@ Microsoft.AspNetCore.Diagnostics.DeveloperExceptionPageMiddlewareImpl.Invoke(Htt
 
 Show raw exception details
 
+Please review and fix. 
+Please return full files for all files that changed. 
+
+The issue is in `Routes.razor` — the `NotFoundPage` parameter requires a component with a `@page` route attribute, but `NotFound.razor` doesn't have one (it's just a layout view, not a routable page).
+
+Looking at `Routes.razor`:
+```razor
+<Router AppAssembly="typeof(Program).Assembly" NotFoundPage="typeof(NotFound)">
+```
+
+And `NotFound.razor`:
+```razor
+<LayoutView Layout="typeof(MainLayout)">
+    <h1>Page Not Found</h1>
+    <p>Sorry, the page you requested could not be found.</p>
+</LayoutView>
+```
+
+The `NotFoundPage` parameter was added in .NET 10 and requires a component with a `@page` directive. The fix is to use the older `NotFound` render fragment approach instead, which works with non-routable components.The change: replaced `NotFoundPage="typeof(NotFound)"` (which requires a `@page`-routed component) with the `<NotFound>` render fragment child, which accepts any component — including the existing `NotFound.razor` that uses `<LayoutView>` without a route attribute. This is the standard Blazor pattern for custom 404 pages when the component isn't a routable page.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+That is not a proper fix. 
+NotFound is deprecated. 
+We must use notfoundpage
+Please fix this properly 
+Reminder 
+from https://learn.microsoft.com/en-us/aspnet/core/release-notes/aspnetcore-10.0?view=aspnetcore-10.0#blazor-router-has-a-notfoundpage-parameter: 
+Blazor router has a NotFoundPage parameter
+Blazor now provides an improved way to display a "Not Found" page when navigating to a non-existent page. You can specify a page to render when NavigationManager.NotFound (described in the next section) is invoked by passing a page type to the Router component using the NotFoundPage parameter. The feature supports routing, works across Status Code Pages Re-execution Middleware, and is compatible even with non-Blazor scenarios.
+The NotFound render fragment (<NotFound>...</NotFound>) isn't supported in .NET 10 or later.
+razor
+<Router AppAssembly="@typeof(Program).Assembly" NotFoundPage="typeof(Pages.NotFound)">
+    <Found Context="routeData">
+        <RouteView RouteData="@routeData" />
+        <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+    </Found>
+    <NotFound>This content is ignored because NotFoundPage is defined.</NotFound>
+</Router>
+The Blazor project template now includes a NotFound.razor page by default. This page automatically renders whenever NotFound is called in your app, making it easier to handle missing routes with a consistent user experience.
 Please review and fix. 
 Please return full files for all files that changed. 
