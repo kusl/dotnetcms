@@ -818,3 +818,16 @@ Error: Process completed with exit code 1.
 
 
 
+The `aspNetCore` element isn't being found because the XML path is wrong. The ASP.NET Core `web.config` uses a namespace or the structure is slightly different. Let me check what `dotnet publish` actually generates for the `web.config`.
+
+The issue is that `dotnet publish` with `-r win-x86 --self-contained false` generates a `web.config` where the `aspNetCore` element path might differ, or more likely, the `system.webServer` node lookup is failing because PowerShell's XML dot-notation is picky.
+
+Let me fix the script to be more robust — it'll dump the actual web.config content first so we can see the structure, and use XPath properly:The fix: the old script used `$xml.configuration.'system.webServer'.aspNetCore` which is PowerShell dot-notation navigating through XML. The problem is `system.webServer` contains a dot, which confuses PowerShell's property resolution — it was returning `$null` for `aspNetCore`, and then the `.SelectSingleNode()` call on `$null` blew up.
+
+The new script uses `$xml.SelectSingleNode('//aspNetCore')` instead — XPath with `//` finds the `aspNetCore` element anywhere in the document regardless of the parent element naming. This is robust against any `web.config` structure.
+
+I also added diagnostic output (prints the web.config before and after modification) so if anything goes wrong on the next run you'll see exactly what the file looks like, and added graceful early exits instead of crashing if the file or element isn't found.
+
+13
+14
+
