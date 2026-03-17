@@ -17358,3 +17358,869 @@ real	0m33.815s
 user	0m1.732s
 sys	0m1.347s
 kushal@fedora:~/src/dotnet/MyBlog$ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+kushal@fedora:~/src/dotnet/MyBlog$ cd ~/src/dotnet/MyBlog/ && export DOTNET_CLI_TELEMETRY_OPTOUT=1 && (cd src && time dotnet format; time dotnet restore; time dotnet clean; time dotnet build; time dotnet run --project MyBlog.Tests/MyBlog.Tests.csproj; time dotnet list package; time dotnet list package --outdated); cd ~/src/dotnet/MyBlog/; cat export.sh; time bash export.sh; cat run-e2e.sh; time bash run-e2e.sh;
+
+real	0m8.977s
+user	0m16.666s
+sys	0m1.036s
+Restore complete (0.5s)
+
+Build succeeded in 0.6s
+
+real	0m0.743s
+user	0m0.820s
+sys	0m0.184s
+
+Build succeeded in 0.5s
+
+real	0m0.711s
+user	0m0.734s
+sys	0m0.196s
+Restore complete (0.5s)
+  MyBlog.Core net10.0 succeeded (0.3s) → MyBlog.Core/bin/Debug/net10.0/MyBlog.Core.dll
+  MyBlog.Infrastructure net10.0 succeeded (0.4s) → MyBlog.Infrastructure/bin/Debug/net10.0/MyBlog.Infrastructure.dll
+  MyBlog.Web net10.0 succeeded (1.1s) → MyBlog.Web/bin/Debug/net10.0/MyBlog.Web.dll
+  MyBlog.E2E net10.0 succeeded (0.6s) → MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll
+  MyBlog.Tests net10.0 succeeded (0.6s) → MyBlog.Tests/bin/Debug/net10.0/MyBlog.Tests.dll
+
+Build succeeded in 3.0s
+
+real	0m3.165s
+user	0m2.090s
+sys	0m0.469s
+xUnit.net v3 In-Process Runner v3.2.2+728c1dce01 (64-bit .NET 10.0.3)
+  Discovering: MyBlog.Tests
+  Discovered:  MyBlog.Tests
+  Starting:    MyBlog.Tests
+  Finished:    MyBlog.Tests (ID = '24cedafe73dab5684218bb3cf04cfd49ae8ce3b87ae799399cb2e301cbc1e755')
+=== TEST EXECUTION SUMMARY ===
+   MyBlog.Tests  Total: 192, Errors: 0, Failed: 0, Skipped: 0, Not Run: 0, Time: 41.528s
+
+real	0m43.473s
+user	0m48.395s
+sys	0m0.692s
+Restore complete (0.4s)
+
+Build succeeded in 0.5s
+Project 'MyBlog.Core' has the following package references
+   [net10.0]: 
+   Top-level Package                   Requested   Resolved
+   > Microsoft.Extensions.Logging      10.0.5      10.0.5  
+
+Project 'MyBlog.E2E' has the following package references
+   [net10.0]: 
+   Top-level Package             Requested   Resolved
+   > Microsoft.NET.Test.Sdk      18.3.0      18.3.0  
+   > Microsoft.Playwright        1.58.0      1.58.0  
+   > xunit.v3                    3.2.2       3.2.2   
+
+Project 'MyBlog.Infrastructure' has the following package references
+   [net10.0]: 
+   Top-level Package                           Requested   Resolved
+   > Microsoft.AspNetCore.Identity             2.3.9       2.3.9   
+   > Microsoft.EntityFrameworkCore.Sqlite      10.0.5      10.0.5  
+   > Microsoft.Extensions.Http                 10.0.5      10.0.5  
+   > OpenTelemetry                             1.15.0      1.15.0  
+
+Project 'MyBlog.Tests' has the following package references
+   [net10.0]: 
+   Top-level Package                             Requested   Resolved
+   > Microsoft.EntityFrameworkCore.Sqlite        10.0.5      10.0.5  
+   > Microsoft.NET.Test.Sdk                      18.3.0      18.3.0  
+   > Microsoft.Testing.Extensions.TrxReport      2.1.0       2.1.0   
+   > xunit.v3                                    3.2.2       3.2.2   
+
+Project 'MyBlog.Web' has the following package references
+   [net10.0]: 
+   Top-level Package                                      Requested    Resolved
+   > Microsoft.AspNetCore.App.Internal.Assets       (A)   [10.0.3, )   10.0.3  
+   > Microsoft.AspNetCore.SignalR.Client                  10.0.5       10.0.5  
+   > OpenTelemetry.Exporter.Console                       1.15.0       1.15.0  
+   > OpenTelemetry.Exporter.OpenTelemetryProtocol         1.15.0       1.15.0  
+   > OpenTelemetry.Extensions.Hosting                     1.15.0       1.15.0  
+   > OpenTelemetry.Instrumentation.AspNetCore             1.15.1       1.15.1  
+   > OpenTelemetry.Instrumentation.Http                   1.15.0       1.15.0  
+
+(A) : Auto-referenced package.
+
+real	0m1.533s
+user	0m1.604s
+sys	0m0.326s
+Restore complete (0.4s)
+
+Build succeeded in 0.5s
+
+The following sources were used:
+   https://api.nuget.org/v3/index.json
+
+The given project `MyBlog.Core` has no updates given the current sources.
+The given project `MyBlog.E2E` has no updates given the current sources.
+The given project `MyBlog.Infrastructure` has no updates given the current sources.
+The given project `MyBlog.Tests` has no updates given the current sources.
+The given project `MyBlog.Web` has no updates given the current sources.
+
+real	0m1.688s
+user	0m1.697s
+sys	0m0.371s
+#!/bin/bash
+# =============================================================================
+# Complete Project Export for LLM Analysis
+# =============================================================================
+# Exports all relevant source files, configs, and documentation for AI review.
+# Excludes: binaries, build outputs, IDE files, packages, git internals
+# =============================================================================
+
+set -e
+
+OUTPUT_DIR="docs/llm"
+OUTPUT_FILE="$OUTPUT_DIR/dump.txt"
+PROJECT_PATH="$(pwd)"
+
+# File extensions to include (comprehensive list for .NET/Blazor projects)
+# Source code
+SOURCE_EXTS="cs|fs|vb"
+# XAML/Avalonia UI
+XAML_EXTS="axaml|xaml|paml"
+# Blazor/Razor
+RAZOR_EXTS="razor"
+# Project/Build files
+PROJECT_EXTS="csproj|fsproj|vbproj|slnx|sln|props|targets|tasks"
+# Config files
+CONFIG_EXTS="json|yaml|yml|xml|config|settings"
+# Documentation
+DOC_EXTS="md|txt|rst|adoc"
+# Scripts
+SCRIPT_EXTS="sh|ps1|psm1|cmd|bat"
+# Web/Style/Scripts
+WEB_EXTS="css|scss|sass|less|js|ts"
+# Data/Templates
+DATA_EXTS="sql|csv|resx|resources"
+# Docker/CI
+DEVOPS_EXTS="dockerfile|dockerignore|editorconfig|gitignore|gitattributes"
+
+# Directories to exclude
+EXCLUDE_DIRS="bin|obj|.git|.vs|.idea|.vscode|node_modules|packages|TestResults|coverage|publish|artifacts|.nuget|wwwroot/lib"
+
+# Files to exclude (patterns)
+EXCLUDE_FILES="*.Designer.cs|*.g.cs|*.g.i.cs|AssemblyInfo.cs|*.min.js|*.min.css|package-lock.json|*.lock|*.bak"
+
+echo "=============================================="
+echo "  Project Export for LLM Analysis"
+echo "=============================================="
+echo ""
+echo "Project Path: $PROJECT_PATH"
+echo "Output File:  $OUTPUT_FILE"
+echo ""
+
+mkdir -p "$OUTPUT_DIR"
+
+# Start output file
+{
+    echo "==============================================================================="
+    echo "PROJECT EXPORT"
+    echo "Generated: $(date)"
+    echo "Project Path: $PROJECT_PATH"
+    echo "==============================================================================="
+    echo ""
+} > "$OUTPUT_FILE"
+
+# Directory structure
+echo "Generating directory structure..."
+{
+    echo "DIRECTORY STRUCTURE:"
+    echo "==================="
+    echo ""
+    # Try tree first, fall back to find
+    if command -v tree &> /dev/null; then
+        tree -a -I "$EXCLUDE_DIRS" --noreport --dirsfirst 2>/dev/null || echo "(tree command failed)"
+    else
+        find . -type d \( -name "bin" -o -name "obj" -o -name ".git" -o -name ".vs" -o -name ".idea" -o -name "node_modules" -o -name "packages" -o -name "TestResults" \) -prune -o -type f -print | sed 's|[^/]*/|  |g' | sort
+    fi
+    echo ""
+    echo ""
+} >> "$OUTPUT_FILE"
+
+# Build the find command dynamically
+echo "Collecting files..."
+
+# Create a temporary file for the file list
+TMPFILE=$(mktemp)
+
+# Find all relevant files
+find . -type f \( \
+    -iname "*.cs" -o \
+    -iname "*.fs" -o \
+    -iname "*.vb" -o \
+    -iname "*.razor" -o \
+    -iname "*.axaml" -o \
+    -iname "*.xaml" -o \
+    -iname "*.paml" -o \
+    -iname "*.csproj" -o \
+    -iname "*.fsproj" -o \
+    -iname "*.vbproj" -o \
+    -iname "*.slnx" -o \
+    -iname "*.sln" -o \
+    -iname "*.props" -o \
+    -iname "*.targets" -o \
+    -iname "*.json" -o \
+    -iname "*.yaml" -o \
+    -iname "*.yml" -o \
+    -iname "*.xml" -o \
+    -iname "*.config" -o \
+    -iname "*.md" -o \
+    -iname "*.txt" -o \
+    -iname "*.sh" -o \
+    -iname "*.ps1" -o \
+    -iname "*.cmd" -o \
+    -iname "*.bat" -o \
+    -iname "*.sql" -o \
+    -iname "*.resx" -o \
+    -iname "*.css" -o \
+    -iname "*.scss" -o \
+    -iname "*.js" -o \
+    -iname "*.ts" -o \
+    -iname "*.manifest" -o \
+    -iname "*.ico" -o \
+    -iname "Dockerfile" -o \
+    -iname "docker-compose*.yml" -o \
+    -iname ".editorconfig" -o \
+    -iname ".gitignore" -o \
+    -iname ".gitattributes" -o \
+    -iname "global.json" -o \
+    -iname "nuget.config" -o \
+    -iname "Directory.Build.props" -o \
+    -iname "Directory.Build.targets" -o \
+    -iname "Directory.Packages.props" \
+    \) \
+    ! -path "*/bin/*" \
+    ! -path "*/obj/*" \
+    ! -path "*/docs/*" \
+    ! -path "*/.git/*" \
+    ! -path "*/.vs/*" \
+    ! -path "*/.idea/*" \
+    ! -path "*/.vscode/*" \
+    ! -path "*/node_modules/*" \
+    ! -path "*/packages/*" \
+    ! -path "*/TestResults/*" \
+    ! -path "*/coverage/*" \
+    ! -path "*/publish/*" \
+    ! -path "*/artifacts/*" \
+    ! -path "*/.nuget/*" \
+    ! -path "*/wwwroot/lib/*" \
+    ! -name "*.Designer.cs" \
+    ! -name "*.g.cs" \
+    ! -name "*.g.i.cs" \
+    ! -name "*.min.js" \
+    ! -name "*.min.css" \
+    ! -name "package-lock.json" \
+    ! -name "*.bak" \
+    2>/dev/null | sort > "$TMPFILE"
+
+FILE_COUNT=$(wc -l < "$TMPFILE")
+echo "Found $FILE_COUNT files to export"
+echo ""
+
+# Add file contents header
+{
+    echo "FILE CONTENTS:"
+    echo "=============="
+    echo ""
+} >> "$OUTPUT_FILE"
+
+# Process each file
+COUNTER=0
+SKIPPED=0
+
+while IFS= read -r file; do
+    COUNTER=$((COUNTER + 1))
+    FILENAME="${file#./}"
+    
+    # Skip binary files (check if file is text)
+    if file "$file" | grep -qE "binary|executable|data|image"; then
+        # For some files we want to note they exist but not dump contents
+        if [[ "$file" =~ \.(ico|png|jpg|jpeg|gif|bmp|svg|woff|woff2|ttf|eot)$ ]]; then
+            SKIPPED=$((SKIPPED + 1))
+            echo "Skipping binary ($COUNTER/$FILE_COUNT): $FILENAME"
+            {
+                echo "================================================================================"
+                echo "FILE: $FILENAME"
+                echo "TYPE: [BINARY FILE - Contents not exported]"
+                echo "================================================================================"
+                echo ""
+            } >> "$OUTPUT_FILE"
+            continue
+        fi
+    fi
+    
+    # Get file info
+    FILESIZE=$(stat -c%s "$file" 2>/dev/null || stat -f%z "$file" 2>/dev/null || echo "0")
+    MODIFIED=$(stat -c%y "$file" 2>/dev/null | cut -d'.' -f1 || stat -f"%Sm" -t "%Y-%m-%d %H:%M:%S" "$file" 2>/dev/null || echo "unknown")
+    
+    # Skip very large files (>500KB) - they're probably not source code
+    if [ "$FILESIZE" -gt 512000 ]; then
+        SKIPPED=$((SKIPPED + 1))
+        echo "Skipping large file ($COUNTER/$FILE_COUNT): $FILENAME ($(echo "scale=0; $FILESIZE/1024" | bc)KB)"
+        {
+            echo "================================================================================"
+            echo "FILE: $FILENAME"
+            echo "SIZE: $(echo "scale=2; $FILESIZE/1024" | bc) KB"
+            echo "TYPE: [LARGE FILE - Contents not exported, exceeds 500KB limit]"
+            echo "================================================================================"
+            echo ""
+        } >> "$OUTPUT_FILE"
+        continue
+    fi
+    
+    echo "Processing ($COUNTER/$FILE_COUNT): $FILENAME"
+    
+    {
+        echo "================================================================================"
+        echo "FILE: $FILENAME"
+        echo "SIZE: $(echo "scale=2; $FILESIZE/1024" | bc 2>/dev/null || echo "0.00") KB"
+        echo "MODIFIED: $MODIFIED"
+        echo "================================================================================"
+        echo ""
+        cat "$file" 2>/dev/null || echo "[ERROR: Could not read file]"
+        echo ""
+        echo ""
+    } >> "$OUTPUT_FILE"
+    
+done < "$TMPFILE"
+
+# Cleanup
+rm -f "$TMPFILE"
+
+# Summary
+EXPORTED=$((COUNTER - SKIPPED))
+{
+    echo "==============================================================================="
+    echo "EXPORT COMPLETED: $(date)"
+    echo "Total Files Found: $FILE_COUNT"
+    echo "Files Exported: $EXPORTED"
+    echo "Files Skipped: $SKIPPED (binary or large files)"
+    echo "Output File: $PROJECT_PATH/$OUTPUT_FILE"
+    echo "==============================================================================="
+} >> "$OUTPUT_FILE"
+
+# Final output
+OUTPUT_SIZE=$(stat -c%s "$OUTPUT_FILE" 2>/dev/null || stat -f%z "$OUTPUT_FILE" 2>/dev/null || echo "0")
+
+echo ""
+echo "=============================================="
+echo "  Export Complete!"
+echo "=============================================="
+echo ""
+echo "Output file:    $OUTPUT_FILE"
+echo "Files exported: $EXPORTED"
+echo "Files skipped:  $SKIPPED"
+echo "Output size:    $(echo "scale=2; $OUTPUT_SIZE/1024" | bc 2>/dev/null || echo "?") KB"
+echo ""
+echo "File types included:"
+echo "  • Source code: .cs, .fs, .vb"
+echo "  • Blazor/Razor: .razor"
+echo "  • UI/XAML: .axaml, .xaml, .paml"
+echo "  • Projects: .csproj, .slnx, .sln, .props, .targets"
+echo "  • Config: .json, .yaml, .yml, .xml, .config"
+echo "  • Docs: .md, .txt"
+echo "  • Scripts: .sh, .ps1, .cmd, .bat"
+echo "  • Web: .css, .scss, .js, .ts"
+echo "  • Other: .sql, .resx, Dockerfile, etc."
+echo ""
+
+==============================================
+  Project Export for LLM Analysis
+==============================================
+
+Project Path: /home/kushal/src/dotnet/MyBlog
+Output File:  docs/llm/dump.txt
+
+Generating directory structure...
+Collecting files...
+Found 128 files to export
+
+Processing (1/128): docker-compose.e2e.yml
+Processing (2/128): docker-compose.yml
+Processing (3/128): .editorconfig
+Processing (4/128): export.sh
+Processing (5/128): .github/workflows/build-deploy.yml
+Processing (6/128): .gitignore
+Processing (7/128): README.md
+Processing (8/128): run-e2e.sh
+Processing (9/128): src/Directory.Build.props
+Processing (10/128): src/Directory.Packages.props
+Processing (11/128): src/.github/workflows/build-deploy.yml
+Processing (12/128): src/global.json
+Processing (13/128): src/MyBlog.Core/Constants/AppConstants.cs
+Processing (14/128): src/MyBlog.Core/Interfaces/IAuthService.cs
+Processing (15/128): src/MyBlog.Core/Interfaces/IImageDimensionService.cs
+Processing (16/128): src/MyBlog.Core/Interfaces/IImageRepository.cs
+Processing (17/128): src/MyBlog.Core/Interfaces/IMarkdownService.cs
+Processing (18/128): src/MyBlog.Core/Interfaces/IPasswordService.cs
+Processing (19/128): src/MyBlog.Core/Interfaces/IPostRepository.cs
+Processing (20/128): src/MyBlog.Core/Interfaces/IReaderTrackingService.cs
+Processing (21/128): src/MyBlog.Core/Interfaces/ISlugService.cs
+Processing (22/128): src/MyBlog.Core/Interfaces/ITelemetryLogRepository.cs
+Processing (23/128): src/MyBlog.Core/Interfaces/IUserRepository.cs
+Processing (24/128): src/MyBlog.Core/Models/Image.cs
+Processing (25/128): src/MyBlog.Core/Models/ImageDimensionCache.cs
+Processing (26/128): src/MyBlog.Core/Models/Post.cs
+Processing (27/128): src/MyBlog.Core/Models/PostDto.cs
+Processing (28/128): src/MyBlog.Core/Models/TelemetryLog.cs
+Processing (29/128): src/MyBlog.Core/Models/User.cs
+Processing (30/128): src/MyBlog.Core/MyBlog.Core.csproj
+Processing (31/128): src/MyBlog.Core/Services/MarkdownService.cs
+Processing (32/128): src/MyBlog.Core/Services/SlugService.cs
+Processing (33/128): src/MyBlog.E2E/Dockerfile
+Processing (34/128): src/MyBlog.E2E/MyBlog.E2E.csproj
+Processing (35/128): src/MyBlog.E2E/PlaywrightCollection.cs
+Processing (36/128): src/MyBlog.E2E/PlaywrightFixture.cs
+Processing (37/128): src/MyBlog.E2E/Tests/AboutPageTests.cs
+Processing (38/128): src/MyBlog.E2E/Tests/AdminPageTests.cs
+Processing (39/128): src/MyBlog.E2E/Tests/AuthenticationTests.cs
+Processing (40/128): src/MyBlog.E2E/Tests/HomePageTests.cs
+Processing (41/128): src/MyBlog.E2E/Tests/LoginPageTests.cs
+Processing (42/128): src/MyBlog.E2E/Tests/NavigationTests.cs
+Processing (43/128): src/MyBlog.E2E/Tests/SeoTests.cs
+Processing (44/128): src/MyBlog.E2E/Tests/ThemeSwitcherTests.cs
+Processing (45/128): src/MyBlog.Infrastructure/Data/BlogDbContext.cs
+Processing (46/128): src/MyBlog.Infrastructure/Data/DatabasePathResolver.cs
+Processing (47/128): src/MyBlog.Infrastructure/Data/DatabaseSchemaUpdater.cs
+Processing (48/128): src/MyBlog.Infrastructure/MyBlog.Infrastructure.csproj
+Processing (49/128): src/MyBlog.Infrastructure/Repositories/ImageRepository.cs
+Processing (50/128): src/MyBlog.Infrastructure/Repositories/PostRepository.cs
+Processing (51/128): src/MyBlog.Infrastructure/Repositories/TelemetryLogRepository.cs
+Processing (52/128): src/MyBlog.Infrastructure/Repositories/UserRepository.cs
+Processing (53/128): src/MyBlog.Infrastructure/ServiceCollectionExtensions.cs
+Processing (54/128): src/MyBlog.Infrastructure/Services/AuthService.cs
+Processing (55/128): src/MyBlog.Infrastructure/Services/ImageCacheWarmerService.cs
+Processing (56/128): src/MyBlog.Infrastructure/Services/ImageDimensionService.cs
+Processing (57/128): src/MyBlog.Infrastructure/Services/PasswordService.cs
+Processing (58/128): src/MyBlog.Infrastructure/Services/ReaderTrackingService.cs
+Processing (59/128): src/MyBlog.Infrastructure/Services/TelemetryCleanupService.cs
+Processing (60/128): src/MyBlog.Infrastructure/Telemetry/DatabaseLogExporter.cs
+Processing (61/128): src/MyBlog.Infrastructure/Telemetry/FileLogExporter.cs
+Processing (62/128): src/MyBlog.Infrastructure/Telemetry/TelemetryPathResolver.cs
+Processing (63/128): src/MyBlog.slnx
+Processing (64/128): src/MyBlog.Tests/Integration/AuthServiceLongPasswordTests.cs
+Processing (65/128): src/MyBlog.Tests/Integration/AuthServiceTests.cs
+Processing (66/128): src/MyBlog.Tests/Integration/DatabaseSchemaUpdaterTests.cs
+Processing (67/128): src/MyBlog.Tests/Integration/ImageRepositoryTests.cs
+Processing (68/128): src/MyBlog.Tests/Integration/PasswordChangeTests.cs
+Processing (69/128): src/MyBlog.Tests/Integration/PostRepositoryExtendedTests.cs
+Processing (70/128): src/MyBlog.Tests/Integration/PostRepositoryTests.cs
+Processing (71/128): src/MyBlog.Tests/Integration/TelemetryCleanupTests.cs
+Processing (72/128): src/MyBlog.Tests/Integration/TelemetryLogRepositoryTests.cs
+Processing (73/128): src/MyBlog.Tests/Integration/UserRepositoryTests.cs
+Processing (74/128): src/MyBlog.Tests/MyBlog.Tests.csproj
+Processing (75/128): src/MyBlog.Tests/Unit/DatabasePathResolverTests.cs
+Processing (76/128): src/MyBlog.Tests/Unit/LoginRateLimitMiddlewareTests.cs
+Processing (77/128): src/MyBlog.Tests/Unit/MarkdownServiceEdgeCaseTests.cs
+Processing (78/128): src/MyBlog.Tests/Unit/MarkdownServiceTests.cs
+Processing (79/128): src/MyBlog.Tests/Unit/PasswordServiceTests.cs
+Processing (80/128): src/MyBlog.Tests/Unit/ReaderTrackingServiceTests.cs
+Processing (81/128): src/MyBlog.Tests/Unit/SlugServiceTests.cs
+Processing (82/128): src/MyBlog.Web/appsettings.Development.json
+Processing (83/128): src/MyBlog.Web/appsettings.json
+Processing (84/128): src/MyBlog.Web/Components/App.razor
+Processing (85/128): src/MyBlog.Web/Components/_Imports.razor
+Processing (86/128): src/MyBlog.Web/Components/Layout/MainLayout.razor
+Processing (87/128): src/MyBlog.Web/Components/NotFound.razor
+Processing (88/128): src/MyBlog.Web/Components/Pages/About.razor
+Processing (89/128): src/MyBlog.Web/Components/Pages/About.razor.css
+Processing (90/128): src/MyBlog.Web/Components/Pages/AccessDenied.razor
+Processing (91/128): src/MyBlog.Web/Components/Pages/Admin/ChangePassword.razor
+Processing (92/128): src/MyBlog.Web/Components/Pages/Admin/ChangePassword.razor.css
+Processing (93/128): src/MyBlog.Web/Components/Pages/Admin/Dashboard.razor
+Processing (94/128): src/MyBlog.Web/Components/Pages/Admin/Dashboard.razor.css
+Processing (95/128): src/MyBlog.Web/Components/Pages/Admin/ImageManager.razor
+Processing (96/128): src/MyBlog.Web/Components/Pages/Admin/ImageManager.razor.css
+Processing (97/128): src/MyBlog.Web/Components/Pages/Admin/PostEditor.razor
+Processing (98/128): src/MyBlog.Web/Components/Pages/Admin/PostEditor.razor.css
+Processing (99/128): src/MyBlog.Web/Components/Pages/Admin/PostList.razor
+Processing (100/128): src/MyBlog.Web/Components/Pages/Admin/UserEditor.razor
+Processing (101/128): src/MyBlog.Web/Components/Pages/Admin/UserEditor.razor.css
+Processing (102/128): src/MyBlog.Web/Components/Pages/Admin/UserList.razor
+Processing (103/128): src/MyBlog.Web/Components/Pages/Admin/UserList.razor.css
+Processing (104/128): src/MyBlog.Web/Components/Pages/Home.razor
+Processing (105/128): src/MyBlog.Web/Components/Pages/Login.razor
+Processing (106/128): src/MyBlog.Web/Components/Pages/Login.razor.css
+Processing (107/128): src/MyBlog.Web/Components/Pages/PostDetail.razor
+Processing (108/128): src/MyBlog.Web/Components/Pages/PostDetail.razor.css
+Processing (109/128): src/MyBlog.Web/Components/Routes.razor
+Processing (110/128): src/MyBlog.Web/Components/Shared/Footer.razor
+Processing (111/128): src/MyBlog.Web/Components/Shared/Footer.razor.css
+Processing (112/128): src/MyBlog.Web/Components/Shared/MarkdownRenderer.razor
+Processing (113/128): src/MyBlog.Web/Components/Shared/Pagination.razor
+Processing (114/128): src/MyBlog.Web/Components/Shared/PostCard.razor
+Processing (115/128): src/MyBlog.Web/Components/Shared/PostCard.razor.css
+Processing (116/128): src/MyBlog.Web/Components/Shared/ReaderBadge.razor
+Processing (117/128): src/MyBlog.Web/Components/Shared/ReaderBadge.razor.css
+Processing (118/128): src/MyBlog.Web/Components/Shared/RedirectToLogin.razor
+Processing (119/128): src/MyBlog.Web/Components/Shared/ThemeSwitcher.razor
+Processing (120/128): src/MyBlog.Web/Components/Shared/ThemeSwitcher.razor.css
+Processing (121/128): src/MyBlog.Web/Dockerfile
+Processing (122/128): src/MyBlog.Web/Hubs/ReaderHub.cs
+Processing (123/128): src/MyBlog.Web/Middleware/LoginRateLimitMiddleware.cs
+Processing (124/128): src/MyBlog.Web/MyBlog.Web.csproj
+Processing (125/128): src/MyBlog.Web/Program.cs
+Processing (126/128): src/MyBlog.Web/Properties/launchSettings.json
+Processing (127/128): src/MyBlog.Web/wwwroot/css/site.css
+Processing (128/128): src/MyBlog.Web/wwwroot/js/site.js
+
+==============================================
+  Export Complete!
+==============================================
+
+Output file:    docs/llm/dump.txt
+Files exported: 128
+Files skipped:  0
+Output size:    544.10 KB
+
+File types included:
+  • Source code: .cs, .fs, .vb
+  • Blazor/Razor: .razor
+  • UI/XAML: .axaml, .xaml, .paml
+  • Projects: .csproj, .slnx, .sln, .props, .targets
+  • Config: .json, .yaml, .yml, .xml, .config
+  • Docs: .md, .txt
+  • Scripts: .sh, .ps1, .cmd, .bat
+  • Web: .css, .scss, .js, .ts
+  • Other: .sql, .resx, Dockerfile, etc.
+
+
+real	0m1.316s
+user	0m0.778s
+sys	0m0.814s
+#!/bin/bash
+# =============================================================================
+# Run E2E Tests with Podman Compose
+# =============================================================================
+# This script runs Playwright E2E tests against MyBlog using containers.
+# Designed for Fedora with SELinux and Podman.
+#
+# Usage:
+#   ./run-e2e.sh              # Run E2E tests (builds only if images missing)
+#   ./run-e2e.sh --build      # Force rebuild containers before running
+#   ./run-e2e.sh --no-build   # Skip build entirely (use existing images)
+#   ./run-e2e.sh --clean      # Clean up and remove volumes
+# =============================================================================
+
+set -e
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$SCRIPT_DIR"
+
+COMPOSE_FILE="docker-compose.e2e.yml"
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
+log_info() {
+    echo -e "${GREEN}[INFO]${NC} $1"
+}
+
+log_warn() {
+    echo -e "${YELLOW}[WARN]${NC} $1"
+}
+
+log_error() {
+    echo -e "${RED}[ERROR]${NC} $1"
+}
+
+# Parse arguments
+BUILD_FLAG=""
+NO_BUILD_FLAG=""
+CLEAN_FLAG=""
+
+for arg in "$@"; do
+    case $arg in
+        --build)
+            BUILD_FLAG="true"
+            ;;
+        --no-build)
+            NO_BUILD_FLAG="true"
+            ;;
+        --clean)
+            CLEAN_FLAG="true"
+            ;;
+    esac
+done
+
+# Clean up if requested
+if [ "$CLEAN_FLAG" == "true" ]; then
+    log_info "Cleaning up containers and volumes..."
+    podman-compose -f "$COMPOSE_FILE" down -v --remove-orphans 2>/dev/null || true
+    podman system prune -f 2>/dev/null || true
+    log_info "Cleanup complete"
+    exit 0
+fi
+
+# Create test results directory
+mkdir -p test-results
+# Set SELinux context if on Fedora with SELinux
+if command -v chcon &> /dev/null && getenforce 2>/dev/null | grep -q "Enforcing"; then
+    log_info "Setting SELinux context for test-results directory..."
+    chcon -Rt svirt_sandbox_file_t test-results 2>/dev/null || true
+fi
+
+log_info "Starting E2E test environment..."
+
+# -------------------------------------------------------------------------
+# Ensure clean container state before starting.
+# This prevents crun "exec.fifo: No such file or directory" errors caused
+# by stale container runtime state from a previous run.
+# -------------------------------------------------------------------------
+log_info "Removing any leftover containers from previous runs..."
+podman-compose -f "$COMPOSE_FILE" down --remove-orphans 2>/dev/null || true
+
+# -------------------------------------------------------------------------
+# Build logic:
+#   --build      → always rebuild
+#   --no-build   → never rebuild (fail fast if images missing)
+#   (default)    → rebuild only if images are missing
+# -------------------------------------------------------------------------
+images_exist() {
+    podman image exists localhost/myblog_myblog-web:latest 2>/dev/null && \
+    podman image exists localhost/myblog_myblog-e2e:latest 2>/dev/null
+}
+
+if [ "$BUILD_FLAG" == "true" ]; then
+    log_info "Force rebuilding containers..."
+    podman-compose -f "$COMPOSE_FILE" build
+elif [ "$NO_BUILD_FLAG" == "true" ]; then
+    if ! images_exist; then
+        log_error "Container images not found. Run without --no-build first, or use --build."
+        exit 1
+    fi
+    log_info "Using existing container images (--no-build)..."
+elif ! images_exist; then
+    log_info "Container images not found. Building..."
+    podman-compose -f "$COMPOSE_FILE" build
+else
+    log_info "Using cached container images (pass --build to force rebuild)..."
+fi
+
+log_info "Starting MyBlog web service..."
+podman-compose -f "$COMPOSE_FILE" up -d myblog-web
+
+# Wait for web service to be healthy
+log_info "Waiting for MyBlog to be ready..."
+RETRIES=30
+until podman exec myblog-web curl -sf http://localhost:5000/ > /dev/null 2>&1; do
+    RETRIES=$((RETRIES - 1))
+    if [ $RETRIES -eq 0 ]; then
+        log_error "MyBlog failed to start within timeout"
+        podman-compose -f "$COMPOSE_FILE" logs myblog-web
+        podman-compose -f "$COMPOSE_FILE" down -v
+        exit 1
+    fi
+    echo -n "."
+    sleep 2
+done
+echo ""
+log_info "MyBlog is ready!"
+
+# Run E2E tests
+log_info "Running E2E tests..."
+podman-compose -f "$COMPOSE_FILE" up myblog-e2e
+E2E_EXIT_CODE=$?
+
+# Capture logs
+log_info "Capturing logs..."
+podman-compose -f "$COMPOSE_FILE" logs myblog-web > test-results/myblog-web.log 2>&1
+podman-compose -f "$COMPOSE_FILE" logs myblog-e2e > test-results/myblog-e2e.log 2>&1
+
+# Clean up
+log_info "Cleaning up..."
+podman-compose -f "$COMPOSE_FILE" down -v
+
+if [ $E2E_EXIT_CODE -eq 0 ]; then
+    log_info "E2E tests passed! ✓"
+else
+    log_error "E2E tests failed with exit code $E2E_EXIT_CODE"
+    log_info "Check test-results/ directory for logs"
+fi
+
+exit $E2E_EXIT_CODE
+[INFO] Setting SELinux context for test-results directory...
+[INFO] Starting E2E test environment...
+[INFO] Removing any leftover containers from previous runs...
+[INFO] Using cached container images (pass --build to force rebuild)...
+[INFO] Starting MyBlog web service...
+91f9ed520a76be2c7062bd6108e919f0eb123e58cee8bea00848039d3e0bb6e3
+3b873e96449ecdeb47a74eb769bd2285a98f02ae9ac4c0c89dc1550734abeb7d
+myblog-web
+[INFO] Waiting for MyBlog to be ready...
+.
+[INFO] MyBlog is ready!
+[INFO] Running E2E tests...
+504065ffdfb1c39bc23ccfe59261e9ff1c98e3f47859687d8d54e99fdc649be1
+[myblog-web] | cannot open `/run/user/1000/crun/3b873e96449ecdeb47a74eb769bd2285a98f02ae9ac4c0c89dc1550734abeb7d/exec.fifo`: No such file or directory
+[myblog-web] | Error: unable to start container 3b873e96449ecdeb47a74eb769bd2285a98f02ae9ac4c0c89dc1550734abeb7d: `/usr/bin/crun start 3b873e96449ecdeb47a74eb769bd2285a98f02ae9ac4c0c89dc1550734abeb7d` failed: exit status 1
+[myblog-e2e] | xUnit.net v3 In-Process Runner v3.2.2+728c1dce01 (64-bit .NET 10.0.5)
+[myblog-e2e] |   Discovering: MyBlog.E2E
+[myblog-e2e] |   Discovered:  MyBlog.E2E
+[myblog-e2e] |   Starting:    MyBlog.E2E
+[myblog-e2e] |   Finished:    MyBlog.E2E (ID = '4d488734a9156ea8719a93bca3e9cb47dfeac4715a7981582060bf185a1e7bf4')
+[myblog-e2e] | === TEST EXECUTION SUMMARY ===
+[myblog-e2e] |    MyBlog.E2E  Total: 78, Errors: 0, Failed: 0, Skipped: 0, Not Run: 0, Time: 24.807s
+[myblog-e2e] | 
+[INFO] Capturing logs...
+[INFO] Cleaning up...
+myblog-e2e
+myblog-web
+myblog-e2e
+myblog-web
+myblog_myblog-data
+91f9ed520a76be2c7062bd6108e919f0eb123e58cee8bea00848039d3e0bb6e3
+myblog_myblog-network
+[INFO] E2E tests passed! ✓
+
+real	0m33.474s
+user	0m1.756s
+sys	0m1.132s
+kushal@fedora:~/src/dotnet/MyBlog$ 
+
