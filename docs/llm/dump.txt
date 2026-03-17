@@ -1,6 +1,6 @@
 ===============================================================================
 PROJECT EXPORT
-Generated: Mon Mar 16 10:04:48 PM EDT 2026
+Generated: Mon Mar 16 10:13:40 PM EDT 2026
 Project Path: /home/kushal/src/dotnet/MyBlog
 ===============================================================================
 
@@ -686,8 +686,8 @@ echo ""
 
 ================================================================================
 FILE: .github/workflows/build-deploy.yml
-SIZE: 7.20 KB
-MODIFIED: 2026-01-30 17:41:50
+SIZE: 11.04 KB
+MODIFIED: 2026-03-16 22:08:34
 ================================================================================
 
 name: Build, Test, and Deploy
@@ -821,6 +821,47 @@ jobs:
       - name: Publish application
         run: dotnet publish src/MyBlog.Web/MyBlog.Web.csproj -c Release -o ./publish -r win-x86 --self-contained false
 
+      - name: Inject OTLP environment variables into web.config
+        shell: pwsh
+        env:
+          HONEYCOMB_API_KEY: ${{ secrets.HONEYCOMB_API_KEY }}
+          OTLP_ENDPOINT: ${{ secrets.OTLP_ENDPOINT }}
+        run: |
+          $webConfigPath = "./publish/web.config"
+          if (Test-Path $webConfigPath) {
+            [xml]$xml = Get-Content $webConfigPath
+            $aspNetCore = $xml.configuration.'system.webServer'.aspNetCore
+            
+            # Create or get environmentVariables element
+            $envVars = $aspNetCore.SelectSingleNode('environmentVariables')
+            if (-not $envVars) {
+              $envVars = $xml.CreateElement('environmentVariables')
+              $aspNetCore.AppendChild($envVars) | Out-Null
+            }
+            
+            # Add OTLP API key if configured
+            if (-not [string]::IsNullOrWhiteSpace($env:HONEYCOMB_API_KEY)) {
+              $envVar = $xml.CreateElement('environmentVariable')
+              $envVar.SetAttribute('name', 'Otlp__ApiKey')
+              $envVar.SetAttribute('value', $env:HONEYCOMB_API_KEY)
+              $envVars.AppendChild($envVar) | Out-Null
+              Write-Host "Added Otlp__ApiKey to web.config"
+            }
+            
+            # Add OTLP endpoint (default to Honeycomb US if not specified)
+            $endpoint = if (-not [string]::IsNullOrWhiteSpace($env:OTLP_ENDPOINT)) { $env:OTLP_ENDPOINT } else { "https://api.honeycomb.io" }
+            $envVar2 = $xml.CreateElement('environmentVariable')
+            $envVar2.SetAttribute('name', 'Otlp__Endpoint')
+            $envVar2.SetAttribute('value', $endpoint)
+            $envVars.AppendChild($envVar2) | Out-Null
+            Write-Host "Added Otlp__Endpoint=$endpoint to web.config"
+            
+            $xml.Save($webConfigPath)
+            Write-Host "web.config updated successfully"
+          } else {
+            Write-Host "web.config not found at $webConfigPath"
+          }
+
       - name: Deploy via WebDeploy
         shell: pwsh
         env:
@@ -873,6 +914,47 @@ jobs:
 
       - name: Publish application
         run: dotnet publish src/MyBlog.Web/MyBlog.Web.csproj -c Release -o ./publish -r win-x86 --self-contained false
+
+      - name: Inject OTLP environment variables into web.config
+        shell: pwsh
+        env:
+          HONEYCOMB_API_KEY: ${{ secrets.NICE_HONEYCOMB_API_KEY }}
+          OTLP_ENDPOINT: ${{ secrets.NICE_OTLP_ENDPOINT }}
+        run: |
+          $webConfigPath = "./publish/web.config"
+          if (Test-Path $webConfigPath) {
+            [xml]$xml = Get-Content $webConfigPath
+            $aspNetCore = $xml.configuration.'system.webServer'.aspNetCore
+            
+            # Create or get environmentVariables element
+            $envVars = $aspNetCore.SelectSingleNode('environmentVariables')
+            if (-not $envVars) {
+              $envVars = $xml.CreateElement('environmentVariables')
+              $aspNetCore.AppendChild($envVars) | Out-Null
+            }
+            
+            # Add OTLP API key if configured
+            if (-not [string]::IsNullOrWhiteSpace($env:HONEYCOMB_API_KEY)) {
+              $envVar = $xml.CreateElement('environmentVariable')
+              $envVar.SetAttribute('name', 'Otlp__ApiKey')
+              $envVar.SetAttribute('value', $env:HONEYCOMB_API_KEY)
+              $envVars.AppendChild($envVar) | Out-Null
+              Write-Host "Added Otlp__ApiKey to web.config"
+            }
+            
+            # Add OTLP endpoint (default to Honeycomb US if not specified)
+            $endpoint = if (-not [string]::IsNullOrWhiteSpace($env:OTLP_ENDPOINT)) { $env:OTLP_ENDPOINT } else { "https://api.honeycomb.io" }
+            $envVar2 = $xml.CreateElement('environmentVariable')
+            $envVar2.SetAttribute('name', 'Otlp__Endpoint')
+            $envVar2.SetAttribute('value', $endpoint)
+            $envVars.AppendChild($envVar2) | Out-Null
+            Write-Host "Added Otlp__Endpoint=$endpoint to web.config"
+            
+            $xml.Save($webConfigPath)
+            Write-Host "web.config updated successfully"
+          } else {
+            Write-Host "web.config not found at $webConfigPath"
+          }
 
       - name: Deploy via WebDeploy
         shell: pwsh
@@ -3609,8 +3691,8 @@ MODIFIED: 2026-01-01 22:21:17
 
 ================================================================================
 FILE: src/Directory.Packages.props
-SIZE: 2.18 KB
-MODIFIED: 2026-03-13 08:55:38
+SIZE: 2.29 KB
+MODIFIED: 2026-03-16 22:06:50
 ================================================================================
 
 <Project>
@@ -3639,6 +3721,7 @@ MODIFIED: 2026-03-13 08:55:38
     <PackageVersion Include="OpenTelemetry" Version="$(OpenTelemetryVersion)" />
     <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="$(OpenTelemetryVersion)" />
     <PackageVersion Include="OpenTelemetry.Exporter.Console" Version="$(OpenTelemetryVersion)" />
+    <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="$(OpenTelemetryVersion)" />
     <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="$(OpenTelemetryVersion)" />
     <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="$(OpenTelemetryInstrumentationAspNetCoreVersion)" />
 
@@ -11732,8 +11815,8 @@ public class SlugServiceTests
 
 ================================================================================
 FILE: src/MyBlog.Web/appsettings.Development.json
-SIZE: .11 KB
-MODIFIED: 2025-12-28 08:44:06
+SIZE: .22 KB
+MODIFIED: 2026-03-16 22:08:04
 ================================================================================
 
 {
@@ -11742,14 +11825,19 @@ MODIFIED: 2025-12-28 08:44:06
       "Default": "Debug",
       "Microsoft.AspNetCore": "Information"
     }
+  },
+  "Otlp": {
+    "Endpoint": "https://api.honeycomb.io",
+    "ApiKey": "",
+    "Protocol": "HttpProtobuf"
   }
 }
 
 
 ================================================================================
 FILE: src/MyBlog.Web/appsettings.json
-SIZE: .60 KB
-MODIFIED: 2026-01-14 19:57:11
+SIZE: .68 KB
+MODIFIED: 2026-03-16 22:07:54
 ================================================================================
 
 {
@@ -11764,6 +11852,11 @@ MODIFIED: 2026-01-14 19:57:11
     "RetentionDays": 30,
     "EnableFileLogging": true,
     "EnableDatabaseLogging": true
+  },
+  "Otlp": {
+    "Endpoint": "",
+    "ApiKey": "",
+    "Protocol": "HttpProtobuf"
   },
   "Application": {
     "Title": "MyBlog",
@@ -15832,13 +15925,14 @@ public static class LoginRateLimitMiddlewareExtensions
 
 ================================================================================
 FILE: src/MyBlog.Web/MyBlog.Web.csproj
-SIZE: .62 KB
-MODIFIED: 2026-01-16 20:29:40
+SIZE: .77 KB
+MODIFIED: 2026-03-16 22:09:22
 ================================================================================
 
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
   <PropertyGroup>
     <RootNamespace>MyBlog.Web</RootNamespace>
+    <UserSecretsId>4e79e86d-8e95-470e-9b17-af16e5a9e8f0</UserSecretsId>
   </PropertyGroup>
   
   <ItemGroup>
@@ -15846,6 +15940,7 @@ MODIFIED: 2026-01-16 20:29:40
     <PackageReference Include="OpenTelemetry.Extensions.Hosting" />
     <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" />
     <PackageReference Include="OpenTelemetry.Exporter.Console" />
+    <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" />
     <PackageReference Include="OpenTelemetry.Instrumentation.Http" />
   </ItemGroup>
   
@@ -15854,10 +15949,11 @@ MODIFIED: 2026-01-16 20:29:40
   </ItemGroup>
 </Project>
 
+
 ================================================================================
 FILE: src/MyBlog.Web/Program.cs
-SIZE: 5.09 KB
-MODIFIED: 2026-03-13 20:18:56
+SIZE: 6.60 KB
+MODIFIED: 2026-03-16 22:08:16
 ================================================================================
 
 using System.Security.Claims;
@@ -15871,6 +15967,7 @@ using MyBlog.Infrastructure.Telemetry;
 using MyBlog.Web.Components;
 using MyBlog.Web.Hubs;
 using MyBlog.Web.Middleware;
+using OpenTelemetry.Exporter;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
@@ -15909,22 +16006,74 @@ builder.Services.AddHttpContextAccessor();
 // Configure OpenTelemetry
 var serviceName = "MyBlog";
 var serviceVersion = typeof(Program).Assembly.GetName().Version?.ToString() ?? "1.0.0";
+
+// Determine if OTLP export is configured (endpoint + API key both present)
+var otlpEndpoint = builder.Configuration["Otlp:Endpoint"];
+var otlpApiKey = builder.Configuration["Otlp:ApiKey"];
+var otlpEnabled = !string.IsNullOrWhiteSpace(otlpEndpoint) && !string.IsNullOrWhiteSpace(otlpApiKey);
+
+// Parse the OTLP protocol from configuration (default: HttpProtobuf)
+var otlpProtocol = OtlpExportProtocol.HttpProtobuf;
+var configuredProtocol = builder.Configuration["Otlp:Protocol"];
+if (!string.IsNullOrWhiteSpace(configuredProtocol) &&
+    configuredProtocol.Equals("Grpc", StringComparison.OrdinalIgnoreCase))
+{
+    otlpProtocol = OtlpExportProtocol.Grpc;
+}
+
 builder.Services.AddOpenTelemetry()
     .ConfigureResource(resource => resource.AddService(serviceName, serviceVersion))
-    .WithTracing(tracing => tracing
-        .AddAspNetCoreInstrumentation()
-        .AddHttpClientInstrumentation()
-        .AddConsoleExporter())
-    .WithMetrics(metrics => metrics
-        .AddAspNetCoreInstrumentation()
-        .AddHttpClientInstrumentation()
-        .AddConsoleExporter());
+    .WithTracing(tracing =>
+    {
+        tracing
+            .AddAspNetCoreInstrumentation()
+            .AddHttpClientInstrumentation()
+            .AddConsoleExporter();
+
+        if (otlpEnabled)
+        {
+            tracing.AddOtlpExporter(o =>
+            {
+                o.Endpoint = new Uri(otlpEndpoint!);
+                o.Protocol = otlpProtocol;
+                o.Headers = $"x-honeycomb-team={otlpApiKey}";
+            });
+        }
+    })
+    .WithMetrics(metrics =>
+    {
+        metrics
+            .AddAspNetCoreInstrumentation()
+            .AddHttpClientInstrumentation()
+            .AddConsoleExporter();
+
+        if (otlpEnabled)
+        {
+            metrics.AddOtlpExporter(o =>
+            {
+                o.Endpoint = new Uri(otlpEndpoint!);
+                o.Protocol = otlpProtocol;
+                o.Headers = $"x-honeycomb-team={otlpApiKey}";
+            });
+        }
+    });
+
 // Configure logging with OpenTelemetry
 builder.Logging.AddOpenTelemetry(logging =>
 {
     logging.IncludeFormattedMessage = true;
     logging.IncludeScopes = true;
     logging.AddConsoleExporter();
+
+    if (otlpEnabled)
+    {
+        logging.AddOtlpExporter(o =>
+        {
+            o.Endpoint = new Uri(otlpEndpoint!);
+            o.Protocol = otlpProtocol;
+            o.Headers = $"x-honeycomb-team={otlpApiKey}";
+        });
+    }
 });
 var app = builder.Build();
 
@@ -17304,7 +17453,7 @@ function showShareError(shareBtn, message) {
 
 
 ===============================================================================
-EXPORT COMPLETED: Mon Mar 16 10:04:50 PM EDT 2026
+EXPORT COMPLETED: Mon Mar 16 10:13:41 PM EDT 2026
 Total Files Found: 128
 Files Exported: 128
 Files Skipped: 0 (binary or large files)
