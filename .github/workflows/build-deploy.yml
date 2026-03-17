@@ -129,6 +129,47 @@ jobs:
       - name: Publish application
         run: dotnet publish src/MyBlog.Web/MyBlog.Web.csproj -c Release -o ./publish -r win-x86 --self-contained false
 
+      - name: Inject OTLP environment variables into web.config
+        shell: pwsh
+        env:
+          HONEYCOMB_API_KEY: ${{ secrets.HONEYCOMB_API_KEY }}
+          OTLP_ENDPOINT: ${{ secrets.OTLP_ENDPOINT }}
+        run: |
+          $webConfigPath = "./publish/web.config"
+          if (Test-Path $webConfigPath) {
+            [xml]$xml = Get-Content $webConfigPath
+            $aspNetCore = $xml.configuration.'system.webServer'.aspNetCore
+            
+            # Create or get environmentVariables element
+            $envVars = $aspNetCore.SelectSingleNode('environmentVariables')
+            if (-not $envVars) {
+              $envVars = $xml.CreateElement('environmentVariables')
+              $aspNetCore.AppendChild($envVars) | Out-Null
+            }
+            
+            # Add OTLP API key if configured
+            if (-not [string]::IsNullOrWhiteSpace($env:HONEYCOMB_API_KEY)) {
+              $envVar = $xml.CreateElement('environmentVariable')
+              $envVar.SetAttribute('name', 'Otlp__ApiKey')
+              $envVar.SetAttribute('value', $env:HONEYCOMB_API_KEY)
+              $envVars.AppendChild($envVar) | Out-Null
+              Write-Host "Added Otlp__ApiKey to web.config"
+            }
+            
+            # Add OTLP endpoint (default to Honeycomb US if not specified)
+            $endpoint = if (-not [string]::IsNullOrWhiteSpace($env:OTLP_ENDPOINT)) { $env:OTLP_ENDPOINT } else { "https://api.honeycomb.io" }
+            $envVar2 = $xml.CreateElement('environmentVariable')
+            $envVar2.SetAttribute('name', 'Otlp__Endpoint')
+            $envVar2.SetAttribute('value', $endpoint)
+            $envVars.AppendChild($envVar2) | Out-Null
+            Write-Host "Added Otlp__Endpoint=$endpoint to web.config"
+            
+            $xml.Save($webConfigPath)
+            Write-Host "web.config updated successfully"
+          } else {
+            Write-Host "web.config not found at $webConfigPath"
+          }
+
       - name: Deploy via WebDeploy
         shell: pwsh
         env:
@@ -181,6 +222,47 @@ jobs:
 
       - name: Publish application
         run: dotnet publish src/MyBlog.Web/MyBlog.Web.csproj -c Release -o ./publish -r win-x86 --self-contained false
+
+      - name: Inject OTLP environment variables into web.config
+        shell: pwsh
+        env:
+          HONEYCOMB_API_KEY: ${{ secrets.NICE_HONEYCOMB_API_KEY }}
+          OTLP_ENDPOINT: ${{ secrets.NICE_OTLP_ENDPOINT }}
+        run: |
+          $webConfigPath = "./publish/web.config"
+          if (Test-Path $webConfigPath) {
+            [xml]$xml = Get-Content $webConfigPath
+            $aspNetCore = $xml.configuration.'system.webServer'.aspNetCore
+            
+            # Create or get environmentVariables element
+            $envVars = $aspNetCore.SelectSingleNode('environmentVariables')
+            if (-not $envVars) {
+              $envVars = $xml.CreateElement('environmentVariables')
+              $aspNetCore.AppendChild($envVars) | Out-Null
+            }
+            
+            # Add OTLP API key if configured
+            if (-not [string]::IsNullOrWhiteSpace($env:HONEYCOMB_API_KEY)) {
+              $envVar = $xml.CreateElement('environmentVariable')
+              $envVar.SetAttribute('name', 'Otlp__ApiKey')
+              $envVar.SetAttribute('value', $env:HONEYCOMB_API_KEY)
+              $envVars.AppendChild($envVar) | Out-Null
+              Write-Host "Added Otlp__ApiKey to web.config"
+            }
+            
+            # Add OTLP endpoint (default to Honeycomb US if not specified)
+            $endpoint = if (-not [string]::IsNullOrWhiteSpace($env:OTLP_ENDPOINT)) { $env:OTLP_ENDPOINT } else { "https://api.honeycomb.io" }
+            $envVar2 = $xml.CreateElement('environmentVariable')
+            $envVar2.SetAttribute('name', 'Otlp__Endpoint')
+            $envVar2.SetAttribute('value', $endpoint)
+            $envVars.AppendChild($envVar2) | Out-Null
+            Write-Host "Added Otlp__Endpoint=$endpoint to web.config"
+            
+            $xml.Save($webConfigPath)
+            Write-Host "web.config updated successfully"
+          } else {
+            Write-Host "web.config not found at $webConfigPath"
+          }
 
       - name: Deploy via WebDeploy
         shell: pwsh

@@ -9,6 +9,7 @@ using MyBlog.Infrastructure.Telemetry;
 using MyBlog.Web.Components;
 using MyBlog.Web.Hubs;
 using MyBlog.Web.Middleware;
+using OpenTelemetry.Exporter;
 using OpenTelemetry.Logs;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Resources;
@@ -47,22 +48,74 @@ builder.Services.AddHttpContextAccessor();
 // Configure OpenTelemetry
 var serviceName = "MyBlog";
 var serviceVersion = typeof(Program).Assembly.GetName().Version?.ToString() ?? "1.0.0";
+
+// Determine if OTLP export is configured (endpoint + API key both present)
+var otlpEndpoint = builder.Configuration["Otlp:Endpoint"];
+var otlpApiKey = builder.Configuration["Otlp:ApiKey"];
+var otlpEnabled = !string.IsNullOrWhiteSpace(otlpEndpoint) && !string.IsNullOrWhiteSpace(otlpApiKey);
+
+// Parse the OTLP protocol from configuration (default: HttpProtobuf)
+var otlpProtocol = OtlpExportProtocol.HttpProtobuf;
+var configuredProtocol = builder.Configuration["Otlp:Protocol"];
+if (!string.IsNullOrWhiteSpace(configuredProtocol) &&
+    configuredProtocol.Equals("Grpc", StringComparison.OrdinalIgnoreCase))
+{
+    otlpProtocol = OtlpExportProtocol.Grpc;
+}
+
 builder.Services.AddOpenTelemetry()
     .ConfigureResource(resource => resource.AddService(serviceName, serviceVersion))
-    .WithTracing(tracing => tracing
-        .AddAspNetCoreInstrumentation()
-        .AddHttpClientInstrumentation()
-        .AddConsoleExporter())
-    .WithMetrics(metrics => metrics
-        .AddAspNetCoreInstrumentation()
-        .AddHttpClientInstrumentation()
-        .AddConsoleExporter());
+    .WithTracing(tracing =>
+    {
+        tracing
+            .AddAspNetCoreInstrumentation()
+            .AddHttpClientInstrumentation()
+            .AddConsoleExporter();
+
+        if (otlpEnabled)
+        {
+            tracing.AddOtlpExporter(o =>
+            {
+                o.Endpoint = new Uri(otlpEndpoint!);
+                o.Protocol = otlpProtocol;
+                o.Headers = $"x-honeycomb-team={otlpApiKey}";
+            });
+        }
+    })
+    .WithMetrics(metrics =>
+    {
+        metrics
+            .AddAspNetCoreInstrumentation()
+            .AddHttpClientInstrumentation()
+            .AddConsoleExporter();
+
+        if (otlpEnabled)
+        {
+            metrics.AddOtlpExporter(o =>
+            {
+                o.Endpoint = new Uri(otlpEndpoint!);
+                o.Protocol = otlpProtocol;
+                o.Headers = $"x-honeycomb-team={otlpApiKey}";
+            });
+        }
+    });
+
 // Configure logging with OpenTelemetry
 builder.Logging.AddOpenTelemetry(logging =>
 {
     logging.IncludeFormattedMessage = true;
     logging.IncludeScopes = true;
     logging.AddConsoleExporter();
+
+    if (otlpEnabled)
+    {
+        logging.AddOtlpExporter(o =>
+        {
+            o.Endpoint = new Uri(otlpEndpoint!);
+            o.Protocol = otlpProtocol;
+            o.Headers = $"x-honeycomb-team={otlpApiKey}";
+        });
+    }
 });
 var app = builder.Build();
 

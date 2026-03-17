@@ -629,3 +629,174 @@ You're right — in .NET 10, `NotFoundPage` requires a routable component with a
 
 17
 09
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+I have this honeycomb.io account and I have my injest API key. 
+So two things, first -- I want to use this injest API key for local development 
+and make sure that my logs, metrics, spans, etc from my local running instance 
+end up on the honeycomb.io
+the key here is I want to do this without adding ANY honeycomb io specific SDK 
+if we need to add any opentelemetry nuget package, that is ok 
+as long as it is free and open source and NOT honeycomb io specific 
+remember this is CRITICAL 
+no vendor specific SDK at all 
+if there is no other way to do this, 
+well I'd rather not do this at all 
+this is not a negotiation tactic 
+it is either my way or the highway 
+remember to return full files for all files that need to change 
+all standard requests are the same 
+I have attached dump.txt with this request 
+please read each and every line of the dump 
+the dump is the same as that in the project files 
+but clearly I can't trust you to read the project files 
+for whatever reason 
+so yeah 
+please do not hallucinate 
+oh and the second of the two things 
+I also need to deploy this secret to the two servers where this thing runs 
+so remember we have two deploys. 
+I need to I guess add two secrets -- one for each of the two targets. 
+I will use the same injest key for now 
+but in the future, I guess we want to make it so we could use two different honeycomb key if we wanted to 
+also we should make anything like honeycomb url configurable from appsettings json or whatever 
+please do not hallucinate 
+00
+12
+
+I've read through the entire dump carefully. Let me break down what needs to happen:
+
+1. **Export OpenTelemetry data to Honeycomb via OTLP** — Honeycomb accepts standard OTLP (OpenTelemetry Protocol) over gRPC/HTTP. No vendor SDK needed — just the open-source OTLP exporter NuGet packages.
+2. **Make the endpoint and headers configurable** via `appsettings.json` / environment variables.
+3. **Add two GitHub secrets** (one per deploy target) for the Honeycomb ingest key.
+4. **Wire it into the deployment workflow** so the keys get passed as environment variables.
+
+Let me search your project knowledge first to make sure I'm not missing anything, then I'll give you the full changed files.Now let me check what OTLP exporter packages are available for .NET:Now I have everything I need. Here's the plan:
+
+**What we need:**
+- `OpenTelemetry.Exporter.OpenTelemetryProtocol` v1.15.0 — a 100% open-source, vendor-neutral NuGet package from the OpenTelemetry project (Apache-2.0 license). Zero Honeycomb code.
+- Honeycomb accepts standard OTLP over HTTP at `https://api.honeycomb.io`. Auth is just the `x-honeycomb-team` header with your ingest key.
+- We use `UseOtlpExporter()` which is the cross-cutting method that registers OTLP export for traces, metrics, AND logs in one call.
+- Configuration via `appsettings.json` with `Otlp:Endpoint` and `Otlp:ApiKey` (overridable by env vars for deployment).
+- Two new GitHub secrets: `HONEYCOMB_API_KEY` and `NICE_HONEYCOMB_API_KEY`.
+
+**Files that change:**
+1. `src/Directory.Packages.props` — add the OTLP exporter package version
+2. `src/MyBlog.Web/MyBlog.Web.csproj` — add package reference
+3. `src/MyBlog.Web/appsettings.json` — add Otlp config section
+4. `src/MyBlog.Web/appsettings.Development.json` — add local dev Otlp config
+5. `src/MyBlog.Web/Program.cs` — wire up OTLP exporter conditionally
+6. `.github/workflows/build-deploy.yml` — pass Honeycomb secrets as env vars to deployed apps
+
+Let me provide all the full files:Now, here's the important thing about deployment. The workflow file above deploys the **same** published binary to both servers. The Honeycomb API key needs to reach the running app as an **environment variable** or **appsettings override** on the IIS server itself. WebDeploy doesn't set environment variables on the target — it only copies files. So you have two options for getting the key to production:
+
+**Option A: Web.config environment variable transform (recommended for IIS)**
+
+You need to create a `web.config` transform or include environment variables in the published output. The cleanest way for IIS is to inject the key via a `web.config` that sets environment variables for the ASP.NET Core module. Let me create that:Here's a summary of everything:
+
+**What changed and why:**
+
+**1. `src/Directory.Packages.props`** — Added `OpenTelemetry.Exporter.OpenTelemetryProtocol` version 1.15.0. This is the standard, open-source, Apache-2.0-licensed OTLP exporter from the OpenTelemetry project. Zero vendor code.
+
+**2. `src/MyBlog.Web/MyBlog.Web.csproj`** — Added the `OpenTelemetry.Exporter.OpenTelemetryProtocol` package reference.
+
+**3. `src/MyBlog.Web/appsettings.json`** — Added the `Otlp` section with `Endpoint`, `ApiKey`, and `Protocol` fields. All empty by default, meaning OTLP export is disabled in production unless configured.
+
+**4. `src/MyBlog.Web/appsettings.Development.json`** — Pre-configured with the Honeycomb US endpoint. The `ApiKey` is left empty — you fill it in locally (or via env var `Otlp__ApiKey`).
+
+**5. `src/MyBlog.Web/Program.cs`** — The OTLP exporter is conditionally added to traces, metrics, and logs only when both `Otlp:Endpoint` and `Otlp:ApiKey` are non-empty. The `x-honeycomb-team` header is the standard OTLP header that Honeycomb uses for auth. The console exporter is kept for local debugging alongside OTLP.
+
+**6. `.github/workflows/build-deploy.yml`** — Added a "Inject OTLP environment variables into web.config" step in both `deploy` and `deploynice` jobs. This modifies the published `web.config` to inject `Otlp__ApiKey` and `Otlp__Endpoint` as environment variables for the ASP.NET Core module in IIS.
+
+**GitHub Secrets you need to add:**
+
+| Secret | Purpose |
+|--------|---------|
+| `HONEYCOMB_API_KEY` | Honeycomb ingest key for the primary (kush.runasp.net) deploy |
+| `NICE_HONEYCOMB_API_KEY` | Honeycomb ingest key for the nice deploy (can be the same key for now) |
+| `OTLP_ENDPOINT` | (Optional) Override the OTLP endpoint for primary deploy. Defaults to `https://api.honeycomb.io` if not set |
+| `NICE_OTLP_ENDPOINT` | (Optional) Override the OTLP endpoint for nice deploy. Defaults to `https://api.honeycomb.io` if not set |
+
+**For local development**, set the API key in one of these ways (pick whichever you prefer):
+
+```bash
+# Option 1: Environment variable (recommended - keeps secrets out of files)
+export Otlp__ApiKey="[redacted]"
+
+# Option 2: .NET user secrets (per-project, not committed to git)
+cd src/MyBlog.Web
+dotnet user-secrets set "Otlp:ApiKey" "[redacted]"
+```
+
+Do **not** put the actual key in `appsettings.Development.json` — it would get committed to git. The endpoint is fine to commit (it's public), but the key should always come from env vars or user secrets.
+
+
+12
+14
