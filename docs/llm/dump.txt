@@ -1,6 +1,6 @@
 ===============================================================================
 PROJECT EXPORT
-Generated: Mon Mar 16 10:15:49 PM EDT 2026
+Generated: Mon Mar 16 10:50:29 PM EDT 2026
 Project Path: /home/kushal/src/dotnet/MyBlog
 ===============================================================================
 
@@ -686,8 +686,8 @@ echo ""
 
 ================================================================================
 FILE: .github/workflows/build-deploy.yml
-SIZE: 11.04 KB
-MODIFIED: 2026-03-16 22:08:34
+SIZE: 12.08 KB
+MODIFIED: 2026-03-16 22:43:26
 ================================================================================
 
 name: Build, Test, and Deploy
@@ -707,10 +707,10 @@ jobs:
     
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup .NET 10
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v5
         with:
           dotnet-version: '10.0.x'
 
@@ -729,10 +729,10 @@ jobs:
     
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup .NET 10
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v5
         with:
           dotnet-version: '10.0.x'
 
@@ -794,7 +794,7 @@ jobs:
           cat app.log || echo "No logs available"
 
       - name: Upload test results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         if: always()
         with:
           name: e2e-test-results
@@ -811,56 +811,71 @@ jobs:
     
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup .NET 10
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v5
         with:
           dotnet-version: '10.0.x'
 
       - name: Publish application
         run: dotnet publish src/MyBlog.Web/MyBlog.Web.csproj -c Release -o ./publish -r win-x86 --self-contained false
 
-      - name: Inject OTLP environment variables into web.config
+      - name: Inject OTLP configuration into web.config
         shell: pwsh
         env:
           HONEYCOMB_API_KEY: ${{ secrets.HONEYCOMB_API_KEY }}
           OTLP_ENDPOINT: ${{ secrets.OTLP_ENDPOINT }}
         run: |
           $webConfigPath = "./publish/web.config"
-          if (Test-Path $webConfigPath) {
-            [xml]$xml = Get-Content $webConfigPath
-            $aspNetCore = $xml.configuration.'system.webServer'.aspNetCore
-            
-            # Create or get environmentVariables element
-            $envVars = $aspNetCore.SelectSingleNode('environmentVariables')
-            if (-not $envVars) {
-              $envVars = $xml.CreateElement('environmentVariables')
-              $aspNetCore.AppendChild($envVars) | Out-Null
-            }
-            
-            # Add OTLP API key if configured
-            if (-not [string]::IsNullOrWhiteSpace($env:HONEYCOMB_API_KEY)) {
-              $envVar = $xml.CreateElement('environmentVariable')
-              $envVar.SetAttribute('name', 'Otlp__ApiKey')
-              $envVar.SetAttribute('value', $env:HONEYCOMB_API_KEY)
-              $envVars.AppendChild($envVar) | Out-Null
-              Write-Host "Added Otlp__ApiKey to web.config"
-            }
-            
-            # Add OTLP endpoint (default to Honeycomb US if not specified)
-            $endpoint = if (-not [string]::IsNullOrWhiteSpace($env:OTLP_ENDPOINT)) { $env:OTLP_ENDPOINT } else { "https://api.honeycomb.io" }
-            $envVar2 = $xml.CreateElement('environmentVariable')
-            $envVar2.SetAttribute('name', 'Otlp__Endpoint')
-            $envVar2.SetAttribute('value', $endpoint)
-            $envVars.AppendChild($envVar2) | Out-Null
-            Write-Host "Added Otlp__Endpoint=$endpoint to web.config"
-            
-            $xml.Save($webConfigPath)
-            Write-Host "web.config updated successfully"
-          } else {
-            Write-Host "web.config not found at $webConfigPath"
+          if (-not (Test-Path $webConfigPath)) {
+            Write-Host "web.config not found at $webConfigPath — skipping OTLP injection"
+            exit 0
           }
+
+          Write-Host "=== Current web.config ==="
+          Get-Content $webConfigPath
+          Write-Host "==========================="
+
+          [xml]$xml = Get-Content $webConfigPath
+
+          # Navigate to the aspNetCore element using XPath to handle any structure
+          $aspNetCore = $xml.SelectSingleNode('//aspNetCore')
+          if (-not $aspNetCore) {
+            Write-Host "No aspNetCore element found in web.config — skipping OTLP injection"
+            exit 0
+          }
+
+          # Create or get environmentVariables element
+          $envVars = $aspNetCore.SelectSingleNode('environmentVariables')
+          if (-not $envVars) {
+            $envVars = $xml.CreateElement('environmentVariables')
+            $aspNetCore.AppendChild($envVars) | Out-Null
+          }
+
+          # Add OTLP API key if configured
+          if (-not [string]::IsNullOrWhiteSpace($env:HONEYCOMB_API_KEY)) {
+            $envVar = $xml.CreateElement('environmentVariable')
+            $envVar.SetAttribute('name', 'Otlp__ApiKey')
+            $envVar.SetAttribute('value', $env:HONEYCOMB_API_KEY)
+            $envVars.AppendChild($envVar) | Out-Null
+            Write-Host "Added Otlp__ApiKey to web.config"
+          } else {
+            Write-Host "No HONEYCOMB_API_KEY secret configured — OTLP export will be disabled"
+          }
+
+          # Add OTLP endpoint (default to Honeycomb US if secret not specified)
+          $endpoint = if (-not [string]::IsNullOrWhiteSpace($env:OTLP_ENDPOINT)) { $env:OTLP_ENDPOINT } else { "https://api.honeycomb.io" }
+          $envVar2 = $xml.CreateElement('environmentVariable')
+          $envVar2.SetAttribute('name', 'Otlp__Endpoint')
+          $envVar2.SetAttribute('value', $endpoint)
+          $envVars.AppendChild($envVar2) | Out-Null
+          Write-Host "Added Otlp__Endpoint=$endpoint to web.config"
+
+          $xml.Save((Resolve-Path $webConfigPath).Path)
+          Write-Host "=== Updated web.config ==="
+          Get-Content $webConfigPath
+          Write-Host "==========================="
 
       - name: Deploy via WebDeploy
         shell: pwsh
@@ -905,56 +920,71 @@ jobs:
     
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup .NET 10
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v5
         with:
           dotnet-version: '10.0.x'
 
       - name: Publish application
         run: dotnet publish src/MyBlog.Web/MyBlog.Web.csproj -c Release -o ./publish -r win-x86 --self-contained false
 
-      - name: Inject OTLP environment variables into web.config
+      - name: Inject OTLP configuration into web.config
         shell: pwsh
         env:
           HONEYCOMB_API_KEY: ${{ secrets.NICE_HONEYCOMB_API_KEY }}
           OTLP_ENDPOINT: ${{ secrets.NICE_OTLP_ENDPOINT }}
         run: |
           $webConfigPath = "./publish/web.config"
-          if (Test-Path $webConfigPath) {
-            [xml]$xml = Get-Content $webConfigPath
-            $aspNetCore = $xml.configuration.'system.webServer'.aspNetCore
-            
-            # Create or get environmentVariables element
-            $envVars = $aspNetCore.SelectSingleNode('environmentVariables')
-            if (-not $envVars) {
-              $envVars = $xml.CreateElement('environmentVariables')
-              $aspNetCore.AppendChild($envVars) | Out-Null
-            }
-            
-            # Add OTLP API key if configured
-            if (-not [string]::IsNullOrWhiteSpace($env:HONEYCOMB_API_KEY)) {
-              $envVar = $xml.CreateElement('environmentVariable')
-              $envVar.SetAttribute('name', 'Otlp__ApiKey')
-              $envVar.SetAttribute('value', $env:HONEYCOMB_API_KEY)
-              $envVars.AppendChild($envVar) | Out-Null
-              Write-Host "Added Otlp__ApiKey to web.config"
-            }
-            
-            # Add OTLP endpoint (default to Honeycomb US if not specified)
-            $endpoint = if (-not [string]::IsNullOrWhiteSpace($env:OTLP_ENDPOINT)) { $env:OTLP_ENDPOINT } else { "https://api.honeycomb.io" }
-            $envVar2 = $xml.CreateElement('environmentVariable')
-            $envVar2.SetAttribute('name', 'Otlp__Endpoint')
-            $envVar2.SetAttribute('value', $endpoint)
-            $envVars.AppendChild($envVar2) | Out-Null
-            Write-Host "Added Otlp__Endpoint=$endpoint to web.config"
-            
-            $xml.Save($webConfigPath)
-            Write-Host "web.config updated successfully"
-          } else {
-            Write-Host "web.config not found at $webConfigPath"
+          if (-not (Test-Path $webConfigPath)) {
+            Write-Host "web.config not found at $webConfigPath — skipping OTLP injection"
+            exit 0
           }
+
+          Write-Host "=== Current web.config ==="
+          Get-Content $webConfigPath
+          Write-Host "==========================="
+
+          [xml]$xml = Get-Content $webConfigPath
+
+          # Navigate to the aspNetCore element using XPath to handle any structure
+          $aspNetCore = $xml.SelectSingleNode('//aspNetCore')
+          if (-not $aspNetCore) {
+            Write-Host "No aspNetCore element found in web.config — skipping OTLP injection"
+            exit 0
+          }
+
+          # Create or get environmentVariables element
+          $envVars = $aspNetCore.SelectSingleNode('environmentVariables')
+          if (-not $envVars) {
+            $envVars = $xml.CreateElement('environmentVariables')
+            $aspNetCore.AppendChild($envVars) | Out-Null
+          }
+
+          # Add OTLP API key if configured
+          if (-not [string]::IsNullOrWhiteSpace($env:HONEYCOMB_API_KEY)) {
+            $envVar = $xml.CreateElement('environmentVariable')
+            $envVar.SetAttribute('name', 'Otlp__ApiKey')
+            $envVar.SetAttribute('value', $env:HONEYCOMB_API_KEY)
+            $envVars.AppendChild($envVar) | Out-Null
+            Write-Host "Added Otlp__ApiKey to web.config"
+          } else {
+            Write-Host "No NICE_HONEYCOMB_API_KEY secret configured — OTLP export will be disabled"
+          }
+
+          # Add OTLP endpoint (default to Honeycomb US if secret not specified)
+          $endpoint = if (-not [string]::IsNullOrWhiteSpace($env:OTLP_ENDPOINT)) { $env:OTLP_ENDPOINT } else { "https://api.honeycomb.io" }
+          $envVar2 = $xml.CreateElement('environmentVariable')
+          $envVar2.SetAttribute('name', 'Otlp__Endpoint')
+          $envVar2.SetAttribute('value', $endpoint)
+          $envVars.AppendChild($envVar2) | Out-Null
+          Write-Host "Added Otlp__Endpoint=$endpoint to web.config"
+
+          $xml.Save((Resolve-Path $webConfigPath).Path)
+          Write-Host "=== Updated web.config ==="
+          Get-Content $webConfigPath
+          Write-Host "==========================="
 
       - name: Deploy via WebDeploy
         shell: pwsh
@@ -17453,7 +17483,7 @@ function showShareError(shareBtn, message) {
 
 
 ===============================================================================
-EXPORT COMPLETED: Mon Mar 16 10:15:51 PM EDT 2026
+EXPORT COMPLETED: Mon Mar 16 10:50:30 PM EDT 2026
 Total Files Found: 128
 Files Exported: 128
 Files Skipped: 0 (binary or large files)
