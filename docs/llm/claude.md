@@ -800,3 +800,21 @@ Do **not** put the actual key in `appsettings.Development.json` — it would get
 
 12
 14
+Got this on both cases 
+Run $webConfigPath = "./publish/web.config"
+InvalidOperation: D:\a\_temp\5683e119-8096-4454-9c8f-b3e850d9081e.ps1:8
+Line |
+   8 |    $envVars = $aspNetCore.SelectSingleNode('environmentVariables')
+     |    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | You cannot call a method on a null-valued expression.
+Error: Process completed with exit code 1.
+Run $webConfigPath = "./publish/web.config"
+InvalidOperation: D:\a\_temp\67331b93-4acd-4200-b9b4-e31a25576321.ps1:8
+Line |
+   8 |    $envVars = $aspNetCore.SelectSingleNode('environmentVariables')
+     |    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | You cannot call a method on a null-valued expression.
+Error: Process completed with exit code 1.
+
+
+
