@@ -831,3 +831,99 @@ I also added diagnostic output (prints the web.config before and after modificat
 13
 14
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+00
+31
+
+**Context:** You are working on `https://github.com/kusl/dotnetcms` — a lightweight self-hosted blog built with .NET 10, Blazor Server, Clean Architecture (Core / Infrastructure / Web layers), SQLite via EF Core, and minimal API endpoints. It is primarily a learning codebase that deploys to multiple domains from a GitHub Actions pipeline.
+
+**Task:** Add RSS 2.0 feed support via a new minimal API endpoint at `/feed.xml`.
+
+**Architectural constraints:**
+- Changes belong in `MyBlog.Web` only — no modifications to `MyBlog.Core` or `MyBlog.Infrastructure`
+- Use the existing `IPostRepository.GetPublishedPostsAsync(page, pageSize)` — no new interfaces or repository methods
+- Register the endpoint in `Program.cs` via a `MapRssEndpoints()` extension method in a new file `src/MyBlog.Web/Endpoints/RssEndpoints.cs`
+- **Do not add a `BaseUrl` config key** — derive the base URL at runtime from `HttpContext.Request` (`request.Scheme + request.Host`). The codebase is environment-agnostic by design; any environment-specific values that genuinely cannot be derived at runtime must be injected via the CI/CD pipeline (GitHub Actions secrets → environment variables), never hardcoded or soft-coded in `appsettings.json`
+- Add output caching (10–15 min TTL) to protect SQLite on shared hosting
+- Advertise the feed via `<link rel="alternate" type="application/rss+xml">` in the layout
+
+**RSS compliance requirements:**
+- `Content-Type: application/rss+xml; charset=utf-8`
+- Use `XmlWriter` with no BOM (`encoderShouldEmitUTF8Identifier: false`)
+- Dates in RFC 822 format (`ToString("R")`)
+- `<atom:link rel="self">` self-reference element
+- `<guid isPermaLink="true">` using the full permalink URL
+- `content:encoded` namespace for full content
+- Limit to 20 most recent published posts
+
+**Testing:** Follow the existing xUnit pattern. Add `RssFeedTests.cs` to `MyBlog.Tests/Integration/` covering: correct content type, valid XML, published-only posts, RFC 822 dates, and guid permalink format.
+
+remember to always return FULL files for any and all files that need to change. 
+please do not hallucinate. 
+Please read the full `dump.txt` 

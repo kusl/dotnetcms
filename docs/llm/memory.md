@@ -1,26 +1,50 @@
 Purpose & context
-Kushal is developing MyBlog, a .NET 10 Blazor Server blogging/CMS application following clean architecture principles. The project serves as both a functional blog platform and a learning sandbox for exploring modern .NET development practices. The application is deployed to production at kush.runasp.net with plans for local deployment using Cloudflare tunnel service.
-The project emphasizes clean code practices, comprehensive testing, and modern development workflows. Kushal maintains strict coding standards including preserving existing style patterns, maintaining braces around control structures, avoiding unnecessary changes, and ensuring all tests pass without regressions. The application uses SQLite for data persistence, implements custom authentication with progressive rate limiting, includes real-time reader tracking via SignalR, and features a custom Markdown parser without third-party dependencies.
-Key technical constraints include zero npm/node dependencies, custom CSS without frameworks, XDG-compliant cross-platform compatibility, and comprehensive observability through OpenTelemetry with both file and database logging. The project targets multiple deployment environments including Windows servers via WebDeploy and containerized environments using Docker/Podman.
+Kushal is building MyBlog, a .NET 10 Blazor Server blogging platform following Clean Architecture principles. The project is a multi-project solution (MyBlog.Core, MyBlog.Infrastructure, MyBlog.Web, MyBlog.Tests, MyBlog.E2E) with SQLite storage, cookie-based authentication, SignalR-based real-time reader tracking, OpenTelemetry observability, and a custom Markdown parser. The application deploys to IIS via WebDeploy through GitHub Actions, with two deployment targets using separate secrets. Kushal develops on both Fedora (Linux) and Windows, with E2E tests running via Podman Compose locally and Docker in CI.
+The project originated as a from-scratch generation via shell script and has evolved through iterative feature additions, bug fixes, test coverage expansion, and infrastructure improvements. Key architectural decisions include: no third-party CSS frameworks, no npm/Node dependencies, custom Markdown parsing, images stored as BLOBs in SQLite, XDG-compliant database paths, and OpenTelemetry with OTLP export to Honeycomb.io using only vendor-neutral packages (no Honeycomb SDK).
+
 Current state
-The application is actively deployed and functional in production, with ongoing development focused on mobile optimization and user experience improvements. Recent work has addressed critical authentication issues, mobile-friendly responsive design with proper touch targets and iOS compatibility, and comprehensive E2E testing infrastructure using Playwright.
-Current technical stack includes .NET 10 Blazor Server, Entity Framework Core with SQLite, xUnit v3 for testing, OpenTelemetry for observability, and GitHub Actions for CI/CD. The architecture spans four main projects: MyBlog.Core (domain), MyBlog.Infrastructure (data access), MyBlog.Web (presentation), and MyBlog.Tests (comprehensive test suite with unit, integration, and E2E coverage).
-Recent fixes have resolved form submission issues in server-side rendering mode, corrected authentication endpoint mappings, implemented proper error handling for missing database tables, and established reliable E2E testing patterns that work across development and CI environments.
+
+Observability: OpenTelemetry integrated with OTLP exporter sending traces/metrics/logs to Honeycomb.io via x-honeycomb-team header auth; conditionally enabled only when endpoint and API key are configured; per-deployment-target secrets in GitHub Actions
+E2E testing: Playwright + xUnit v3 suite running in Podman/Docker; infrastructure includes stale container cleanup, optimized Docker layer ordering to avoid redundant browser downloads, and offline support flags
+Authentication: Login uses a minimal API POST endpoint (/account/login) with antiforgery token; LoginRateLimitMiddleware applies progressive delays (never fully blocks) and is disabled in Development environments
+Database schema: Managed via EnsureCreatedAsync() + DatabaseSchemaUpdater for incremental updates on existing deployments; no EF Core migrations
+Test suite: Comprehensive unit, integration, and E2E coverage; xUnit v3 patterns with TestContext.Current.CancellationToken; in-memory SQLite for integration tests
+
+
 On the horizon
-Planned improvements include RSS feed functionality, enhanced mobile user experience, and resolution of remaining share sheet functionality issues on Chrome for iPhone. Future deployment goals involve local hosting with Cloudflare tunnel integration and potential expansion to additional hosting environments.
-Kushal is considering implementing additional features like comments systems, search functionality, and performance optimizations, particularly addressing execution time differences between Windows and Linux environments. Documentation updates and UI/UX enhancements are also being evaluated for future iterations.
+
+RSS feed support (detailed implementation plan exists: new models, IRssFeedService, minimal API endpoint, tests)
+Mobile UX improvements and share sheet functionality (Web Share API with clipboard fallback)
+Potential future features noted: comments system, search functionality
+
+
 Key learnings & principles
-Authentication in Blazor Server requires careful consideration of render modes - interactive components need SignalR circuits while traditional forms work better with server-side rendering and proper HTML form attributes. The distinction between @bind for interactive components and name attributes for form submissions is critical for proper functionality.
-Database initialization strategies must account for existing deployments - EnsureCreatedAsync() only works for fresh databases, while existing databases require incremental schema updates through custom migration logic. Error handling should implement graceful degradation, especially for optional features like image dimension caching.
-Cross-platform compatibility requires attention to details like newline character differences between Windows (CRLF) and Unix (LF) systems, proper SQLite connection handling to avoid file locking issues, and XDG-compliant path resolution for configuration and data storage.
-Testing strategies benefit from separating concerns - unit tests excel at business logic validation but cannot catch UI interaction bugs that require E2E testing with tools like Playwright. Performance testing must account for real-world delays (like rate limiting) that can cause tests to run for extended periods without proper mocking.
+
+Forward-compatible solutions over workarounds: Kushal actively rejects deprecated patterns (e.g., insisted on .NET 10-correct @page directive approach for NotFound.razor rather than reverting to deprecated <NotFound> fragment)
+Root cause fixes only: Suppress-warning or workaround approaches are explicitly rejected; fix the actual problem
+No regressions: Changes must not break existing deployments or test suites; data safety on live deployments is a hard constraint
+Blazor SSR vs. interactive rendering: Login/auth uses SSR with proper name attributes and [SupplyParameterFromForm]; interactive admin components use InteractiveServer render mode — mixing these patterns causes breakage
+WebDeploy quirks: WEBSITE_NAME secret must be the IIS site name only (not full domain); -enableRule:AppOffline needed to avoid file-in-use errors during deployment; PowerShell backtick line continuations cause argument mangling with complex quoted params — build args as separate variables instead
+PowerShell XML traversal: Dot-notation fails on element names containing dots (e.g., system.webServer); use SelectSingleNode() with XPath instead
+Cross-platform newlines: StringBuilder.AppendLine() produces CRLF on Windows; normalize newlines before string assertions in tests
+Testability via DI: Injectable delay functions (rather than real Task.Delay) make rate-limiting middleware tests run in milliseconds
+
+
 Approach & patterns
-Development follows a methodical approach emphasizing comprehensive code review, reading every line carefully, and avoiding hallucinated solutions. Changes are made incrementally with full test coverage and verification that existing functionality remains intact.
-The architecture implements clean separation between domain logic, infrastructure concerns, and presentation layers. Authentication uses cookie-based sessions with progressive rate limiting that slows down repeated attempts without completely blocking users. Real-time features leverage SignalR for reader tracking and live statistics.
-Error handling implements defense-in-depth strategies with multiple layers of graceful degradation. Database operations include existence checks and try-catch blocks to handle missing tables or connection issues. Logging prioritizes structured information over throwing exceptions to maintain application stability.
-Testing patterns include comprehensive unit tests for business logic, integration tests using in-memory SQLite for data access verification, and E2E tests covering complete user journeys. Tests use proper cancellation token handling and avoid time-based waits in favor of event-driven synchronization.
+
+Always provide complete files: Kushal explicitly requires full file contents for every changed file — never diffs or partial snippets
+Minimal, targeted changes: No unnecessary modifications; preserve existing coding style, brace placement, and primary constructors
+No hallucination: Read every line of provided code carefully before proposing solutions; verify method signatures and class names exist before referencing them
+Codebase provided via dump files: Kushal regularly provides full codebase dumps (dump.txt) and log files for analysis; project knowledge search is used to navigate these
+Conditional feature flags: New infrastructure features (OTLP export, file logging, database logging) are gated on configuration flags so they're safely off by default
+Centralized package management: Directory.Packages.props with MSBuild property variables for version grouping; no version attributes on individual PackageReference elements
+
+
 Tools & resources
-Primary development stack centers on .NET 10 with Blazor Server, Entity Framework Core, and SQLite. Testing infrastructure uses xUnit v3 with Playwright for E2E scenarios. OpenTelemetry provides comprehensive observability with configurable log retention and rotation.
-Development environment supports both Windows and Linux (Fedora) with Docker/Podman for containerization. GitHub Actions handles CI/CD with multi-platform testing and WebDeploy for production deployment. The project uses centralized package management and the modern .slnx solution format.
-Custom implementations include a Markdown parser supporting standard formatting, headings, lists, and code blocks, along with an image management system storing files as BLOBs in the database. The authentication system implements custom password hashing and progressive rate limiting middleware.
-Deployment infrastructure includes GitHub Actions workflows for automated testing and deployment, PowerShell scripts for WebDeploy operations, and Docker configurations for both development and E2E testing environments with proper SELinux compatibility for Fedora systems.
+
+Runtime/framework: .NET 10, Blazor Server, ASP.NET Core minimal APIs
+Data: SQLite via EF Core (no migrations), in-memory SQLite for tests
+Observability: OpenTelemetry SDK, OpenTelemetry.Exporter.OpenTelemetryProtocol → Honeycomb.io
+Testing: xUnit v3, Playwright for .NET, Podman Compose (local), Docker (CI)
+CI/CD: GitHub Actions, WebDeploy (MSDeploy) to IIS, custom PowerShell deployment scripts
+Dev environment: Fedora (primary Linux), Windows (secondary); cross-platform compatibility required
