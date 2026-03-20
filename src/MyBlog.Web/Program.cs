@@ -7,6 +7,7 @@ using MyBlog.Infrastructure;
 using MyBlog.Infrastructure.Data;
 using MyBlog.Infrastructure.Telemetry;
 using MyBlog.Web.Components;
+using MyBlog.Web.Endpoints;
 using MyBlog.Web.Hubs;
 using MyBlog.Web.Middleware;
 using OpenTelemetry.Exporter;
@@ -24,6 +25,9 @@ builder.Services.AddRazorComponents()
 builder.Services.AddSignalR();
 
 builder.Services.AddInfrastructure(builder.Configuration);
+
+// Output caching for RSS feed
+builder.Services.AddOutputCache();
 
 // Configure authentication
 var sessionTimeout = builder.Configuration.GetValue("Authentication:SessionTimeoutMinutes", 30);
@@ -134,6 +138,8 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.UseOutputCache();
+
 app.UseAntiforgery();
 // Minimal API endpoints
 app.MapPost("/account/login", async (HttpContext context, IAuthService authService) =>
@@ -183,6 +189,10 @@ app.MapGet("/api/images/{id:guid}", async (Guid id, IImageRepository imageReposi
     }
     return Results.File(image.Data, image.ContentType);
 });
+
+// RSS feed endpoint
+app.MapRssEndpoints();
+
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
