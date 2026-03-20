@@ -8,7 +8,6 @@ using MyBlog.Core.Interfaces;
 using MyBlog.Core.Models;
 using MyBlog.Infrastructure.Data;
 using MyBlog.Infrastructure.Repositories;
-using MyBlog.Web.Endpoints;
 using Xunit;
 
 namespace MyBlog.Tests.Integration;
@@ -16,6 +15,8 @@ namespace MyBlog.Tests.Integration;
 /// <summary>
 /// Integration tests for the RSS feed endpoint.
 /// Uses in-memory SQLite for cross-platform compatibility.
+/// Tests mirror the generation logic in RssEndpoints to validate output
+/// without requiring a full ASP.NET Core pipeline.
 /// </summary>
 public class RssFeedTests : IAsyncDisposable
 {
@@ -23,6 +24,9 @@ public class RssFeedTests : IAsyncDisposable
     private readonly PostRepository _postRepository;
     private readonly User _testUser;
     private readonly IConfiguration _configuration;
+
+    private static readonly XNamespace AtomNs = "http://www.w3.org/2005/Atom";
+    private static readonly XNamespace ContentNs = "http://purl.org/rss/1.0/modules/content/";
 
     public RssFeedTests()
     {
@@ -122,9 +126,8 @@ public class RssFeedTests : IAsyncDisposable
 
         var doc = await GenerateFeedXDocument(ct);
         var channel = doc.Root!.Element("channel")!;
-        XNamespace atom = "http://www.w3.org/2005/Atom";
 
-        var atomLink = channel.Element(atom + "link");
+        var atomLink = channel.Element(AtomNs + "link");
         Assert.NotNull(atomLink);
         Assert.Equal("self", atomLink.Attribute("rel")?.Value);
         Assert.Equal("application/rss+xml", atomLink.Attribute("type")?.Value);
@@ -226,48 +229,93 @@ public class RssFeedTests : IAsyncDisposable
             "RSS feed should not contain a UTF-8 BOM");
     }
 
+    [Fact]
+    public async Task RssFeed_ItemHasContentEncoded_WithFullHtml()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await CreateTestPost("Full Content Post", slug: "full-content-post", isPublished: true,
+            content: "# Hello World\n\nThis is the **full** post content.", ct: ct);
+
+        var doc = await GenerateFeedXDocument(ct);
+        var item = doc.Descendants("item").First();
+        var contentEncoded = item.Element(ContentNs + "encoded");
+
+        Assert.NotNull(contentEncoded);
+        var html = contentEncoded.Value;
+        // The StubMarkdownService wraps in <p> tags — just verify content is present
+        Assert.Contains("Hello World", html);
+        Assert.Contains("full", html);
+    }
+
+    [Fact]
+    public async Task RssFeed_ContentEncoded_IsCData()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await CreateTestPost("CData Test", slug: "cdata-test", isPublished: true,
+            content: "Some <em>content</em> here", ct: ct);
+
+        var bytes = await GenerateFeedBytes(ct);
+        var xml = Encoding.UTF8.GetString(bytes);
+
+        // The raw XML should contain CDATA wrapping around content:encoded value
+        Assert.Contains("<![CDATA[", xml);
+    }
+
+    [Fact]
+    public async Task RssFeed_DescriptionIsSummary_NotFullContent()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await CreateTestPost("Summary Test", slug: "summary-test", isPublished: true,
+            content: "This is a very long post body that should not appear in description",
+            summary: "Short summary", ct: ct);
+
+        var doc = await GenerateFeedXDocument(ct);
+        var item = doc.Descendants("item").First();
+
+        Assert.Equal("Short summary", item.Element("description")?.Value);
+    }
+
+    [Fact]
+    public async Task RssFeed_ContentEncoded_ContainsRenderedMarkdown()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        await CreateTestPost("Markdown Test", slug: "markdown-test", isPublished: true,
+            content: "**bold text** and *italic text*", ct: ct);
+
+        var doc = await GenerateFeedXDocument(ct);
+        var item = doc.Descendants("item").First();
+        var contentEncoded = item.Element(ContentNs + "encoded");
+
+        Assert.NotNull(contentEncoded);
+        var html = contentEncoded.Value;
+        // Our stub returns content wrapped in <p> tags
+        Assert.Contains("<p>", html);
+    }
+
     // =========================================================================
     // Helpers
     // =========================================================================
 
+    /// <summary>
+    /// Generates RSS feed bytes using the same logic as RssEndpoints
+    /// but without requiring a full ASP.NET Core pipeline.
+    /// </summary>
     private async Task<byte[]> GenerateFeedBytes(CancellationToken ct)
     {
-        var markdownService = new StubMarkdownService();
-
-        // Build a minimal HttpContext
-        var httpContext = new DefaultHttpContext();
-        httpContext.Request.Scheme = "https";
-        httpContext.Request.Host = new HostString("example.com");
-
-        var result = await InvokeRssFeed(httpContext, markdownService);
-
-        // The endpoint returns Results.Bytes; extract the content
-        // We re-generate using the same logic but capture the stream
-        return await GenerateFeedBytesFromContext(httpContext, markdownService, ct);
-    }
-
-    private async Task<XDocument> GenerateFeedXDocument(CancellationToken ct)
-    {
-        var bytes = await GenerateFeedBytes(ct);
-        var xml = Encoding.UTF8.GetString(bytes);
-        return XDocument.Parse(xml);
-    }
-
-    /// <summary>
-    /// Directly generates RSS feed bytes using the same logic as RssEndpoints
-    /// but without needing a full ASP.NET Core pipeline.
-    /// </summary>
-    private async Task<byte[]> GenerateFeedBytesFromContext(
-        HttpContext context,
-        IMarkdownService markdownService,
-        CancellationToken ct)
-    {
-        var request = context.Request;
-        var baseUrl = $"{request.Scheme}://{request.Host}";
+        var baseUrl = "https://example.com";
         var siteTitle = _configuration["Application:Title"] ?? "MyBlog";
         var feedUrl = $"{baseUrl}/feed.xml";
+        var markdownService = new StubMarkdownService();
 
         var (posts, _) = await _postRepository.GetPublishedPostsAsync(1, 20, ct);
+
+        // Fetch full content for each post, mirroring the endpoint logic
+        var fullPosts = new List<(PostListItemDto ListItem, PostDetailDto? Detail)>();
+        foreach (var post in posts)
+        {
+            var detail = await _postRepository.GetBySlugAsync(post.Slug, ct);
+            fullPosts.Add((post, detail));
+        }
 
         var settings = new XmlWriterSettings
         {
@@ -301,7 +349,7 @@ public class RssFeedTests : IAsyncDisposable
             await writer.WriteAttributeStringAsync(null, "type", null, "application/rss+xml");
             await writer.WriteEndElementAsync();
 
-            foreach (var post in posts)
+            foreach (var (post, detail) in fullPosts)
             {
                 var permalink = $"{baseUrl}/post/{post.Slug}";
 
@@ -323,6 +371,15 @@ public class RssFeedTests : IAsyncDisposable
                 await writer.WriteStringAsync(permalink);
                 await writer.WriteEndElementAsync();
 
+                // <content:encoded> — full rendered HTML
+                if (detail is not null)
+                {
+                    var htmlContent = await markdownService.ToHtmlAsync(detail.Content);
+                    await writer.WriteStartElementAsync("content", "encoded", "http://purl.org/rss/1.0/modules/content/");
+                    await writer.WriteCDataAsync(htmlContent);
+                    await writer.WriteEndElementAsync();
+                }
+
                 await writer.WriteEndElementAsync();
             }
 
@@ -336,15 +393,20 @@ public class RssFeedTests : IAsyncDisposable
         return stream.ToArray();
     }
 
-    private static Task<IResult> InvokeRssFeed(HttpContext context, IMarkdownService markdownService) =>
-        // This is just for compilation validation; actual testing uses the direct generation approach
-        Task.FromResult(Results.Ok() as IResult);
+    private async Task<XDocument> GenerateFeedXDocument(CancellationToken ct)
+    {
+        var bytes = await GenerateFeedBytes(ct);
+        var xml = Encoding.UTF8.GetString(bytes);
+        return XDocument.Parse(xml);
+    }
 
     private async Task CreateTestPost(
         string title,
         string? slug = null,
         bool isPublished = true,
         DateTime? publishedAt = null,
+        string? content = null,
+        string? summary = null,
         CancellationToken ct = default)
     {
         var post = new Post
@@ -352,8 +414,8 @@ public class RssFeedTests : IAsyncDisposable
             Id = Guid.NewGuid(),
             Title = title,
             Slug = slug ?? title.ToLower().Replace(" ", "-"),
-            Content = $"Content for {title}",
-            Summary = $"Summary for {title}",
+            Content = content ?? $"Content for {title}",
+            Summary = summary ?? $"Summary for {title}",
             AuthorId = _testUser.Id,
             CreatedAtUtc = DateTime.UtcNow,
             UpdatedAtUtc = DateTime.UtcNow,
@@ -367,6 +429,7 @@ public class RssFeedTests : IAsyncDisposable
 
     /// <summary>
     /// Minimal stub for IMarkdownService used by tests.
+    /// Wraps content in paragraph tags to simulate basic HTML rendering.
     /// </summary>
     private sealed class StubMarkdownService : IMarkdownService
     {

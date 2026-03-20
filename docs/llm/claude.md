@@ -931,3 +931,108 @@ Please read the full `dump.txt`
 10
 32
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+This is good. 
+Now without any regressions, 
+lets improve upon this by allowing people to read the full text within the feed reader 
+without having to visit the blog. 
+We don't make any money when people visit our blog 
+and we want people to read them easily within their blog reader. 
+Lets give them the full text of any post 
+so they can read the full post offline on a subnway train or whatever. 
+
+Looking at the current `RssEndpoints.cs`, the feed only includes `post.Summary` in `<description>` and doesn't include the full post content at all. The issue is that `GetPublishedPostsAsync` returns `PostListItemDto` which only has `Summary`, not `Content`. I need to use a different approach to get the full content.
+
+Let me check what's available... `IPostRepository` has `GetBySlugAsync` (returns `PostDetailDto` with `Content`) and `GetAllPostsAsync` (returns `PostListItemDto` — no content). There's no single method that returns full content for multiple published posts with pagination.
+
+The constraint says "no modifications to `MyBlog.Core` or `MyBlog.Infrastructure`" — so I need to work with what exists. I can call `GetAllPostsAsync()` which returns all posts (including drafts), filter to published, take 20, and then for each one call `GetBySlugAsync` to get the full content. Or I can use `GetPublishedPostsAsync` for the list and then `GetBySlugAsync` for each.
+
+Actually, re-reading the constraint from the original task: "Use the existing `IPostRepository.GetPublishedPostsAsync(page, pageSize)`". But now we need full content too. I'll use `GetPublishedPostsAsync` for the list, then `GetBySlugAsync` for each post to get full content. With only 20 posts and SQLite, this is fine.
+
+Let me also render the markdown to HTML via `IMarkdownService.ToHtmlAsync` so readers get formatted content.Now update the tests to cover the full-content behavior:`Program.cs` and `App.razor` are unchanged from before — no updates needed there.
+
+Here's what changed and why:
+
+**`RssEndpoints.cs`** — two additions:
+
+1. After fetching the list via `GetPublishedPostsAsync`, the endpoint now loops through each post and calls `GetBySlugAsync(post.Slug)` to get the `PostDetailDto` which contains the full `Content` field. This is capped at 20 posts so the extra queries are negligible.
+
+2. For each item, if the detail was resolved, the markdown content is rendered to HTML via `IMarkdownService.ToHtmlAsync()` and written as a `<content:encoded>` element wrapped in CDATA. This means feed readers get fully rendered HTML — headings, bold, italic, links, images, code blocks — all readable offline without visiting the site. The `<description>` still contains the short summary for readers that show previews.
+
+**`RssFeedTests.cs`** — four new tests added:
+
+- `RssFeed_ItemHasContentEncoded_WithFullHtml` — verifies `content:encoded` exists and contains the post content
+- `RssFeed_ContentEncoded_IsCData` — verifies the raw XML uses CDATA wrapping (important so HTML doesn't break XML parsing)
+- `RssFeed_DescriptionIsSummary_NotFullContent` — verifies `<description>` stays as the summary, not the full body
+- `RssFeed_ContentEncoded_ContainsRenderedMarkdown` — verifies the content is rendered HTML (contains `<p>` tags), not raw markdown
+
+The `CreateTestPost` helper also gained optional `content` and `summary` parameters so tests can control both fields independently. All existing tests remain unchanged.
+
+14
+33

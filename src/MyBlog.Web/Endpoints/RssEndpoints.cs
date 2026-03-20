@@ -35,6 +35,15 @@ public static class RssEndpoints
 
         var (posts, _) = await postRepository.GetPublishedPostsAsync(1, FeedItemLimit);
 
+        // Fetch full content for each post via slug lookup.
+        // With a cap of 20 posts and SQLite, this is perfectly fine.
+        var fullPosts = new List<(Core.Models.PostListItemDto ListItem, Core.Models.PostDetailDto? Detail)>();
+        foreach (var post in posts)
+        {
+            var detail = await postRepository.GetBySlugAsync(post.Slug);
+            fullPosts.Add((post, detail));
+        }
+
         var settings = new XmlWriterSettings
         {
             Async = true,
@@ -69,7 +78,7 @@ public static class RssEndpoints
             await writer.WriteAttributeStringAsync(null, "type", null, "application/rss+xml");
             await writer.WriteEndElementAsync(); // atom:link
 
-            foreach (var post in posts)
+            foreach (var (post, detail) in fullPosts)
             {
                 var permalink = $"{baseUrl}/post/{post.Slug}";
 
@@ -91,6 +100,15 @@ public static class RssEndpoints
                 await writer.WriteAttributeStringAsync(null, "isPermaLink", null, "true");
                 await writer.WriteStringAsync(permalink);
                 await writer.WriteEndElementAsync(); // guid
+
+                // <content:encoded> — full rendered HTML so readers can read offline
+                if (detail is not null)
+                {
+                    var htmlContent = await markdownService.ToHtmlAsync(detail.Content);
+                    await writer.WriteStartElementAsync("content", "encoded", "http://purl.org/rss/1.0/modules/content/");
+                    await writer.WriteCDataAsync(htmlContent);
+                    await writer.WriteEndElementAsync(); // content:encoded
+                }
 
                 await writer.WriteEndElementAsync(); // item
             }
