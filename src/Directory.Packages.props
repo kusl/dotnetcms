@@ -5,7 +5,7 @@
 
     <!-- Version variables -->
     <DotNetVersion>10.0.5</DotNetVersion>
-    <OpenTelemetryVersion>1.15.0</OpenTelemetryVersion>
+    <OpenTelemetryVersion>1.16.0</OpenTelemetryVersion>
     <OpenTelemetryInstrumentationAspNetCoreVersion>1.15.1</OpenTelemetryInstrumentationAspNetCoreVersion>
     <XUnitVersion>3.2.2</XUnitVersion>
     <TestSdkVersion>18.3.0</TestSdkVersion>
