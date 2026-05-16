@@ -3,41 +3,44 @@
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
     <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
 
-    <!-- Version variables -->
-    <DotNetVersion>10.0.5</DotNetVersion>
+    <MicrosoftPackagesVersion>10.0.8</MicrosoftPackagesVersion>
+    <MicrosoftIdentityVersion>2.3.10</MicrosoftIdentityVersion>
+
     <OpenTelemetryVersion>1.15.3</OpenTelemetryVersion>
-    <OpenTelemetryExtensionVersion>1.15.3</OpenTelemetryExtensionVersion>
-    <OpenTelemetryInstrumentationAspNetCoreVersion>1.15.1</OpenTelemetryInstrumentationAspNetCoreVersion>
+    <OtelAspNetCoreInstrVersion>1.15.2</OtelAspNetCoreInstrVersion>
+    <OtelHttpInstrVersion>1.15.1</OtelHttpInstrVersion>
+
+    <TestSdkVersion>18.5.1</TestSdkVersion>
     <XUnitVersion>3.2.2</XUnitVersion>
-    <TestSdkVersion>18.3.0</TestSdkVersion>
+    <XUnitRunnerVersion>3.1.5</XUnitRunnerVersion>
+    <TestingExtensionsVersion>2.2.3</TestingExtensionsVersion>
+    <PlaywrightVersion>1.59.0</PlaywrightVersion>
+
+    <SystemSecurityXmlVersion>8.0.3</SystemSecurityXmlVersion>
   </PropertyGroup>
+
   <ItemGroup>
-    <!-- Core Framework (.NET 10) -->
-    <PackageVersion Include="Microsoft.AspNetCore.SignalR.Client" Version="$(DotNetVersion)" />
-    <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="$(DotNetVersion)" />
-    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="$(DotNetVersion)" />
-    <PackageVersion Include="Microsoft.AspNetCore.Identity" Version="2.3.9" />
-    <PackageVersion Include="Microsoft.Extensions.Hosting" Version="$(DotNetVersion)" />
-    <PackageVersion Include="Microsoft.Extensions.Http" Version="$(DotNetVersion)" />
-    <PackageVersion Include="Microsoft.Extensions.Logging" Version="$(DotNetVersion)" />
+    <PackageVersion Include="Microsoft.AspNetCore.SignalR.Client" Version="$(MicrosoftPackagesVersion)" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="$(MicrosoftPackagesVersion)" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="$(MicrosoftPackagesVersion)" />
+    <PackageVersion Include="Microsoft.Extensions.Hosting" Version="$(MicrosoftPackagesVersion)" />
+    <PackageVersion Include="Microsoft.Extensions.Http" Version="$(MicrosoftPackagesVersion)" />
+    <PackageVersion Include="Microsoft.Extensions.Logging" Version="$(MicrosoftPackagesVersion)" />
+    <PackageVersion Include="Microsoft.AspNetCore.Identity" Version="$(MicrosoftIdentityVersion)" />
 
-    <!-- OpenTelemetry -->
     <PackageVersion Include="OpenTelemetry" Version="$(OpenTelemetryVersion)" />
-    <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="$(OpenTelemetryExtensionVersion)" />
-    <PackageVersion Include="OpenTelemetry.Exporter.Console" Version="$(OpenTelemetryExtensionVersion)" />
-    <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="$(OpenTelemetryExtensionVersion)" />
-    <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="$(OpenTelemetryInstrumentationAspNetCoreVersion)" />
-    <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="$(OpenTelemetryInstrumentationAspNetCoreVersion)" />
+    <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="$(OpenTelemetryVersion)" />
+    <PackageVersion Include="OpenTelemetry.Exporter.Console" Version="$(OpenTelemetryVersion)" />
+    <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="$(OpenTelemetryVersion)" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="$(OtelAspNetCoreInstrVersion)" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="$(OtelHttpInstrVersion)" />
 
-    <!-- Testing (xUnit v3) -->
-    <PackageVersion Include="xunit.v3" Version="$(XUnitVersion)" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="$(TestSdkVersion)" />
-    <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
-    <PackageVersion Include="Microsoft.Testing.Extensions.TrxReport" Version="2.1.0" />
+    <PackageVersion Include="xunit.v3" Version="$(XUnitVersion)" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="$(XUnitRunnerVersion)" />
+    <PackageVersion Include="Microsoft.Testing.Extensions.TrxReport" Version="$(TestingExtensionsVersion)" />
+    <PackageVersion Include="Microsoft.Playwright" Version="$(PlaywrightVersion)" />
 
-    <!-- E2E Testing (Playwright) -->
-    <PackageVersion Include="Microsoft.Playwright" Version="1.58.0" />
-
-    <PackageVersion Include="System.Security.Cryptography.Xml" Version="8.0.3" />
+    <PackageVersion Include="System.Security.Cryptography.Xml" Version="$(SystemSecurityXmlVersion)" />
   </ItemGroup>
 </Project>
