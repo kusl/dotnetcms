@@ -6,154 +6,73 @@ Unhandled exception: System.Exception: Restore operation failed.
    at Microsoft.CodeAnalysis.Tools.Commands.RootFormatCommand.FormatCommandDefaultHandler.InvokeAsync(ParseResult parseResult, CancellationToken cancellationToken)
    at System.CommandLine.Invocation.InvocationPipeline.InvokeAsync(ParseResult parseResult, CancellationToken cancellationToken)
 
-real	0m1.640s
-user	0m1.583s
-sys	0m0.312s
-    /home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/MyBlog.E2E.csproj : error NU1102: 
-      Unable to find package OpenTelemetry with version (>= 1.16.0)
-        - Found 86 version(s) in nuget.org [ Nearest version: 1.15.3 ]
-        - Found 0 version(s) in /usr/lib64/dotnet/library-packs
-    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Infrastructure/MyBlog.Infrastructure.csproj : error NU1102: 
-      Unable to find package OpenTelemetry with version (>= 1.16.0)
-        - Found 86 version(s) in nuget.org [ Nearest version: 1.15.3 ]
-        - Found 0 version(s) in /usr/lib64/dotnet/library-packs
-    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/MyBlog.Tests.csproj : error NU1102: 
-      Unable to find package OpenTelemetry with version (>= 1.16.0)
-        - Found 86 version(s) in nuget.org [ Nearest version: 1.15.3 ]
-        - Found 0 version(s) in /usr/lib64/dotnet/library-packs
-    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/MyBlog.Web.csproj : error NU1102: 
-      Unable to find package OpenTelemetry with version (>= 1.16.0)
-        - Found 86 version(s) in nuget.org [ Nearest version: 1.15.3 ]
-        - Found 0 version(s) in /usr/lib64/dotnet/library-packs
-    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Infrastructure/MyBlog.Infrastructure.csproj : error NU1903: Warning As Error: Package 'System.Security.Cryptography.Xml' 8.0.2 has a known high severity vulnerability, https://github.com/advisories/GHSA-37gx-xxp4-5rgx
+real	0m1.381s
+user	0m1.373s
+sys	0m0.322s
     /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/MyBlog.Tests.csproj : error NU1903: Warning As Error: Package 'System.Security.Cryptography.Xml' 8.0.2 has a known high severity vulnerability, https://github.com/advisories/GHSA-37gx-xxp4-5rgx
     /home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/MyBlog.E2E.csproj : error NU1903: Warning As Error: Package 'System.Security.Cryptography.Xml' 8.0.2 has a known high severity vulnerability, https://github.com/advisories/GHSA-37gx-xxp4-5rgx
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Infrastructure/MyBlog.Infrastructure.csproj : error NU1903: Warning As Error: Package 'System.Security.Cryptography.Xml' 8.0.2 has a known high severity vulnerability, https://github.com/advisories/GHSA-37gx-xxp4-5rgx
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/MyBlog.Tests.csproj : error NU1903: Warning As Error: Package 'System.Security.Cryptography.Xml' 8.0.2 has a known high severity vulnerability, https://github.com/advisories/GHSA-w3x6-4m5h-cxqf
     /home/kushal/src/dotnet/MyBlog/src/MyBlog.Infrastructure/MyBlog.Infrastructure.csproj : error NU1903: Warning As Error: Package 'System.Security.Cryptography.Xml' 8.0.2 has a known high severity vulnerability, https://github.com/advisories/GHSA-w3x6-4m5h-cxqf
     /home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/MyBlog.E2E.csproj : error NU1903: Warning As Error: Package 'System.Security.Cryptography.Xml' 8.0.2 has a known high severity vulnerability, https://github.com/advisories/GHSA-w3x6-4m5h-cxqf
-    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/MyBlog.Tests.csproj : error NU1903: Warning As Error: Package 'System.Security.Cryptography.Xml' 8.0.2 has a known high severity vulnerability, https://github.com/advisories/GHSA-w3x6-4m5h-cxqf
-    /usr/lib64/dotnet/sdk/10.0.107/NuGet.targets(196,5): error The given key 'OpenTelemetry' was not present in the dictionary.
 
-Restore failed with 11 error(s) in 0.8s
+Restore failed with 6 error(s) in 0.8s
 
-real	0m0.903s
-user	0m1.168s
-sys	0m0.243s
+real	0m0.965s
+user	0m1.205s
+sys	0m0.241s
 
 Build succeeded in 0.5s
 
-real	0m0.592s
-user	0m0.636s
-sys	0m0.143s
-    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/MyBlog.Tests.csproj : error NU1102: 
-      Unable to find package OpenTelemetry with version (>= 1.16.0)
-        - Found 86 version(s) in nuget.org [ Nearest version: 1.15.3 ]
-        - Found 0 version(s) in /usr/lib64/dotnet/library-packs
-    /home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/MyBlog.E2E.csproj : error NU1102: 
-      Unable to find package OpenTelemetry with version (>= 1.16.0)
-        - Found 86 version(s) in nuget.org [ Nearest version: 1.15.3 ]
-        - Found 0 version(s) in /usr/lib64/dotnet/library-packs
-    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Infrastructure/MyBlog.Infrastructure.csproj : error NU1102: 
-      Unable to find package OpenTelemetry with version (>= 1.16.0)
-        - Found 86 version(s) in nuget.org [ Nearest version: 1.15.3 ]
-        - Found 0 version(s) in /usr/lib64/dotnet/library-packs
-    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/MyBlog.Web.csproj : error NU1102: 
-      Unable to find package OpenTelemetry with version (>= 1.16.0)
-        - Found 86 version(s) in nuget.org [ Nearest version: 1.15.3 ]
-        - Found 0 version(s) in /usr/lib64/dotnet/library-packs
+real	0m0.691s
+user	0m0.726s
+sys	0m0.154s
     /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/MyBlog.Tests.csproj : error NU1903: Warning As Error: Package 'System.Security.Cryptography.Xml' 8.0.2 has a known high severity vulnerability, https://github.com/advisories/GHSA-37gx-xxp4-5rgx
-    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Infrastructure/MyBlog.Infrastructure.csproj : error NU1903: Warning As Error: Package 'System.Security.Cryptography.Xml' 8.0.2 has a known high severity vulnerability, https://github.com/advisories/GHSA-37gx-xxp4-5rgx
-    /home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/MyBlog.E2E.csproj : error NU1903: Warning As Error: Package 'System.Security.Cryptography.Xml' 8.0.2 has a known high severity vulnerability, https://github.com/advisories/GHSA-37gx-xxp4-5rgx
     /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/MyBlog.Tests.csproj : error NU1903: Warning As Error: Package 'System.Security.Cryptography.Xml' 8.0.2 has a known high severity vulnerability, https://github.com/advisories/GHSA-w3x6-4m5h-cxqf
-    /home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/MyBlog.E2E.csproj : error NU1903: Warning As Error: Package 'System.Security.Cryptography.Xml' 8.0.2 has a known high severity vulnerability, https://github.com/advisories/GHSA-w3x6-4m5h-cxqf
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Infrastructure/MyBlog.Infrastructure.csproj : error NU1903: Warning As Error: Package 'System.Security.Cryptography.Xml' 8.0.2 has a known high severity vulnerability, https://github.com/advisories/GHSA-37gx-xxp4-5rgx
     /home/kushal/src/dotnet/MyBlog/src/MyBlog.Infrastructure/MyBlog.Infrastructure.csproj : error NU1903: Warning As Error: Package 'System.Security.Cryptography.Xml' 8.0.2 has a known high severity vulnerability, https://github.com/advisories/GHSA-w3x6-4m5h-cxqf
-    /usr/lib64/dotnet/sdk/10.0.107/NuGet.targets(196,5): error The given key 'OpenTelemetry' was not present in the dictionary.
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/MyBlog.E2E.csproj : error NU1903: Warning As Error: Package 'System.Security.Cryptography.Xml' 8.0.2 has a known high severity vulnerability, https://github.com/advisories/GHSA-37gx-xxp4-5rgx
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/MyBlog.E2E.csproj : error NU1903: Warning As Error: Package 'System.Security.Cryptography.Xml' 8.0.2 has a known high severity vulnerability, https://github.com/advisories/GHSA-w3x6-4m5h-cxqf
 
-Restore failed with 11 error(s) in 0.8s
+Restore failed with 6 error(s) in 0.9s
 
-real	0m0.970s
-user	0m1.263s
-sys	0m0.238s
-/home/kushal/src/dotnet/MyBlog/src/MyBlog.Infrastructure/MyBlog.Infrastructure.csproj : error NU1102: 
-  Unable to find package OpenTelemetry with version (>= 1.16.0)
-    - Found 86 version(s) in nuget.org [ Nearest version: 1.15.3 ]
-    - Found 0 version(s) in /usr/lib64/dotnet/library-packs
-/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/MyBlog.Tests.csproj : error NU1102: 
-  Unable to find package OpenTelemetry with version (>= 1.16.0)
-    - Found 86 version(s) in nuget.org [ Nearest version: 1.15.3 ]
-    - Found 0 version(s) in /usr/lib64/dotnet/library-packs
-/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/MyBlog.Web.csproj : error NU1102: 
-  Unable to find package OpenTelemetry with version (>= 1.16.0)
-    - Found 86 version(s) in nuget.org [ Nearest version: 1.15.3 ]
-    - Found 0 version(s) in /usr/lib64/dotnet/library-packs
-/home/kushal/src/dotnet/MyBlog/src/MyBlog.Infrastructure/MyBlog.Infrastructure.csproj : error NU1903: Warning As Error: Package 'System.Security.Cryptography.Xml' 8.0.2 has a known high severity vulnerability, https://github.com/advisories/GHSA-37gx-xxp4-5rgx
+real	0m1.029s
+user	0m1.295s
+sys	0m0.232s
 /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/MyBlog.Tests.csproj : error NU1903: Warning As Error: Package 'System.Security.Cryptography.Xml' 8.0.2 has a known high severity vulnerability, https://github.com/advisories/GHSA-37gx-xxp4-5rgx
+/home/kushal/src/dotnet/MyBlog/src/MyBlog.Infrastructure/MyBlog.Infrastructure.csproj : error NU1903: Warning As Error: Package 'System.Security.Cryptography.Xml' 8.0.2 has a known high severity vulnerability, https://github.com/advisories/GHSA-37gx-xxp4-5rgx
 /home/kushal/src/dotnet/MyBlog/src/MyBlog.Infrastructure/MyBlog.Infrastructure.csproj : error NU1903: Warning As Error: Package 'System.Security.Cryptography.Xml' 8.0.2 has a known high severity vulnerability, https://github.com/advisories/GHSA-w3x6-4m5h-cxqf
 /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/MyBlog.Tests.csproj : error NU1903: Warning As Error: Package 'System.Security.Cryptography.Xml' 8.0.2 has a known high severity vulnerability, https://github.com/advisories/GHSA-w3x6-4m5h-cxqf
-/usr/lib64/dotnet/sdk/10.0.107/NuGet.targets(196,5): error The given key 'OpenTelemetry' was not present in the dictionary.
 
 The build failed. Fix the build errors and run again.
 
-real	0m1.118s
-user	0m1.308s
-sys	0m0.181s
-    /home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/MyBlog.E2E.csproj : error NU1102: 
-      Unable to find package OpenTelemetry with version (>= 1.16.0)
-        - Found 86 version(s) in nuget.org [ Nearest version: 1.15.3 ]
-        - Found 0 version(s) in /usr/lib64/dotnet/library-packs
-    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/MyBlog.Tests.csproj : error NU1102: 
-      Unable to find package OpenTelemetry with version (>= 1.16.0)
-        - Found 86 version(s) in nuget.org [ Nearest version: 1.15.3 ]
-        - Found 0 version(s) in /usr/lib64/dotnet/library-packs
-    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Infrastructure/MyBlog.Infrastructure.csproj : error NU1102: 
-      Unable to find package OpenTelemetry with version (>= 1.16.0)
-        - Found 86 version(s) in nuget.org [ Nearest version: 1.15.3 ]
-        - Found 0 version(s) in /usr/lib64/dotnet/library-packs
-    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/MyBlog.Web.csproj : error NU1102: 
-      Unable to find package OpenTelemetry with version (>= 1.16.0)
-        - Found 86 version(s) in nuget.org [ Nearest version: 1.15.3 ]
-        - Found 0 version(s) in /usr/lib64/dotnet/library-packs
-    /home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/MyBlog.E2E.csproj : error NU1903: Warning As Error: Package 'System.Security.Cryptography.Xml' 8.0.2 has a known high severity vulnerability, https://github.com/advisories/GHSA-37gx-xxp4-5rgx
-    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Infrastructure/MyBlog.Infrastructure.csproj : error NU1903: Warning As Error: Package 'System.Security.Cryptography.Xml' 8.0.2 has a known high severity vulnerability, https://github.com/advisories/GHSA-37gx-xxp4-5rgx
-    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/MyBlog.Tests.csproj : error NU1903: Warning As Error: Package 'System.Security.Cryptography.Xml' 8.0.2 has a known high severity vulnerability, https://github.com/advisories/GHSA-37gx-xxp4-5rgx
-    /home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/MyBlog.E2E.csproj : error NU1903: Warning As Error: Package 'System.Security.Cryptography.Xml' 8.0.2 has a known high severity vulnerability, https://github.com/advisories/GHSA-w3x6-4m5h-cxqf
-    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/MyBlog.Tests.csproj : error NU1903: Warning As Error: Package 'System.Security.Cryptography.Xml' 8.0.2 has a known high severity vulnerability, https://github.com/advisories/GHSA-w3x6-4m5h-cxqf
-    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Infrastructure/MyBlog.Infrastructure.csproj : error NU1903: Warning As Error: Package 'System.Security.Cryptography.Xml' 8.0.2 has a known high severity vulnerability, https://github.com/advisories/GHSA-w3x6-4m5h-cxqf
-    /usr/lib64/dotnet/sdk/10.0.107/NuGet.targets(196,5): error The given key 'OpenTelemetry' was not present in the dictionary.
-
-Restore failed with 11 error(s) in 0.8s
-
-real	0m0.941s
-user	0m1.224s
-sys	0m0.232s
-    /home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/MyBlog.E2E.csproj : error NU1102: 
-      Unable to find package OpenTelemetry with version (>= 1.16.0)
-        - Found 86 version(s) in nuget.org [ Nearest version: 1.15.3 ]
-        - Found 0 version(s) in /usr/lib64/dotnet/library-packs
-    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Infrastructure/MyBlog.Infrastructure.csproj : error NU1102: 
-      Unable to find package OpenTelemetry with version (>= 1.16.0)
-        - Found 86 version(s) in nuget.org [ Nearest version: 1.15.3 ]
-        - Found 0 version(s) in /usr/lib64/dotnet/library-packs
-    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/MyBlog.Tests.csproj : error NU1102: 
-      Unable to find package OpenTelemetry with version (>= 1.16.0)
-        - Found 86 version(s) in nuget.org [ Nearest version: 1.15.3 ]
-        - Found 0 version(s) in /usr/lib64/dotnet/library-packs
-    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/MyBlog.Web.csproj : error NU1102: 
-      Unable to find package OpenTelemetry with version (>= 1.16.0)
-        - Found 86 version(s) in nuget.org [ Nearest version: 1.15.3 ]
-        - Found 0 version(s) in /usr/lib64/dotnet/library-packs
+real	0m1.077s
+user	0m1.184s
+sys	0m0.198s
     /home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/MyBlog.E2E.csproj : error NU1903: Warning As Error: Package 'System.Security.Cryptography.Xml' 8.0.2 has a known high severity vulnerability, https://github.com/advisories/GHSA-37gx-xxp4-5rgx
     /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/MyBlog.Tests.csproj : error NU1903: Warning As Error: Package 'System.Security.Cryptography.Xml' 8.0.2 has a known high severity vulnerability, https://github.com/advisories/GHSA-37gx-xxp4-5rgx
     /home/kushal/src/dotnet/MyBlog/src/MyBlog.Infrastructure/MyBlog.Infrastructure.csproj : error NU1903: Warning As Error: Package 'System.Security.Cryptography.Xml' 8.0.2 has a known high severity vulnerability, https://github.com/advisories/GHSA-37gx-xxp4-5rgx
     /home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/MyBlog.E2E.csproj : error NU1903: Warning As Error: Package 'System.Security.Cryptography.Xml' 8.0.2 has a known high severity vulnerability, https://github.com/advisories/GHSA-w3x6-4m5h-cxqf
     /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/MyBlog.Tests.csproj : error NU1903: Warning As Error: Package 'System.Security.Cryptography.Xml' 8.0.2 has a known high severity vulnerability, https://github.com/advisories/GHSA-w3x6-4m5h-cxqf
     /home/kushal/src/dotnet/MyBlog/src/MyBlog.Infrastructure/MyBlog.Infrastructure.csproj : error NU1903: Warning As Error: Package 'System.Security.Cryptography.Xml' 8.0.2 has a known high severity vulnerability, https://github.com/advisories/GHSA-w3x6-4m5h-cxqf
-    /usr/lib64/dotnet/sdk/10.0.107/NuGet.targets(196,5): error The given key 'OpenTelemetry' was not present in the dictionary.
 
-Restore failed with 11 error(s) in 0.8s
+Restore failed with 6 error(s) in 0.8s
 
-real	0m0.925s
-user	0m1.191s
-sys	0m0.228s
+real	0m0.926s
+user	0m1.149s
+sys	0m0.215s
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/MyBlog.Tests.csproj : error NU1903: Warning As Error: Package 'System.Security.Cryptography.Xml' 8.0.2 has a known high severity vulnerability, https://github.com/advisories/GHSA-37gx-xxp4-5rgx
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Infrastructure/MyBlog.Infrastructure.csproj : error NU1903: Warning As Error: Package 'System.Security.Cryptography.Xml' 8.0.2 has a known high severity vulnerability, https://github.com/advisories/GHSA-37gx-xxp4-5rgx
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/MyBlog.E2E.csproj : error NU1903: Warning As Error: Package 'System.Security.Cryptography.Xml' 8.0.2 has a known high severity vulnerability, https://github.com/advisories/GHSA-37gx-xxp4-5rgx
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/MyBlog.E2E.csproj : error NU1903: Warning As Error: Package 'System.Security.Cryptography.Xml' 8.0.2 has a known high severity vulnerability, https://github.com/advisories/GHSA-w3x6-4m5h-cxqf
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Infrastructure/MyBlog.Infrastructure.csproj : error NU1903: Warning As Error: Package 'System.Security.Cryptography.Xml' 8.0.2 has a known high severity vulnerability, https://github.com/advisories/GHSA-w3x6-4m5h-cxqf
+    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/MyBlog.Tests.csproj : error NU1903: Warning As Error: Package 'System.Security.Cryptography.Xml' 8.0.2 has a known high severity vulnerability, https://github.com/advisories/GHSA-w3x6-4m5h-cxqf
+
+Restore failed with 6 error(s) in 0.8s
+
+real	0m0.966s
+user	0m1.199s
+sys	0m0.211s
 #!/bin/bash
 # =============================================================================
 # Complete Project Export for LLM Analysis
@@ -582,9 +501,9 @@ File types included:
   • Other: .sql, .resx, Dockerfile, etc.
 
 
-real	0m1.391s
-user	0m0.738s
-sys	0m0.876s
+real	0m1.330s
+user	0m0.777s
+sys	0m0.823s
 #!/bin/bash
 # =============================================================================
 # Run E2E Tests with Podman Compose
@@ -744,23 +663,23 @@ exit $E2E_EXIT_CODE
 [INFO] Removing any leftover containers from previous runs...
 [INFO] Using cached container images (pass --build to force rebuild)...
 [INFO] Starting MyBlog web service...
-2275b7122dd41b9ae2285eaee55bf29fcbfba2ae0f15eddb647f1232ad5b5e99
-eb3b4d42715b865a6376a57b5f3b26c6a303e101dc3d83b1bf2cd49ed7ad8875
+726e631f286e0e9aaed3d1290e96c609779495b39c00a64a33605168df614e38
+ed41d0e81a71803d825637c08d47e376a0646bab75050912f4e2f4a8a8235b59
 myblog-web
 [INFO] Waiting for MyBlog to be ready...
 .
 [INFO] MyBlog is ready!
 [INFO] Running E2E tests...
-d3ec08c0d2b699dbf9d34d4d8690fed7bcaffb09f39db7ae606e6ff739505c0d
-[myblog-web] | cannot open `/run/user/1000/crun/eb3b4d42715b865a6376a57b5f3b26c6a303e101dc3d83b1bf2cd49ed7ad8875/exec.fifo`: No such file or directory
-[myblog-web] | Error: unable to start container eb3b4d42715b865a6376a57b5f3b26c6a303e101dc3d83b1bf2cd49ed7ad8875: `/usr/bin/crun start eb3b4d42715b865a6376a57b5f3b26c6a303e101dc3d83b1bf2cd49ed7ad8875` failed: exit status 1
+d694b10f4c9fbe0f4378448341f08ff8bfba80a68753cea4118067359532c50b
+[myblog-web] | cannot open `/run/user/1000/crun/ed41d0e81a71803d825637c08d47e376a0646bab75050912f4e2f4a8a8235b59/exec.fifo`: No such file or directory
+[myblog-web] | Error: unable to start container ed41d0e81a71803d825637c08d47e376a0646bab75050912f4e2f4a8a8235b59: `/usr/bin/crun start ed41d0e81a71803d825637c08d47e376a0646bab75050912f4e2f4a8a8235b59` failed: exit status 1
 [myblog-e2e] | xUnit.net v3 In-Process Runner v3.2.2+728c1dce01 (64-bit .NET 10.0.5)
 [myblog-e2e] |   Discovering: MyBlog.E2E
 [myblog-e2e] |   Discovered:  MyBlog.E2E
 [myblog-e2e] |   Starting:    MyBlog.E2E
 [myblog-e2e] |   Finished:    MyBlog.E2E (ID = '4d488734a9156ea8719a93bca3e9cb47dfeac4715a7981582060bf185a1e7bf4')
 [myblog-e2e] | === TEST EXECUTION SUMMARY ===
-[myblog-e2e] |    MyBlog.E2E  Total: 78, Errors: 0, Failed: 0, Skipped: 0, Not Run: 0, Time: 24.981s
+[myblog-e2e] |    MyBlog.E2E  Total: 78, Errors: 0, Failed: 0, Skipped: 0, Not Run: 0, Time: 25.256s
 [myblog-e2e] | 
 [INFO] Capturing logs...
 [INFO] Cleaning up...
@@ -769,11 +688,11 @@ myblog-web
 myblog-e2e
 myblog-web
 myblog_myblog-data
-2275b7122dd41b9ae2285eaee55bf29fcbfba2ae0f15eddb647f1232ad5b5e99
+726e631f286e0e9aaed3d1290e96c609779495b39c00a64a33605168df614e38
 myblog_myblog-network
 [INFO] E2E tests passed! ✓
 
-real	0m33.684s
-user	0m2.112s
-sys	0m1.156s
+real	0m34.221s
+user	0m1.895s
+sys	0m1.316s
 kushal@fedora:~/src/dotnet/MyBlog$ 

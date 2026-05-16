@@ -1,6 +1,6 @@
 ===============================================================================
 PROJECT EXPORT
-Generated: Sat May 16 06:56:48 AM EDT 2026
+Generated: Sat May 16 06:58:11 AM EDT 2026
 Project Path: /home/kushal/src/dotnet/MyBlog
 ===============================================================================
 
@@ -3729,7 +3729,7 @@ MODIFIED: 2026-01-01 22:21:17
 ================================================================================
 FILE: src/Directory.Packages.props
 SIZE: 2.42 KB
-MODIFIED: 2026-05-16 06:56:03
+MODIFIED: 2026-05-16 06:57:38
 ================================================================================
 
 <Project>
@@ -3739,7 +3739,7 @@ MODIFIED: 2026-05-16 06:56:03
 
     <!-- Version variables -->
     <DotNetVersion>10.0.5</DotNetVersion>
-    <OpenTelemetryVersion>1.16.0</OpenTelemetryVersion>
+    <OpenTelemetryVersion>1.15.3</OpenTelemetryVersion>
     <OpenTelemetryExtensionVersion>1.15.3</OpenTelemetryExtensionVersion>
     <OpenTelemetryInstrumentationAspNetCoreVersion>1.15.1</OpenTelemetryInstrumentationAspNetCoreVersion>
     <XUnitVersion>3.2.2</XUnitVersion>
@@ -18083,7 +18083,7 @@ function showShareError(shareBtn, message) {
 
 
 ===============================================================================
-EXPORT COMPLETED: Sat May 16 06:56:49 AM EDT 2026
+EXPORT COMPLETED: Sat May 16 06:58:12 AM EDT 2026
 Total Files Found: 130
 Files Exported: 130
 Files Skipped: 0 (binary or large files)
