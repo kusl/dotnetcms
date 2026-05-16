@@ -1,6 +1,6 @@
 ===============================================================================
 PROJECT EXPORT
-Generated: Sat May 16 06:53:00 AM EDT 2026
+Generated: Sat May 16 06:56:48 AM EDT 2026
 Project Path: /home/kushal/src/dotnet/MyBlog
 ===============================================================================
 
@@ -77,7 +77,8 @@ DIRECTORY STRUCTURE:
 │   │   │   ├── 0066.txt
 │   │   │   ├── 0067.txt
 │   │   │   ├── 0068.txt
-│   │   │   └── 0069.txt
+│   │   │   ├── 0069.txt
+│   │   │   └── 0070.txt
 │   │   ├── vendor
 │   │   │   └── gemini.md
 │   │   ├── chatgpt.md
@@ -3727,8 +3728,8 @@ MODIFIED: 2026-01-01 22:21:17
 
 ================================================================================
 FILE: src/Directory.Packages.props
-SIZE: 2.29 KB
-MODIFIED: 2026-05-16 06:52:29
+SIZE: 2.42 KB
+MODIFIED: 2026-05-16 06:56:03
 ================================================================================
 
 <Project>
@@ -3739,6 +3740,7 @@ MODIFIED: 2026-05-16 06:52:29
     <!-- Version variables -->
     <DotNetVersion>10.0.5</DotNetVersion>
     <OpenTelemetryVersion>1.16.0</OpenTelemetryVersion>
+    <OpenTelemetryExtensionVersion>1.15.3</OpenTelemetryExtensionVersion>
     <OpenTelemetryInstrumentationAspNetCoreVersion>1.15.1</OpenTelemetryInstrumentationAspNetCoreVersion>
     <XUnitVersion>3.2.2</XUnitVersion>
     <TestSdkVersion>18.3.0</TestSdkVersion>
@@ -3755,10 +3757,10 @@ MODIFIED: 2026-05-16 06:52:29
 
     <!-- OpenTelemetry -->
     <PackageVersion Include="OpenTelemetry" Version="$(OpenTelemetryVersion)" />
-    <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="$(OpenTelemetryVersion)" />
-    <PackageVersion Include="OpenTelemetry.Exporter.Console" Version="$(OpenTelemetryVersion)" />
-    <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="$(OpenTelemetryVersion)" />
-    <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="$(OpenTelemetryVersion)" />
+    <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="$(OpenTelemetryExtensionVersion)" />
+    <PackageVersion Include="OpenTelemetry.Exporter.Console" Version="$(OpenTelemetryExtensionVersion)" />
+    <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="$(OpenTelemetryExtensionVersion)" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="$(OpenTelemetryInstrumentationAspNetCoreVersion)" />
     <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="$(OpenTelemetryInstrumentationAspNetCoreVersion)" />
 
     <!-- Testing (xUnit v3) -->
@@ -18081,7 +18083,7 @@ function showShareError(shareBtn, message) {
 
 
 ===============================================================================
-EXPORT COMPLETED: Sat May 16 06:53:01 AM EDT 2026
+EXPORT COMPLETED: Sat May 16 06:56:49 AM EDT 2026
 Total Files Found: 130
 Files Exported: 130
 Files Skipped: 0 (binary or large files)
