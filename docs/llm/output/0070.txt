@@ -1,78 +1,133 @@
 kushal@fedora:~/src/dotnet/MyBlog$ cd ~/src/dotnet/MyBlog/ && export DOTNET_CLI_TELEMETRY_OPTOUT=1 && (cd src && time dotnet format; time dotnet restore; time dotnet clean; time dotnet build; time dotnet run --project MyBlog.Tests/MyBlog.Tests.csproj; time dotnet list package; time dotnet list package --outdated); cd ~/src/dotnet/MyBlog/; cat export.sh; time bash export.sh; cat run-e2e.sh; time bash run-e2e.sh;
-Unhandled exception: System.Exception: Restore operation failed.
-   at Microsoft.CodeAnalysis.Tools.CodeFormatter.OpenMSBuildWorkspaceAsync(String solutionOrProjectPath, WorkspaceType workspaceType, Boolean noRestore, Boolean requiresSemantics, String binaryLogPath, Boolean logWorkspaceWarnings, ILogger logger, CancellationToken cancellationToken)
-   at Microsoft.CodeAnalysis.Tools.CodeFormatter.FormatWorkspaceAsync(FormatOptions formatOptions, ILogger logger, CancellationToken cancellationToken, String binaryLogPath)
-   at Microsoft.CodeAnalysis.Tools.FormatCommandCommon.FormatAsync(FormatOptions formatOptions, ILogger`1 logger, CancellationToken cancellationToken)
-   at Microsoft.CodeAnalysis.Tools.Commands.RootFormatCommand.FormatCommandDefaultHandler.InvokeAsync(ParseResult parseResult, CancellationToken cancellationToken)
-   at System.CommandLine.Invocation.InvocationPipeline.InvokeAsync(ParseResult parseResult, CancellationToken cancellationToken)
 
-real	0m1.381s
-user	0m1.373s
-sys	0m0.322s
-    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/MyBlog.Tests.csproj : error NU1903: Warning As Error: Package 'System.Security.Cryptography.Xml' 8.0.2 has a known high severity vulnerability, https://github.com/advisories/GHSA-37gx-xxp4-5rgx
-    /home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/MyBlog.E2E.csproj : error NU1903: Warning As Error: Package 'System.Security.Cryptography.Xml' 8.0.2 has a known high severity vulnerability, https://github.com/advisories/GHSA-37gx-xxp4-5rgx
-    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Infrastructure/MyBlog.Infrastructure.csproj : error NU1903: Warning As Error: Package 'System.Security.Cryptography.Xml' 8.0.2 has a known high severity vulnerability, https://github.com/advisories/GHSA-37gx-xxp4-5rgx
-    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/MyBlog.Tests.csproj : error NU1903: Warning As Error: Package 'System.Security.Cryptography.Xml' 8.0.2 has a known high severity vulnerability, https://github.com/advisories/GHSA-w3x6-4m5h-cxqf
-    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Infrastructure/MyBlog.Infrastructure.csproj : error NU1903: Warning As Error: Package 'System.Security.Cryptography.Xml' 8.0.2 has a known high severity vulnerability, https://github.com/advisories/GHSA-w3x6-4m5h-cxqf
-    /home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/MyBlog.E2E.csproj : error NU1903: Warning As Error: Package 'System.Security.Cryptography.Xml' 8.0.2 has a known high severity vulnerability, https://github.com/advisories/GHSA-w3x6-4m5h-cxqf
+real	0m9.735s
+user	0m17.831s
+sys	0m1.233s
+Restore complete (0.5s)
 
-Restore failed with 6 error(s) in 0.8s
+Build succeeded in 0.6s
 
-real	0m0.965s
-user	0m1.205s
-sys	0m0.241s
+real	0m0.714s
+user	0m0.789s
+sys	0m0.172s
 
 Build succeeded in 0.5s
 
-real	0m0.691s
-user	0m0.726s
-sys	0m0.154s
-    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/MyBlog.Tests.csproj : error NU1903: Warning As Error: Package 'System.Security.Cryptography.Xml' 8.0.2 has a known high severity vulnerability, https://github.com/advisories/GHSA-37gx-xxp4-5rgx
-    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/MyBlog.Tests.csproj : error NU1903: Warning As Error: Package 'System.Security.Cryptography.Xml' 8.0.2 has a known high severity vulnerability, https://github.com/advisories/GHSA-w3x6-4m5h-cxqf
-    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Infrastructure/MyBlog.Infrastructure.csproj : error NU1903: Warning As Error: Package 'System.Security.Cryptography.Xml' 8.0.2 has a known high severity vulnerability, https://github.com/advisories/GHSA-37gx-xxp4-5rgx
-    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Infrastructure/MyBlog.Infrastructure.csproj : error NU1903: Warning As Error: Package 'System.Security.Cryptography.Xml' 8.0.2 has a known high severity vulnerability, https://github.com/advisories/GHSA-w3x6-4m5h-cxqf
-    /home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/MyBlog.E2E.csproj : error NU1903: Warning As Error: Package 'System.Security.Cryptography.Xml' 8.0.2 has a known high severity vulnerability, https://github.com/advisories/GHSA-37gx-xxp4-5rgx
-    /home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/MyBlog.E2E.csproj : error NU1903: Warning As Error: Package 'System.Security.Cryptography.Xml' 8.0.2 has a known high severity vulnerability, https://github.com/advisories/GHSA-w3x6-4m5h-cxqf
+real	0m0.641s
+user	0m0.692s
+sys	0m0.141s
+Restore complete (0.5s)
+  MyBlog.Core net10.0 succeeded (2.9s) → MyBlog.Core/bin/Debug/net10.0/MyBlog.Core.dll
+  MyBlog.Infrastructure net10.0 succeeded (0.5s) → MyBlog.Infrastructure/bin/Debug/net10.0/MyBlog.Infrastructure.dll
+  MyBlog.Web net10.0 succeeded (2.5s) → MyBlog.Web/bin/Debug/net10.0/MyBlog.Web.dll
+  MyBlog.E2E net10.0 succeeded (0.7s) → MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll
+  MyBlog.Tests net10.0 succeeded (0.8s) → MyBlog.Tests/bin/Debug/net10.0/MyBlog.Tests.dll
 
-Restore failed with 6 error(s) in 0.9s
+Build succeeded in 7.3s
 
-real	0m1.029s
-user	0m1.295s
-sys	0m0.232s
-/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/MyBlog.Tests.csproj : error NU1903: Warning As Error: Package 'System.Security.Cryptography.Xml' 8.0.2 has a known high severity vulnerability, https://github.com/advisories/GHSA-37gx-xxp4-5rgx
-/home/kushal/src/dotnet/MyBlog/src/MyBlog.Infrastructure/MyBlog.Infrastructure.csproj : error NU1903: Warning As Error: Package 'System.Security.Cryptography.Xml' 8.0.2 has a known high severity vulnerability, https://github.com/advisories/GHSA-37gx-xxp4-5rgx
-/home/kushal/src/dotnet/MyBlog/src/MyBlog.Infrastructure/MyBlog.Infrastructure.csproj : error NU1903: Warning As Error: Package 'System.Security.Cryptography.Xml' 8.0.2 has a known high severity vulnerability, https://github.com/advisories/GHSA-w3x6-4m5h-cxqf
-/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/MyBlog.Tests.csproj : error NU1903: Warning As Error: Package 'System.Security.Cryptography.Xml' 8.0.2 has a known high severity vulnerability, https://github.com/advisories/GHSA-w3x6-4m5h-cxqf
+real	0m7.407s
+user	0m2.504s
+sys	0m0.472s
+xUnit.net v3 In-Process Runner v3.2.2+728c1dce01 (64-bit .NET 10.0.7)
+  Discovering: MyBlog.Tests
+  Discovered:  MyBlog.Tests
+  Starting:    MyBlog.Tests
+  Finished:    MyBlog.Tests (ID = '24cedafe73dab5684218bb3cf04cfd49ae8ce3b87ae799399cb2e301cbc1e755')
+=== TEST EXECUTION SUMMARY ===
+   MyBlog.Tests  Total: 207, Errors: 0, Failed: 0, Skipped: 0, Not Run: 0, Time: 41.551s
 
-The build failed. Fix the build errors and run again.
+real	0m43.413s
+user	0m46.936s
+sys	0m0.695s
+Restore complete (0.5s)
 
-real	0m1.077s
-user	0m1.184s
-sys	0m0.198s
-    /home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/MyBlog.E2E.csproj : error NU1903: Warning As Error: Package 'System.Security.Cryptography.Xml' 8.0.2 has a known high severity vulnerability, https://github.com/advisories/GHSA-37gx-xxp4-5rgx
-    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/MyBlog.Tests.csproj : error NU1903: Warning As Error: Package 'System.Security.Cryptography.Xml' 8.0.2 has a known high severity vulnerability, https://github.com/advisories/GHSA-37gx-xxp4-5rgx
-    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Infrastructure/MyBlog.Infrastructure.csproj : error NU1903: Warning As Error: Package 'System.Security.Cryptography.Xml' 8.0.2 has a known high severity vulnerability, https://github.com/advisories/GHSA-37gx-xxp4-5rgx
-    /home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/MyBlog.E2E.csproj : error NU1903: Warning As Error: Package 'System.Security.Cryptography.Xml' 8.0.2 has a known high severity vulnerability, https://github.com/advisories/GHSA-w3x6-4m5h-cxqf
-    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/MyBlog.Tests.csproj : error NU1903: Warning As Error: Package 'System.Security.Cryptography.Xml' 8.0.2 has a known high severity vulnerability, https://github.com/advisories/GHSA-w3x6-4m5h-cxqf
-    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Infrastructure/MyBlog.Infrastructure.csproj : error NU1903: Warning As Error: Package 'System.Security.Cryptography.Xml' 8.0.2 has a known high severity vulnerability, https://github.com/advisories/GHSA-w3x6-4m5h-cxqf
+Build succeeded in 0.5s
+Project 'MyBlog.Core' has the following package references
+   [net10.0]: 
+   Top-level Package                   Requested   Resolved
+   > Microsoft.Extensions.Logging      10.0.5      10.0.5  
 
-Restore failed with 6 error(s) in 0.8s
+Project 'MyBlog.E2E' has the following package references
+   [net10.0]: 
+   Top-level Package             Requested   Resolved
+   > Microsoft.NET.Test.Sdk      18.3.0      18.3.0  
+   > Microsoft.Playwright        1.58.0      1.58.0  
+   > xunit.v3                    3.2.2       3.2.2   
 
-real	0m0.926s
-user	0m1.149s
-sys	0m0.215s
-    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/MyBlog.Tests.csproj : error NU1903: Warning As Error: Package 'System.Security.Cryptography.Xml' 8.0.2 has a known high severity vulnerability, https://github.com/advisories/GHSA-37gx-xxp4-5rgx
-    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Infrastructure/MyBlog.Infrastructure.csproj : error NU1903: Warning As Error: Package 'System.Security.Cryptography.Xml' 8.0.2 has a known high severity vulnerability, https://github.com/advisories/GHSA-37gx-xxp4-5rgx
-    /home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/MyBlog.E2E.csproj : error NU1903: Warning As Error: Package 'System.Security.Cryptography.Xml' 8.0.2 has a known high severity vulnerability, https://github.com/advisories/GHSA-37gx-xxp4-5rgx
-    /home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/MyBlog.E2E.csproj : error NU1903: Warning As Error: Package 'System.Security.Cryptography.Xml' 8.0.2 has a known high severity vulnerability, https://github.com/advisories/GHSA-w3x6-4m5h-cxqf
-    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Infrastructure/MyBlog.Infrastructure.csproj : error NU1903: Warning As Error: Package 'System.Security.Cryptography.Xml' 8.0.2 has a known high severity vulnerability, https://github.com/advisories/GHSA-w3x6-4m5h-cxqf
-    /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/MyBlog.Tests.csproj : error NU1903: Warning As Error: Package 'System.Security.Cryptography.Xml' 8.0.2 has a known high severity vulnerability, https://github.com/advisories/GHSA-w3x6-4m5h-cxqf
+Project 'MyBlog.Infrastructure' has the following package references
+   [net10.0]: 
+   Top-level Package                           Requested   Resolved
+   > Microsoft.AspNetCore.Identity             2.3.9       2.3.9   
+   > Microsoft.EntityFrameworkCore.Sqlite      10.0.5      10.0.5  
+   > Microsoft.Extensions.Http                 10.0.5      10.0.5  
+   > OpenTelemetry                             1.15.3      1.15.3  
 
-Restore failed with 6 error(s) in 0.8s
+Project 'MyBlog.Tests' has the following package references
+   [net10.0]: 
+   Top-level Package                             Requested   Resolved
+   > Microsoft.EntityFrameworkCore.Sqlite        10.0.5      10.0.5  
+   > Microsoft.NET.Test.Sdk                      18.3.0      18.3.0  
+   > Microsoft.Testing.Extensions.TrxReport      2.1.0       2.1.0   
+   > xunit.v3                                    3.2.2       3.2.2   
 
-real	0m0.966s
-user	0m1.199s
-sys	0m0.211s
+Project 'MyBlog.Web' has the following package references
+   [net10.0]: 
+   Top-level Package                                      Requested    Resolved
+   > Microsoft.AspNetCore.App.Internal.Assets       (A)   [10.0.7, )   10.0.7  
+   > Microsoft.AspNetCore.SignalR.Client                  10.0.5       10.0.5  
+   > OpenTelemetry.Exporter.Console                       1.15.3       1.15.3  
+   > OpenTelemetry.Exporter.OpenTelemetryProtocol         1.15.3       1.15.3  
+   > OpenTelemetry.Extensions.Hosting                     1.15.3       1.15.3  
+   > OpenTelemetry.Instrumentation.AspNetCore             1.15.1       1.15.1  
+   > OpenTelemetry.Instrumentation.Http                   1.15.1       1.15.1  
+
+(A) : Auto-referenced package.
+
+real	0m1.574s
+user	0m1.595s
+sys	0m0.399s
+Restore complete (0.4s)
+
+Build succeeded in 0.5s
+
+The following sources were used:
+   https://api.nuget.org/v3/index.json
+
+Project `MyBlog.Core` has the following updates to its packages
+   [net10.0]: 
+   Top-level Package                   Requested   Resolved   Latest
+   > Microsoft.Extensions.Logging      10.0.5      10.0.5     10.0.8
+
+Project `MyBlog.E2E` has the following updates to its packages
+   [net10.0]: 
+   Top-level Package             Requested   Resolved   Latest
+   > Microsoft.NET.Test.Sdk      18.3.0      18.3.0     18.5.1
+   > Microsoft.Playwright        1.58.0      1.58.0     1.59.0
+
+Project `MyBlog.Infrastructure` has the following updates to its packages
+   [net10.0]: 
+   Top-level Package                           Requested   Resolved   Latest
+   > Microsoft.AspNetCore.Identity             2.3.9       2.3.9      2.3.10
+   > Microsoft.EntityFrameworkCore.Sqlite      10.0.5      10.0.5     10.0.8
+   > Microsoft.Extensions.Http                 10.0.5      10.0.5     10.0.8
+
+Project `MyBlog.Tests` has the following updates to its packages
+   [net10.0]: 
+   Top-level Package                             Requested   Resolved   Latest
+   > Microsoft.EntityFrameworkCore.Sqlite        10.0.5      10.0.5     10.0.8
+   > Microsoft.NET.Test.Sdk                      18.3.0      18.3.0     18.5.1
+   > Microsoft.Testing.Extensions.TrxReport      2.1.0       2.1.0      2.2.3 
+
+Project `MyBlog.Web` has the following updates to its packages
+   [net10.0]: 
+   Top-level Package                               Requested   Resolved   Latest
+   > Microsoft.AspNetCore.SignalR.Client           10.0.5      10.0.5     10.0.8
+   > OpenTelemetry.Instrumentation.AspNetCore      1.15.1      1.15.1     1.15.2
+
+
+real	0m2.766s
+user	0m2.049s
+sys	0m0.420s
 #!/bin/bash
 # =============================================================================
 # Complete Project Export for LLM Analysis
@@ -487,7 +542,7 @@ Processing (130/130): src/MyBlog.Web/wwwroot/js/site.js
 Output file:    docs/llm/dump.txt
 Files exported: 130
 Files skipped:  0
-Output size:    567.82 KB
+Output size:    567.90 KB
 
 File types included:
   • Source code: .cs, .fs, .vb
@@ -501,9 +556,9 @@ File types included:
   • Other: .sql, .resx, Dockerfile, etc.
 
 
-real	0m1.330s
-user	0m0.777s
-sys	0m0.823s
+real	0m1.359s
+user	0m0.725s
+sys	0m0.900s
 #!/bin/bash
 # =============================================================================
 # Run E2E Tests with Podman Compose
@@ -663,23 +718,23 @@ exit $E2E_EXIT_CODE
 [INFO] Removing any leftover containers from previous runs...
 [INFO] Using cached container images (pass --build to force rebuild)...
 [INFO] Starting MyBlog web service...
-726e631f286e0e9aaed3d1290e96c609779495b39c00a64a33605168df614e38
-ed41d0e81a71803d825637c08d47e376a0646bab75050912f4e2f4a8a8235b59
+50fb51d3d719ca0c853f129b78245dcc44d488acb98c28217a7bd2db8a953b35
+86ee59e73d81b2ac16d7c32fb0e777eafc27b6523bc321004b47ab59e2f82182
 myblog-web
 [INFO] Waiting for MyBlog to be ready...
 .
 [INFO] MyBlog is ready!
 [INFO] Running E2E tests...
-d694b10f4c9fbe0f4378448341f08ff8bfba80a68753cea4118067359532c50b
-[myblog-web] | cannot open `/run/user/1000/crun/ed41d0e81a71803d825637c08d47e376a0646bab75050912f4e2f4a8a8235b59/exec.fifo`: No such file or directory
-[myblog-web] | Error: unable to start container ed41d0e81a71803d825637c08d47e376a0646bab75050912f4e2f4a8a8235b59: `/usr/bin/crun start ed41d0e81a71803d825637c08d47e376a0646bab75050912f4e2f4a8a8235b59` failed: exit status 1
+e9284fee835ff961e940f4d0435c6f76cc855665d9998e6990d6099be20782ba
+[myblog-web] | cannot open `/run/user/1000/crun/86ee59e73d81b2ac16d7c32fb0e777eafc27b6523bc321004b47ab59e2f82182/exec.fifo`: No such file or directory
+[myblog-web] | Error: unable to start container 86ee59e73d81b2ac16d7c32fb0e777eafc27b6523bc321004b47ab59e2f82182: `/usr/bin/crun start 86ee59e73d81b2ac16d7c32fb0e777eafc27b6523bc321004b47ab59e2f82182` failed: exit status 1
 [myblog-e2e] | xUnit.net v3 In-Process Runner v3.2.2+728c1dce01 (64-bit .NET 10.0.5)
 [myblog-e2e] |   Discovering: MyBlog.E2E
 [myblog-e2e] |   Discovered:  MyBlog.E2E
 [myblog-e2e] |   Starting:    MyBlog.E2E
 [myblog-e2e] |   Finished:    MyBlog.E2E (ID = '4d488734a9156ea8719a93bca3e9cb47dfeac4715a7981582060bf185a1e7bf4')
 [myblog-e2e] | === TEST EXECUTION SUMMARY ===
-[myblog-e2e] |    MyBlog.E2E  Total: 78, Errors: 0, Failed: 0, Skipped: 0, Not Run: 0, Time: 25.256s
+[myblog-e2e] |    MyBlog.E2E  Total: 78, Errors: 0, Failed: 0, Skipped: 0, Not Run: 0, Time: 25.657s
 [myblog-e2e] | 
 [INFO] Capturing logs...
 [INFO] Cleaning up...
@@ -688,11 +743,11 @@ myblog-web
 myblog-e2e
 myblog-web
 myblog_myblog-data
-726e631f286e0e9aaed3d1290e96c609779495b39c00a64a33605168df614e38
+50fb51d3d719ca0c853f129b78245dcc44d488acb98c28217a7bd2db8a953b35
 myblog_myblog-network
 [INFO] E2E tests passed! ✓
 
-real	0m34.221s
-user	0m1.895s
-sys	0m1.316s
+real	0m34.667s
+user	0m2.113s
+sys	0m1.234s
 kushal@fedora:~/src/dotnet/MyBlog$ 

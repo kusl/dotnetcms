@@ -1,6 +1,6 @@
 ===============================================================================
 PROJECT EXPORT
-Generated: Sat May 16 06:58:11 AM EDT 2026
+Generated: Sat May 16 07:00:19 AM EDT 2026
 Project Path: /home/kushal/src/dotnet/MyBlog
 ===============================================================================
 
@@ -3728,8 +3728,8 @@ MODIFIED: 2026-01-01 22:21:17
 
 ================================================================================
 FILE: src/Directory.Packages.props
-SIZE: 2.42 KB
-MODIFIED: 2026-05-16 06:57:38
+SIZE: 2.50 KB
+MODIFIED: 2026-05-16 06:58:51
 ================================================================================
 
 <Project>
@@ -3771,6 +3771,8 @@ MODIFIED: 2026-05-16 06:57:38
 
     <!-- E2E Testing (Playwright) -->
     <PackageVersion Include="Microsoft.Playwright" Version="1.58.0" />
+
+    <PackageVersion Include="System.Security.Cryptography.Xml" Version="8.0.3" />
   </ItemGroup>
 </Project>
 
@@ -18083,7 +18085,7 @@ function showShareError(shareBtn, message) {
 
 
 ===============================================================================
-EXPORT COMPLETED: Sat May 16 06:58:12 AM EDT 2026
+EXPORT COMPLETED: Sat May 16 07:00:20 AM EDT 2026
 Total Files Found: 130
 Files Exported: 130
 Files Skipped: 0 (binary or large files)
