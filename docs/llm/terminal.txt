@@ -1,0 +1,112 @@
+kushal@fedora:~/src/dotnet/MyBlog$ mylogpath="/home/kushal/src/dotnet/MyBlog/docs/llm/output/$(date +%Y-%m-%d-%H-%M-%S).txt";cd ~/src/dotnet/MyBlog/ && pwd > ${mylogpath} && export DOTNET_CLI_TELEMETRY_OPTOUT=1 && (cd src && time dotnet format >> ${mylogpath}; time dotnet restore >> ${mylogpath}; time dotnet clean >> ${mylogpath}; time dotnet build >> ${mylogpath}; time dotnet run --project MyBlog.Tests/MyBlog.Tests.csproj >> ${mylogpath}; time dotnet list package >> ${mylogpath}; time dotnet list package --outdated >> ${mylogpath}); cd ~/src/dotnet/MyBlog/ >> ${mylogpath}; cat export.sh >> ${mylogpath}; time bash export.sh >> ${mylogpath}; cat run-e2e.sh >> ${mylogpath}; time bash run-e2e.sh >> ${mylogpath};
+Unhandled exception: System.Exception: Restore operation failed.
+   at Microsoft.CodeAnalysis.Tools.CodeFormatter.OpenMSBuildWorkspaceAsync(String solutionOrProjectPath, WorkspaceType workspaceType, Boolean noRestore, Boolean requiresSemantics, String binaryLogPath, Boolean logWorkspaceWarnings, ILogger logger, CancellationToken cancellationToken)
+   at Microsoft.CodeAnalysis.Tools.CodeFormatter.FormatWorkspaceAsync(FormatOptions formatOptions, ILogger logger, CancellationToken cancellationToken, String binaryLogPath)
+   at Microsoft.CodeAnalysis.Tools.FormatCommandCommon.FormatAsync(FormatOptions formatOptions, ILogger`1 logger, CancellationToken cancellationToken)
+   at Microsoft.CodeAnalysis.Tools.Commands.RootFormatCommand.FormatCommandDefaultHandler.InvokeAsync(ParseResult parseResult, CancellationToken cancellationToken)
+   at System.CommandLine.Invocation.InvocationPipeline.InvokeAsync(ParseResult parseResult, CancellationToken cancellationToken)
+
+real	0m1.401s
+user	0m1.415s
+sys	0m0.270s
+
+real	0m0.940s
+user	0m1.231s
+sys	0m0.222s
+
+real	0m0.680s
+user	0m0.712s
+sys	0m0.158s
+
+real	0m1.023s
+user	0m1.324s
+sys	0m0.252s
+
+The build failed. Fix the build errors and run again.
+
+real	0m1.113s
+user	0m1.282s
+sys	0m0.210s
+
+real	0m0.980s
+user	0m1.253s
+sys	0m0.256s
+
+real	0m0.983s
+user	0m1.283s
+sys	0m0.224s
+
+real	0m4.307s
+user	0m2.115s
+sys	0m2.723s
+
+real	0m34.558s
+user	0m2.305s
+sys	0m1.506s
+kushal@fedora:~/src/dotnet/MyBlog$ cd ~/src/dotnet/MyBlog/; time bash run.sh 
+run.sh: repository root: /home/kushal/src/dotnet/MyBlog
+run.sh: logging to     : /home/kushal/src/dotnet/MyBlog/docs/llm/output/2026-07-11-06-42-33.txt
+[01] dotnet --info ...
+[01] dotnet --info -> ok (0.153s)
+[02] dotnet --version ...
+[02] dotnet --version -> ok (0.088s)
+[03] dotnet --list-sdks ...
+[03] dotnet --list-sdks -> ok (0.002s)
+[04] dotnet --list-runtimes ...
+[04] dotnet --list-runtimes -> ok (0.002s)
+[05] git status ...
+[05] git status -> ok (0.004s)
+[06] git log (recent) ...
+[06] git log (recent) -> ok (0.002s)
+[07] podman --version ...
+[07] podman --version -> ok (0.018s)
+[08] podman-compose --version ...
+[08] podman-compose --version -> ok (0.106s)
+[09] dotnet format ...
+[09] dotnet format -> FAILED (exit 1, 1.109s)
+[10] dotnet restore ...
+[10] dotnet restore -> FAILED (exit 1, 0.920s)
+[11] dotnet clean ...
+[11] dotnet clean -> ok (0.633s)
+[12] dotnet build ...
+[12] dotnet build -> FAILED (exit 1, 0.960s)
+[13] dotnet run (MyBlog.Tests) ...
+[13] dotnet run (MyBlog.Tests) -> FAILED (exit 1, 0.987s)
+[14] dotnet list package ...
+[14] dotnet list package -> FAILED (exit 1, 0.917s)
+[15] dotnet list package --outdated ...
+[15] dotnet list package --outdated -> FAILED (exit 1, 0.913s)
+[16] export.sh (repository dump) ...
+[16] export.sh (repository dump) -> ok (4.361s)
+[17] run-e2e.sh (Playwright E2E) ...
+[17] run-e2e.sh (Playwright E2E) -> ok (34.494s)
+
+###############################################################################
+# SUMMARY
+###############################################################################
+  [PASS] dotnet --info                            exit=0    0.153s
+  [PASS] dotnet --version                         exit=0    0.088s
+  [PASS] dotnet --list-sdks                       exit=0    0.002s
+  [PASS] dotnet --list-runtimes                   exit=0    0.002s
+  [PASS] git status                               exit=0    0.004s
+  [PASS] git log (recent)                         exit=0    0.002s
+  [PASS] podman --version                         exit=0    0.018s
+  [PASS] podman-compose --version                 exit=0    0.106s
+  [FAIL] dotnet format                            exit=1    1.109s
+  [FAIL] dotnet restore                           exit=1    0.920s
+  [PASS] dotnet clean                             exit=0    0.633s
+  [FAIL] dotnet build                             exit=1    0.960s
+  [FAIL] dotnet run (MyBlog.Tests)                exit=1    0.987s
+  [FAIL] dotnet list package                      exit=1    0.917s
+  [FAIL] dotnet list package --outdated           exit=1    0.913s
+  [PASS] export.sh (repository dump)              exit=0    4.361s
+  [PASS] run-e2e.sh (Playwright E2E)              exit=0    34.494s
+  ---------------------------------------------------------------------------
+  Steps: 17    Failures: 6
+  Finished: 2026-07-11T06:43:19-04:00
+  Log file: /home/kushal/src/dotnet/MyBlog/docs/llm/output/2026-07-11-06-42-33.txt
+
+real	0m45.765s
+user	0m12.343s
+sys	0m5.956s
+kushal@fedora:~/src/dotnet/MyBlog$ 
