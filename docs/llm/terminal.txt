@@ -64,4 +64,70 @@ run.sh: logging to     : /home/kushal/src/dotnet/MyBlog/docs/llm/output/2026-07-
 real	0m46.415s
 user	0m13.267s
 sys	0m5.845s
+kushal@fedora:~/src/dotnet/MyBlog$ cd ~/src/dotnet/MyBlog/; time bash run.sh
+run.sh: repository root: /home/kushal/src/dotnet/MyBlog
+run.sh: logging to     : /home/kushal/src/dotnet/MyBlog/docs/llm/output/2026-07-11-07-05-50.txt
+[01] dotnet --info ...
+[01] dotnet --info -> ok (0.155s)
+[02] dotnet --version ...
+[02] dotnet --version -> ok (0.092s)
+[03] dotnet --list-sdks ...
+[03] dotnet --list-sdks -> ok (0.003s)
+[04] dotnet --list-runtimes ...
+[04] dotnet --list-runtimes -> ok (0.002s)
+[05] git status ...
+[05] git status -> ok (0.004s)
+[06] git log (recent) ...
+[06] git log (recent) -> ok (0.002s)
+[07] podman --version ...
+[07] podman --version -> ok (0.019s)
+[08] podman-compose --version ...
+[08] podman-compose --version -> ok (0.109s)
+[09] dotnet format ...
+[09] dotnet format -> ok (10.536s)
+[10] dotnet restore ...
+[10] dotnet restore -> ok (0.754s)
+[11] dotnet clean ...
+[11] dotnet clean -> ok (0.698s)
+[12] dotnet build ...
+[12] dotnet build -> ok (8.024s)
+[13] dotnet run (MyBlog.Tests) ...
+[13] dotnet run (MyBlog.Tests) -> ok (45.609s)
+[14] dotnet list package ...
+[14] dotnet list package -> ok (1.610s)
+[15] dotnet list package --outdated ...
+[15] dotnet list package --outdated -> ok (3.292s)
+[16] export.sh (repository dump) ...
+[16] export.sh (repository dump) -> ok (4.359s)
+[17] run-e2e.sh (Playwright E2E) ...
+[17] run-e2e.sh (Playwright E2E) -> ok (35.413s)
+
+###############################################################################
+# SUMMARY
+###############################################################################
+  [PASS] dotnet --info                            exit=0    0.155s
+  [PASS] dotnet --version                         exit=0    0.092s
+  [PASS] dotnet --list-sdks                       exit=0    0.003s
+  [PASS] dotnet --list-runtimes                   exit=0    0.002s
+  [PASS] git status                               exit=0    0.004s
+  [PASS] git log (recent)                         exit=0    0.002s
+  [PASS] podman --version                         exit=0    0.019s
+  [PASS] podman-compose --version                 exit=0    0.109s
+  [PASS] dotnet format                            exit=0    10.536s
+  [PASS] dotnet restore                           exit=0    0.754s
+  [PASS] dotnet clean                             exit=0    0.698s
+  [PASS] dotnet build                             exit=0    8.024s
+  [PASS] dotnet run (MyBlog.Tests)                exit=0    45.609s
+  [PASS] dotnet list package                      exit=0    1.610s
+  [PASS] dotnet list package --outdated           exit=0    3.292s
+  [PASS] export.sh (repository dump)              exit=0    4.359s
+  [PASS] run-e2e.sh (Playwright E2E)              exit=0    35.413s
+  ---------------------------------------------------------------------------
+  Steps: 17    Failures: 0
+  Finished: 2026-07-11T07:07:40-04:00
+  Log file: /home/kushal/src/dotnet/MyBlog/docs/llm/output/2026-07-11-07-05-50.txt
+
+real	1m50.772s
+user	1m21.908s
+sys	0m8.417s
 kushal@fedora:~/src/dotnet/MyBlog$ 
