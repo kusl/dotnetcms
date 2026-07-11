@@ -6,6 +6,18 @@
     <MicrosoftPackagesVersion>10.0.8</MicrosoftPackagesVersion>
     <MicrosoftIdentityVersion>2.3.10</MicrosoftIdentityVersion>
 
+    <!-- Transitive security pin. Microsoft.EntityFrameworkCore.Sqlite pulls in the native
+         SQLite library through SQLitePCLRaw. The 2.x bundle references
+         SQLitePCLRaw.lib.e_sqlite3 <= 2.1.11, which bundles a SQLite build affected by
+         CVE-2025-6965 / GHSA-2m69-gcr7-jv3q (fixed in SQLite 3.50.2) and has no patched
+         2.x release. SQLitePCLRaw 3.0 renamed that package to SourceGear.sqlite3; the 3.0
+         bundle instead references SourceGear.sqlite3 (SQLite >= 3.50.4) plus
+         SQLitePCLRaw.config.e_sqlite3, removing the vulnerable package from the graph.
+         Bumping the bundle is the upgrade path documented by both the SQLitePCLRaw 3.0
+         release notes and the EF Core docs ("no changes are required, just update the
+         version number"). See the matching PackageVersion below. -->
+    <SQLitePCLRawBundleVersion>3.0.3</SQLitePCLRawBundleVersion>
+
     <OpenTelemetryVersion>1.15.3</OpenTelemetryVersion>
     <OtelAspNetCoreInstrVersion>1.15.2</OtelAspNetCoreInstrVersion>
     <OtelHttpInstrVersion>1.15.1</OtelHttpInstrVersion>
@@ -27,6 +39,11 @@
     <PackageVersion Include="Microsoft.Extensions.Http" Version="$(MicrosoftPackagesVersion)" />
     <PackageVersion Include="Microsoft.Extensions.Logging" Version="$(MicrosoftPackagesVersion)" />
     <PackageVersion Include="Microsoft.AspNetCore.Identity" Version="$(MicrosoftIdentityVersion)" />
+
+    <!-- Not referenced directly by any project. Pinned transitively (via
+         CentralPackageTransitivePinningEnabled) so the vulnerable SQLitePCLRaw.lib.e_sqlite3
+         2.1.11 stays out of the dependency graph. See the PropertyGroup comment above. -->
+    <PackageVersion Include="SQLitePCLRaw.bundle_e_sqlite3" Version="$(SQLitePCLRawBundleVersion)" />
 
     <PackageVersion Include="OpenTelemetry" Version="$(OpenTelemetryVersion)" />
     <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="$(OpenTelemetryVersion)" />
