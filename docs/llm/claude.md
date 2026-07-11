@@ -1998,3 +1998,198 @@ Claude is AI and can make mistakes. Please double-check cited sources.
 
 
 
+49
+97
+100
+
+I recently learned about the concept of ADR 
+Architectural Decision Records
+Please go through all our old conversations and generate ALL the ADR you can
+in order preferably with actual dates but if not today's date is ok as well 
+as you go through the old conversations, take a look at the dump as well 
+is there somewhere we are not following SOLID principles? 
+somewhere we are taking shortcuts not doing the right thing? 
+Some things are deliberate for example the `ChangeMe` password thing is deliberate
+Lets document that as well not just the what but the why and how 
+if necessary please fix any code or documentation / README file as necessary 
+
+more info on adr 
+Motivation and Definitions
+
+An Architectural Decision (AD) is a justified design choice that addresses a functional or non-functional requirement that is architecturally significant. An Architecturally Significant Requirement (ASR) is a requirement that has a measurable effect on the architecture and quality of a software and/or hardware system. An Architectural Decision Record (ADR) captures a single AD and its rationale; Put it simply, ADR can help you understand the reasons for a chosen architectural decision, along with its trade-offs and consequences. The collection of ADRs created and maintained in a project constitute its decision log. All these are within the topic of Architectural Knowledge Management (AKM), but ADR usage can be extended to design and other decisions (“any decision record”).
+
+The aim of the GitHub adr organization is to:
+
+    Motivate the need for and benefits of AD capturing and establish a common vocabulary.
+    Strengthen the tooling around ADRs, in support of agile practices as well as iterative and incremental engineering processes.
+    Provide pointers to public knowledge in the context of AKM and ADRs.
+
+ADRs in the Media
+
+    (in German) Architekturentscheidungen sichtbar und nachvollziehbar gestalten at JavaLand 2026 (2026-03-10).
+    The Azure Well-Architected Framework features ADRs and this website (2024-11-10).
+    Love Unrequited: The Story of Architecture, Agile, and How Architecture Decision Records Brought Them Together, Michael Keeling in the Pragmatic Designer column of IEEE Software Vol. 39 Issue 4 (2022) (PDF)
+    Architectural decision capturing is positioned as one of the essential activities in Design Practice Reference, a LeanPub e-Book.
+    Chapter 3 of “Patterns for API Design: Simplifying Integration with Loosely Coupled Message Exchanges” in the Addison Wesley Signature Series at Pearson features six narratives guiding through the conceptual level of API design: 29 recurring decisions with options and criteria. Learn more in this blog post.
+    (in German) Gut dokumentiert: Architecture Decision Records by @obfischer published at heise online.
+
+Background Information
+
+The work in the adr organization is based on the guidelines and principles in Sustainable Architectural Decisions by Zdun et al., for instance the Y-statement format suggested in that article.
+
+More general background information and ADR guidance is available:
+
+    A comparison of seven templates can be found in “Architectural Decision Guidance Across Projects — Problem Space Modeling, Decision Backlog Management and Cloud Computing Knowledge”, a WICSA 2015 conference paper.
+    Architectural Decisions — The Making Of provides a history on architecture decision recording since the late 1990, as well as examples and guidance for providing decision rationale.
+    Documenting Architecture Decisions is the blog post from 2011 by Michael Nygard that popularized the concept.
+    Architectural Decision Records (ADR): Open & Transparent Decision History is a practice in the Open Practice Library.
+    An AWS Prescriptive Guidance recommends using architectural decision records to streamline technical decision-making for a software development project.
+    Architecture Decision Records in Action by Michael Keeling (IBM Watson Group) and Joe Runde (IBM) [YouTube] is a presentation that includes empirical numbers.
+    ADRs and Architecture Stories is part of a video series by Mark Richards explaining ADRs, starting from Nygard’s template.
+    Additional pointers and resources can be found on the web page Architectural Knowledge Management (AKM).
+AD Practices
+Posted Oct 26, 2024 Updated May 11, 2026
+By adr.github.io
+1 min read
+
+    The lists on this page point at ADR capturing practices and related advice but do not necessarily endorse all of them.
+
+Timing Architectural Decisions, a presentation given at the annual Swedish IT architect conference ITARC features many of the practices collected on this page.
+AD Making
+
+The Design Practice Repository (DPR) on GitHub and the DPR e-Book on LeanPub feature AD making and capturing as an essential design activity (Mirko Stocker and Olaf Zimmermann, 2021-2024).
+
+Decision-making ADRs: weightings are a work-around is a blog post by Jacqui Read that offers some tips on how to make better architectural decisions (2024). Example: “normalise your criteria DOWN to the same level of abstraction”.
+
+Things can go wrong. The blog post Seven Architectural Decision Making Fallacies (and Ways Around Them) identifies decision making habits with room for improvement (Olaf Zimmermann, 2025).
+Good ADRs — and How to Get to Them
+Authored by one or more of the maintainers of adr.github.io/ and the MADR project/template
+
+    Definition of Ready for Architectural Decisions, suggesting five criteria abbreviated as START.
+    Architectural Significance Test and Some Core Decisions
+    How to create ADRs — and how not to collects good practices and anti-patterns.
+    The Markdown ADR (MADR) Template Explained and Distilled
+    A Definition of Done for Architectural Decision Making proposes five criteria and a checklist to decide when it is time to set the status of a single decision to “done”: evidence, criteria and alternatives, agreement, documentation, and realization/review plan. Here, we focus on the ‘D’ in ecADR.
+    Context, background and examples of good and bad justifications can be found in this blog post.
+    How to review ADRs — and how not to has good practices, anti-patterns, review check list
+    An Adoption Model for Architectural Decision Making and Capturing
+
+Most of the material referenced above is also available on Medium.
+Third-party articles
+
+    Documenting Architecture Decisions, blog post by Fabian Kleiser
+    More will be featured in future versions of this page, suggestions are welcome!
+    to be continued
+
+From Architectural Decisions to Design/Any Decisions
+
+From Architectural Decisions to Design Decisions and ADR = Any Decision Record? are two blog posts proposing to extend the scope of ADRs.
+ADR Templates
+Posted Oct 24, 2024 Updated Jul 7, 2026
+By adr.github.io
+2 min read
+
+The following UML class diagram shows that many templates for ADR capturing exist, including (but not limited to) MADR, Nygardian ADRs, and Y-Statements:
+
+«abstract»
+ADR
+MADR
+NygardADR
+Y-Statement
+OtherADRTemplate
+
+Markdown Architectural Decision Records (MADR)
+
+MADR is about architectural decisions that matter ([ˈmæɾɚ]). Olaf Zimmermann’s MADR Template Primer covers it in more depth. You can use MADR without installing software by populating the template in any text editor. Additionally, a VS Code extension is available, though it may be outdated and lack support for the latest features. Other tools are also available.
+
+MADR provides a full and a minimal template, both of which now come in an annotated and a bare format. The rationale for this decision is documented in the template decisions.
+
+We think that the considered options with their pros and cons are crucial to understand the reasons for choosing a particular design. Therefore, the Markdown Architectural Decision Records (MADR) project in this organization includes such tradeoff analysis information. It also suggests metadata such as decision makers and confirmation in addition to decision status.
+Nygard ADR
+
+An ADR consists of title, status, context, decision, and consequences according to “Documenting Architecture Decisions” by @mtnygard.
+
+The original blog post from 2011 suggests this structure, and a Markdown rendering is also available.
+Y-Statement
+
+In short, the Y-statement is as follows:
+
+    In the context of <use case/user story>, facing <concern> we decided for <option> to achieve <quality>, accepting <downside>.
+
+The long form of it is as follows (extra section “because”):
+
+    In the context of <use case/user story>, facing <concern>, we decided for <option> and neglected <other options>, to achieve <system qualities/desired consequences>, accepting <downside/undesired consequences>, because <additional rationale>.
+
+cards42 has adopted the Y-statement template in its German ADR card; the English version is similar, but adds state information. Finally, you can find more explanations and examples on Medium: Y-Statements - A Light Template for Architectural Decision Capturing.
+Other ADR templates
+
+Numerous other ADR formats exist, many of which are also featured in @joelparkerhenderson’s GitHub repository.
+
+The template for ISO/IEC/IEEE 42010:2011, the international standard for architecture descriptions of systems and software engineering, suggests nine information items for ADRs its Appendix A. It also identifies areas to consider when identifying key decisions.
+Decision Capturing Tools
+Posted Oct 27, 2024 Updated Jul 7, 2026
+By adr.github.io
+2 min read
+
+    The following lists are rather inclusive and sorted alphabetically. Please find out about the status and the maturity of the list entries for yourself by following the links.
+
+Tooling to create and maintain decision files
+Any template
+
+    ADG (Architectural Decision Guidance), a command-line tool written in Go for modeling, managing, and reusing architectural decisions in a lightweight and structured way (step-by-step usage example in this Medium story). Template options: Nygard, MADR (basic), QOC.
+    dotnet-adr - A cross platform .NET Global Tool for creating and managing Architectural Decision Records (ADR).
+    ReflectRally, a collaborative web-based application for creating, discussing and maintaining Architectural Decision Records with structured workflows, ownership and review processes.
+    adr.zone, a web-based ADR generator with multi-format support (Nygard, MADR, Y-Statement, ISO/IEC/IEEE 42010-inspired), examples, and a simple API for generating Architecture Decision Records.
+
+MADR template
+Name	MADR Version	Comment
+adr-log	2.1.2	CLI to keep an index.md file updated with all ADRs
+ADR Manager	2.1.2	Web-based UI connecting to GitHub to directly edit ADRs in a form-based way
+ADR Manager VS Code Extension	2.1.2	Visual Studio Code (VS Code) extension
+Backstage ADR plugin	2.1.2 and 3.x	plugin to explore and search ADRs within a backstage based developer portal. Search at scale across multiple orgs/repos
+Hugo Markdown ADR Tools	2.1.2.	CLI to create and update ADRs
+Log4brains	2.1.2 without numbers in the filename	Supports both nice rendering of ADRs and creation of ADRs in a command line.
+pyadr	2.1.2	CLI to help with an ADR process lifecycle (proposal/acceptance/rejection/deprecation/superseding)
+Nygard template
+
+    adr-tools - bash scripts to manage ADRs in the Nygard format. example.
+        Ansible script to install adr-tools: ansible-adr-tools
+        C# rewrite: adr-cli
+        Go rewrite: adr
+        Java rewrite: adr-j
+        ESM Node.js port: adr-tools
+        Node.js rewrite: adr
+        PHP version: phpadr
+        Powershell module: adr-ps
+        Python rewrite: adr-tools-python
+        Python rewrite: ADR-py
+        Another Powershell module: ArchitectureDecisionRecords
+        Rust rewrite: adrs
+    adr-viewer - python application to generate a website from a set of ADRs.
+    architectural-decision: PHP library to create ADRs using PHP8 Attributes.
+    Loqbooq: Commercial Web App with Slack integration to record ADR-inspired decision logs
+    Talo: CLI (and dotnet tool) to manage and export ADRs, RFCs and custom software design document types.
+
+Renderings
+
+    adr-viewer - renders ADRs in a web page
+
+Tooling close to the code
+
+    (Java) Embedded Architectural Decision Records, which shows how a distributed AD log can be embedded in Java Code via ADR annotations.
+
+Tooling related to architecture management
+
+    ArchUnit: unit tests for architecture
+    docToolchain: docToolchain is an implementation of the docs-as-code approach for software architecture plus some additional automation.
+    Structurizr: Structurizr is a collection of tooling to help you visualise, document and explore your software architecture using the C4 model.
+
+Interesting, but unmaintained tooling
+
+    adr-log: Generates an architectural decision log out of MADRs.
+    ADMentor Architectural Decision Modeling Add-In for Sparx Enterprise Architect
+    eadlsync: Synchronizes embedded architectural decision records with a repository of architectural decisions.
+    SE Repo: Software Engineering Repository. A repository for versioning software engineering artifacts, which can be architectural decisions, patterns, and others.
+
+adr
+This post is licensed under CC BY 4.0 by the author.
