@@ -2,6 +2,7 @@
 @page "/admin/posts/edit/{Id:guid}"
 @rendermode InteractiveServer
 @attribute [Authorize]
+@implements IDisposable
 @inject IPostRepository PostRepository
 @inject ISlugService SlugService
 @inject NavigationManager Navigation
@@ -26,19 +27,29 @@ else
 {
     <div class="post-editor">
         <div class="editor-form">
+            @if (!_interactive)
+            {
+                <div class="editor-status" role="status">
+                    Connecting to the server. Please wait before typing or pasting.
+                </div>
+            }
+
             <div class="form-group">
                 <label for="title">Title</label>
-                <input type="text" id="title" @bind="_title" @bind:event="oninput" placeholder="Enter post title..." />
+                <input type="text" id="title" @bind="_title" @bind:event="oninput" readonly="@(!_interactive)" placeholder="Enter post title..." />
+                <small class="char-count">@_title.Length characters received by the server</small>
             </div>
 
             <div class="form-group">
                 <label for="summary">Summary</label>
-                <textarea id="summary" @bind="_summary" rows="2" placeholder="Brief description for listings..."></textarea>
+                <textarea id="summary" @bind="_summary" @bind:event="oninput" readonly="@(!_interactive)" rows="2" placeholder="Brief description for listings..."></textarea>
+                <small class="char-count">@_summary.Length characters received by the server</small>
             </div>
 
             <div class="form-group">
                 <label for="content">Content (Markdown)</label>
-                <textarea id="content" @bind="_content" rows="15" placeholder="Write your post content in Markdown..."></textarea>
+                <textarea id="content" @bind="_content" @bind:event="oninput" @bind:after="SchedulePreviewRefresh" readonly="@(!_interactive)" rows="15" placeholder="Write your post content in Markdown..."></textarea>
+                <small class="char-count">@_content.Length characters received by the server</small>
             </div>
 
             <div class="form-group checkbox">
@@ -54,7 +65,7 @@ else
             }
 
             <div class="form-actions">
-                <button @onclick="Save" class="btn btn-primary" disabled="@_saving">
+                <button @onclick="Save" class="btn btn-primary" disabled="@(_saving || !_interactive)">
                     @(_saving ? "Saving..." : "Save")
                 </button>
                 <a href="/admin/posts" class="btn">Cancel</a>
@@ -64,25 +75,42 @@ else
         <div class="editor-preview">
             <h3>Preview</h3>
             <div class="preview-content">
-                <MarkdownRenderer Content="@_content" />
+                <MarkdownRenderer Content="@_previewContent" />
             </div>
         </div>
     </div>
 }
 
 @code {
+    /// <summary>
+    /// How long to wait after the last keystroke before re-rendering the Markdown
+    /// preview. Without this, binding on "oninput" would re-parse the whole document
+    /// and push a full preview diff down the circuit on every single keypress.
+    /// </summary>
+    private const int PreviewDebounceMilliseconds = 500;
+
     [Parameter]
     public Guid? Id { get; set; }
 
     private bool IsEdit => Id.HasValue;
     private bool _loading = true;
     private bool _saving;
+
+    /// <summary>
+    /// False until the first interactive render completes. OnAfterRender does not run
+    /// during prerendering, so this is the reliable signal that the circuit is live and
+    /// that input events will actually reach the server.
+    /// </summary>
+    private bool _interactive;
+
     private string _title = "";
     private string _summary = "";
     private string _content = "";
+    private string _previewContent = "";
     private bool _isPublished = true; // Default to published for new posts
     private string? _error;
     private Post? _existingPost;
+    private System.Threading.Timer? _previewTimer;
 
     protected override async Task OnInitializedAsync()
     {
@@ -94,6 +122,7 @@ else
                 _title = _existingPost.Title;
                 _summary = _existingPost.Summary;
                 _content = _existingPost.Content;
+                _previewContent = _existingPost.Content;
                 _isPublished = _existingPost.IsPublished;
             }
         }
@@ -101,11 +130,61 @@ else
         _loading = false;
     }
 
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender && !_interactive)
+        {
+            _interactive = true;
+            StateHasChanged();
+        }
+    }
+
+    /// <summary>
+    /// Restarts the preview debounce timer. Called by @bind:after on the content
+    /// textarea, so it runs after _content has already been updated on the server.
+    /// </summary>
+    private void SchedulePreviewRefresh()
+    {
+        _previewTimer ??= new System.Threading.Timer(_ => RefreshPreview(), null, Timeout.Infinite, Timeout.Infinite);
+        _previewTimer.Change(PreviewDebounceMilliseconds, Timeout.Infinite);
+    }
+
+    private void RefreshPreview()
+    {
+        try
+        {
+            _ = InvokeAsync(() =>
+            {
+                _previewContent = _content;
+                StateHasChanged();
+            });
+        }
+        catch (ObjectDisposedException)
+        {
+            // The circuit was torn down before the debounce elapsed. Nothing to render.
+        }
+    }
+
     private async Task Save()
     {
+        // Guard against saving while the circuit is not yet live. Without this, the
+        // fields on screen can be newer than the fields on the server, and the save
+        // would silently write back stale values.
+        if (!_interactive)
+        {
+            _error = "The editor is still connecting. Please wait a moment and try again.";
+            return;
+        }
+
         if (string.IsNullOrWhiteSpace(_title))
         {
             _error = "Title is required.";
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(_content))
+        {
+            _error = "Content is required.";
             return;
         }
 
@@ -166,7 +245,9 @@ else
                 }
 
                 await PostRepository.UpdateAsync(_existingPost);
-                Logger.LogInformation("Post updated: {PostId} by user {UserId}", _existingPost.Id, authorId);
+                Logger.LogInformation(
+                    "Post updated: {PostId} by user {UserId} ({ContentLength} content characters)",
+                    _existingPost.Id, authorId, _content.Length);
             }
             else
             {
@@ -198,7 +279,9 @@ else
                     PublishedAtUtc = _isPublished ? DateTime.UtcNow : null
                 };
                 await PostRepository.CreateAsync(post);
-                Logger.LogInformation("Post created: {PostId} by user {UserId}", post.Id, authorId);
+                Logger.LogInformation(
+                    "Post created: {PostId} by user {UserId} ({ContentLength} content characters)",
+                    post.Id, authorId, _content.Length);
             }
 
             Navigation.NavigateTo("/admin/posts");
@@ -217,4 +300,6 @@ else
             _saving = false;
         }
     }
+
+    public void Dispose() => _previewTimer?.Dispose();
 }

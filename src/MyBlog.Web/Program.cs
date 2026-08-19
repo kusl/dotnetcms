@@ -17,11 +17,28 @@ using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// The Blazor circuit hub inherits SignalR's default MaximumReceiveMessageSize of
+// 32 KB (HubOptionsSetup.DefaultMaximumMessageSize). Any single inbound message
+// larger than that causes SignalR to abort the connection, which tears down the
+// circuit. Because @bind on a <textarea> sends the whole textarea value in one
+// message, a long Markdown post silently kills the editor instead of saving.
+var maxCircuitMessageBytes = builder.Configuration.GetValue(
+    "Blazor:MaximumReceiveMessageSizeBytes", 1024 * 1024);
+
 // Add services
 builder.Services.AddRazorComponents()
-    .AddInteractiveServerComponents();
+    .AddInteractiveServerComponents(options =>
+    {
+        options.DetailedErrors = builder.Environment.IsDevelopment();
+    })
+    .AddHubOptions(options =>
+    {
+        options.MaximumReceiveMessageSize = maxCircuitMessageBytes;
+    });
 
-// Register SignalR
+// Register SignalR. Deliberately left at the default 32 KB receive limit:
+// ReaderHub only ever receives post slugs, so it does not need a larger budget.
 builder.Services.AddSignalR();
 
 builder.Services.AddInfrastructure(builder.Configuration);

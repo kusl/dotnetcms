@@ -9,6 +9,21 @@
     public string? Content { get; set; }
 
     private string _htmlContent = "";
+    private string? _parsedContent;
 
-    protected override async Task OnParametersSetAsync() => _htmlContent = await MarkdownService.ToHtmlAsync(Content ?? "");
+    protected override async Task OnParametersSetAsync()
+    {
+        var content = Content ?? "";
+
+        // OnParametersSetAsync runs on every parent render, not only when Content
+        // actually changes. Re-parsing a long document on every keystroke in the
+        // editor is pure waste, so skip the parse when the input is unchanged.
+        if (_parsedContent is not null && string.Equals(_parsedContent, content, StringComparison.Ordinal))
+        {
+            return;
+        }
+
+        _htmlContent = await MarkdownService.ToHtmlAsync(content);
+        _parsedContent = content;
+    }
 }
