@@ -27,7 +27,7 @@
     <TestingExtensionsVersion>2.3.3</TestingExtensionsVersion>
     <PlaywrightVersion>1.62.0</PlaywrightVersion>
 
-    <SystemSecurityXmlVersion>8.0.3</SystemSecurityXmlVersion>
+    <SystemSecurityXmlVersion>8.0.4</SystemSecurityXmlVersion>
   </PropertyGroup>
 
   <ItemGroup>
