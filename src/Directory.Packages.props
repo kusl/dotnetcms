@@ -3,8 +3,46 @@
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
     <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
 
-    <MicrosoftPackagesVersion>10.0.8</MicrosoftPackagesVersion>
-    <MicrosoftIdentityVersion>2.3.10</MicrosoftIdentityVersion>
+Project `MyBlog.Core` has the following updates to its packages
+   [net10.0]: 
+   Top-level Package                   Requested   Resolved   Latest 
+   > Microsoft.Extensions.Logging      10.0.8      10.0.8     10.0.11
+
+Project `MyBlog.E2E` has the following updates to its packages
+   [net10.0]: 
+   Top-level Package             Requested   Resolved   Latest
+   > Microsoft.NET.Test.Sdk      18.5.1      18.5.1     18.9.0
+   > Microsoft.Playwright        1.59.0      1.59.0     1.62.0
+   > xunit.v3                    3.2.2       3.2.2      4.0.0 
+
+Project `MyBlog.Infrastructure` has the following updates to its packages
+   [net10.0]: 
+   Top-level Package                           Requested   Resolved   Latest 
+   > Microsoft.AspNetCore.Identity             2.3.10      2.3.10     2.3.12 
+   > Microsoft.EntityFrameworkCore.Sqlite      10.0.8      10.0.8     10.0.11
+   > Microsoft.Extensions.Http                 10.0.8      10.0.8     10.0.11
+   > OpenTelemetry                             1.15.3      1.15.3     1.17.0 
+
+Project `MyBlog.Tests` has the following updates to its packages
+   [net10.0]: 
+   Top-level Package                             Requested   Resolved   Latest 
+   > Microsoft.EntityFrameworkCore.Sqlite        10.0.8      10.0.8     10.0.11
+   > Microsoft.NET.Test.Sdk                      18.5.1      18.5.1     18.9.0 
+   > Microsoft.Testing.Extensions.TrxReport      2.2.3       2.2.3      2.3.3  
+   > xunit.v3                                    3.2.2       3.2.2      4.0.0  
+
+Project `MyBlog.Web` has the following updates to its packages
+   [net10.0]: 
+   Top-level Package                                   Requested   Resolved   Latest 
+   > Microsoft.AspNetCore.SignalR.Client               10.0.8      10.0.8     10.0.11
+   > OpenTelemetry.Exporter.Console                    1.15.3      1.15.3     1.17.0 
+   > OpenTelemetry.Exporter.OpenTelemetryProtocol      1.15.3      1.15.3     1.17.0 
+   > OpenTelemetry.Extensions.Hosting                  1.15.3      1.15.3     1.17.0 
+   > OpenTelemetry.Instrumentation.AspNetCore          1.15.2      1.15.2     1.17.0 
+   > OpenTelemetry.Instrumentation.Http                1.15.1      1.15.1     1.17.0 
+
+    <MicrosoftPackagesVersion>10.0.11</MicrosoftPackagesVersion>
+    <MicrosoftIdentityVersion>2.3.12</MicrosoftIdentityVersion>
 
     <!-- Transitive security pin. Microsoft.EntityFrameworkCore.Sqlite pulls in the native
          SQLite library through SQLitePCLRaw. The 2.x bundle references
@@ -18,15 +56,15 @@
          version number"). See the matching PackageVersion below. -->
     <SQLitePCLRawBundleVersion>3.0.3</SQLitePCLRawBundleVersion>
 
-    <OpenTelemetryVersion>1.15.3</OpenTelemetryVersion>
-    <OtelAspNetCoreInstrVersion>1.15.2</OtelAspNetCoreInstrVersion>
-    <OtelHttpInstrVersion>1.15.1</OtelHttpInstrVersion>
+    <OpenTelemetryVersion>1.17.0</OpenTelemetryVersion>
+    <OtelAspNetCoreInstrVersion>1.17.0</OtelAspNetCoreInstrVersion>
+    <OtelHttpInstrVersion>1.17.0</OtelHttpInstrVersion>
 
-    <TestSdkVersion>18.5.1</TestSdkVersion>
+    <TestSdkVersion>18.9.0</TestSdkVersion>
     <XUnitVersion>3.2.2</XUnitVersion>
     <XUnitRunnerVersion>3.1.5</XUnitRunnerVersion>
-    <TestingExtensionsVersion>2.2.3</TestingExtensionsVersion>
-    <PlaywrightVersion>1.59.0</PlaywrightVersion>
+    <TestingExtensionsVersion>2.3.3</TestingExtensionsVersion>
+    <PlaywrightVersion>1.62.0</PlaywrightVersion>
 
     <SystemSecurityXmlVersion>8.0.3</SystemSecurityXmlVersion>
   </PropertyGroup>
