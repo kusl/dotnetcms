@@ -24747,3 +24747,41 @@ myblog_myblog-data
 3e9d1306b52751dbdf41a48f6b9c14c5c35bac59e9db576bdcb57a223411d6b7
 myblog_myblog-network
 [0;32m[INFO][0m E2E tests passed! ✓
+kushal@fedora:~/src/dotnet/MyBlog$ mylogpath="/home/kushal/src/dotnet/MyBlog/docs/llm/output/$(date +%Y-%m-%d-%H-%M-%S).txt";cd ~/src/dotnet/MyBlog/ && pwd > ${mylogpath} && export DOTNET_CLI_TELEMETRY_OPTOUT=1 && (cd src && time dotnet format >> ${mylogpath}; time dotnet restore >> ${mylogpath}; time dotnet clean >> ${mylogpath}; time dotnet build >> ${mylogpath}; time dotnet run --project MyBlog.Tests/MyBlog.Tests.csproj >> ${mylogpath}; time dotnet list package >> ${mylogpath}; time dotnet list package --outdated >> ${mylogpath}); cd ~/src/dotnet/MyBlog/ >> ${mylogpath}; cat export.sh >> ${mylogpath}; time bash export.sh >> ${mylogpath}; cat run-e2e.sh >> ${mylogpath}; time bash run-e2e.sh >> ${mylogpath};
+
+real	0m9.719s
+user	0m19.398s
+sys	0m1.033s
+
+real	0m0.691s
+user	0m0.769s
+sys	0m0.180s
+
+real	0m0.682s
+user	0m0.742s
+sys	0m0.184s
+
+real	0m3.181s
+user	0m2.057s
+sys	0m0.458s
+
+real	0m43.423s
+user	0m48.700s
+sys	0m0.797s
+
+real	0m1.541s
+user	0m1.551s
+sys	0m0.354s
+
+real	0m1.737s
+user	0m1.736s
+sys	0m0.352s
+
+real	0m5.050s
+user	0m2.623s
+sys	0m3.032s
+
+real	0m34.193s
+user	0m2.099s
+sys	0m1.164s
+kushal@fedora:~/src/dotnet/MyBlog$ 
