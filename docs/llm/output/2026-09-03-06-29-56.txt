@@ -24471,3 +24471,867 @@ real	0m0.954s
 user	0m1.061s
 sys	0m0.218s
 kushal@fedora:~/src/dotnet/MyBlog/src$ 
+kushal@fedora:~/src/dotnet/MyBlog/src$ cd ~/src/dotnet/MyBlog/src/; time dotnet clean; time dotnet restore; time dotnet build;
+
+Build succeeded in 0.6s
+
+real	0m0.779s
+user	0m0.664s
+sys	0m0.162s
+Restore complete (1.1s)
+
+Build succeeded in 1.2s
+
+real	0m1.310s
+user	0m1.315s
+sys	0m0.267s
+Restore complete (0.5s)
+  MyBlog.Core net10.0 succeeded (3.0s) → MyBlog.Core/bin/Debug/net10.0/MyBlog.Core.dll
+  MyBlog.Infrastructure net10.0 succeeded (0.5s) → MyBlog.Infrastructure/bin/Debug/net10.0/MyBlog.Infrastructure.dll
+  MyBlog.Web net10.0 succeeded (2.5s) → MyBlog.Web/bin/Debug/net10.0/MyBlog.Web.dll
+  MyBlog.E2E net10.0 succeeded (0.9s) → MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll
+  MyBlog.Tests net10.0 succeeded (0.9s) → MyBlog.Tests/bin/Debug/net10.0/MyBlog.Tests.dll
+
+Build succeeded in 7.4s
+
+real	0m7.563s
+user	0m2.558s
+sys	0m0.426s
+kushal@fedora:~/src/dotnet/MyBlog/src$ cd ~/src/dotnet/MyBlog/src/; time dotnet clean; time dotnet restore; time dotnet build; time dotnet test;
+
+Build succeeded in 0.5s
+
+real	0m0.603s
+user	0m0.649s
+sys	0m0.136s
+Restore complete (0.5s)
+
+Build succeeded in 0.6s
+
+real	0m0.712s
+user	0m0.772s
+sys	0m0.167s
+Restore complete (0.5s)
+  MyBlog.Core net10.0 succeeded (0.3s) → MyBlog.Core/bin/Debug/net10.0/MyBlog.Core.dll
+  MyBlog.Infrastructure net10.0 succeeded (0.2s) → MyBlog.Infrastructure/bin/Debug/net10.0/MyBlog.Infrastructure.dll
+  MyBlog.Web net10.0 succeeded (0.7s) → MyBlog.Web/bin/Debug/net10.0/MyBlog.Web.dll
+  MyBlog.E2E net10.0 succeeded (0.3s) → MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll
+  MyBlog.Tests net10.0 succeeded (0.4s) → MyBlog.Tests/bin/Debug/net10.0/MyBlog.Tests.dll
+
+Build succeeded in 2.2s
+
+real	0m2.357s
+user	0m1.719s
+sys	0m0.403s
+Running tests from MyBlog.Tests/bin/Debug/net10.0/MyBlog.Tests.dll (net10.0|x64)
+Running tests from MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64)
+failed MyBlog.E2E.Tests.SeoTests.AboutPage_HasPageTitle (91ms)
+  from MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64)
+  Xunit.MicrosoftTestingPlatform.XunitException: Microsoft.Playwright.PlaywrightException : net::ERR_CONNECTION_REFUSED at http://localhost:5000/about
+  Call log:
+    - navigating to "http://localhost:5000/about", waiting until "load"
+    at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls, Nullable`1 timeout) in /_/src/Playwright/Transport/Connection.cs:229
+    at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:535
+    at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options) in /_/src/Playwright/Core/Frame.cs:857
+    at MyBlog.E2E.Tests.SeoTests.AboutPage_HasPageTitle() in MyBlog.E2E/Tests/SeoTests.cs:30
+    --- End of stack trace from previous location ---
+failed MyBlog.E2E.Tests.SeoTests.AboutPage_HasProperHeadingHierarchy (28ms)
+  from MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64)
+  Xunit.MicrosoftTestingPlatform.XunitException: Microsoft.Playwright.PlaywrightException : net::ERR_CONNECTION_REFUSED at http://localhost:5000/about
+  Call log:
+    - navigating to "http://localhost:5000/about", waiting until "load"
+    at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls, Nullable`1 timeout) in /_/src/Playwright/Transport/Connection.cs:229
+    at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:535
+    at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options) in /_/src/Playwright/Core/Frame.cs:857
+    at MyBlog.E2E.Tests.SeoTests.AboutPage_HasProperHeadingHierarchy() in MyBlog.E2E/Tests/SeoTests.cs:75
+    --- End of stack trace from previous location ---
+failed MyBlog.E2E.Tests.SeoTests.Images_HaveAltText (29ms)
+  from MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64)
+  Xunit.MicrosoftTestingPlatform.XunitException: Microsoft.Playwright.PlaywrightException : net::ERR_CONNECTION_REFUSED at http://localhost:5000/about
+  Call log:
+    - navigating to "http://localhost:5000/about", waiting until "load"
+    at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls, Nullable`1 timeout) in /_/src/Playwright/Transport/Connection.cs:229
+    at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:535
+    at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options) in /_/src/Playwright/Core/Frame.cs:857
+    at MyBlog.E2E.Tests.SeoTests.Images_HaveAltText() in MyBlog.E2E/Tests/SeoTests.cs:142
+    --- End of stack trace from previous location ---
+failed MyBlog.E2E.Tests.SeoTests.HomePage_HasMainLandmark (26ms)
+  from MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64)
+  Xunit.MicrosoftTestingPlatform.XunitException: Microsoft.Playwright.PlaywrightException : net::ERR_CONNECTION_REFUSED at http://localhost:5000/
+  Call log:
+    - navigating to "http://localhost:5000/", waiting until "load"
+    at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls, Nullable`1 timeout) in /_/src/Playwright/Transport/Connection.cs:229
+    at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:535
+    at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options) in /_/src/Playwright/Core/Frame.cs:857
+    at MyBlog.E2E.Tests.SeoTests.HomePage_HasMainLandmark() in MyBlog.E2E/Tests/SeoTests.cs:52
+    --- End of stack trace from previous location ---
+failed MyBlog.E2E.Tests.SeoTests.LoginPage_HasPageTitle (26ms)
+  from MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64)
+  Xunit.MicrosoftTestingPlatform.XunitException: Microsoft.Playwright.PlaywrightException : net::ERR_CONNECTION_REFUSED at http://localhost:5000/login
+  Call log:
+    - navigating to "http://localhost:5000/login", waiting until "load"
+    at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls, Nullable`1 timeout) in /_/src/Playwright/Transport/Connection.cs:229
+    at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:535
+    at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options) in /_/src/Playwright/Core/Frame.cs:857
+    at MyBlog.E2E.Tests.SeoTests.LoginPage_HasPageTitle() in MyBlog.E2E/Tests/SeoTests.cs:41
+    --- End of stack trace from previous location ---
+failed MyBlog.E2E.Tests.SeoTests.Page_HasLanguageAttribute (28ms)
+  from MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64)
+  Xunit.MicrosoftTestingPlatform.XunitException: Microsoft.Playwright.PlaywrightException : net::ERR_CONNECTION_REFUSED at http://localhost:5000/
+  Call log:
+    - navigating to "http://localhost:5000/", waiting until "load"
+    at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls, Nullable`1 timeout) in /_/src/Playwright/Transport/Connection.cs:229
+    at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:535
+    at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options) in /_/src/Playwright/Core/Frame.cs:857
+    at MyBlog.E2E.Tests.SeoTests.Page_HasLanguageAttribute() in MyBlog.E2E/Tests/SeoTests.cs:162
+    --- End of stack trace from previous location ---
+failed MyBlog.E2E.Tests.SeoTests.Buttons_HaveAccessibleNames (29ms)
+  from MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64)
+  Xunit.MicrosoftTestingPlatform.XunitException: Microsoft.Playwright.PlaywrightException : net::ERR_CONNECTION_REFUSED at http://localhost:5000/
+  Call log:
+    - navigating to "http://localhost:5000/", waiting until "load"
+    at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls, Nullable`1 timeout) in /_/src/Playwright/Transport/Connection.cs:229
+    at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:535
+    at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options) in /_/src/Playwright/Core/Frame.cs:857
+    at MyBlog.E2E.Tests.SeoTests.Buttons_HaveAccessibleNames() in MyBlog.E2E/Tests/SeoTests.cs:112
+    --- End of stack trace from previous location ---
+failed MyBlog.E2E.Tests.SeoTests.HomePage_HasNavigationLandmark (26ms)
+  from MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64)
+  Xunit.MicrosoftTestingPlatform.XunitException: Microsoft.Playwright.PlaywrightException : net::ERR_CONNECTION_REFUSED at http://localhost:5000/
+  Call log:
+    - navigating to "http://localhost:5000/", waiting until "load"
+    at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls, Nullable`1 timeout) in /_/src/Playwright/Transport/Connection.cs:229
+    at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:535
+    at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options) in /_/src/Playwright/Core/Frame.cs:857
+    at MyBlog.E2E.Tests.SeoTests.HomePage_HasNavigationLandmark() in MyBlog.E2E/Tests/SeoTests.cs:64
+    --- End of stack trace from previous location ---
+failed MyBlog.E2E.Tests.SeoTests.LoginForm_HasLabels (34ms)
+  from MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64)
+  Xunit.MicrosoftTestingPlatform.XunitException: Microsoft.Playwright.PlaywrightException : net::ERR_CONNECTION_REFUSED at http://localhost:5000/login
+  Call log:
+    - navigating to "http://localhost:5000/login", waiting until "load"
+    at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls, Nullable`1 timeout) in /_/src/Playwright/Transport/Connection.cs:229
+    at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:535
+    at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options) in /_/src/Playwright/Core/Frame.cs:857
+    at MyBlog.E2E.Tests.SeoTests.LoginForm_HasLabels() in MyBlog.E2E/Tests/SeoTests.cs:127
+    --- End of stack trace from previous location ---
+failed MyBlog.E2E.Tests.SeoTests.Links_HaveVisibleText (31ms)
+  from MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64)
+  Xunit.MicrosoftTestingPlatform.XunitException: Microsoft.Playwright.PlaywrightException : net::ERR_CONNECTION_REFUSED at http://localhost:5000/
+  Call log:
+    - navigating to "http://localhost:5000/", waiting until "load"
+    at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls, Nullable`1 timeout) in /_/src/Playwright/Transport/Connection.cs:229
+    at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:535
+    at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options) in /_/src/Playwright/Core/Frame.cs:857
+    at MyBlog.E2E.Tests.SeoTests.Links_HaveVisibleText() in MyBlog.E2E/Tests/SeoTests.cs:99
+    --- End of stack trace from previous location ---
+failed MyBlog.E2E.Tests.SeoTests.HomePage_HasPageTitle (38ms)
+  from MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64)
+  Xunit.MicrosoftTestingPlatform.XunitException: Microsoft.Playwright.PlaywrightException : net::ERR_CONNECTION_REFUSED at http://localhost:5000/
+  Call log:
+    - navigating to "http://localhost:5000/", waiting until "load"
+    at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls, Nullable`1 timeout) in /_/src/Playwright/Transport/Connection.cs:229
+    at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:535
+    at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options) in /_/src/Playwright/Core/Frame.cs:857
+    at MyBlog.E2E.Tests.SeoTests.HomePage_HasPageTitle() in MyBlog.E2E/Tests/SeoTests.cs:19
+    --- End of stack trace from previous location ---
+failed MyBlog.E2E.Tests.SeoTests.Pages_HaveViewportMeta (40ms)
+  from MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64)
+  Xunit.MicrosoftTestingPlatform.XunitException: Microsoft.Playwright.PlaywrightException : net::ERR_CONNECTION_REFUSED at http://localhost:5000/
+  Call log:
+    - navigating to "http://localhost:5000/", waiting until "load"
+    at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls, Nullable`1 timeout) in /_/src/Playwright/Transport/Connection.cs:229
+    at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:535
+    at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options) in /_/src/Playwright/Core/Frame.cs:857
+    at MyBlog.E2E.Tests.SeoTests.Pages_HaveViewportMeta() in MyBlog.E2E/Tests/SeoTests.cs:87
+    --- End of stack trace from previous location ---
+failed MyBlog.E2E.Tests.AdminPageTests.AdminNewPost_HasContentEditor (33ms)
+  from MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64)
+  Xunit.MicrosoftTestingPlatform.XunitException: Microsoft.Playwright.PlaywrightException : net::ERR_CONNECTION_REFUSED at http://localhost:5000/login
+  Call log:
+    - navigating to "http://localhost:5000/login", waiting until "load"
+    at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls, Nullable`1 timeout) in /_/src/Playwright/Transport/Connection.cs:229
+    at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:535
+    at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options) in /_/src/Playwright/Core/Frame.cs:857
+    at MyBlog.E2E.Tests.AdminPageTests.LoginAsAdminAsync(IPage page) in MyBlog.E2E/Tests/AdminPageTests.cs:19
+    at MyBlog.E2E.Tests.AdminPageTests.AdminNewPost_HasContentEditor() in MyBlog.E2E/Tests/AdminPageTests.cs:115
+    --- End of stack trace from previous location ---
+failed MyBlog.E2E.Tests.AdminPageTests.AdminDashboard_DisplaysStatistics (32ms)
+  from MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64)
+  Xunit.MicrosoftTestingPlatform.XunitException: Microsoft.Playwright.PlaywrightException : net::ERR_CONNECTION_REFUSED at http://localhost:5000/login
+  Call log:
+    - navigating to "http://localhost:5000/login", waiting until "load"
+    at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls, Nullable`1 timeout) in /_/src/Playwright/Transport/Connection.cs:229
+    at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:535
+    at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options) in /_/src/Playwright/Core/Frame.cs:857
+    at MyBlog.E2E.Tests.AdminPageTests.LoginAsAdminAsync(IPage page) in MyBlog.E2E/Tests/AdminPageTests.cs:19
+    at MyBlog.E2E.Tests.AdminPageTests.AdminDashboard_DisplaysStatistics() in MyBlog.E2E/Tests/AdminPageTests.cs:36
+    --- End of stack trace from previous location ---
+failed MyBlog.E2E.Tests.AdminPageTests.AdminNewPost_LoadsSuccessfully (37ms)
+  from MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64)
+  Xunit.MicrosoftTestingPlatform.XunitException: Microsoft.Playwright.PlaywrightException : net::ERR_CONNECTION_REFUSED at http://localhost:5000/login
+  Call log:
+    - navigating to "http://localhost:5000/login", waiting until "load"
+    at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls, Nullable`1 timeout) in /_/src/Playwright/Transport/Connection.cs:229
+    at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:535
+    at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options) in /_/src/Playwright/Core/Frame.cs:857
+    at MyBlog.E2E.Tests.AdminPageTests.LoginAsAdminAsync(IPage page) in MyBlog.E2E/Tests/AdminPageTests.cs:19
+    at MyBlog.E2E.Tests.AdminPageTests.AdminNewPost_LoadsSuccessfully() in MyBlog.E2E/Tests/AdminPageTests.cs:102
+    --- End of stack trace from previous location ---
+failed MyBlog.E2E.Tests.AdminPageTests.AdminDashboard_ShowsRecentPosts (27ms)
+  from MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64)
+  Xunit.MicrosoftTestingPlatform.XunitException: Microsoft.Playwright.PlaywrightException : net::ERR_CONNECTION_REFUSED at http://localhost:5000/login
+  Call log:
+    - navigating to "http://localhost:5000/login", waiting until "load"
+    at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls, Nullable`1 timeout) in /_/src/Playwright/Transport/Connection.cs:229
+    at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:535
+    at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options) in /_/src/Playwright/Core/Frame.cs:857
+    at MyBlog.E2E.Tests.AdminPageTests.LoginAsAdminAsync(IPage page) in MyBlog.E2E/Tests/AdminPageTests.cs:19
+    at MyBlog.E2E.Tests.AdminPageTests.AdminDashboard_ShowsRecentPosts() in MyBlog.E2E/Tests/AdminPageTests.cs:158
+    --- End of stack trace from previous location ---
+failed MyBlog.E2E.Tests.AdminPageTests.AdminDashboard_HasNewPostLink (27ms)
+  from MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64)
+  Xunit.MicrosoftTestingPlatform.XunitException: Microsoft.Playwright.PlaywrightException : net::ERR_CONNECTION_REFUSED at http://localhost:5000/login
+  Call log:
+    - navigating to "http://localhost:5000/login", waiting until "load"
+    at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls, Nullable`1 timeout) in /_/src/Playwright/Transport/Connection.cs:229
+    at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:535
+    at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options) in /_/src/Playwright/Core/Frame.cs:857
+    at MyBlog.E2E.Tests.AdminPageTests.LoginAsAdminAsync(IPage page) in MyBlog.E2E/Tests/AdminPageTests.cs:19
+    at MyBlog.E2E.Tests.AdminPageTests.AdminDashboard_HasNewPostLink() in MyBlog.E2E/Tests/AdminPageTests.cs:58
+    --- End of stack trace from previous location ---
+failed MyBlog.E2E.Tests.AdminPageTests.AdminImages_LoadsSuccessfully (25ms)
+  from MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64)
+  Xunit.MicrosoftTestingPlatform.XunitException: Microsoft.Playwright.PlaywrightException : net::ERR_CONNECTION_REFUSED at http://localhost:5000/login
+  Call log:
+    - navigating to "http://localhost:5000/login", waiting until "load"
+    at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls, Nullable`1 timeout) in /_/src/Playwright/Transport/Connection.cs:229
+    at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:535
+    at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options) in /_/src/Playwright/Core/Frame.cs:857
+    at MyBlog.E2E.Tests.AdminPageTests.LoginAsAdminAsync(IPage page) in MyBlog.E2E/Tests/AdminPageTests.cs:19
+    at MyBlog.E2E.Tests.AdminPageTests.AdminImages_LoadsSuccessfully() in MyBlog.E2E/Tests/AdminPageTests.cs:128
+    --- End of stack trace from previous location ---
+failed MyBlog.E2E.Tests.AdminPageTests.AdminNavigation_CanNavigateBetweenPages (25ms)
+  from MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64)
+  Xunit.MicrosoftTestingPlatform.XunitException: Microsoft.Playwright.PlaywrightException : net::ERR_CONNECTION_REFUSED at http://localhost:5000/login
+  Call log:
+    - navigating to "http://localhost:5000/login", waiting until "load"
+    at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls, Nullable`1 timeout) in /_/src/Playwright/Transport/Connection.cs:229
+    at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:535
+    at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options) in /_/src/Playwright/Core/Frame.cs:857
+    at MyBlog.E2E.Tests.AdminPageTests.LoginAsAdminAsync(IPage page) in MyBlog.E2E/Tests/AdminPageTests.cs:19
+    at MyBlog.E2E.Tests.AdminPageTests.AdminNavigation_CanNavigateBetweenPages() in MyBlog.E2E/Tests/AdminPageTests.cs:140
+    --- End of stack trace from previous location ---
+failed MyBlog.E2E.Tests.AdminPageTests.AdminPosts_LoadsSuccessfully (25ms)
+  from MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64)
+  Xunit.MicrosoftTestingPlatform.XunitException: Microsoft.Playwright.PlaywrightException : net::ERR_CONNECTION_REFUSED at http://localhost:5000/login
+  Call log:
+    - navigating to "http://localhost:5000/login", waiting until "load"
+    at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls, Nullable`1 timeout) in /_/src/Playwright/Transport/Connection.cs:229
+    at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:535
+    at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options) in /_/src/Playwright/Core/Frame.cs:857
+    at MyBlog.E2E.Tests.AdminPageTests.LoginAsAdminAsync(IPage page) in MyBlog.E2E/Tests/AdminPageTests.cs:19
+    at MyBlog.E2E.Tests.AdminPageTests.AdminPosts_LoadsSuccessfully() in MyBlog.E2E/Tests/AdminPageTests.cs:78
+    --- End of stack trace from previous location ---
+failed MyBlog.E2E.Tests.AdminPageTests.AdminDashboard_HasManageImagesLink (26ms)
+  from MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64)
+  Xunit.MicrosoftTestingPlatform.XunitException: Microsoft.Playwright.PlaywrightException : net::ERR_CONNECTION_REFUSED at http://localhost:5000/login
+  Call log:
+    - navigating to "http://localhost:5000/login", waiting until "load"
+    at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls, Nullable`1 timeout) in /_/src/Playwright/Transport/Connection.cs:229
+    at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:535
+    at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options) in /_/src/Playwright/Core/Frame.cs:857
+    at MyBlog.E2E.Tests.AdminPageTests.LoginAsAdminAsync(IPage page) in MyBlog.E2E/Tests/AdminPageTests.cs:19
+    at MyBlog.E2E.Tests.AdminPageTests.AdminDashboard_HasManageImagesLink() in MyBlog.E2E/Tests/AdminPageTests.cs:68
+    --- End of stack trace from previous location ---
+failed MyBlog.E2E.Tests.AdminPageTests.AdminPosts_HasNewPostButton (25ms)
+  from MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64)
+  Xunit.MicrosoftTestingPlatform.XunitException: Microsoft.Playwright.PlaywrightException : net::ERR_CONNECTION_REFUSED at http://localhost:5000/login
+  Call log:
+    - navigating to "http://localhost:5000/login", waiting until "load"
+    at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls, Nullable`1 timeout) in /_/src/Playwright/Transport/Connection.cs:229
+    at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:535
+    at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options) in /_/src/Playwright/Core/Frame.cs:857
+    at MyBlog.E2E.Tests.AdminPageTests.LoginAsAdminAsync(IPage page) in MyBlog.E2E/Tests/AdminPageTests.cs:19
+    at MyBlog.E2E.Tests.AdminPageTests.AdminPosts_HasNewPostButton() in MyBlog.E2E/Tests/AdminPageTests.cs:90
+    --- End of stack trace from previous location ---
+failed MyBlog.E2E.Tests.AdminPageTests.AdminDashboard_HasManagePostsLink (25ms)
+  from MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64)
+  Xunit.MicrosoftTestingPlatform.XunitException: Microsoft.Playwright.PlaywrightException : net::ERR_CONNECTION_REFUSED at http://localhost:5000/login
+  Call log:
+    - navigating to "http://localhost:5000/login", waiting until "load"
+    at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls, Nullable`1 timeout) in /_/src/Playwright/Transport/Connection.cs:229
+    at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:535
+    at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options) in /_/src/Playwright/Core/Frame.cs:857
+    at MyBlog.E2E.Tests.AdminPageTests.LoginAsAdminAsync(IPage page) in MyBlog.E2E/Tests/AdminPageTests.cs:19
+    at MyBlog.E2E.Tests.AdminPageTests.AdminDashboard_HasManagePostsLink() in MyBlog.E2E/Tests/AdminPageTests.cs:48
+    --- End of stack trace from previous location ---
+failed MyBlog.E2E.Tests.NavigationTests.Navigation_HomeToLogin_Works (35ms)
+  from MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64)
+  Xunit.MicrosoftTestingPlatform.XunitException: Microsoft.Playwright.PlaywrightException : net::ERR_CONNECTION_REFUSED at http://localhost:5000/
+  Call log:
+    - navigating to "http://localhost:5000/", waiting until "load"
+    at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls, Nullable`1 timeout) in /_/src/Playwright/Transport/Connection.cs:229
+    at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:535
+    at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options) in /_/src/Playwright/Core/Frame.cs:857
+    at MyBlog.E2E.Tests.NavigationTests.Navigation_HomeToLogin_Works() in MyBlog.E2E/Tests/NavigationTests.cs:47
+    --- End of stack trace from previous location ---
+failed MyBlog.E2E.Tests.NavigationTests.Navigation_LogoLinksToHome (24ms)
+  from MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64)
+  Xunit.MicrosoftTestingPlatform.XunitException: Microsoft.Playwright.PlaywrightException : net::ERR_CONNECTION_REFUSED at http://localhost:5000/about
+  Call log:
+    - navigating to "http://localhost:5000/about", waiting until "load"
+    at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls, Nullable`1 timeout) in /_/src/Playwright/Transport/Connection.cs:229
+    at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:535
+    at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options) in /_/src/Playwright/Core/Frame.cs:857
+    at MyBlog.E2E.Tests.NavigationTests.Navigation_LogoLinksToHome() in MyBlog.E2E/Tests/NavigationTests.cs:116
+    --- End of stack trace from previous location ---
+failed MyBlog.E2E.Tests.NavigationTests.Navigation_MobileViewport_HasNavigation (25ms)
+  from MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64)
+  Xunit.MicrosoftTestingPlatform.XunitException: Microsoft.Playwright.PlaywrightException : net::ERR_CONNECTION_REFUSED at http://localhost:5000/
+  Call log:
+    - navigating to "http://localhost:5000/", waiting until "load"
+    at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls, Nullable`1 timeout) in /_/src/Playwright/Transport/Connection.cs:229
+    at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:535
+    at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options) in /_/src/Playwright/Core/Frame.cs:857
+    at MyBlog.E2E.Tests.NavigationTests.Navigation_MobileViewport_HasNavigation() in MyBlog.E2E/Tests/NavigationTests.cs:188
+    --- End of stack trace from previous location ---
+failed MyBlog.E2E.Tests.NavigationTests.PostNotFound_ShowsError (25ms)
+  from MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64)
+  Xunit.MicrosoftTestingPlatform.XunitException: Microsoft.Playwright.PlaywrightException : net::ERR_CONNECTION_REFUSED at http://localhost:5000/post/this-post-definitely-does-not-exist-12345
+  Call log:
+    - navigating to "http://localhost:5000/post/this-post-definitely-does-not-exist-12345", waiting until "load"
+    at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls, Nullable`1 timeout) in /_/src/Playwright/Transport/Connection.cs:229
+    at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:535
+    at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options) in /_/src/Playwright/Core/Frame.cs:857
+    at MyBlog.E2E.Tests.NavigationTests.PostNotFound_ShowsError() in MyBlog.E2E/Tests/NavigationTests.cs:166
+    --- End of stack trace from previous location ---
+failed MyBlog.E2E.Tests.NavigationTests.Navigation_FooterIsPresent_OnAllPages (24ms)
+  from MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64)
+  Xunit.MicrosoftTestingPlatform.XunitException: Microsoft.Playwright.PlaywrightException : net::ERR_CONNECTION_REFUSED at http://localhost:5000/
+  Call log:
+    - navigating to "http://localhost:5000/", waiting until "load"
+    at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls, Nullable`1 timeout) in /_/src/Playwright/Transport/Connection.cs:229
+    at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:535
+    at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options) in /_/src/Playwright/Core/Frame.cs:857
+    at MyBlog.E2E.Tests.NavigationTests.Navigation_FooterIsPresent_OnAllPages() in MyBlog.E2E/Tests/NavigationTests.cs:79
+    --- End of stack trace from previous location ---
+failed MyBlog.E2E.Tests.NavigationTests.Navigation_HomeToAbout_Works (24ms)
+  from MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64)
+  Xunit.MicrosoftTestingPlatform.XunitException: Microsoft.Playwright.PlaywrightException : net::ERR_CONNECTION_REFUSED at http://localhost:5000/
+  Call log:
+    - navigating to "http://localhost:5000/", waiting until "load"
+    at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls, Nullable`1 timeout) in /_/src/Playwright/Transport/Connection.cs:229
+    at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:535
+    at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options) in /_/src/Playwright/Core/Frame.cs:857
+    at MyBlog.E2E.Tests.NavigationTests.Navigation_HomeToAbout_Works() in MyBlog.E2E/Tests/NavigationTests.cs:19
+    --- End of stack trace from previous location ---
+failed MyBlog.E2E.Tests.NavigationTests.NonExistentPage_ShowsNotFound_OrRedirects (26ms)
+  from MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64)
+  Xunit.MicrosoftTestingPlatform.XunitException: Microsoft.Playwright.PlaywrightException : net::ERR_CONNECTION_REFUSED at http://localhost:5000/this-page-does-not-exist-12345
+  Call log:
+    - navigating to "http://localhost:5000/this-page-does-not-exist-12345", waiting until "load"
+    at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls, Nullable`1 timeout) in /_/src/Playwright/Transport/Connection.cs:229
+    at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:535
+    at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options) in /_/src/Playwright/Core/Frame.cs:857
+    at MyBlog.E2E.Tests.NavigationTests.NonExistentPage_ShowsNotFound_OrRedirects() in MyBlog.E2E/Tests/NavigationTests.cs:141
+    --- End of stack trace from previous location ---
+failed MyBlog.E2E.Tests.NavigationTests.Navigation_TabletViewport_HasNavigation (23ms)
+  from MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64)
+  Xunit.MicrosoftTestingPlatform.XunitException: Microsoft.Playwright.PlaywrightException : net::ERR_CONNECTION_REFUSED at http://localhost:5000/
+  Call log:
+    - navigating to "http://localhost:5000/", waiting until "load"
+    at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls, Nullable`1 timeout) in /_/src/Playwright/Transport/Connection.cs:229
+    at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:535
+    at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options) in /_/src/Playwright/Core/Frame.cs:857
+    at MyBlog.E2E.Tests.NavigationTests.Navigation_TabletViewport_HasNavigation() in MyBlog.E2E/Tests/NavigationTests.cs:206
+    --- End of stack trace from previous location ---
+failed MyBlog.E2E.Tests.NavigationTests.Navigation_AboutToHome_Works (23ms)
+  from MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64)
+  Xunit.MicrosoftTestingPlatform.XunitException: Microsoft.Playwright.PlaywrightException : net::ERR_CONNECTION_REFUSED at http://localhost:5000/about
+  Call log:
+    - navigating to "http://localhost:5000/about", waiting until "load"
+    at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls, Nullable`1 timeout) in /_/src/Playwright/Transport/Connection.cs:229
+    at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:535
+    at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options) in /_/src/Playwright/Core/Frame.cs:857
+    at MyBlog.E2E.Tests.NavigationTests.Navigation_AboutToHome_Works() in MyBlog.E2E/Tests/NavigationTests.cs:33
+    --- End of stack trace from previous location ---
+failed MyBlog.E2E.Tests.NavigationTests.Navigation_AllMainLinks_Present (24ms)
+  from MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64)
+  Xunit.MicrosoftTestingPlatform.XunitException: Microsoft.Playwright.PlaywrightException : net::ERR_CONNECTION_REFUSED at http://localhost:5000/
+  Call log:
+    - navigating to "http://localhost:5000/", waiting until "load"
+    at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls, Nullable`1 timeout) in /_/src/Playwright/Transport/Connection.cs:229
+    at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:535
+    at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options) in /_/src/Playwright/Core/Frame.cs:857
+    at MyBlog.E2E.Tests.NavigationTests.Navigation_AllMainLinks_Present() in MyBlog.E2E/Tests/NavigationTests.cs:61
+    --- End of stack trace from previous location ---
+failed MyBlog.E2E.Tests.NavigationTests.Navigation_HeaderIsPresent_OnAllPages (25ms)
+  from MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64)
+  Xunit.MicrosoftTestingPlatform.XunitException: Microsoft.Playwright.PlaywrightException : net::ERR_CONNECTION_REFUSED at http://localhost:5000/
+  Call log:
+    - navigating to "http://localhost:5000/", waiting until "load"
+    at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls, Nullable`1 timeout) in /_/src/Playwright/Transport/Connection.cs:229
+    at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:535
+    at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options) in /_/src/Playwright/Core/Frame.cs:857
+    at MyBlog.E2E.Tests.NavigationTests.Navigation_HeaderIsPresent_OnAllPages() in MyBlog.E2E/Tests/NavigationTests.cs:98
+    --- End of stack trace from previous location ---
+failed MyBlog.E2E.Tests.AuthenticationTests.ProtectedRoute_IncludesReturnUrl_WhenRedirected (28ms)
+  from MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64)
+  Xunit.MicrosoftTestingPlatform.XunitException: Microsoft.Playwright.PlaywrightException : net::ERR_CONNECTION_REFUSED at http://localhost:5000/admin/posts
+  Call log:
+    - navigating to "http://localhost:5000/admin/posts", waiting until "load"
+    at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls, Nullable`1 timeout) in /_/src/Playwright/Transport/Connection.cs:229
+    at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:535
+    at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options) in /_/src/Playwright/Core/Frame.cs:857
+    at MyBlog.E2E.Tests.AuthenticationTests.ProtectedRoute_IncludesReturnUrl_WhenRedirected() in MyBlog.E2E/Tests/AuthenticationTests.cs:37
+    --- End of stack trace from previous location ---
+failed MyBlog.E2E.Tests.AuthenticationTests.Logout_RemovesAdminLink (24ms)
+  from MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64)
+  Xunit.MicrosoftTestingPlatform.XunitException: Microsoft.Playwright.PlaywrightException : net::ERR_CONNECTION_REFUSED at http://localhost:5000/login
+  Call log:
+    - navigating to "http://localhost:5000/login", waiting until "load"
+    at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls, Nullable`1 timeout) in /_/src/Playwright/Transport/Connection.cs:229
+    at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:535
+    at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options) in /_/src/Playwright/Core/Frame.cs:857
+    at MyBlog.E2E.Tests.AuthenticationTests.Logout_RemovesAdminLink() in MyBlog.E2E/Tests/AuthenticationTests.cs:135
+    --- End of stack trace from previous location ---
+failed MyBlog.E2E.Tests.AuthenticationTests.Login_WithInvalidPassword_ShowsError (23ms)
+  from MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64)
+  Xunit.MicrosoftTestingPlatform.XunitException: Microsoft.Playwright.PlaywrightException : net::ERR_CONNECTION_REFUSED at http://localhost:5000/login
+  Call log:
+    - navigating to "http://localhost:5000/login", waiting until "load"
+    at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls, Nullable`1 timeout) in /_/src/Playwright/Transport/Connection.cs:229
+    at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:535
+    at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options) in /_/src/Playwright/Core/Frame.cs:857
+    at MyBlog.E2E.Tests.AuthenticationTests.Login_WithInvalidPassword_ShowsError() in MyBlog.E2E/Tests/AuthenticationTests.cs:164
+    --- End of stack trace from previous location ---
+failed MyBlog.E2E.Tests.AuthenticationTests.AdminDashboard_LoadsSuccessfully_WhenAuthenticated (24ms)
+  from MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64)
+  Xunit.MicrosoftTestingPlatform.XunitException: Microsoft.Playwright.PlaywrightException : net::ERR_CONNECTION_REFUSED at http://localhost:5000/login
+  Call log:
+    - navigating to "http://localhost:5000/login", waiting until "load"
+    at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls, Nullable`1 timeout) in /_/src/Playwright/Transport/Connection.cs:229
+    at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:535
+    at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options) in /_/src/Playwright/Core/Frame.cs:857
+    at MyBlog.E2E.Tests.AuthenticationTests.AdminDashboard_LoadsSuccessfully_WhenAuthenticated() in MyBlog.E2E/Tests/AuthenticationTests.cs:221
+    --- End of stack trace from previous location ---
+failed MyBlog.E2E.Tests.AuthenticationTests.Login_ShowsAdminLink_WhenAuthenticated (26ms)
+  from MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64)
+  Xunit.MicrosoftTestingPlatform.XunitException: Microsoft.Playwright.PlaywrightException : net::ERR_CONNECTION_REFUSED at http://localhost:5000/login
+  Call log:
+    - navigating to "http://localhost:5000/login", waiting until "load"
+    at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls, Nullable`1 timeout) in /_/src/Playwright/Transport/Connection.cs:229
+    at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:535
+    at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options) in /_/src/Playwright/Core/Frame.cs:857
+    at MyBlog.E2E.Tests.AuthenticationTests.Login_ShowsAdminLink_WhenAuthenticated() in MyBlog.E2E/Tests/AuthenticationTests.cs:76
+    --- End of stack trace from previous location ---
+failed MyBlog.E2E.Tests.AuthenticationTests.Login_WithDefaultCredentials_Succeeds (23ms)
+  from MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64)
+  Xunit.MicrosoftTestingPlatform.XunitException: Microsoft.Playwright.PlaywrightException : net::ERR_CONNECTION_REFUSED at http://localhost:5000/login
+  Call log:
+    - navigating to "http://localhost:5000/login", waiting until "load"
+    at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls, Nullable`1 timeout) in /_/src/Playwright/Transport/Connection.cs:229
+    at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:535
+    at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options) in /_/src/Playwright/Core/Frame.cs:857
+    at MyBlog.E2E.Tests.AuthenticationTests.Login_WithDefaultCredentials_Succeeds() in MyBlog.E2E/Tests/AuthenticationTests.cs:52
+    --- End of stack trace from previous location ---
+failed MyBlog.E2E.Tests.AuthenticationTests.Logout_RedirectsToHome (24ms)
+  from MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64)
+  Xunit.MicrosoftTestingPlatform.XunitException: Microsoft.Playwright.PlaywrightException : net::ERR_CONNECTION_REFUSED at http://localhost:5000/login
+  Call log:
+    - navigating to "http://localhost:5000/login", waiting until "load"
+    at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls, Nullable`1 timeout) in /_/src/Playwright/Transport/Connection.cs:229
+    at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:535
+    at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options) in /_/src/Playwright/Core/Frame.cs:857
+    at MyBlog.E2E.Tests.AuthenticationTests.Logout_RedirectsToHome() in MyBlog.E2E/Tests/AuthenticationTests.cs:103
+    --- End of stack trace from previous location ---
+failed MyBlog.E2E.Tests.AuthenticationTests.Login_WithInvalidUsername_ShowsError (25ms)
+  from MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64)
+  Xunit.MicrosoftTestingPlatform.XunitException: Microsoft.Playwright.PlaywrightException : net::ERR_CONNECTION_REFUSED at http://localhost:5000/login
+  Call log:
+    - navigating to "http://localhost:5000/login", waiting until "load"
+    at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls, Nullable`1 timeout) in /_/src/Playwright/Transport/Connection.cs:229
+    at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:535
+    at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options) in /_/src/Playwright/Core/Frame.cs:857
+    at MyBlog.E2E.Tests.AuthenticationTests.Login_WithInvalidUsername_ShowsError() in MyBlog.E2E/Tests/AuthenticationTests.cs:192
+    --- End of stack trace from previous location ---
+failed MyBlog.E2E.Tests.AuthenticationTests.ProtectedRoute_RedirectsToLogin_WhenNotAuthenticated (25ms)
+  from MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64)
+  Xunit.MicrosoftTestingPlatform.XunitException: Microsoft.Playwright.PlaywrightException : net::ERR_CONNECTION_REFUSED at http://localhost:5000/admin
+  Call log:
+    - navigating to "http://localhost:5000/admin", waiting until "load"
+    at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls, Nullable`1 timeout) in /_/src/Playwright/Transport/Connection.cs:229
+    at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:535
+    at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options) in /_/src/Playwright/Core/Frame.cs:857
+    at MyBlog.E2E.Tests.AuthenticationTests.ProtectedRoute_RedirectsToLogin_WhenNotAuthenticated() in MyBlog.E2E/Tests/AuthenticationTests.cs:21
+    --- End of stack trace from previous location ---
+failed MyBlog.E2E.Tests.AboutPageTests.AboutPage_DisplaysAboutHeading (24ms)
+  from MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64)
+  Xunit.MicrosoftTestingPlatform.XunitException: Microsoft.Playwright.PlaywrightException : net::ERR_CONNECTION_REFUSED at http://localhost:5000/about
+  Call log:
+    - navigating to "http://localhost:5000/about", waiting until "load"
+    at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls, Nullable`1 timeout) in /_/src/Playwright/Transport/Connection.cs:229
+    at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:535
+    at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options) in /_/src/Playwright/Core/Frame.cs:857
+    at MyBlog.E2E.Tests.AboutPageTests.AboutPage_DisplaysAboutHeading() in MyBlog.E2E/Tests/AboutPageTests.cs:30
+    --- End of stack trace from previous location ---
+failed MyBlog.E2E.Tests.AboutPageTests.AboutPage_DisplaysTechnologyStack (23ms)
+  from MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64)
+  Xunit.MicrosoftTestingPlatform.XunitException: Microsoft.Playwright.PlaywrightException : net::ERR_CONNECTION_REFUSED at http://localhost:5000/about
+  Call log:
+    - navigating to "http://localhost:5000/about", waiting until "load"
+    at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls, Nullable`1 timeout) in /_/src/Playwright/Transport/Connection.cs:229
+    at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:535
+    at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options) in /_/src/Playwright/Core/Frame.cs:857
+    at MyBlog.E2E.Tests.AboutPageTests.AboutPage_DisplaysTechnologyStack() in MyBlog.E2E/Tests/AboutPageTests.cs:53
+    --- End of stack trace from previous location ---
+failed MyBlog.E2E.Tests.AboutPageTests.AboutPage_DisplaysArchitectureSection (24ms)
+  from MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64)
+  Xunit.MicrosoftTestingPlatform.XunitException: Microsoft.Playwright.PlaywrightException : net::ERR_CONNECTION_REFUSED at http://localhost:5000/about
+  Call log:
+    - navigating to "http://localhost:5000/about", waiting until "load"
+    at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls, Nullable`1 timeout) in /_/src/Playwright/Transport/Connection.cs:229
+    at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:535
+    at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options) in /_/src/Playwright/Core/Frame.cs:857
+    at MyBlog.E2E.Tests.AboutPageTests.AboutPage_DisplaysArchitectureSection() in MyBlog.E2E/Tests/AboutPageTests.cs:42
+    --- End of stack trace from previous location ---
+failed MyBlog.E2E.Tests.AboutPageTests.AboutPage_MentionsCleanArchitecture (36ms)
+  from MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64)
+  Xunit.MicrosoftTestingPlatform.XunitException: Microsoft.Playwright.PlaywrightException : net::ERR_CONNECTION_REFUSED at http://localhost:5000/about
+  Call log:
+    - navigating to "http://localhost:5000/about", waiting until "load"
+    at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls, Nullable`1 timeout) in /_/src/Playwright/Transport/Connection.cs:229
+    at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:535
+    at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options) in /_/src/Playwright/Core/Frame.cs:857
+    at MyBlog.E2E.Tests.AboutPageTests.AboutPage_MentionsCleanArchitecture() in MyBlog.E2E/Tests/AboutPageTests.cs:101
+    --- End of stack trace from previous location ---
+failed MyBlog.E2E.Tests.AboutPageTests.AboutPage_DisplaysOverviewSection (23ms)
+  from MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64)
+  Xunit.MicrosoftTestingPlatform.XunitException: Microsoft.Playwright.PlaywrightException : net::ERR_CONNECTION_REFUSED at http://localhost:5000/about
+  Call log:
+    - navigating to "http://localhost:5000/about", waiting until "load"
+    at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls, Nullable`1 timeout) in /_/src/Playwright/Transport/Connection.cs:229
+    at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:535
+    at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options) in /_/src/Playwright/Core/Frame.cs:857
+    at MyBlog.E2E.Tests.AboutPageTests.AboutPage_DisplaysOverviewSection() in MyBlog.E2E/Tests/AboutPageTests.cs:90
+    --- End of stack trace from previous location ---
+failed MyBlog.E2E.Tests.AboutPageTests.AboutPage_HasReaderBadge (23ms)
+  from MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64)
+  Xunit.MicrosoftTestingPlatform.XunitException: Microsoft.Playwright.PlaywrightException : net::ERR_CONNECTION_REFUSED at http://localhost:5000/about
+  Call log:
+    - navigating to "http://localhost:5000/about", waiting until "load"
+    at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls, Nullable`1 timeout) in /_/src/Playwright/Transport/Connection.cs:229
+    at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:535
+    at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options) in /_/src/Playwright/Core/Frame.cs:857
+    at MyBlog.E2E.Tests.AboutPageTests.AboutPage_HasReaderBadge() in MyBlog.E2E/Tests/AboutPageTests.cs:66
+    --- End of stack trace from previous location ---
+failed MyBlog.E2E.Tests.AboutPageTests.AboutPage_HasNavigationBackToHome (22ms)
+  from MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64)
+  Xunit.MicrosoftTestingPlatform.XunitException: Microsoft.Playwright.PlaywrightException : net::ERR_CONNECTION_REFUSED at http://localhost:5000/about
+  Call log:
+    - navigating to "http://localhost:5000/about", waiting until "load"
+    at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls, Nullable`1 timeout) in /_/src/Playwright/Transport/Connection.cs:229
+    at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:535
+    at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options) in /_/src/Playwright/Core/Frame.cs:857
+    at MyBlog.E2E.Tests.AboutPageTests.AboutPage_HasNavigationBackToHome() in MyBlog.E2E/Tests/AboutPageTests.cs:78
+    --- End of stack trace from previous location ---
+failed MyBlog.E2E.Tests.AboutPageTests.AboutPage_LoadsSuccessfully (24ms)
+  from MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64)
+  Xunit.MicrosoftTestingPlatform.XunitException: Microsoft.Playwright.PlaywrightException : net::ERR_CONNECTION_REFUSED at http://localhost:5000/about
+  Call log:
+    - navigating to "http://localhost:5000/about", waiting until "load"
+    at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls, Nullable`1 timeout) in /_/src/Playwright/Transport/Connection.cs:229
+    at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:535
+    at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options) in /_/src/Playwright/Core/Frame.cs:857
+    at MyBlog.E2E.Tests.AboutPageTests.AboutPage_LoadsSuccessfully() in MyBlog.E2E/Tests/AboutPageTests.cs:19
+    --- End of stack trace from previous location ---
+failed MyBlog.E2E.Tests.ThemeSwitcherTests.ThemeSwitcher_ThemePersistsOnRefresh (25ms)
+  from MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64)
+  Xunit.MicrosoftTestingPlatform.XunitException: Microsoft.Playwright.PlaywrightException : net::ERR_CONNECTION_REFUSED at http://localhost:5000/
+  Call log:
+    - navigating to "http://localhost:5000/", waiting until "load"
+    at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls, Nullable`1 timeout) in /_/src/Playwright/Transport/Connection.cs:229
+    at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:535
+    at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options) in /_/src/Playwright/Core/Frame.cs:857
+    at MyBlog.E2E.Tests.ThemeSwitcherTests.ThemeSwitcher_ThemePersistsOnRefresh() in MyBlog.E2E/Tests/ThemeSwitcherTests.cs:129
+    --- End of stack trace from previous location ---
+failed MyBlog.E2E.Tests.ThemeSwitcherTests.ThemeSwitcher_IsVisibleOnPage (23ms)
+  from MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64)
+  Xunit.MicrosoftTestingPlatform.XunitException: Microsoft.Playwright.PlaywrightException : net::ERR_CONNECTION_REFUSED at http://localhost:5000/
+  Call log:
+    - navigating to "http://localhost:5000/", waiting until "load"
+    at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls, Nullable`1 timeout) in /_/src/Playwright/Transport/Connection.cs:229
+    at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:535
+    at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options) in /_/src/Playwright/Core/Frame.cs:857
+    at MyBlog.E2E.Tests.ThemeSwitcherTests.ThemeSwitcher_IsVisibleOnPage() in MyBlog.E2E/Tests/ThemeSwitcherTests.cs:20
+    --- End of stack trace from previous location ---
+failed MyBlog.E2E.Tests.ThemeSwitcherTests.ThemeSwitcher_MenuClosesOnOutsideClick (24ms)
+  from MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64)
+  Xunit.MicrosoftTestingPlatform.XunitException: Microsoft.Playwright.PlaywrightException : net::ERR_CONNECTION_REFUSED at http://localhost:5000/
+  Call log:
+    - navigating to "http://localhost:5000/", waiting until "load"
+    at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls, Nullable`1 timeout) in /_/src/Playwright/Transport/Connection.cs:229
+    at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:535
+    at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options) in /_/src/Playwright/Core/Frame.cs:857
+    at MyBlog.E2E.Tests.ThemeSwitcherTests.ThemeSwitcher_MenuClosesOnOutsideClick() in MyBlog.E2E/Tests/ThemeSwitcherTests.cs:182
+    --- End of stack trace from previous location ---
+failed MyBlog.E2E.Tests.ThemeSwitcherTests.ThemeSwitcher_HasMultipleOptions (23ms)
+  from MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64)
+  Xunit.MicrosoftTestingPlatform.XunitException: Microsoft.Playwright.PlaywrightException : net::ERR_CONNECTION_REFUSED at http://localhost:5000/
+  Call log:
+    - navigating to "http://localhost:5000/", waiting until "load"
+    at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls, Nullable`1 timeout) in /_/src/Playwright/Transport/Connection.cs:229
+    at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:535
+    at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options) in /_/src/Playwright/Core/Frame.cs:857
+    at MyBlog.E2E.Tests.ThemeSwitcherTests.ThemeSwitcher_HasMultipleOptions() in MyBlog.E2E/Tests/ThemeSwitcherTests.cs:69
+    --- End of stack trace from previous location ---
+failed MyBlog.E2E.Tests.ThemeSwitcherTests.ThemeSwitcher_OpensMenuOnClick (25ms)
+  from MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64)
+  Xunit.MicrosoftTestingPlatform.XunitException: Microsoft.Playwright.PlaywrightException : net::ERR_CONNECTION_REFUSED at http://localhost:5000/
+  Call log:
+    - navigating to "http://localhost:5000/", waiting until "load"
+    at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls, Nullable`1 timeout) in /_/src/Playwright/Transport/Connection.cs:229
+    at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:535
+    at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options) in /_/src/Playwright/Core/Frame.cs:857
+    at MyBlog.E2E.Tests.ThemeSwitcherTests.ThemeSwitcher_OpensMenuOnClick() in MyBlog.E2E/Tests/ThemeSwitcherTests.cs:47
+    --- End of stack trace from previous location ---
+failed MyBlog.E2E.Tests.ThemeSwitcherTests.ThemeSwitcher_HasAccessibilityAttributes (24ms)
+  from MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64)
+  Xunit.MicrosoftTestingPlatform.XunitException: Microsoft.Playwright.PlaywrightException : net::ERR_CONNECTION_REFUSED at http://localhost:5000/
+  Call log:
+    - navigating to "http://localhost:5000/", waiting until "load"
+    at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls, Nullable`1 timeout) in /_/src/Playwright/Transport/Connection.cs:229
+    at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:535
+    at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options) in /_/src/Playwright/Core/Frame.cs:857
+    at MyBlog.E2E.Tests.ThemeSwitcherTests.ThemeSwitcher_HasAccessibilityAttributes() in MyBlog.E2E/Tests/ThemeSwitcherTests.cs:167
+    --- End of stack trace from previous location ---
+failed MyBlog.E2E.Tests.ThemeSwitcherTests.ThemeSwitcher_ButtonIsClickable (24ms)
+  from MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64)
+  Xunit.MicrosoftTestingPlatform.XunitException: Microsoft.Playwright.PlaywrightException : net::ERR_CONNECTION_REFUSED at http://localhost:5000/
+  Call log:
+    - navigating to "http://localhost:5000/", waiting until "load"
+    at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls, Nullable`1 timeout) in /_/src/Playwright/Transport/Connection.cs:229
+    at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:535
+    at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options) in /_/src/Playwright/Core/Frame.cs:857
+    at MyBlog.E2E.Tests.ThemeSwitcherTests.ThemeSwitcher_ButtonIsClickable() in MyBlog.E2E/Tests/ThemeSwitcherTests.cs:32
+    --- End of stack trace from previous location ---
+failed MyBlog.E2E.Tests.ThemeSwitcherTests.ThemeSwitcher_ChangesToDarkTheme (23ms)
+  from MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64)
+  Xunit.MicrosoftTestingPlatform.XunitException: Microsoft.Playwright.PlaywrightException : net::ERR_CONNECTION_REFUSED at http://localhost:5000/
+  Call log:
+    - navigating to "http://localhost:5000/", waiting until "load"
+    at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls, Nullable`1 timeout) in /_/src/Playwright/Transport/Connection.cs:229
+    at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:535
+    at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options) in /_/src/Playwright/Core/Frame.cs:857
+    at MyBlog.E2E.Tests.ThemeSwitcherTests.ThemeSwitcher_ChangesToDarkTheme() in MyBlog.E2E/Tests/ThemeSwitcherTests.cs:95
+    --- End of stack trace from previous location ---
+failed MyBlog.E2E.Tests.LoginPageTests.LoginPage_LoadsSuccessfully (24ms)
+  from MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64)
+  Xunit.MicrosoftTestingPlatform.XunitException: Microsoft.Playwright.PlaywrightException : net::ERR_CONNECTION_REFUSED at http://localhost:5000/login
+  Call log:
+    - navigating to "http://localhost:5000/login", waiting until "load"
+    at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls, Nullable`1 timeout) in /_/src/Playwright/Transport/Connection.cs:229
+    at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:535
+    at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options) in /_/src/Playwright/Core/Frame.cs:857
+    at MyBlog.E2E.Tests.LoginPageTests.LoginPage_LoadsSuccessfully() in MyBlog.E2E/Tests/LoginPageTests.cs:19
+    --- End of stack trace from previous location ---
+failed MyBlog.E2E.Tests.LoginPageTests.LoginPage_HasUsernameField (25ms)
+  from MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64)
+  Xunit.MicrosoftTestingPlatform.XunitException: Microsoft.Playwright.PlaywrightException : net::ERR_CONNECTION_REFUSED at http://localhost:5000/login
+  Call log:
+    - navigating to "http://localhost:5000/login", waiting until "load"
+    at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls, Nullable`1 timeout) in /_/src/Playwright/Transport/Connection.cs:229
+    at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:535
+    at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options) in /_/src/Playwright/Core/Frame.cs:857
+    at MyBlog.E2E.Tests.LoginPageTests.LoginPage_HasUsernameField() in MyBlog.E2E/Tests/LoginPageTests.cs:42
+    --- End of stack trace from previous location ---
+failed MyBlog.E2E.Tests.LoginPageTests.LoginPage_FieldsAreRequired (25ms)
+  from MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64)
+  Xunit.MicrosoftTestingPlatform.XunitException: Microsoft.Playwright.PlaywrightException : net::ERR_CONNECTION_REFUSED at http://localhost:5000/login
+  Call log:
+    - navigating to "http://localhost:5000/login", waiting until "load"
+    at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls, Nullable`1 timeout) in /_/src/Playwright/Transport/Connection.cs:229
+    at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:535
+    at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options) in /_/src/Playwright/Core/Frame.cs:857
+    at MyBlog.E2E.Tests.LoginPageTests.LoginPage_FieldsAreRequired() in MyBlog.E2E/Tests/LoginPageTests.cs:74
+    --- End of stack trace from previous location ---
+failed MyBlog.E2E.Tests.LoginPageTests.LoginPage_HasSubmitButton (26ms)
+  from MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64)
+  Xunit.MicrosoftTestingPlatform.XunitException: Microsoft.Playwright.PlaywrightException : net::ERR_CONNECTION_REFUSED at http://localhost:5000/login
+  Call log:
+    - navigating to "http://localhost:5000/login", waiting until "load"
+    at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls, Nullable`1 timeout) in /_/src/Playwright/Transport/Connection.cs:229
+    at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:535
+    at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options) in /_/src/Playwright/Core/Frame.cs:857
+    at MyBlog.E2E.Tests.LoginPageTests.LoginPage_HasSubmitButton() in MyBlog.E2E/Tests/LoginPageTests.cs:64
+    --- End of stack trace from previous location ---
+failed MyBlog.E2E.Tests.LoginPageTests.LoginPage_FormHasCorrectAction (24ms)
+  from MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64)
+  Xunit.MicrosoftTestingPlatform.XunitException: Microsoft.Playwright.PlaywrightException : net::ERR_CONNECTION_REFUSED at http://localhost:5000/login
+  Call log:
+    - navigating to "http://localhost:5000/login", waiting until "load"
+    at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls, Nullable`1 timeout) in /_/src/Playwright/Transport/Connection.cs:229
+    at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:535
+    at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options) in /_/src/Playwright/Core/Frame.cs:857
+    at MyBlog.E2E.Tests.LoginPageTests.LoginPage_FormHasCorrectAction() in MyBlog.E2E/Tests/LoginPageTests.cs:109
+    --- End of stack trace from previous location ---
+failed MyBlog.E2E.Tests.LoginPageTests.LoginPage_HasPasswordField (25ms)
+  from MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64)
+  Xunit.MicrosoftTestingPlatform.XunitException: Microsoft.Playwright.PlaywrightException : net::ERR_CONNECTION_REFUSED at http://localhost:5000/login
+  Call log:
+    - navigating to "http://localhost:5000/login", waiting until "load"
+    at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls, Nullable`1 timeout) in /_/src/Playwright/Transport/Connection.cs:229
+    at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:535
+    at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options) in /_/src/Playwright/Core/Frame.cs:857
+    at MyBlog.E2E.Tests.LoginPageTests.LoginPage_HasPasswordField() in MyBlog.E2E/Tests/LoginPageTests.cs:53
+    --- End of stack trace from previous location ---
+failed MyBlog.E2E.Tests.LoginPageTests.LoginPage_DisplaysLoginHeading (26ms)
+  from MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64)
+  Xunit.MicrosoftTestingPlatform.XunitException: Microsoft.Playwright.PlaywrightException : net::ERR_CONNECTION_REFUSED at http://localhost:5000/login
+  Call log:
+    - navigating to "http://localhost:5000/login", waiting until "load"
+    at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls, Nullable`1 timeout) in /_/src/Playwright/Transport/Connection.cs:229
+    at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:535
+    at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options) in /_/src/Playwright/Core/Frame.cs:857
+    at MyBlog.E2E.Tests.LoginPageTests.LoginPage_DisplaysLoginHeading() in MyBlog.E2E/Tests/LoginPageTests.cs:30
+    --- End of stack trace from previous location ---
+failed MyBlog.E2E.Tests.LoginPageTests.LoginPage_InvalidCredentials_ShowsError (26ms)
+  from MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64)
+  Xunit.MicrosoftTestingPlatform.XunitException: Microsoft.Playwright.PlaywrightException : net::ERR_CONNECTION_REFUSED at http://localhost:5000/login
+  Call log:
+    - navigating to "http://localhost:5000/login", waiting until "load"
+    at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls, Nullable`1 timeout) in /_/src/Playwright/Transport/Connection.cs:229
+    at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:535
+    at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options) in /_/src/Playwright/Core/Frame.cs:857
+    at MyBlog.E2E.Tests.LoginPageTests.LoginPage_InvalidCredentials_ShowsError() in MyBlog.E2E/Tests/LoginPageTests.cs:119
+    --- End of stack trace from previous location ---
+failed MyBlog.E2E.Tests.LoginPageTests.LoginPage_PasswordFieldIsTypePassword (26ms)
+  from MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64)
+  Xunit.MicrosoftTestingPlatform.XunitException: Microsoft.Playwright.PlaywrightException : net::ERR_CONNECTION_REFUSED at http://localhost:5000/login
+  Call log:
+    - navigating to "http://localhost:5000/login", waiting until "load"
+    at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls, Nullable`1 timeout) in /_/src/Playwright/Transport/Connection.cs:229
+    at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:535
+    at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options) in /_/src/Playwright/Core/Frame.cs:857
+    at MyBlog.E2E.Tests.LoginPageTests.LoginPage_PasswordFieldIsTypePassword() in MyBlog.E2E/Tests/LoginPageTests.cs:88
+    --- End of stack trace from previous location ---
+failed MyBlog.E2E.Tests.LoginPageTests.LoginPage_HasAntiforgeryToken (25ms)
+  from MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64)
+  Xunit.MicrosoftTestingPlatform.XunitException: Microsoft.Playwright.PlaywrightException : net::ERR_CONNECTION_REFUSED at http://localhost:5000/login
+  Call log:
+    - navigating to "http://localhost:5000/login", waiting until "load"
+    at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls, Nullable`1 timeout) in /_/src/Playwright/Transport/Connection.cs:229
+    at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:535
+    at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options) in /_/src/Playwright/Core/Frame.cs:857
+    at MyBlog.E2E.Tests.LoginPageTests.LoginPage_HasAntiforgeryToken() in MyBlog.E2E/Tests/LoginPageTests.cs:98
+    --- End of stack trace from previous location ---
+failed MyBlog.E2E.Tests.LoginPageTests.LoginPage_SuccessfulLogin_RedirectsToAdmin (25ms)
+  from MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64)
+  Xunit.MicrosoftTestingPlatform.XunitException: Microsoft.Playwright.PlaywrightException : net::ERR_CONNECTION_REFUSED at http://localhost:5000/login
+  Call log:
+    - navigating to "http://localhost:5000/login", waiting until "load"
+    at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls, Nullable`1 timeout) in /_/src/Playwright/Transport/Connection.cs:229
+    at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:535
+    at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options) in /_/src/Playwright/Core/Frame.cs:857
+    at MyBlog.E2E.Tests.LoginPageTests.LoginPage_SuccessfulLogin_RedirectsToAdmin() in MyBlog.E2E/Tests/LoginPageTests.cs:147
+    --- End of stack trace from previous location ---
+failed MyBlog.E2E.Tests.HomePageTests.HomePage_NavigationToAbout_Works (26ms)
+  from MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64)
+  Xunit.MicrosoftTestingPlatform.XunitException: Microsoft.Playwright.PlaywrightException : net::ERR_CONNECTION_REFUSED at http://localhost:5000/
+  Call log:
+    - navigating to "http://localhost:5000/", waiting until "load"
+    at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls, Nullable`1 timeout) in /_/src/Playwright/Transport/Connection.cs:229
+    at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:535
+    at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options) in /_/src/Playwright/Core/Frame.cs:857
+    at MyBlog.E2E.Tests.HomePageTests.HomePage_NavigationToAbout_Works() in MyBlog.E2E/Tests/HomePageTests.cs:70
+    --- End of stack trace from previous location ---
+failed MyBlog.E2E.Tests.HomePageTests.HomePage_HasThemeSwitcher (25ms)
+  from MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64)
+  Xunit.MicrosoftTestingPlatform.XunitException: Microsoft.Playwright.PlaywrightException : net::ERR_CONNECTION_REFUSED at http://localhost:5000/
+  Call log:
+    - navigating to "http://localhost:5000/", waiting until "load"
+    at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls, Nullable`1 timeout) in /_/src/Playwright/Transport/Connection.cs:229
+    at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:535
+    at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options) in /_/src/Playwright/Core/Frame.cs:857
+    at MyBlog.E2E.Tests.HomePageTests.HomePage_HasThemeSwitcher() in MyBlog.E2E/Tests/HomePageTests.cs:98
+    --- End of stack trace from previous location ---
+failed MyBlog.E2E.Tests.HomePageTests.HomePage_NavigationToLogin_Works (27ms)
+  from MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64)
+  Xunit.MicrosoftTestingPlatform.XunitException: Microsoft.Playwright.PlaywrightException : net::ERR_CONNECTION_REFUSED at http://localhost:5000/
+  Call log:
+    - navigating to "http://localhost:5000/", waiting until "load"
+    at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls, Nullable`1 timeout) in /_/src/Playwright/Transport/Connection.cs:229
+    at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:535
+    at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options) in /_/src/Playwright/Core/Frame.cs:857
+    at MyBlog.E2E.Tests.HomePageTests.HomePage_NavigationToLogin_Works() in MyBlog.E2E/Tests/HomePageTests.cs:84
+    --- End of stack trace from previous location ---
+failed MyBlog.E2E.Tests.HomePageTests.HomePage_HasFooter (25ms)
+  from MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64)
+  Xunit.MicrosoftTestingPlatform.XunitException: Microsoft.Playwright.PlaywrightException : net::ERR_CONNECTION_REFUSED at http://localhost:5000/
+  Call log:
+    - navigating to "http://localhost:5000/", waiting until "load"
+    at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls, Nullable`1 timeout) in /_/src/Playwright/Transport/Connection.cs:229
+    at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:535
+    at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options) in /_/src/Playwright/Core/Frame.cs:857
+    at MyBlog.E2E.Tests.HomePageTests.HomePage_HasFooter() in MyBlog.E2E/Tests/HomePageTests.cs:59
+    --- End of stack trace from previous location ---
+failed MyBlog.E2E.Tests.HomePageTests.HomePage_LoadsSuccessfully (25ms)
+  from MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64)
+  Xunit.MicrosoftTestingPlatform.XunitException: Microsoft.Playwright.PlaywrightException : net::ERR_CONNECTION_REFUSED at http://localhost:5000/
+  Call log:
+    - navigating to "http://localhost:5000/", waiting until "load"
+    at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls, Nullable`1 timeout) in /_/src/Playwright/Transport/Connection.cs:229
+    at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:535
+    at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options) in /_/src/Playwright/Core/Frame.cs:857
+    at MyBlog.E2E.Tests.HomePageTests.HomePage_LoadsSuccessfully() in MyBlog.E2E/Tests/HomePageTests.cs:19
+    --- End of stack trace from previous location ---
+failed MyBlog.E2E.Tests.HomePageTests.HomePage_HasNavigationLinks (23ms)
+  from MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64)
+  Xunit.MicrosoftTestingPlatform.XunitException: Microsoft.Playwright.PlaywrightException : net::ERR_CONNECTION_REFUSED at http://localhost:5000/
+  Call log:
+    - navigating to "http://localhost:5000/", waiting until "load"
+    at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls, Nullable`1 timeout) in /_/src/Playwright/Transport/Connection.cs:229
+    at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:535
+    at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options) in /_/src/Playwright/Core/Frame.cs:857
+    at MyBlog.E2E.Tests.HomePageTests.HomePage_HasNavigationLinks() in MyBlog.E2E/Tests/HomePageTests.cs:42
+    --- End of stack trace from previous location ---
+failed MyBlog.E2E.Tests.HomePageTests.HomePage_HasMainContentArea (26ms)
+  from MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64)
+  Xunit.MicrosoftTestingPlatform.XunitException: Microsoft.Playwright.PlaywrightException : net::ERR_CONNECTION_REFUSED at http://localhost:5000/
+  Call log:
+    - navigating to "http://localhost:5000/", waiting until "load"
+    at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls, Nullable`1 timeout) in /_/src/Playwright/Transport/Connection.cs:229
+    at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:535
+    at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options) in /_/src/Playwright/Core/Frame.cs:857
+    at MyBlog.E2E.Tests.HomePageTests.HomePage_HasMainContentArea() in MyBlog.E2E/Tests/HomePageTests.cs:109
+    --- End of stack trace from previous location ---
+failed MyBlog.E2E.Tests.HomePageTests.HomePage_DisplaysWelcomeHeading (24ms)
+  from MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64)
+  Xunit.MicrosoftTestingPlatform.XunitException: Microsoft.Playwright.PlaywrightException : net::ERR_CONNECTION_REFUSED at http://localhost:5000/
+  Call log:
+    - navigating to "http://localhost:5000/", waiting until "load"
+    at Microsoft.Playwright.Transport.Connection.InnerSendMessageToServerAsync[T](ChannelOwner object, String method, Dictionary`2 dictionary, Boolean keepNulls, Nullable`1 timeout) in /_/src/Playwright/Transport/Connection.cs:229
+    at Microsoft.Playwright.Transport.Connection.WrapApiCallAsync[T](Func`1 action, Boolean isInternal, String title) in /_/src/Playwright/Transport/Connection.cs:535
+    at Microsoft.Playwright.Core.Frame.GotoAsync(String url, FrameGotoOptions options) in /_/src/Playwright/Core/Frame.cs:857
+    at MyBlog.E2E.Tests.HomePageTests.HomePage_DisplaysWelcomeHeading() in MyBlog.E2E/Tests/HomePageTests.cs:30
+    --- End of stack trace from previous location ---
+MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64) failed with 78 error(s) (3s 551ms)
+Exit code: 2
+MyBlog.Tests/bin/Debug/net10.0/MyBlog.Tests.dll (net10.0|x64) passed (41s 977ms)
+
+Test run summary: Failed!
+  MyBlog.Tests/bin/Debug/net10.0/MyBlog.Tests.dll (net10.0|x64) passed (41s 977ms)
+  MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll (net10.0|x64) failed with 78 error(s) (3s 551ms)
+
+  total: 289
+  failed: 78
+  succeeded: 211
+  skipped: 0
+  duration: 42s 162ms
+Test run completed with non-success exit code: 2 (see: https://aka.ms/testingplatform/exitcodes)
+
+real	0m43.650s
+user	0m53.521s
+sys	0m2.099s
+kushal@fedora:~/src/dotnet/MyBlog/src$ 
