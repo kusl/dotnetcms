@@ -24958,3 +24958,49 @@ myblog-web
 myblog_myblog-data
 1108596b62563cf4abf27de340a665020dbc1dc11a2a9f963f0a5ec3f4560f2e
 myblog_myblog-network
+kushal@fedora:~/src/dotnet/MyBlog$ mylogpath="/home/kushal/src/dotnet/MyBlog/docs/llm/output/$(date +%Y-%m-%d-%H-%M-%S).txt";cd ~/src/dotnet/MyBlog/ && pwd > ${mylogpath} && export DOTNET_CLI_TELEMETRY_OPTOUT=1 && (cd src && time dotnet format >> ${mylogpath}; time dotnet restore >> ${mylogpath}; time dotnet clean >> ${mylogpath}; time dotnet build >> ${mylogpath}; time dotnet run --project MyBlog.Tests/MyBlog.Tests.csproj >> ${mylogpath}; time dotnet list package >> ${mylogpath}; time dotnet list package --outdated >> ${mylogpath}); cd ~/src/dotnet/MyBlog/ >> ${mylogpath}; cat export.sh >> ${mylogpath}; time bash export.sh >> ${mylogpath}; cat run-e2e.sh >> ${mylogpath}; time bash run-e2e.sh >> ${mylogpath};
+Unhandled exception: System.Exception: Restore operation failed.
+   at Microsoft.CodeAnalysis.Tools.CodeFormatter.OpenMSBuildWorkspaceAsync(String solutionOrProjectPath, WorkspaceType workspaceType, Boolean noRestore, Boolean requiresSemantics, String binaryLogPath, Boolean logWorkspaceWarnings, ILogger logger, CancellationToken cancellationToken)
+   at Microsoft.CodeAnalysis.Tools.CodeFormatter.FormatWorkspaceAsync(FormatOptions formatOptions, ILogger logger, CancellationToken cancellationToken, String binaryLogPath)
+   at Microsoft.CodeAnalysis.Tools.FormatCommandCommon.FormatAsync(FormatOptions formatOptions, ILogger`1 logger, CancellationToken cancellationToken)
+   at Microsoft.CodeAnalysis.Tools.Commands.RootFormatCommand.FormatCommandDefaultHandler.InvokeAsync(ParseResult parseResult, CancellationToken cancellationToken)
+   at System.CommandLine.Invocation.InvocationPipeline.InvokeAsync(ParseResult parseResult, CancellationToken cancellationToken)
+
+real	0m1.456s
+user	0m1.416s
+sys	0m0.333s
+
+real	0m0.928s
+user	0m1.076s
+sys	0m0.194s
+
+real	0m0.638s
+user	0m0.673s
+sys	0m0.177s
+
+real	0m1.008s
+user	0m1.177s
+sys	0m0.197s
+
+real	0m48.358s
+user	0m48.572s
+sys	0m0.860s
+
+real	0m0.949s
+user	0m1.042s
+sys	0m0.202s
+
+real	0m0.944s
+user	0m1.064s
+sys	0m0.194s
+
+real	0m4.989s
+user	0m2.459s
+sys	0m3.118s
+Error: no container with name or ID "myblog-e2e" found: no such container
+Error: no container with ID or name "myblog-e2e" found: no such container
+
+real	1m0.187s
+user	0m1.287s
+sys	0m1.023s
+kushal@fedora:~/src/dotnet/MyBlog$ 
