@@ -18,8 +18,8 @@
     <SQLitePCLRawBundleVersion>3.0.3</SQLitePCLRawBundleVersion>
 
     <OpenTelemetryVersion>1.18.0</OpenTelemetryVersion>
-    <OtelAspNetCoreInstrVersion>1.17.0</OtelAspNetCoreInstrVersion>
-    <OtelHttpInstrVersion>1.17.0</OtelHttpInstrVersion>
+    <OtelAspNetCoreInstrVersion>1.18.0</OtelAspNetCoreInstrVersion>
+    <OtelHttpInstrVersion>1.18.0</OtelHttpInstrVersion>
 
     <TestSdkVersion>18.9.0</TestSdkVersion>
     <XUnitVersion>4.0.0</XUnitVersion>
