@@ -1,7 +1,13 @@
 @inherits LayoutComponentBase
 @inject IConfiguration Configuration
 
-<div class="layout">
+@* data-blazor-interactive is "false" in the prerendered HTML and "true" once the
+   SignalR circuit has connected and re-rendered this layout. The E2E suite waits on
+   it before clicking anything the interactive router owns: a click that lands during
+   circuit startup is handled by blazor.web.js enhanced navigation, which pushes the
+   new URL immediately, and the connecting circuit then rebuilds the DOM for the old
+   route — leaving the address bar and the markup permanently out of sync. *@
+<div class="layout" data-blazor-interactive="@(RendererInfo.IsInteractive ? "true" : "false")">
     <a href="#main-content" class="skip-link">Skip to main content</a>
 
     <header class="header">

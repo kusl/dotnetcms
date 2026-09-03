@@ -17,6 +17,12 @@ public sealed class NavigationTests(PlaywrightFixture fixture)
         var page = await _fixture.CreatePageAsync();
 
         await page.GotoAsync("/");
+
+        // Anchor clicks are only handled by the interactive router once the circuit is
+        // up. Clicking sooner lets enhanced navigation change the URL while the
+        // connecting circuit re-renders the old route, so the heading never updates.
+        await page.WaitForBlazorInteractiveAsync();
+
         await page.ClickAsync("nav a[href='/about']");
 
         await page.WaitForURLAsync("**/about");
@@ -31,6 +37,8 @@ public sealed class NavigationTests(PlaywrightFixture fixture)
         var page = await _fixture.CreatePageAsync();
 
         await page.GotoAsync("/about");
+        await page.WaitForBlazorInteractiveAsync();
+
         await page.ClickAsync("nav a[href='/']");
 
         await page.WaitForURLAsync("**/");
@@ -45,6 +53,8 @@ public sealed class NavigationTests(PlaywrightFixture fixture)
         var page = await _fixture.CreatePageAsync();
 
         await page.GotoAsync("/");
+        await page.WaitForBlazorInteractiveAsync();
+
         await page.ClickAsync("nav a[href='/login']");
 
         await page.WaitForURLAsync("**/login");
@@ -114,6 +124,7 @@ public sealed class NavigationTests(PlaywrightFixture fixture)
         var page = await _fixture.CreatePageAsync();
 
         await page.GotoAsync("/about");
+        await page.WaitForBlazorInteractiveAsync();
 
         // Click on the logo/brand link
         var logoLink = page.Locator("header a.logo, .header a.logo, header a:has-text('MyBlog')");

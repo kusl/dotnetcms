@@ -69,6 +69,10 @@ public sealed class HomePageTests(PlaywrightFixture fixture)
 
         await page.GotoAsync("/");
 
+        // Wait for the circuit so the interactive router handles the click; a click
+        // during Blazor startup changes the URL without changing the rendered page.
+        await page.WaitForBlazorInteractiveAsync();
+
         await page.ClickAsync("nav a[href='/about']");
 
         await page.WaitForURLAsync("**/about");
@@ -82,6 +86,7 @@ public sealed class HomePageTests(PlaywrightFixture fixture)
         var page = await _fixture.CreatePageAsync();
 
         await page.GotoAsync("/");
+        await page.WaitForBlazorInteractiveAsync();
 
         await page.ClickAsync("nav a[href='/login']");
 

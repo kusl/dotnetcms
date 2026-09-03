@@ -177,9 +177,44 @@ public sealed class MyNewTests(PlaywrightFixture fixture)
 
 1. **Use semantic selectors**: Prefer `text=`, role-based, or data-testid selectors over CSS classes
 2. **Wait for elements**: Use `WaitForSelectorAsync` or `Expect().ToBeVisibleAsync()`
-3. **Handle dynamic content**: Account for SignalR connections and lazy loading
-4. **Keep tests independent**: Each test should work in isolation
-5. **Use descriptive names**: Test names should describe the scenario
+3. **Wait for interactivity before interacting**: Call `page.WaitForBlazorInteractiveAsync()`
+   before clicking a link or filling a form. Asserting on prerendered content needs no wait
+4. **Handle dynamic content**: Account for SignalR connections and lazy loading
+5. **Keep tests independent**: Each test should work in isolation
+6. **Use descriptive names**: Test names should describe the scenario
+
+### Waiting for the Blazor circuit
+
+Every page is delivered twice: first as prerendered static HTML, then again from the
+interactive circuit once SignalR connects. `GotoAsync` and `WaitForLoadStateAsync` only
+know about the first delivery, so a test can act on a page that is not yet live.
+
+Two things go wrong in that window:
+
+- **Clicks on links are handled by enhanced navigation** (`history.pushState` plus a
+  background fetch) instead of the interactive router. The URL changes immediately, so
+  `WaitForURLAsync` succeeds — but the circuit was started for the *previous* URL, and
+  its first render batch rebuilds the DOM for the page you just left. The address bar
+  and the markup then disagree forever, and the assertion on the new page's heading
+  fails with the *old* page's text.
+- **Form fields are cleared**, because attaching the circuit replaces the prerendered
+  DOM along with anything already typed into it.
+
+`MainLayout` publishes `data-blazor-interactive`, which is `"false"` in prerendered
+markup and `"true"` once `RendererInfo.IsInteractive` is true.
+`BlazorPageExtensions.WaitForBlazorInteractiveAsync` waits on it:
+
+```csharp
+await page.GotoAsync("/");
+await page.WaitForBlazorInteractiveAsync();   // circuit is connected and rendering
+
+await page.ClickAsync("nav a[href='/about']");
+await page.WaitForURLAsync("**/about");
+```
+
+Symptoms of a missing wait: a heading assertion reports the previous page's text, or a
+login submits empty credentials. Both reproduce only under load, so they surface in CI
+and pass locally.
 
 ## CI/CD Integration
 

@@ -13,11 +13,17 @@ public sealed class AdminPageTests(PlaywrightFixture fixture)
 
     /// <summary>
     /// Helper method to login with default admin credentials.
+    /// Returns once the admin dashboard is loaded and its circuit is interactive, so
+    /// callers can click links and buttons without racing Blazor's startup.
     /// </summary>
     private async Task LoginAsAdminAsync(IPage page)
     {
         await page.GotoAsync("/login");
         await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+
+        // Attaching the circuit rebuilds the prerendered DOM, which would discard
+        // anything already typed into the form, so wait before filling the fields.
+        await page.WaitForBlazorInteractiveAsync();
 
         await page.FillAsync("input[name='username']", "admin");
         await page.FillAsync("input[name='password']", "ChangeMe123!");
@@ -27,6 +33,11 @@ public sealed class AdminPageTests(PlaywrightFixture fixture)
             page.WaitForURLAsync("**/admin**", new() { Timeout = 30000 }),
             page.Locator("button[type='submit']").ClickAsync()
         );
+
+        // The redirect only waits for the document; the dashboard is still prerendered
+        // at this point. Wait for its circuit too, so every admin test starts from a
+        // page where the interactive router owns navigation.
+        await page.WaitForBlazorInteractiveAsync();
     }
 
     [Fact]
