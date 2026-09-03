@@ -3629,3 +3629,111 @@ Claude is AI and can make mistakes. Please double-check responses.
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+00
+07
+
+Something is not quite right here. 
+I got this test failure on github actions 
+https://github.com/kusl/dotnetcms/actions/runs/33750663719/job/100634107499
+Run dotnet run --project src/MyBlog.E2E/MyBlog.E2E.csproj -c Release --no-build
+xUnit.net v3 In-Process Runner v4.0.0+8bf043c053 (64-bit .NET 10.0.11)
+  Discovering: MyBlog.E2E
+  Discovered:  MyBlog.E2E
+  Starting:    MyBlog.E2E
+    MyBlog.E2E.Tests.AdminPageTests.AdminNavigation_CanNavigateBetweenPages [FAIL]
+      Microsoft.Playwright.PlaywrightException : Locator expected to contain text 'Posts'
+      But was: 'Admin Dashboard' 
+      Call log:
+        - Expect "ToContainTextAsync" with timeout 10000ms
+        - waiting for Locator("h1")
+          - locator resolved to <h1 b-qee02rydq7="">Admin Dashboard</h1>
+          23 × unexpected value "Admin Dashboard"
+             - locator resolved to <h1 tabindex="-1" b-qee02rydq7="">Admin Dashboard</h1>
+          - unexpected value "Admin Dashboard"
+      Aria snapshot:
+      - heading "Admin Dashboard" [level=1]
+      Stack Trace:
+        /_/src/Playwright/Core/AssertionsBase.cs(97,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, FrameExpectOptions expectOptions, Object expected, String message, String title)
+        /_/src/Playwright/Core/AssertionsBase.cs(69,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue[] expectedText, Object expected, String message, String title, FrameExpectOptions options)
+        /_/src/Playwright/Core/AssertionsBase.cs(61,0): at Microsoft.Playwright.Core.AssertionsBase.ExpectImplAsync(String expression, ExpectedTextValue textValue, Object expected, String message, String title, FrameExpectOptions options)
+        src/MyBlog.E2E/Tests/AdminPageTests.cs(151,0): at MyBlog.E2E.Tests.AdminPageTests.AdminNavigation_CanNavigateBetweenPages()
+        --- End of stack trace from previous location ---
+  Finished:    MyBlog.E2E (ID = 'b6ab309f502e6cc5a74f8f7adcf1b64b05fc7fcd78e23dc08c37c9e1a596c147')
+=== TEST EXECUTION SUMMARY ===
+   MyBlog.E2E  Total: 78, Errors: 0, Failed: 1, Skipped: 0, Not Run: 0, Time: 43.654s
+Error: Process completed with exit code 1.
+I have generated a dump again and am building again on github actions at 
+https://github.com/kusl/dotnetcms/actions/runs/33754417380
+but nothing in the code has changed 
+I have also included the lates dump and the output in the project files in claude 
+as expected everything is passing in https://github.com/kusl/dotnetcms/actions/runs/33754417380
+please review and give me full files for all files that need to change, if any 
