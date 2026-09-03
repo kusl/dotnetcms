@@ -17,14 +17,14 @@
          version number"). See the matching PackageVersion below. -->
     <SQLitePCLRawBundleVersion>3.0.3</SQLitePCLRawBundleVersion>
 
-    <OpenTelemetryVersion>1.17.0</OpenTelemetryVersion>
+    <OpenTelemetryVersion>1.18.0</OpenTelemetryVersion>
     <OtelAspNetCoreInstrVersion>1.17.0</OtelAspNetCoreInstrVersion>
     <OtelHttpInstrVersion>1.17.0</OtelHttpInstrVersion>
 
     <TestSdkVersion>18.9.0</TestSdkVersion>
     <XUnitVersion>4.0.0</XUnitVersion>
     <XUnitRunnerVersion>3.1.5</XUnitRunnerVersion>
-    <TestingExtensionsVersion>2.3.3</TestingExtensionsVersion>
+    <TestingExtensionsVersion>2.4.0</TestingExtensionsVersion>
     <PlaywrightVersion>1.62.0</PlaywrightVersion>
 
     <SystemSecurityXmlVersion>8.0.4</SystemSecurityXmlVersion>
