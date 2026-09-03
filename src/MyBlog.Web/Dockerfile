@@ -33,7 +33,9 @@ RUN useradd -m -s /bin/bash appuser
 # Create data directory for SQLite
 RUN mkdir -p /app/data && chown appuser:appuser /app/data
 
-COPY --from=build /app/publish .
+# Copy published artifacts with appuser ownership and ensure readable permissions
+COPY --from=build --chown=appuser:appuser /app/publish .
+RUN chmod -R a+rX /app
 
 # Set environment variables
 ENV ASPNETCORE_URLS=http://+:5000
