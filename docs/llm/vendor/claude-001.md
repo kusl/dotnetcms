@@ -296,3 +296,152 @@ Claude is AI and can make mistakes. Please double-check responses.
 
 
 
+kushal@fedora:~/src/dotnet/MyImapDownloader$ mylogpath="/home/kushal/src/dotnet/MyBlog/docs/llm/output/$(date +%Y-%m-%d-%H-%M-%S).txt";cd ~/src/dotnet/MyBlog/ && pwd > ${mylogpath} && export DOTNET_CLI_TELEMETRY_OPTOUT=1 && (cd src && time dotnet format >> ${mylogpath}; time dotnet restore >> ${mylogpath}; time dotnet clean >> ${mylogpath}; time dotnet build >> ${mylogpath}; time dotnet run --project MyBlog.Tests/MyBlog.Tests.csproj >> ${mylogpath}; time dotnet list package >> ${mylogpath}; time dotnet list package --outdated >> ${mylogpath}); cd ~/src/dotnet/MyBlog/ >> ${mylogpath}; cat export.sh >> ${mylogpath}; time bash export.sh >> ${mylogpath}; cat run-e2e.sh >> ${mylogpath}; time bash run-e2e.sh >> ${mylogpath};
+
+real	0m9.370s
+user	0m18.654s
+sys	0m1.176s
+
+real	0m0.683s
+user	0m0.755s
+sys	0m0.181s
+
+real	0m0.678s
+user	0m0.716s
+sys	0m0.189s
+
+real	0m5.214s
+user	0m2.447s
+sys	0m0.452s
+
+real	0m42.878s
+user	0m47.878s
+sys	0m0.825s
+
+real	0m1.616s
+user	0m1.585s
+sys	0m0.376s
+
+real	0m2.704s
+user	0m2.101s
+sys	0m0.443s
+
+real	0m5.354s
+user	0m2.502s
+sys	0m3.468s
+
+real	0m36.491s
+user	0m2.163s
+sys	0m1.734s
+kushal@fedora:~/src/dotnet/MyBlog$ mylogpath="/home/kushal/src/dotnet/MyBlog/docs/llm/output/$(date +%Y-%m-%d-%H-%M-%S).txt";cd ~/src/dotnet/MyBlog/ && pwd > ${mylogpath} && export DOTNET_CLI_TELEMETRY_OPTOUT=1 && (cd src && time dotnet format >> ${mylogpath}; time dotnet restore >> ${mylogpath}; time dotnet clean >> ${mylogpath}; time dotnet build >> ${mylogpath}; time dotnet run --project MyBlog.Tests/MyBlog.Tests.csproj >> ${mylogpath}; time dotnet list package >> ${mylogpath}; time dotnet list package --outdated >> ${mylogpath}); cd ~/src/dotnet/MyBlog/ >> ${mylogpath}; cat export.sh >> ${mylogpath}; time bash export.sh >> ${mylogpath}; cat run-e2e.sh >> ${mylogpath}; time bash run-e2e.sh >> ${mylogpath};
+
+real	0m16.464s
+user	0m22.349s
+sys	0m3.388s
+
+real	0m0.701s
+user	0m0.736s
+sys	0m0.157s
+
+real	0m0.647s
+user	0m0.693s
+sys	0m0.147s
+
+real	0m2.531s
+user	0m1.722s
+sys	0m0.379s
+
+real	0m42.057s
+user	0m45.526s
+sys	0m0.768s
+
+real	0m1.486s
+user	0m1.535s
+sys	0m0.337s
+
+real	0m1.760s
+user	0m1.740s
+sys	0m0.359s
+
+real	0m5.247s
+user	0m2.503s
+sys	0m3.352s
+
+real	0m35.143s
+user	0m2.549s
+sys	0m1.575s
+kushal@fedora:~/src/dotnet/MyBlog$ mylogpath="/home/kushal/src/dotnet/MyBlog/docs/llm/output/$(date +%Y-%m-%d-%H-%M-%S).txt";cd ~/src/dotnet/MyBlog/ && pwd > ${mylogpath} && export DOTNET_CLI_TELEMETRY_OPTOUT=1 && (cd src && time dotnet format >> ${mylogpath}; time dotnet restore >> ${mylogpath}; time dotnet clean >> ${mylogpath}; time dotnet build >> ${mylogpath}; time dotnet run --project MyBlog.Tests/MyBlog.Tests.csproj >> ${mylogpath}; time dotnet list package >> ${mylogpath}; time dotnet list package --outdated >> ${mylogpath}); cd ~/src/dotnet/MyBlog/ >> ${mylogpath}; cat export.sh >> ${mylogpath}; time bash export.sh >> ${mylogpath}; cat run-e2e.sh >> ${mylogpath}; time bash run-e2e.sh >> ${mylogpath};
+
+real	0m8.995s
+user	0m17.811s
+sys	0m1.189s
+
+real	0m0.669s
+user	0m0.721s
+sys	0m0.162s
+
+real	0m0.612s
+user	0m0.672s
+sys	0m0.166s
+
+real	0m2.258s
+user	0m1.616s
+sys	0m0.353s
+
+real	0m41.880s
+user	0m45.521s
+sys	0m0.721s
+
+real	0m1.498s
+user	0m1.553s
+sys	0m0.330s
+
+real	0m1.738s
+user	0m1.703s
+sys	0m0.375s
+
+real	0m5.278s
+user	0m2.559s
+sys	0m3.342s
+
+real	0m34.519s
+user	0m2.050s
+sys	0m1.338s
+kushal@fedora:~/src/dotnet/MyBlog$ mylogpath="/home/kushal/src/dotnet/MyBlog/docs/llm/output/$(date +%Y-%m-%d-%H-%M-%S).txt";cd ~/src/dotnet/MyBlog/ && pwd > ${mylogpath} && export DOTNET_CLI_TELEMETRY_OPTOUT=1 && (cd src && time dotnet format >> ${mylogpath}; time dotnet restore >> ${mylogpath}; time dotnet clean >> ${mylogpath}; time dotnet build >> ${mylogpath}; time dotnet run --project MyBlog.Tests/MyBlog.Tests.csproj >> ${mylogpath}; time dotnet list package >> ${mylogpath}; time dotnet list package --outdated >> ${mylogpath}); cd ~/src/dotnet/MyBlog/ >> ${mylogpath}; cat export.sh >> ${mylogpath}; time bash export.sh >> ${mylogpath}; cat run-e2e.sh >> ${mylogpath}; time bash run-e2e.sh >> ${mylogpath};
+
+real	0m8.918s
+user	0m18.168s
+sys	0m1.073s
+
+real	0m0.703s
+user	0m0.790s
+sys	0m0.159s
+
+real	0m0.655s
+user	0m0.720s
+sys	0m0.173s
+
+real	0m7.199s
+user	0m2.403s
+sys	0m0.471s
+
+real	0m43.541s
+user	0m48.599s
+sys	0m0.811s
+
+real	0m1.725s
+user	0m1.773s
+sys	0m0.419s
+
+real	0m2.835s
+user	0m2.335s
+sys	0m0.456s
+
+real	0m5.677s
+user	0m2.618s
+sys	0m3.730s
+
+real	0m35.056s
+user	0m2.219s
+sys	0m1.491s
+kushal@fedora:~/src/dotnet/MyBlog$ mylogpath="/home/kushal/src/dotnet/MyBlog/docs/llm/output/$(date +%Y-%m-%d-%H-%M-%S).txt";cd ~/src/dotnet/MyBlog/ && pwd > ${mylogpath} && export DOTNET_CLI_TELEMETRY_OPTOUT=1 && (cd src && time dotnet format >> ${mylogpath}; time dotnet restore >> ${mylogpath}; time dotnet clean >> ${mylogpath}; time dotnet build >> ${mylogpath}; time dotnet run --project MyBlog.Tests/MyBlog.Tests.csproj >> ${mylogpath}; time dotnet list package >> ${mylogpath}; time dotnet list package --outdated >> ${mylogpath}); cd ~/src/dotnet/MyBlog/ >> ${mylogpath}; cat export.sh >> ${mylogpath}; time bash export.sh >> ${mylogpath}; cat run-e2e.sh >> ${mylogpath}; time bash run-e2e.sh >> ${mylogpath};
