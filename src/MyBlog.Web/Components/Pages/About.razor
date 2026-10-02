@@ -1,8 +1,6 @@
 @page "/about"
 @rendermode InteractiveServer
-@implements IDisposable
 @inject IConfiguration Configuration
-@inject IReaderTrackingService ReaderTrackingService
 @inject IPostRepository PostRepository
 
 <PageTitle>About - @(Configuration["Application:Title"] ?? "MyBlog")</PageTitle>
@@ -69,9 +67,9 @@
                 <div class="arch-contents">
                     <strong>Contains:</strong>
                     <ul>
-                        <li><code>Data/</code> — BlogDbContext, DatabasePathResolver</li>
+                        <li><code>Data/</code> — BlogDbContext, DatabasePathResolver, DatabaseSchemaUpdater</li>
                         <li><code>Repositories/</code> — EF Core implementations</li>
-                        <li><code>Services/</code> — AuthService, PasswordService, ReaderTrackingService</li>
+                        <li><code>Services/</code> — AuthService, PasswordService, ReaderTrackingService, ImageDimensionService</li>
                         <li><code>Telemetry/</code> — OpenTelemetry exporters</li>
                     </ul>
                 </div>
@@ -82,8 +80,8 @@
                 <p class="arch-subtitle">Presentation Layer</p>
                 <p>
                     The Blazor Server application containing all UI components, pages, layouts, and middleware.
-                    Uses a hybrid rendering approach with both Server-Side Rendering (SSR) for public pages
-                    and Interactive Server mode for admin functionality.
+                    Routes render in Interactive Server mode after a prerendered first response; login is a
+                    static form that posts to a minimal API endpoint.
                 </p>
                 <div class="arch-contents">
                     <strong>Contains:</strong>
@@ -92,6 +90,7 @@
                         <li><code>Components/Pages/Admin/</code> — Dashboard, PostEditor, UserEditor, ImageManager</li>
                         <li><code>Components/Shared/</code> — Reusable components (PostCard, Pagination, ReaderBadge)</li>
                         <li><code>Middleware/</code> — LoginRateLimitMiddleware</li>
+                        <li><code>Endpoints/</code> — RSS feed at <code>/feed.xml</code></li>
                     </ul>
                 </div>
             </div>
@@ -124,7 +123,7 @@
                     <li><strong>.NET 10</strong> — Current runtime with latest features and performance improvements</li>
                     <li><strong>Blazor Server</strong> — Component-based UI with real-time SignalR connectivity</li>
                     <li><strong>ASP.NET Core</strong> — Web framework with middleware pipeline</li>
-                    <li><strong>Entity Framework Core</strong> — ORM with code-first migrations</li>
+                    <li><strong>Entity Framework Core</strong> — ORM; schema via EnsureCreated plus an idempotent updater, no migrations</li>
                 </ul>
             </div>
 
@@ -174,7 +173,7 @@
                     <li><strong>GitHub Actions</strong> — Automated CI/CD pipeline</li>
                     <li><strong>WebDeploy</strong> — IIS deployment with AppOffline rule</li>
                     <li><strong>PowerShell Scripts</strong> — No third-party deployment actions</li>
-                    <li><strong>Cross-Platform Publishing</strong> — win-x86, win-x64, linux-x64</li>
+                    <li><strong>Two Deploy Targets</strong> — Same package deployed to two IIS sites</li>
                 </ul>
             </div>
         </div>
@@ -239,8 +238,8 @@
                 </p>
                 <div class="feature-details">
                     <strong>Implementation:</strong>
-                    <code>IReaderTrackingService</code> with JoinPost/LeavePost lifecycle,
-                    <code>OnCountChanged</code> event for reactive updates
+                    <code>IReaderTrackingService</code> with JoinPost/LeavePost lifecycle;
+                    <code>ReaderHub</code> broadcasts <code>UpdateCount</code> to each post's group
                 </div>
             </div>
 
@@ -250,7 +249,7 @@
                 <p>
                     Enterprise-grade security with rate limiting that progressively delays login attempts
                     (1s, 2s, 4s... up to 30s) but never completely blocks users. Passwords are hashed using
-                    ASP.NET Identity's PasswordHasher with automatic rehashing support.
+                    ASP.NET Core Identity's PasswordHasher (PBKDF2-HMAC-SHA512, 100,000 iterations).
                 </p>
                 <div class="feature-details">
                     <strong>Rate Limiting:</strong>
@@ -264,8 +263,8 @@
                 <h3>Smart Slug Generation</h3>
                 <p>
                     Automatically generates URL-friendly slugs from post titles with Unicode normalization,
-                    special character removal, and automatic collision prevention by appending numbers
-                    (<code>my-post</code>, <code>my-post-1</code>, <code>my-post-2</code>).
+                    special character removal, and a UUIDv7 fallback (<code>post-&lt;uuid&gt;</code>) when the
+                    title slug is empty or already taken.
                 </p>
                 <div class="feature-details">
                     <strong>Algorithm:</strong>
@@ -296,7 +295,7 @@
                 <p>
                     View all posts with title, author, and publish status. Create new posts with
                     a live Markdown preview, edit existing content, toggle publish/draft status,
-                    and delete posts with confirmation.
+                    and delete posts.
                 </p>
             </div>
 
@@ -311,8 +310,8 @@
             <div class="admin-feature">
                 <h3>🖼️ Image Library (<code>/admin/images</code>)</h3>
                 <p>
-                    Upload new images with drag-and-drop support, browse existing images with
-                    preview thumbnails, copy image URLs for use in Markdown, and delete unused images.
+                    Upload images with a file picker, browse thumbnails alongside the image URL to
+                    paste into Markdown, and delete unused images.
                 </p>
             </div>
 
@@ -434,8 +433,8 @@
                 <li><strong>Build & Test</strong> — Runs on Windows, Linux, and macOS simultaneously</li>
                 <li><strong>Restore</strong> — <code>dotnet restore src/MyBlog.slnx</code></li>
                 <li><strong>Build</strong> — <code>dotnet build -c Release</code></li>
-                <li><strong>Test</strong> — <code>dotnet test</code> with TRX output</li>
-                <li><strong>Publish</strong> — Self-contained deployment for win-x86</li>
+                <li><strong>Test</strong> — <code>dotnet run --project src/MyBlog.Tests/MyBlog.Tests.csproj</code> (Microsoft.Testing.Platform)</li>
+                <li><strong>Publish</strong> — Framework-dependent publish for win-x86</li>
                 <li><strong>Deploy</strong> — WebDeploy to IIS with AppOffline rule</li>
             </ol>
         </div>
@@ -487,7 +486,8 @@
                 <h3>🎯 Zero External Dependencies</h3>
                 <p>
                     No npm, no Node.js, no CSS frameworks. All styling is custom CSS using CSS variables
-                    for theming. The only JavaScript is Blazor's <code>blazor.web.js</code> runtime.
+                    for theming. Besides Blazor's <code>blazor.web.js</code> runtime, the only JavaScript is a
+                    small vanilla <code>site.js</code> for theming and sharing.
                 </p>
             </div>
 
@@ -510,8 +510,8 @@
             <div class="principle">
                 <h3>⚡ Performance First</h3>
                 <p>
-                    Public pages use Server-Side Rendering (SSR) for fast initial loads. Interactive
-                    features are scoped to admin pages where they're needed. AsNoTracking queries
+                    Pages are prerendered for a fast first paint, static assets are served precompressed
+                    and fingerprinted via <code>MapStaticAssets</code>, and AsNoTracking queries
                     minimize EF Core overhead for read operations.
                 </p>
             </div>
@@ -598,8 +598,12 @@
                 <span>Sign out the current user (requires authorization)</span>
             </div>
             <div class="api-row">
-                <code>POST /login</code>
+                <code>POST /account/login</code>
                 <span>Form-based authentication with rate limiting</span>
+            </div>
+            <div class="api-row">
+                <code>GET /feed.xml</code>
+                <span>RSS 2.0 feed of the 20 most recent published posts</span>
             </div>
         </div>
     </section>
@@ -686,20 +690,7 @@ dotnet run</code></pre>
 
     protected override async Task OnInitializedAsync()
     {
-        var (posts, totalCount) = await PostRepository.GetPublishedPostsAsync(1, int.MaxValue);
-        _publishedCount = totalCount;
+        _publishedCount = await PostRepository.GetPublishedCountAsync();
         _postCount = await PostRepository.GetCountAsync();
-    }
-
-    private void HandleCountChanged(string slug, int count)
-    {
-        if (slug == TrackingSlug)
-        {
-            InvokeAsync(StateHasChanged);
-        }
-    }
-
-    public void Dispose()
-    {
     }
 }

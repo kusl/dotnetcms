@@ -3,28 +3,20 @@
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
     <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
     <MicrosoftPackagesVersion>10.0.12</MicrosoftPackagesVersion>
-    <MicrosoftIdentityVersion>2.3.13</MicrosoftIdentityVersion>
     <OpenTelemetryVersion>1.19.1</OpenTelemetryVersion>
     <OtelAspNetCoreInstrVersion>1.19.0</OtelAspNetCoreInstrVersion>
     <OtelHttpInstrVersion>1.19.0</OtelHttpInstrVersion>
 
     <TestSdkVersion>18.10.1</TestSdkVersion>
     <XUnitVersion>4.0.1</XUnitVersion>
-    <XUnitRunnerVersion>3.1.5</XUnitRunnerVersion>
     <TestingExtensionsVersion>2.4.1</TestingExtensionsVersion>
     <PlaywrightVersion>1.63.0</PlaywrightVersion>
-
-    <SystemSecurityXmlVersion>8.0.4</SystemSecurityXmlVersion>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageVersion Include="Microsoft.AspNetCore.SignalR.Client" Version="$(MicrosoftPackagesVersion)" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="$(MicrosoftPackagesVersion)" />
-    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="$(MicrosoftPackagesVersion)" />
-    <PackageVersion Include="Microsoft.Extensions.Hosting" Version="$(MicrosoftPackagesVersion)" />
-    <PackageVersion Include="Microsoft.Extensions.Http" Version="$(MicrosoftPackagesVersion)" />
     <PackageVersion Include="Microsoft.Extensions.Logging" Version="$(MicrosoftPackagesVersion)" />
-    <PackageVersion Include="Microsoft.AspNetCore.Identity" Version="$(MicrosoftIdentityVersion)" />
     <PackageVersion Include="OpenTelemetry" Version="$(OpenTelemetryVersion)" />
     <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="$(OpenTelemetryVersion)" />
     <PackageVersion Include="OpenTelemetry.Exporter.Console" Version="$(OpenTelemetryVersion)" />
@@ -34,10 +26,7 @@
 
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="$(TestSdkVersion)" />
     <PackageVersion Include="xunit.v3" Version="$(XUnitVersion)" />
-    <PackageVersion Include="xunit.runner.visualstudio" Version="$(XUnitRunnerVersion)" />
     <PackageVersion Include="Microsoft.Testing.Extensions.TrxReport" Version="$(TestingExtensionsVersion)" />
     <PackageVersion Include="Microsoft.Playwright" Version="$(PlaywrightVersion)" />
-
-    <PackageVersion Include="System.Security.Cryptography.Xml" Version="$(SystemSecurityXmlVersion)" />
   </ItemGroup>
 </Project>

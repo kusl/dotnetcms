@@ -66,9 +66,12 @@ falls back to a dimensionless `<img>` on any failure.
 
 ## More Information
 
-The table's existence is checked with a `sqlite_master` query because a database
-created before this feature would not have the table until the schema updater runs
-(ADR-0005). AVIF/SVG support would be the natural next extension.
+The schema updater (ADR-0005) creates the table at startup, before requests are served;
+the warmer still checks `sqlite_master` once.
+
+> **Amendment (2026-10-02):** the probe no longer queries `sqlite_master` per call, reads
+> GIF/JPEG dimensions and JPEG segment lengths as unsigned 16-bit values, and receives the
+> HTML-decoded URL from `MarkdownService` (ADR-0021). AVIF/SVG support would be the natural next extension.
 
 **Y-statement:** In the context of eliminating image layout shift without an image
 library, facing the cost of downloading full images, we decided for a hand-written

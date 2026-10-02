@@ -18,15 +18,9 @@ using OpenTelemetry.Trace;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// The Blazor circuit hub inherits SignalR's default MaximumReceiveMessageSize of
-// 32 KB (HubOptionsSetup.DefaultMaximumMessageSize). Any single inbound message
-// larger than that causes SignalR to abort the connection, which tears down the
-// circuit. Because @bind on a <textarea> sends the whole textarea value in one
-// message, a long Markdown post silently kills the editor instead of saving.
 var maxCircuitMessageBytes = builder.Configuration.GetValue(
     "Blazor:MaximumReceiveMessageSizeBytes", 1024 * 1024);
 
-// Add services
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents(options =>
     {
@@ -37,16 +31,12 @@ builder.Services.AddRazorComponents()
         options.MaximumReceiveMessageSize = maxCircuitMessageBytes;
     });
 
-// Register SignalR. Deliberately left at the default 32 KB receive limit:
-// ReaderHub only ever receives post slugs, so it does not need a larger budget.
 builder.Services.AddSignalR();
 
 builder.Services.AddInfrastructure(builder.Configuration);
 
-// Output caching for RSS feed
 builder.Services.AddOutputCache();
 
-// Configure authentication
 var sessionTimeout = builder.Configuration.GetValue("Authentication:SessionTimeoutMinutes", 30);
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
@@ -64,18 +54,14 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     });
 builder.Services.AddAuthorization();
 builder.Services.AddCascadingAuthenticationState();
-builder.Services.AddHttpContextAccessor();
 
-// Configure OpenTelemetry
 var serviceName = "MyBlog";
 var serviceVersion = typeof(Program).Assembly.GetName().Version?.ToString() ?? "1.0.0";
 
-// Determine if OTLP export is configured (endpoint + API key both present)
 var otlpEndpoint = builder.Configuration["Otlp:Endpoint"];
 var otlpApiKey = builder.Configuration["Otlp:ApiKey"];
 var otlpEnabled = !string.IsNullOrWhiteSpace(otlpEndpoint) && !string.IsNullOrWhiteSpace(otlpApiKey);
 
-// Parse the OTLP protocol from configuration (default: HttpProtobuf)
 var otlpProtocol = OtlpExportProtocol.HttpProtobuf;
 var configuredProtocol = builder.Configuration["Otlp:Protocol"];
 if (!string.IsNullOrWhiteSpace(configuredProtocol) &&
@@ -121,7 +107,6 @@ builder.Services.AddOpenTelemetry()
         }
     });
 
-// Configure logging with OpenTelemetry
 builder.Logging.AddOpenTelemetry(logging =>
 {
     logging.IncludeFormattedMessage = true;
@@ -140,14 +125,11 @@ builder.Logging.AddOpenTelemetry(logging =>
 });
 var app = builder.Build();
 
-// Configure the HTTP request pipeline
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
 }
 
-app.UseStaticFiles();
-// Rate limiting for login attempts
 app.UseLoginRateLimit();
 
 app.UseRouting();
@@ -158,7 +140,9 @@ app.UseAuthorization();
 app.UseOutputCache();
 
 app.UseAntiforgery();
-// Minimal API endpoints
+
+app.MapStaticAssets();
+
 app.MapPost("/account/login", async (HttpContext context, IAuthService authService) =>
 {
     var form = await context.Request.ReadFormAsync();
@@ -207,7 +191,6 @@ app.MapGet("/api/images/{id:guid}", async (Guid id, IImageRepository imageReposi
     return Results.File(image.Data, image.ContentType);
 });
 
-// RSS feed endpoint
 app.MapRssEndpoints();
 
 app.MapRazorComponents<App>()
@@ -215,13 +198,10 @@ app.MapRazorComponents<App>()
 
 app.MapHub<ReaderHub>("/readerHub");
 
-// Initialize database and ensure admin user
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<BlogDbContext>();
-    // EnsureCreated creates the database and all tables if they don't exist
     await context.Database.EnsureCreatedAsync();
-    // Apply any incremental schema updates for existing databases
     await DatabaseSchemaUpdater.ApplyUpdatesAsync(context);
 
     var authService = scope.ServiceProvider.GetRequiredService<IAuthService>();

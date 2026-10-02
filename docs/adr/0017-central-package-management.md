@@ -52,6 +52,12 @@ vulnerability was remediated:
 > the mechanism that forced the fixed version across the whole solution from one
 > edit. The rest of the log is dated to when each decision was made; this line
 > records a later security bump to the same policy.
+>
+> **Amendment (2026-10-02):** the SQLitePCLRaw pin is removed. EF Core 10.0.12 depends on
+> SQLitePCLRaw 2.1.12, which references SQLite 3.53.3, and restore reports no advisory. The
+> `System.Security.Cryptography.Xml` pin is also removed; only the retired
+> `Microsoft.AspNetCore.Identity` 2.x graph needed it (ADR-0021). NuGet audit under
+> warnings-as-errors (ADR-0020) guards against regressions.
 
 ### Consequences
 

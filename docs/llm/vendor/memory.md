@@ -1,36 +1,50 @@
-Manage project memory
-
-Claude regenerates project memory every evening from your past chats in this project. Only you can see this memory, and it is not shared with other project users.
-
 Purpose & context
-
-Kushal is the sole developer and operator of dotnetcms (also called MyBlog), a self-hosted .NET 10 Blazor Server blog engine hosted at kush.runasp.net with source at github.com/kusl/dotnetcms. The project follows Clean Architecture (Core / Infrastructure / Web layers) with SQLite via EF Core, SignalR, a hand-written Markdown parser, OpenTelemetry observability, and deployment to IIS via GitHub Actions WebDeploy. It is primarily a learning project that also serves as a real deployment across multiple domains.
-
-Kushal works with AI assistance from both Claude and Gemini, reflected in ADR authorship. The project has a comprehensive 63 KB README in the repository (a zero-byte copy at /mnt/project/README.md is a sync artifact only — never treat it as the real file or rewrite it).
+Kushal is building MyBlog, a .NET 10 Blazor Server blogging platform following Clean Architecture principles. The project is a multi-project solution (MyBlog.Core, MyBlog.Infrastructure, MyBlog.Web, MyBlog.Tests, MyBlog.E2E) with SQLite storage, cookie-based authentication, SignalR-based real-time reader tracking, OpenTelemetry observability, and a custom Markdown parser. The application deploys to IIS via WebDeploy through GitHub Actions, with two deployment targets using separate secrets. Kushal develops on both Fedora (Linux) and Windows, with E2E tests running via Podman Compose locally and Docker in CI.
+The project originated as a from-scratch generation via shell script and has evolved through iterative feature additions, bug fixes, test coverage expansion, and infrastructure improvements. Key architectural decisions include: no third-party CSS frameworks, no npm/Node dependencies, custom Markdown parsing, images stored as BLOBs in SQLite, XDG-compliant database paths, and OpenTelemetry with OTLP export to Honeycomb.io using only vendor-neutral packages (no Honeycomb SDK).
 
 Current state
 
-A complete 22-file ADR set (MADR format, Y-statements, index + ADRs 0001–0020 + solid-review.md appendix) has been produced documenting all major architectural decisions, SOLID adherence, deliberate deviations, accepted nits, and prioritized recommendations
-Flaky E2E test race condition (AdminNavigation_CanNavigateBetweenPages) diagnosed and fixed: root cause is Blazor prerender/SignalR circuit gap; fix involves WaitForBlazorInteractiveAsync() extension + data-blazor-interactive attribute on MainLayout.razor; ThemeSwitcherTests.cs and the production-side navigation race were intentionally left for a separate ADR
-Post body editor silent-save bug fixed (three compounding defects: onchange vs oninput binding, prerender data loss, unconditional _content write); SignalR MaximumReceiveMessageSize raised to configurable 1 MB; PostRepository.UpdateAsync flagged for incorrectly marking User entity Modified on every post save
-CVE-2025-6965 (SQLitePCLRaw.lib.e_sqlite3) resolved via transitive pin to SQLitePCLRaw.bundle_e_sqlite3 3.0.3 in Directory.Packages.props using CentralPackageTransitivePinningEnabled
-RSS 2.0 feed live at /feed.xml with full <content:encoded> CDATA for offline reading, output caching, RFC 822 dates, atom:link rel="self", guid isPermaLink="true"
-OpenTelemetry integrated via vendor-neutral OTLP exporter to Honeycomb.io; conditionally enabled when both Otlp:Endpoint and Otlp:ApiKey are non-empty; per-deployment secrets injected via GitHub Actions
+Observability: OpenTelemetry integrated with OTLP exporter sending traces/metrics/logs to Honeycomb.io via x-honeycomb-team header auth; conditionally enabled only when endpoint and API key are configured; per-deployment-target secrets in GitHub Actions
+E2E testing: Playwright + xUnit v3 suite running in Podman/Docker; infrastructure includes stale container cleanup, optimized Docker layer ordering to avoid redundant browser downloads, and offline support flags
+Authentication: Login uses a minimal API POST endpoint (/account/login) with antiforgery token; LoginRateLimitMiddleware applies progressive delays (never fully blocks) and is disabled in Development environments
+Database schema: Managed via EnsureCreatedAsync() + DatabaseSchemaUpdater for incremental updates on existing deployments; no EF Core migrations
+Test suite: Comprehensive unit, integration, and E2E coverage; xUnit v3 patterns with TestContext.Current.CancellationToken; in-memory SQLite for integration tests
+
 
 On the horizon
 
-URL scheme allow-listing in the Markdown parser (flagged as the top security recommendation in solid-review.md — only item with real security value)
-Production-side Blazor prerender/navigation race (intentionally deferred; warrants an ADR before touching)
-PostRepository.UpdateAsync incorrectly marks User entity as Modified on every post save — latent bug to address
-Mobile UX improvements and share sheet functionality (Web Share API with clipboard fallback for Chrome on iOS)
+RSS feed support (detailed implementation plan exists: new models, IRssFeedService, minimal API endpoint, tests)
+Mobile UX improvements and share sheet functionality (Web Share API with clipboard fallback)
+Potential future features noted: comments system, search functionality
+
 
 Key learnings & principles
 
-Blazor prerender/circuit gap is a recurring failure mode: any interactive action (link click, form fill) must wait for the SignalR circuit to be live; WaitForBlazorInteractiveAsync() is the established pattern
-EnsureCreatedAsync() + DatabaseSchemaUpdater is the schema strategy (no EF Core migrations); CREATE TABLE IF NOT EXISTS for incremental updates; idempotent and safe across deployments
-SignalR MaximumReceiveMessageSize defaults to 32 KB and silently aborts the circuit for large documents — must be raised for content-heavy editors
-Login must use a minimal API endpoint (POST /account/login) rather than Blazor interactive form handling, because HttpContext is null in interactive SignalR mode; this pattern is established and must not be reverted
-Playwright selector patterns: use .Or() for OR conditions, never comma-separated text selectors; use WaitForURLAsync started before click for navigation assertions; avoid RunAndWaitForNavigationAsync (obsolete)
-WebDeploy: WEBSITE_NAME secret must be the IIS site name only (not the full domain); -enableRule:AppOffline prevents ERROR_FILE_IN_USE; PowerShell XPath (SelectSingleNode) required for XML element names containing dots
-Rate limiting philosophy: progressive delays, never lockout — unlimited attempts always permitted
-README zero-byte artifact: /mnt/project/README.md is never the real file; the real README is in the repository at 63 KB
+Forward-compatible solutions over workarounds: Kushal actively rejects deprecated patterns (e.g., insisted on .NET 10-correct @page directive approach for NotFound.razor rather than reverting to deprecated <NotFound> fragment)
+Root cause fixes only: Suppress-warning or workaround approaches are explicitly rejected; fix the actual problem
+No regressions: Changes must not break existing deployments or test suites; data safety on live deployments is a hard constraint
+Blazor SSR vs. interactive rendering: Login/auth uses SSR with proper name attributes and [SupplyParameterFromForm]; interactive admin components use InteractiveServer render mode — mixing these patterns causes breakage
+WebDeploy quirks: WEBSITE_NAME secret must be the IIS site name only (not full domain); -enableRule:AppOffline needed to avoid file-in-use errors during deployment; PowerShell backtick line continuations cause argument mangling with complex quoted params — build args as separate variables instead
+PowerShell XML traversal: Dot-notation fails on element names containing dots (e.g., system.webServer); use SelectSingleNode() with XPath instead
+Cross-platform newlines: StringBuilder.AppendLine() produces CRLF on Windows; normalize newlines before string assertions in tests
+Testability via DI: Injectable delay functions (rather than real Task.Delay) make rate-limiting middleware tests run in milliseconds
+
+
+Approach & patterns
+
+Always provide complete files: Kushal explicitly requires full file contents for every changed file — never diffs or partial snippets
+Minimal, targeted changes: No unnecessary modifications; preserve existing coding style, brace placement, and primary constructors
+No hallucination: Read every line of provided code carefully before proposing solutions; verify method signatures and class names exist before referencing them
+Codebase provided via dump files: Kushal regularly provides full codebase dumps (dump.txt) and log files for analysis; project knowledge search is used to navigate these
+Conditional feature flags: New infrastructure features (OTLP export, file logging, database logging) are gated on configuration flags so they're safely off by default
+Centralized package management: Directory.Packages.props with MSBuild property variables for version grouping; no version attributes on individual PackageReference elements
+
+
+Tools & resources
+
+Runtime/framework: .NET 10, Blazor Server, ASP.NET Core minimal APIs
+Data: SQLite via EF Core (no migrations), in-memory SQLite for tests
+Observability: OpenTelemetry SDK, OpenTelemetry.Exporter.OpenTelemetryProtocol → Honeycomb.io
+Testing: xUnit v3, Playwright for .NET, Podman Compose (local), Docker (CI)
+CI/CD: GitHub Actions, WebDeploy (MSDeploy) to IIS, custom PowerShell deployment scripts
+Dev environment: Fedora (primary Linux), Windows (secondary); cross-platform compatibility required

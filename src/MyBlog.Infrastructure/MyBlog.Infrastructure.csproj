@@ -2,14 +2,20 @@
   <PropertyGroup>
     <RootNamespace>MyBlog.Infrastructure</RootNamespace>
   </PropertyGroup>
-  
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity" />
-    <PackageReference Include="Microsoft.Extensions.Http" />
     <PackageReference Include="OpenTelemetry" />
   </ItemGroup>
-  
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="MyBlog.Tests" />
+  </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\MyBlog.Core\MyBlog.Core.csproj" />
   </ItemGroup>

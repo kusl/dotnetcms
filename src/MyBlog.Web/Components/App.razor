@@ -5,12 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#f8f9fa" />
     <base href="/" />
-    <link rel="stylesheet" href="css/site.css" />
-    <link rel="stylesheet" href="MyBlog.Web.styles.css" />
+    <link rel="stylesheet" href="@Assets["css/site.css"]" />
+    <link rel="stylesheet" href="@Assets["MyBlog.Web.styles.css"]" />
     <link rel="alternate" type="application/rss+xml" title="RSS Feed" href="/feed.xml" />
     <HeadOutlet @rendermode="InteractiveServer" />
     <script>
-        // Inline script to prevent flash of wrong theme - runs immediately
         (function() {
             var storageKey = 'myblog-theme';
             var theme = localStorage.getItem(storageKey);
@@ -18,7 +17,6 @@
                 theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
             }
             document.documentElement.setAttribute('data-theme', theme);
-            // Update theme-color meta immediately
             var isDark = ['dark', 'nord', 'dracula'].indexOf(theme) !== -1;
             var metaTheme = document.querySelector('meta[name="theme-color"]');
             if (metaTheme) metaTheme.content = isDark ? '#0f172a' : '#f8f9fa';
@@ -27,7 +25,7 @@
 </head>
 <body>
     <Routes @rendermode="InteractiveServer" />
-    <script src="_framework/blazor.web.js"></script>
-    <script src="js/site.js"></script>
+    <script src="@Assets["_framework/blazor.web.js"]"></script>
+    <script src="@Assets["js/site.js"]"></script>
 </body>
 </html>

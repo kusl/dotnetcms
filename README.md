@@ -64,8 +64,8 @@ MyBlog is a complete content management system designed for developers who want 
 
 ### Security Features
 - **Progressive Rate Limiting** — Slows down brute-force attacks but never locks users out
-- **Secure Password Storage** — ASP.NET Identity PasswordHasher with automatic rehashing
-- **Slug Collision Prevention** — Automatic unique slug generation
+- **Secure Password Storage** — ASP.NET Core Identity `PasswordHasher` (PBKDF2-HMAC-SHA512, 100,000 iterations)
+- **Slug Collision Prevention** — Falls back to a UUIDv7 slug when the title slug is taken
 - **Cookie-Based Sessions** — HttpOnly, secure cookies with sliding expiration
 
 ### Administrative Features
@@ -79,6 +79,8 @@ MyBlog is a complete content management system designed for developers who want 
 - **OpenTelemetry Integration** — Distributed tracing, metrics, and logging
 - **Automatic Log Cleanup** — Configurable retention with daily cleanup
 - **XDG-Compliant Paths** — Proper data storage locations per platform
+- **Optimized Static Assets** — `MapStaticAssets` serves precompressed, fingerprinted files
+- **RSS 2.0 Feed** — `/feed.xml` with full post content
 - **CI/CD Pipeline** — GitHub Actions with cross-platform testing
 
 ---
@@ -167,7 +169,9 @@ MyBlog/
 │   │   │   └── TelemetryCleanupService.cs
 │   │   ├── Telemetry/
 │   │   │   ├── DatabaseLogExporter.cs
+│   │   │   ├── FileLogEntry.cs
 │   │   │   ├── FileLogExporter.cs
+│   │   │   ├── TelemetryJsonContext.cs
 │   │   │   └── TelemetryPathResolver.cs
 │   │   └── ServiceCollectionExtensions.cs
 │   │
@@ -197,6 +201,8 @@ MyBlog/
 │   │   │       ├── ReaderBadge.razor
 │   │   │       ├── RedirectToLogin.razor
 │   │   │       └── ThemeSwitcher.razor
+│   │   ├── Endpoints/
+│   │   │   └── RssEndpoints.cs
 │   │   ├── Hubs/
 │   │   │   └── ReaderHub.cs
 │   │   ├── Middleware/
@@ -205,18 +211,11 @@ MyBlog/
 │   │       ├── css/site.css
 │   │       └── js/site.js
 │   │
-│   ├── MyBlog.Tests/                # Test Project
-│   │   ├── Integration/
-│   │   │   ├── AuthServiceLongPasswordTests.cs
-│   │   │   ├── AuthServiceTests.cs
-│   │   │   ├── PasswordChangeTests.cs
-│   │   │   ├── PostRepositoryTests.cs
-│   │   │   └── TelemetryCleanupTests.cs
+│   ├── MyBlog.Tests/                # Unit and integration tests
+│   │   ├── Integration/             # In-memory SQLite
 │   │   └── Unit/
-│   │       ├── LoginRateLimitMiddlewareTests.cs
-│   │       ├── MarkdownServiceTests.cs
-│   │       ├── PasswordServiceTests.cs
-│   │       └── SlugServiceTests.cs
+│   │
+│   ├── MyBlog.E2E/                  # Playwright end-to-end tests
 │   │
 │   ├── Directory.Build.props        # Shared build properties
 │   ├── Directory.Packages.props     # Centralized package versions
@@ -240,8 +239,8 @@ MyBlog/
 | Runtime | .NET | 10.0 |
 | Web Framework | ASP.NET Core | 10.0 |
 | UI Framework | Blazor Server | 10.0 |
-| ORM | Entity Framework Core | 10.0.2 |
-| Real-Time | SignalR | 10.0.2 |
+| ORM | Entity Framework Core (SQLite) | 10.0.12 |
+| Real-Time | SignalR | 10.0.12 |
 
 ### Database
 
@@ -255,23 +254,24 @@ MyBlog/
 
 | Component | Technology | Version |
 |-----------|------------|---------|
-| Telemetry | OpenTelemetry | 1.15.0 |
-| Tracing | OpenTelemetry.Instrumentation.AspNetCore | 1.15.0 |
+| Telemetry | OpenTelemetry | 1.19.1 |
+| Instrumentation | OpenTelemetry.Instrumentation.AspNetCore / Http | 1.19.0 |
 | Logging | File (JSON) + Database + Console | — |
 
 ### Testing
 
 | Component | Technology | Version |
 |-----------|------------|---------|
-| Framework | xUnit | v3.2.2 |
-| Test SDK | Microsoft.NET.Test.Sdk | 18.0.1 |
+| Framework | xUnit v3 on Microsoft.Testing.Platform | 4.0.1 |
+| Test SDK | Microsoft.NET.Test.Sdk | 18.10.1 |
+| E2E | Microsoft.Playwright | 1.63.0 |
 | Database | In-Memory SQLite | — |
 
 ### Security
 
 | Component | Implementation |
 |-----------|----------------|
-| Password Hashing | ASP.NET Identity PasswordHasher (PBKDF2) |
+| Password Hashing | ASP.NET Core Identity `PasswordHasher` (PBKDF2-HMAC-SHA512) |
 | Authentication | Cookie-based with sliding expiration |
 | Rate Limiting | Custom middleware with progressive delays |
 
@@ -602,7 +602,7 @@ This approach is idempotent—safe to run multiple times without side effects.
 │         │     │   Middleware    │     │    Page     │
 └─────────┘     └─────────────────┘     └─────────────┘
                        │                       │
-                       │ Delay if needed       │ POST /login
+                       │ Delay if needed       │ POST /account/login
                        ▼                       ▼
               ┌─────────────────┐     ┌─────────────┐
               │  Track Attempt  │     │ AuthService │
@@ -628,36 +628,23 @@ This approach is idempotent—safe to run multiple times without side effects.
 
 ### Password Security
 
-Passwords are hashed using ASP.NET Identity's `PasswordHasher<T>`:
+`PasswordService` wraps the shared-framework `PasswordHasher<User>`, injected as `IPasswordHasher<User>`.
 
-**Algorithm:** PBKDF2 with HMAC-SHA256
-- 128-bit salt
-- 256-bit subkey
-- 10,000+ iterations (version-dependent)
+**Algorithm (.NET 10 defaults):** PBKDF2-HMAC-SHA512, 100,000 iterations, 128-bit salt, 256-bit subkey.
 
 ```csharp
-public sealed class PasswordService : IPasswordService
+public bool VerifyPassword(string hashedPassword, string providedPassword)
 {
-    private readonly PasswordHasher<User> _hasher = new();
-
-    public string HashPassword(string password)
-    {
-        return _hasher.HashPassword(null!, password);
-    }
-
-    public bool VerifyPassword(string hashedPassword, string providedPassword)
-    {
-        var result = _hasher.VerifyHashedPassword(null!, hashedPassword, providedPassword);
-        return result == PasswordVerificationResult.Success ||
-               result == PasswordVerificationResult.SuccessRehashNeeded;
-    }
+    var result = _hasher.VerifyHashedPassword(null!, hashedPassword, providedPassword);
+    return result == PasswordVerificationResult.Success ||
+           result == PasswordVerificationResult.SuccessRehashNeeded;
 }
 ```
 
 **Key behaviors:**
 - Same password produces different hashes each time (random salt)
-- Automatic rehashing detection for algorithm upgrades
-- Supports passwords up to 512+ characters
+- `SuccessRehashNeeded` is accepted as a valid login; stored hashes are not rewritten
+- No length truncation (tested up to 512 characters)
 
 ### Rate Limiting
 
@@ -682,7 +669,7 @@ The `LoginRateLimitMiddleware` protects against brute-force attacks using **prog
 ```csharp
 // Delay calculation formula
 var delayMultiplier = record.Count - AttemptsBeforeDelay;  // attempts - 5
-var delaySeconds = Math.Min(Math.Pow(2, delayMultiplier), MaxDelaySeconds);  // 2^n, max 30
+var delaySeconds = Math.Min(Math.Pow(2, delayMultiplier - 1), MaxDelaySeconds);  // 2^(n-1), max 30
 ```
 
 ### Session Management
@@ -1024,26 +1011,20 @@ This is paragraph two.
 
 The Markdown service automatically fetches and caches dimensions for external images:
 
-1. **On render:** Check `ImageDimensionCache` table for URL
+1. **On render:** Check `ImageDimensionCache` table for the HTML-decoded URL (the same key the startup warmer uses)
 2. **If cached:** Use stored width/height
 3. **If not cached:** Fetch image headers, parse dimensions, store in cache
 4. **If fetch fails:** Render image without dimensions (graceful degradation)
 
 **Supported image formats for dimension detection:**
 - PNG (dimensions at bytes 16-23)
-- GIF (dimensions at bytes 6-9)
-- JPEG (requires scanning for SOF marker)
+- GIF (unsigned 16-bit dimensions at bytes 6-9)
+- JPEG (scans segments for the SOF marker; unsigned 16-bit lengths and dimensions)
 - WebP (VP8, VP8L, VP8X variants)
 
 ### HTML Escaping
 
-All user content is HTML-escaped before processing:
-
-```csharp
-text = HttpUtility.HtmlEncode(text);
-```
-
-This prevents XSS attacks while allowing Markdown syntax.
+`MarkdownService` encodes `<`, `>`, `&` and `"` before applying Markdown rules, leaving other Unicode (including emoji) untouched. Raw HTML in posts is therefore displayed, not rendered. Link and image URL schemes are not filtered (ADR-0007).
 
 ---
 
@@ -1103,7 +1084,7 @@ Content-Length: 12345
 
 ### Reader Tracking
 
-MyBlog tracks how many users are currently reading each post using SignalR.
+MyBlog tracks how many users are currently reading each post using SignalR. `ReaderBadge` runs inside the Blazor circuit on the server and opens its own `HubConnection` to `/readerHub` (ADR-0014).
 
 #### Architecture
 
@@ -1256,14 +1237,14 @@ MyBlog uses OpenTelemetry for distributed tracing, metrics, and logging.
 
 #### Configuration
 
+Traces, metrics and logs use the console exporter. OTLP export is added only when both `Otlp:Endpoint` and `Otlp:ApiKey` are set; `Otlp:Protocol` selects `HttpProtobuf` (default) or `Grpc`.
+
 ```csharp
 builder.Services.AddOpenTelemetry()
-    .ConfigureResource(resource => resource
-        .AddService(serviceName: "MyBlog.Web", serviceVersion: "1.0.0"))
+    .ConfigureResource(resource => resource.AddService(serviceName, serviceVersion))
     .WithTracing(tracing => tracing
         .AddAspNetCoreInstrumentation()
         .AddHttpClientInstrumentation()
-        .AddSource("MyBlog.Web")
         .AddConsoleExporter())
     .WithMetrics(metrics => metrics
         .AddAspNetCoreInstrumentation()
@@ -1297,11 +1278,11 @@ Writes JSON-formatted logs to rotating files:
 ]
 ```
 
-**Rotation:** Files rotate at 25 MB with sequential numbering.
+**Rotation:** Files rotate at 25 MB with sequential numbering. Entries are serialized with the source-generated `TelemetryJsonContext` (no reflection).
 
 #### Database Exporter
 
-Writes structured logs to the `TelemetryLogs` table for queryable storage.
+Writes structured logs to the `TelemetryLogs` table for queryable storage. Attributes go to `Properties` as a JSON object written with `Utf8JsonWriter`: strings, numbers, booleans, dates and GUIDs are native JSON; other values are written as invariant strings.
 
 ### Automatic Cleanup
 
@@ -1362,14 +1343,18 @@ Login page.
 |-----------|------|-------------|
 | `returnUrl` | string | URL to redirect after login |
 
-#### POST `/login`
-Authenticate user (handled by Blazor form).
+#### POST `/account/login`
+Minimal API endpoint that validates credentials and issues the auth cookie. Rate limited.
 
 **Form Data:**
 | Field | Type | Required |
 |-------|------|----------|
 | `username` | string | Yes |
 | `password` | string | Yes |
+| `returnUrl` | string | No |
+
+#### GET `/feed.xml`
+RSS 2.0 feed of the 20 most recent published posts with full HTML in `content:encoded`. Output-cached for 10 minutes.
 
 #### POST `/logout`
 Sign out current user. Requires authentication.
@@ -1431,7 +1416,7 @@ The dashboard provides:
 4. Check **Published** to make visible
 5. Click **Save**
 
-The slug is automatically generated from the title. If a collision occurs, `-1`, `-2`, etc. is appended.
+The slug is automatically generated from the title. If it is empty or already taken, a UUIDv7 slug (`post-<uuid>`) is used.
 
 #### Editing a Post (`/admin/posts/edit/{id}`)
 
@@ -1464,8 +1449,8 @@ Users can be deleted except for the currently logged-in user.
 
 #### Uploading
 
-1. Click the file input or drag-and-drop
-2. Select an image (JPEG, PNG, GIF, or WebP)
+1. Click the file input
+2. Select an image (JPEG, PNG, GIF, or WebP, max 5 MB)
 3. Image uploads automatically
 
 #### Using in Posts
@@ -1495,144 +1480,11 @@ The `MYBLOG_ADMIN_PASSWORD` environment variable does NOT override existing pass
 
 ### Test Project Structure
 
-```
-MyBlog.Tests/
-├── Integration/
-│   ├── AuthServiceLongPasswordTests.cs
-│   ├── AuthServiceTests.cs
-│   ├── PasswordChangeTests.cs
-│   ├── PostRepositoryTests.cs
-│   └── TelemetryCleanupTests.cs
-└── Unit/
-    ├── LoginRateLimitMiddlewareTests.cs
-    ├── MarkdownServiceTests.cs
-    ├── PasswordServiceTests.cs
-    └── SlugServiceTests.cs
-```
-
-### Test Categories
-
-#### Unit Tests
-
-Test individual components in isolation with mock dependencies.
-
-**PasswordServiceTests (5 tests)**
-
-| Test | Purpose |
-|------|---------|
-| `HashPassword_ReturnsNonEmptyHash` | Verify hashing produces output |
-| `HashPassword_ReturnsDifferentHashForSamePassword` | Verify salt randomization |
-| `VerifyPassword_WithCorrectPassword_ReturnsTrue` | Verify correct password matches |
-| `VerifyPassword_WithWrongPassword_ReturnsFalse` | Verify incorrect password fails |
-| `VerifyPassword_WithEmptyPassword_ReturnsFalse` | Verify empty password fails |
-
-**SlugServiceTests (7 tests)**
-
-| Test | Purpose |
-|------|---------|
-| `GenerateSlug_WithSimpleTitle_ReturnsLowercaseWithHyphens` | Basic transformation |
-| `GenerateSlug_WithSpecialCharacters_RemovesThem` | Punctuation removal |
-| `GenerateSlug_WithMultipleSpaces_CollapsesToSingleHyphen` | Space normalization |
-| `GenerateSlug_WithUnicode_RemovesDiacritics` | Unicode handling |
-| `GenerateSlug_WithLeadingTrailingSpaces_TrimsHyphens` | Edge trimming |
-| `GenerateSlug_WithNumbers_PreservesNumbers` | Number preservation |
-| `GenerateSlug_WithEmptyStringOrWhitespace_ReturnsGuidWithPrefix` | Fallback behavior |
-
-**MarkdownServiceTests (18 tests)**
-
-| Test | Purpose |
-|------|---------|
-| `ToHtml_WithHeading1_ReturnsH1Tag` | H1 parsing |
-| `ToHtml_WithHeading2_ReturnsH2Tag` | H2 parsing |
-| `ToHtml_WithHeading6_ReturnsH6Tag` | H6 parsing |
-| `ToHtml_WithBoldText_ReturnsStrongTag` | Bold parsing |
-| `ToHtml_WithItalicText_ReturnsEmTag` | Italic parsing |
-| `ToHtml_WithLink_ReturnsAnchorTag` | Link parsing |
-| `ToHtml_WithImage_InjectsDimensions_IfResolvable` | Image with dimensions |
-| `ToHtml_WithImage_NoDimensions_IfUnresolvable` | Image without dimensions |
-| `ToHtml_WithImage_WhenServiceThrows_StillRendersImage` | Error handling |
-| `ToHtml_WithInlineCode_ReturnsCodeTag` | Inline code |
-| `ToHtml_WithCodeBlock_ReturnsPreCodeTags` | Code blocks |
-| `ToHtml_WithBlockquote_ReturnsBlockquoteTag` | Blockquotes |
-| `ToHtml_WithUnorderedList_ReturnsUlLiTags` | Unordered lists |
-| `ToHtml_WithOrderedList_ReturnsOlLiTags` | Ordered lists |
-| `ToHtml_WithHorizontalRule_ReturnsHrTag` | Horizontal rules |
-| `ToHtml_WithEmptyString_ReturnsEmpty` | Empty input |
-| `ToHtml_WithNull_ReturnsEmpty` | Null input |
-| `ToHtml_WithMultipleImages_ProcessesAll` | Multiple images |
-
-**LoginRateLimitMiddlewareTests (8 tests)**
-
-| Test | Purpose |
-|------|---------|
-| `InvokeAsync_NonLoginRequest_PassesThroughImmediately` | Non-login requests unaffected |
-| `InvokeAsync_GetLoginRequest_PassesThroughImmediately` | GET requests unaffected |
-| `InvokeAsync_FirstFiveAttempts_NoDelay` | Grace period |
-| `InvokeAsync_SixthAttempt_HasOneSecondDelay` | First delay |
-| `InvokeAsync_ProgressiveDelays_IncreaseExponentially` | Exponential backoff |
-| `InvokeAsync_DelayCappedAt30Seconds` | Maximum delay cap |
-| `InvokeAsync_AfterManyAttempts_NeverBlocks` | Never blocks (100 attempts) |
-| `InvokeAsync_DifferentIPs_IndependentTracking` | Per-IP isolation |
-
-#### Integration Tests
-
-Test components with real database (in-memory SQLite).
-
-**AuthServiceTests (5 tests)**
-
-| Test | Purpose |
-|------|---------|
-| `AuthenticateAsync_WithValidCredentials_ReturnsUser` | Successful login |
-| `AuthenticateAsync_WithInvalidPassword_ReturnsNull` | Wrong password |
-| `AuthenticateAsync_WithNonExistentUser_ReturnsNull` | Unknown user |
-| `EnsureAdminUserAsync_WhenNoUsersExist_CreatesAdmin` | Initial setup |
-| `EnsureAdminUserAsync_WhenUsersExist_DoesNotCreateAnother` | Idempotence |
-
-**AuthServiceLongPasswordTests (8 tests)**
-
-| Test | Purpose |
-|------|---------|
-| `AuthenticateAsync_With128CharacterPassword_Succeeds` | Long password support |
-| `AuthenticateAsync_With256CharacterPassword_Succeeds` | Very long password |
-| `AuthenticateAsync_With512CharacterPassword_Succeeds` | Extra long password |
-| `ChangePasswordAsync_With128CharacterNewPassword_Succeeds` | Long password change |
-| `AuthenticateAsync_WithComplexLongPassword_Succeeds` | Mixed character password |
-| `AuthenticateAsync_After100FailedAttempts_StillAllowsLogin` | No lockout (100) |
-| `AuthenticateAsync_After1000FailedAttempts_StillAllowsLogin` | No lockout (1000) |
-| `AuthenticateAsync_InterleavedFailuresAndSuccesses_NeverLocks` | Interleaved attempts |
-
-**PasswordChangeTests (7 tests)**
-
-| Test | Purpose |
-|------|---------|
-| `ChangePasswordAsync_WithCorrectCurrentPassword_ReturnsTrue` | Successful change |
-| `ChangePasswordAsync_WithCorrectPassword_AllowsLoginWithNewPassword` | New password works |
-| `ChangePasswordAsync_WithWrongCurrentPassword_ReturnsFalse` | Wrong current password |
-| `ChangePasswordAsync_WithWrongPassword_DoesNotChangePassword` | Failed change preserves old |
-| `ChangePasswordAsync_WithNonExistentUser_ReturnsFalse` | Invalid user |
-| `ResetPasswordAsync_SetsNewPassword` | Admin reset |
-| `ResetPasswordAsync_WithNonExistentUser_ThrowsException` | Invalid user throws |
-
-**PostRepositoryTests (8 tests)**
-
-| Test | Purpose |
-|------|---------|
-| `CreateAsync_AddsPostToDatabase` | Create post |
-| `GetByIdAsync_WithExistingId_ReturnsPost` | Retrieve by ID |
-| `GetByIdAsync_WithNonExistingId_ReturnsNull` | Non-existent ID |
-| `GetBySlugAsync_WithExistingSlug_ReturnsPost` | Retrieve by slug |
-| `GetPublishedPostsAsync_ReturnsOnlyPublishedPosts` | Published filter |
-| `UpdateAsync_ModifiesPost` | Update post |
-| `DeleteAsync_RemovesPost` | Delete post |
-| `GetPublishedPostsAsync_ReturnsCorrectCount` | Pagination count |
-
-**TelemetryCleanupTests (3 tests)**
-
-| Test | Purpose |
-|------|---------|
-| `DeleteOlderThanAsync_RemovesOldLogs` | Cleanup old logs |
-| `DeleteOlderThanAsync_WithNoOldLogs_ReturnsZero` | No-op when nothing to clean |
-| `DeleteOlderThanAsync_WithEmptyTable_ReturnsZero` | Empty table handling |
+| Folder | Classes | Covers |
+|--------|---------|--------|
+| `MyBlog.Tests/Unit` | `DatabasePathResolverTests`, `LoginRateLimitMiddlewareTests`, `MarkdownService*Tests`, `PasswordServiceTests`, `ReaderTrackingServiceTests`, `SlugServiceTests`, `TelemetrySerializationTests` | Pure logic, rate-limit delays, parser output, telemetry JSON |
+| `MyBlog.Tests/Integration` | `AuthService*Tests`, `DatabaseSchemaUpdaterTests`, `ImageDimensionServiceTests`, `ImageRepositoryTests`, `PasswordChangeTests`, `PostRepository*Tests`, `RssFeedTests`, `Telemetry*Tests`, `UserRepositoryTests` | Repositories, auth, schema updater, image probe (stub `HttpMessageHandler`) against in-memory SQLite |
+| `MyBlog.E2E/Tests` | About, Admin, Authentication, Home, Login, Navigation, SEO, ThemeSwitcher | Playwright against a running instance (`run-e2e.sh`, see `docs/E2E-TESTING.md`) |
 
 ### Running Tests
 
@@ -1676,30 +1528,7 @@ _context.Database.EnsureCreated();
 
 ### Testing Rate Limiting
 
-The rate limiting middleware uses an injectable delay function for testing:
-
-```csharp
-// Production: Real delays
-public LoginRateLimitMiddleware(RequestDelegate next, ILogger logger)
-    : this(next, logger, null) { }
-
-// Testing: No-op delay function
-public LoginRateLimitMiddleware(
-    RequestDelegate next,
-    ILogger logger,
-    Func<TimeSpan, CancellationToken, Task>? delayFunc)
-{
-    _delayFunc = delayFunc;
-}
-
-// In InvokeAsync:
-if (_delayFunc != null)
-    await _delayFunc(delay, context.RequestAborted);  // Test path
-else
-    await Task.Delay(delay, context.RequestAborted);  // Production path
-```
-
-This allows tests to run instantly while still verifying delay calculations.
+`LoginRateLimitMiddleware` has a public constructor taking `Func<TimeSpan, CancellationToken, Task>? delayFunc`. Tests pass a recording no-op so delays are asserted without waiting. Production construction happens in `UseLoginRateLimit`, which builds the middleware directly (no `UseMiddleware<T>` reflection) and disables it in Development.
 
 ---
 
@@ -1709,47 +1538,11 @@ This allows tests to run instantly while still verifying delay calculations.
 
 The project includes a complete CI/CD pipeline (`.github/workflows/build-deploy.yml`):
 
-```yaml
-name: Build, Test, and Deploy
-
-on:
-  push:
-    branches: ['**']
-  pull_request:
-    branches: ['**']
-
-jobs:
-  build-test:
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-    runs-on: ${{ matrix.os }}
-    
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup .NET 10
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '10.0.x'
-
-      - name: Restore dependencies
-        run: dotnet restore src/MyBlog.slnx
-
-      - name: Build solution
-        run: dotnet build src/MyBlog.slnx -c Release --no-restore
-
-      - name: Run tests
-        run: dotnet run --project src/MyBlog.Tests/MyBlog.Tests.csproj
-
-  deploy:
-    needs: build-test
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop'
-    runs-on: windows-latest
-    
-    # ... deployment steps
-```
+| Job | Runs on | Does |
+|-----|---------|------|
+| `build-test` | ubuntu, windows, macos | restore, Release build, `dotnet run --project src/MyBlog.Tests/MyBlog.Tests.csproj` |
+| `e2e-tests` | ubuntu | starts the app, runs Playwright |
+| deploy jobs | windows | framework-dependent `win-x86` publish, OTLP settings injected into `web.config`, WebDeploy to two IIS sites |
 
 ### Required GitHub Secrets
 

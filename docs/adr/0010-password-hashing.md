@@ -61,6 +61,11 @@ testability affordance, not a production seam.
   blog; the login is additionally throttled (ADR-0009). Revisiting the algorithm is
   a one-class change if the threat model ever grows.
 
+> **Amendment (2026-10-02):** the hasher now comes from the ASP.NET Core shared framework
+> via a `FrameworkReference` (ADR-0021), not the `Microsoft.AspNetCore.Identity` 2.x package.
+> The .NET 10 defaults apply: PBKDF2-HMAC-SHA512, 100,000 iterations. Hashes are not
+> rewritten on `SuccessRehashNeeded`.
+
 ## More Information
 
 The hasher is only ever exercised for the single seeded admin (ADR-0012) and via

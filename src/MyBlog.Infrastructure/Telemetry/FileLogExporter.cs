@@ -6,9 +6,6 @@ using OpenTelemetry.Logs;
 
 namespace MyBlog.Infrastructure.Telemetry;
 
-/// <summary>
-/// OpenTelemetry log exporter that writes to JSON files.
-/// </summary>
 public sealed class FileLogExporter : BaseExporter<LogRecord>, IHostedService
 {
     private readonly string _directory;
@@ -19,9 +16,7 @@ public sealed class FileLogExporter : BaseExporter<LogRecord>, IHostedService
     private long _currentFileSize;
     private int _fileNumber;
     private bool _isFirstRecord = true;
-    private readonly JsonSerializerOptions _jsonOptions = new() { WriteIndented = true };
 
-    /// <summary>Initializes a new instance of FileLogExporter.</summary>
     public FileLogExporter(string directory, long maxFileSizeBytes = 25 * 1024 * 1024)
     {
         _directory = directory;
@@ -30,7 +25,6 @@ public sealed class FileLogExporter : BaseExporter<LogRecord>, IHostedService
         Directory.CreateDirectory(_directory);
     }
 
-    /// <inheritdoc />
     public override ExportResult Export(in Batch<LogRecord> batch)
     {
         try
@@ -41,18 +35,16 @@ public sealed class FileLogExporter : BaseExporter<LogRecord>, IHostedService
 
                 foreach (var record in batch)
                 {
-                    var obj = new
-                    {
-                        Timestamp = record.Timestamp.ToString("O"),
-                        Level = record.LogLevel.ToString(),
-                        Category = record.CategoryName,
-                        Message = record.FormattedMessage ?? record.Body,
-                        TraceId = record.TraceId.ToString(),
-                        SpanId = record.SpanId.ToString(),
-                        Exception = record.Exception?.ToString()
-                    };
+                    var entry = new FileLogEntry(
+                        record.Timestamp.ToString("O"),
+                        record.LogLevel.ToString(),
+                        record.CategoryName,
+                        record.FormattedMessage ?? record.Body,
+                        record.TraceId.ToString(),
+                        record.SpanId.ToString(),
+                        record.Exception?.ToString());
 
-                    var json = JsonSerializer.Serialize(obj, _jsonOptions);
+                    var json = JsonSerializer.Serialize(entry, TelemetryJsonContext.Default.FileLogEntry);
                     var bytes = Encoding.UTF8.GetByteCount(json) + 2;
 
                     if (_currentFileSize + bytes > _maxFileSizeBytes)
@@ -123,7 +115,6 @@ public sealed class FileLogExporter : BaseExporter<LogRecord>, IHostedService
         }
     }
 
-    /// <inheritdoc />
     protected override bool OnShutdown(int timeoutMilliseconds)
     {
         lock (_lock)
@@ -132,12 +123,8 @@ public sealed class FileLogExporter : BaseExporter<LogRecord>, IHostedService
         }
         return true;
     }
-    public Task StartAsync(CancellationToken cancellationToken) =>
-        // If your constructor already handles subscription,
-        // this can just return Task.CompletedTask.
-        Task.CompletedTask;
 
-    public Task StopAsync(CancellationToken cancellationToken) =>
-        // Unsubscribe or clean up resources here
-        Task.CompletedTask;
+    public Task StartAsync(CancellationToken cancellationToken) => Task.CompletedTask;
+
+    public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
 }

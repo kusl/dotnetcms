@@ -72,9 +72,6 @@ These are conscious trade-offs, not oversights. They are documented so they are 
 |-----|-------|---------------|------------|
 | `ReaderTrackingService` is `public class`, not `sealed` | Infrastructure | Cosmetic; other services are sealed. Sealing is a one-word, zero-risk change worth doing next time the file is touched | 0014, 0020 |
 | `Console.WriteLine` instead of `ILogger` | `ThemeSwitcher.SelectThemeAsync`, `ReaderBadge` | Cosmetic logging inconsistency; the rest of the app uses `ILogger` | 0014 |
-| User id read via `IHttpContextAccessor` vs `AuthenticationStateProvider` | `ChangePassword` vs `ImageManager`/`PostEditor`/`UserList` | Both are correct for their render model; the `AuthenticationStateProvider` form is the idiomatic one to converge on | 0011, 0013 |
-| README delay formula off by one | root `README.md` prose (`2^n` vs code `2^(n-1)`) | The README **table** (1,2,4,8,16,30) is correct; only the one-line prose formula is off. Erratum, not a code bug | 0009 |
-| Stale duplicate workflow | `src/.github/workflows/build-deploy.yml` | GitHub only reads the repo-root `.github`; the file is dead and harmless. Removal recommended | 0019 |
 | Near-identical XDG logic duplicated | `DatabasePathResolver`, `TelemetryPathResolver` | Small DRY debt; correct and test-covered. Extract a shared helper when convenient | 0016 |
 | Parameterless ctor "for tests" | `PasswordService` | Justified — the service is stateless and has no dependencies; harmless testability affordance | 0010 |
 | Aspirational E2E design note vs reality | `playwright.md` describes an epic MSTest-style suite that was not built | The real tests are simpler per-page xUnit classes; the note is discarded history, not an unmet spec | 0018 |
@@ -83,16 +80,23 @@ These are conscious trade-offs, not oversights. They are documented so they are 
 
 1. **Allow-list URL schemes in the Markdown parser** (closes the `javascript:` XSS
    even under the admin-only trust model). Highest security value. — ADR-0007
-2. **Fix the README delay-formula prose** so it reads `2^(n-1)` and matches the code
-   and the table. Trivial, removes a real point of confusion. — ADR-0009
-3. **Delete the stale `src/.github/workflows/build-deploy.yml`.** Zero-risk cleanup;
-   prevents a future reader editing the dead file. — ADR-0019
-4. **Seal `ReaderTrackingService`** and switch the two `Console.WriteLine` call sites
+2. **Seal `ReaderTrackingService`** and switch the two `Console.WriteLine` call sites
    to `ILogger`. Cosmetic consistency. — ADR-0014
-5. **Unify user-id access on `AuthenticationStateProvider`** in `ChangePassword`.
-   Consistency; low value, do it only when that code is next touched. — ADR-0011
-6. **Extract a shared XDG path helper** used by both resolvers. Removes the DRY debt
+3. **Extract a shared XDG path helper** used by both resolvers. Removes the DRY debt
    once it's worth the churn. — ADR-0016
+4. **Add an `/Error` page.** `UseExceptionHandler("/Error")` re-executes to a route that
+   does not exist, so production exceptions return a bare 500. With global interactivity
+   the page needs `[ExcludeFromInteractiveRouting]`; write an ADR first. — ADR-0003
+5. **Console exporters in production.** Traces, metrics and logs are all written to the
+   console exporter regardless of environment. Gate them on Development or config. — ADR-0015
+6. **Reader badge loopback.** `ReaderBadge` opens a server-to-self `HubConnection` per
+   reader; injecting `IReaderTrackingService` with a change event would avoid the extra
+   socket. Supersede ADR-0014 if adopted. — ADR-0014
+7. **RSS N+1.** `/feed.xml` loads each post body with a separate query; output caching
+   hides it. A single projection query would remove it. — ADR-0006
+
+Done on 2026-10-02 (ADR-0021): README formula erratum, stale workflow deleted,
+`ChangePassword` on `AuthenticationStateProvider`.
 
 None of these is required for correctness today; each is a deliberate, reviewable
 change to be made on its own merits rather than bundled into this documentation pass.

@@ -1,3 +1,6 @@
+using System.Buffers;
+using System.Globalization;
+using System.Text;
 using System.Text.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -8,20 +11,15 @@ using OpenTelemetry.Logs;
 
 namespace MyBlog.Infrastructure.Telemetry;
 
-/// <summary>
-/// OpenTelemetry log exporter that writes to SQLite database.
-/// </summary>
 public sealed class DatabaseLogExporter : BaseExporter<LogRecord>, IHostedService
 {
     private readonly IServiceScopeFactory _scopeFactory;
 
-    /// <summary>Initializes a new instance of DatabaseLogExporter.</summary>
     public DatabaseLogExporter(IServiceScopeFactory scopeFactory)
     {
         _scopeFactory = scopeFactory;
     }
 
-    /// <inheritdoc />
     public override ExportResult Export(in Batch<LogRecord> batch)
     {
         try
@@ -40,7 +38,7 @@ public sealed class DatabaseLogExporter : BaseExporter<LogRecord>, IHostedServic
                     Exception = record.Exception?.ToString(),
                     TraceId = record.TraceId.ToString(),
                     SpanId = record.SpanId.ToString(),
-                    Properties = SerializeAttributes(record)
+                    Properties = SerializeAttributes(record.Attributes)
                 };
 
                 context.TelemetryLogs.Add(log);
@@ -55,28 +53,96 @@ public sealed class DatabaseLogExporter : BaseExporter<LogRecord>, IHostedServic
         }
     }
 
-    private static string? SerializeAttributes(LogRecord record)
+    internal static string? SerializeAttributes(IReadOnlyList<KeyValuePair<string, object?>>? attributes)
     {
-        if (record.Attributes is null)
+        if (attributes is null || attributes.Count == 0)
         {
             return null;
         }
 
-        var dict = new Dictionary<string, object?>();
-        foreach (var attr in record.Attributes)
+        var values = new Dictionary<string, object?>(attributes.Count);
+        foreach (var attribute in attributes)
         {
-            dict[attr.Key] = attr.Value;
+            values[attribute.Key] = attribute.Value;
         }
 
-        return dict.Count > 0 ? JsonSerializer.Serialize(dict) : null;
+        var buffer = new ArrayBufferWriter<byte>();
+        using (var writer = new Utf8JsonWriter(buffer))
+        {
+            writer.WriteStartObject();
+            foreach (var (key, value) in values)
+            {
+                writer.WritePropertyName(key);
+                WriteValue(writer, value);
+            }
+            writer.WriteEndObject();
+        }
+
+        return Encoding.UTF8.GetString(buffer.WrittenSpan);
     }
 
-    public Task StartAsync(CancellationToken cancellationToken) =>
-        // If your constructor already handles subscription,
-        // this can just return Task.CompletedTask.
-        Task.CompletedTask;
+    private static void WriteValue(Utf8JsonWriter writer, object? value)
+    {
+        switch (value)
+        {
+            case null:
+                writer.WriteNullValue();
+                break;
+            case string s:
+                writer.WriteStringValue(s);
+                break;
+            case bool b:
+                writer.WriteBooleanValue(b);
+                break;
+            case int i:
+                writer.WriteNumberValue(i);
+                break;
+            case long l:
+                writer.WriteNumberValue(l);
+                break;
+            case short sh:
+                writer.WriteNumberValue(sh);
+                break;
+            case byte by:
+                writer.WriteNumberValue(by);
+                break;
+            case sbyte sb:
+                writer.WriteNumberValue(sb);
+                break;
+            case ushort us:
+                writer.WriteNumberValue(us);
+                break;
+            case uint ui:
+                writer.WriteNumberValue(ui);
+                break;
+            case ulong ul:
+                writer.WriteNumberValue(ul);
+                break;
+            case decimal m:
+                writer.WriteNumberValue(m);
+                break;
+            case double d when double.IsFinite(d):
+                writer.WriteNumberValue(d);
+                break;
+            case float f when float.IsFinite(f):
+                writer.WriteNumberValue(f);
+                break;
+            case DateTime dt:
+                writer.WriteStringValue(dt);
+                break;
+            case DateTimeOffset dto:
+                writer.WriteStringValue(dto);
+                break;
+            case Guid g:
+                writer.WriteStringValue(g);
+                break;
+            default:
+                writer.WriteStringValue(Convert.ToString(value, CultureInfo.InvariantCulture));
+                break;
+        }
+    }
 
-    public Task StopAsync(CancellationToken cancellationToken) =>
-        // Unsubscribe or clean up resources here
-        Task.CompletedTask;
+    public Task StartAsync(CancellationToken cancellationToken) => Task.CompletedTask;
+
+    public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
 }

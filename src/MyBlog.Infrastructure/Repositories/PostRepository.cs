@@ -5,20 +5,15 @@ using MyBlog.Infrastructure.Data;
 
 namespace MyBlog.Infrastructure.Repositories;
 
-/// <summary>
-/// EF Core implementation of the post repository.
-/// </summary>
 public sealed class PostRepository : IPostRepository
 {
     private readonly BlogDbContext _context;
 
-    /// <summary>Initializes a new instance of PostRepository.</summary>
     public PostRepository(BlogDbContext context)
     {
         _context = context;
     }
 
-    /// <inheritdoc />
     public async Task<(IReadOnlyList<PostListItemDto> Posts, int TotalCount)> GetPublishedPostsAsync(
         int page, int pageSize, CancellationToken cancellationToken = default)
     {
@@ -46,7 +41,6 @@ public sealed class PostRepository : IPostRepository
         return (posts, totalCount);
     }
 
-    /// <inheritdoc />
     public async Task<IReadOnlyList<PostListItemDto>> GetAllPostsAsync(
         CancellationToken cancellationToken = default) =>
         await _context.Posts
@@ -63,7 +57,6 @@ public sealed class PostRepository : IPostRepository
                 p.IsPublished))
             .ToListAsync(cancellationToken);
 
-    /// <inheritdoc />
     public async Task<PostDetailDto?> GetBySlugAsync(
         string slug, CancellationToken cancellationToken = default) =>
         await _context.Posts
@@ -83,13 +76,11 @@ public sealed class PostRepository : IPostRepository
                 p.IsPublished))
             .FirstOrDefaultAsync(cancellationToken);
 
-    /// <inheritdoc />
     public async Task<Post?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default) =>
         await _context.Posts
             .Include(p => p.Author)
             .FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
 
-    /// <inheritdoc />
     public async Task<Post> CreateAsync(Post post, CancellationToken cancellationToken = default)
     {
         _context.Posts.Add(post);
@@ -97,14 +88,17 @@ public sealed class PostRepository : IPostRepository
         return post;
     }
 
-    /// <inheritdoc />
     public async Task UpdateAsync(Post post, CancellationToken cancellationToken = default)
     {
-        _context.Posts.Update(post);
+        if (_context.Entry(post).State == EntityState.Detached)
+        {
+            _context.Posts.Attach(post);
+            _context.Entry(post).State = EntityState.Modified;
+        }
+
         await _context.SaveChangesAsync(cancellationToken);
     }
 
-    /// <inheritdoc />
     public async Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var post = await _context.Posts.FindAsync([id], cancellationToken);
@@ -115,10 +109,11 @@ public sealed class PostRepository : IPostRepository
         }
     }
 
-    /// <inheritdoc />
     public async Task<int> GetCountAsync(CancellationToken cancellationToken = default) => await _context.Posts.CountAsync(cancellationToken);
 
-    /// <inheritdoc />
+    public async Task<int> GetPublishedCountAsync(CancellationToken cancellationToken = default) =>
+        await _context.Posts.CountAsync(p => p.IsPublished, cancellationToken);
+
     public async Task<IReadOnlyList<PostListItemDto>> GetRecentPostsAsync(
         int count, CancellationToken cancellationToken = default) =>
         await _context.Posts
@@ -136,7 +131,6 @@ public sealed class PostRepository : IPostRepository
                 p.IsPublished))
             .ToListAsync(cancellationToken);
 
-    /// <inheritdoc />
     public async Task<bool> IsSlugTakenAsync(string slug, Guid? excludePostId = null, CancellationToken cancellationToken = default)
     {
         if (excludePostId.HasValue)

@@ -45,10 +45,8 @@ Supporting details:
   out.
 - Roles and related magic strings live in `AppConstants` rather than being
   scattered as literals.
-- User identity for the change-password flow is read via `IHttpContextAccessor`,
-  whereas the interactive admin components read it via `AuthenticationStateProvider`.
-  Both are correct for their render model; the inconsistency is noted in
-  `solid-review.md` as a candidate for unification, not a bug.
+- Interactive admin components, including change-password, read the user via
+  `AuthenticationStateProvider` (unified on 2026-10-02, ADR-0021).
 
 ### Consequences
 

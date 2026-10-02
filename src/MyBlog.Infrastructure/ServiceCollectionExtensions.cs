@@ -12,23 +12,15 @@ using MyBlog.Infrastructure.Telemetry;
 
 namespace MyBlog.Infrastructure;
 
-/// <summary>
-/// Extension methods for registering infrastructure services.
-/// </summary>
 public static class ServiceCollectionExtensions
 {
-    /// <summary>
-    /// Adds infrastructure services to the DI container.
-    /// </summary>
     public static IServiceCollection AddInfrastructure(
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        // Database
         var connectionString = configuration.GetConnectionString("DefaultConnection");
         if (string.IsNullOrEmpty(connectionString) || connectionString == "Data Source=myblog.db")
         {
-            // Use XDG-compliant path
             var dbPath = DatabasePathResolver.GetDatabasePath();
             connectionString = $"Data Source={dbPath}";
         }
@@ -36,36 +28,29 @@ public static class ServiceCollectionExtensions
         services.AddDbContext<BlogDbContext>(options =>
             options.UseSqlite(connectionString));
 
-        // Repositories
         services.AddScoped<IPostRepository, PostRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IImageRepository, ImageRepository>();
         services.AddScoped<ITelemetryLogRepository, TelemetryLogRepository>();
 
-        // Services
-        // Register the password hasher so PasswordService gets it via DI,
-        // and hashing options (like iteration count) can be configured globally.
         services.AddSingleton<IPasswordHasher<User>, PasswordHasher<User>>();
         services.AddSingleton<IPasswordService, PasswordService>();
         services.AddSingleton<ISlugService, SlugService>();
 
-        // MarkdownService is Scoped because it depends on Scoped IImageDimensionService
         services.AddScoped<IMarkdownService, MarkdownService>();
         services.AddScoped<IAuthService, AuthService>();
 
         services.AddSingleton<IReaderTrackingService, ReaderTrackingService>();
 
-        // Image Dimension Service (With HttpClient for fetching image headers)
-        services.AddHttpClient<IImageDimensionService, ImageDimensionService>();
+        services.AddHttpClient<IImageDimensionService, ImageDimensionService>(client =>
+        {
+            client.Timeout = TimeSpan.FromSeconds(10);
+            client.DefaultRequestHeaders.UserAgent.ParseAdd("MyBlog/1.0");
+        });
 
-        // Background services
         services.AddHostedService<TelemetryCleanupService>();
-        // Cache Warmer - runs on startup to pre-fetch dimensions for existing images
         services.AddHostedService<ImageCacheWarmerService>();
 
-        // Telemetry log exporters
-        // FileLogExporter requires a directory string in its constructor —
-        // use a factory so DI can construct it with the resolved path.
         var enableFileLogging = configuration.GetValue("Telemetry:EnableFileLogging", true);
         if (enableFileLogging)
         {
