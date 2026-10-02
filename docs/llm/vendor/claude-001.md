@@ -8,3 +8,9 @@ NEVER EVER EVER write code comments.
 in fact, never, ever write comments at all. 
 markdown files such as readme.md are the exception but even these should be as concise and terse as possible.
 also please update documentation to match the code
+Delivery
+Whole project as one tar.gz, unambiguous file placement
+Any files to delete on updates called out explicitly
+No bespoke sed/patch scripts — full files only for anything that changes
+Docs updated alongside code changes
+Low verbosity, no code comments
