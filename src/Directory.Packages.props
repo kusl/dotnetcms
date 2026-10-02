@@ -2,8 +2,8 @@
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
     <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
-    <MicrosoftPackagesVersion>10.0.11</MicrosoftPackagesVersion>
-    <MicrosoftIdentityVersion>2.3.12</MicrosoftIdentityVersion>
+    <MicrosoftPackagesVersion>10.0.12</MicrosoftPackagesVersion>
+    <MicrosoftIdentityVersion>2.3.13</MicrosoftIdentityVersion>
 
     <!-- Transitive security pin. Microsoft.EntityFrameworkCore.Sqlite pulls in the native
          SQLite library through SQLitePCLRaw. The 2.x bundle references
@@ -17,15 +17,15 @@
          version number"). See the matching PackageVersion below. -->
     <SQLitePCLRawBundleVersion>3.0.3</SQLitePCLRawBundleVersion>
 
-    <OpenTelemetryVersion>1.18.0</OpenTelemetryVersion>
-    <OtelAspNetCoreInstrVersion>1.18.0</OtelAspNetCoreInstrVersion>
-    <OtelHttpInstrVersion>1.18.0</OtelHttpInstrVersion>
+    <OpenTelemetryVersion>1.19.1</OpenTelemetryVersion>
+    <OtelAspNetCoreInstrVersion>1.19.0</OtelAspNetCoreInstrVersion>
+    <OtelHttpInstrVersion>1.19.0</OtelHttpInstrVersion>
 
-    <TestSdkVersion>18.9.0</TestSdkVersion>
-    <XUnitVersion>4.0.0</XUnitVersion>
+    <TestSdkVersion>18.10.1</TestSdkVersion>
+    <XUnitVersion>4.0.1</XUnitVersion>
     <XUnitRunnerVersion>3.1.5</XUnitRunnerVersion>
     <TestingExtensionsVersion>2.4.0</TestingExtensionsVersion>
-    <PlaywrightVersion>1.62.0</PlaywrightVersion>
+    <PlaywrightVersion>1.63.0</PlaywrightVersion>
 
     <SystemSecurityXmlVersion>8.0.4</SystemSecurityXmlVersion>
   </PropertyGroup>
