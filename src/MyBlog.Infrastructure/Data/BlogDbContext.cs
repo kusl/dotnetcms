@@ -3,33 +3,22 @@ using MyBlog.Core.Models;
 
 namespace MyBlog.Infrastructure.Data;
 
-/// <summary>
-/// Entity Framework Core database context for the blog.
-/// </summary>
 public sealed class BlogDbContext : DbContext
 {
-    /// <summary>Initializes a new instance of the BlogDbContext.</summary>
     public BlogDbContext(DbContextOptions<BlogDbContext> options) : base(options)
     {
     }
 
-    /// <summary>Gets or sets the Users table.</summary>
     public DbSet<User> Users => Set<User>();
-    /// <summary>Gets or sets the Posts table.</summary>
     public DbSet<Post> Posts => Set<Post>();
-    /// <summary>Gets or sets the Images table.</summary>
     public DbSet<Image> Images => Set<Image>();
-    /// <summary>Gets or sets the TelemetryLogs table.</summary>
     public DbSet<TelemetryLog> TelemetryLogs => Set<TelemetryLog>();
-    /// <summary>Gets or sets the Image Dimension Cache table.</summary>
     public DbSet<ImageDimensionCache> ImageDimensionCache => Set<ImageDimensionCache>();
 
-    /// <inheritdoc />
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
-        // User configuration
         modelBuilder.Entity<User>(entity =>
         {
             entity.HasKey(e => e.Id);
@@ -40,7 +29,6 @@ public sealed class BlogDbContext : DbContext
             entity.Property(e => e.DisplayName).HasMaxLength(100).IsRequired();
         });
 
-        // Post configuration
         modelBuilder.Entity<Post>(entity =>
         {
             entity.HasKey(e => e.Id);
@@ -54,7 +42,6 @@ public sealed class BlogDbContext : DbContext
                 .OnDelete(DeleteBehavior.Restrict);
         });
 
-        // Image configuration
         modelBuilder.Entity<Image>(entity =>
         {
             entity.HasKey(e => e.Id);
@@ -70,7 +57,6 @@ public sealed class BlogDbContext : DbContext
                 .OnDelete(DeleteBehavior.Restrict);
         });
 
-        // TelemetryLog configuration
         modelBuilder.Entity<TelemetryLog>(entity =>
         {
             entity.HasKey(e => e.Id);
@@ -80,11 +66,10 @@ public sealed class BlogDbContext : DbContext
             entity.HasIndex(e => e.TimestampUtc);
         });
 
-        // ImageDimensionCache configuration
         modelBuilder.Entity<ImageDimensionCache>(entity =>
         {
-            entity.HasKey(e => e.Url); // URL is the primary key
-            entity.Property(e => e.Url).HasMaxLength(2048); // Support long URLs
+            entity.HasKey(e => e.Url);
+            entity.Property(e => e.Url).HasMaxLength(2048);
         });
     }
 }

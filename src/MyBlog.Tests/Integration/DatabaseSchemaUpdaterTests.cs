@@ -5,12 +5,6 @@ using Xunit;
 
 namespace MyBlog.Tests.Integration;
 
-/// <summary>
-/// Integration tests for the DatabaseSchemaUpdater.
-/// Verifies that incremental schema updates work correctly for both
-/// fresh databases and existing databases that are missing newer tables.
-/// Uses in-memory SQLite for cross-platform compatibility.
-/// </summary>
 public class DatabaseSchemaUpdaterTests : IAsyncDisposable
 {
     private readonly BlogDbContext _context;
@@ -33,11 +27,8 @@ public class DatabaseSchemaUpdaterTests : IAsyncDisposable
     {
         var ct = TestContext.Current.CancellationToken;
 
-        // EnsureCreated already created all tables including ImageDimensionCache.
-        // ApplyUpdatesAsync should be safe to call (idempotent).
         await DatabaseSchemaUpdater.ApplyUpdatesAsync(_context);
 
-        // Verify the table is still usable
         var count = await _context.ImageDimensionCache.CountAsync(ct);
         Assert.Equal(0, count);
     }
@@ -47,18 +38,14 @@ public class DatabaseSchemaUpdaterTests : IAsyncDisposable
     {
         var ct = TestContext.Current.CancellationToken;
 
-        // Simulate an older database that was created before ImageDimensionCache existed
         await _context.Database.ExecuteSqlRawAsync(
             "DROP TABLE IF EXISTS \"ImageDimensionCache\"", ct);
 
-        // Verify the table is actually gone
         var tableExists = await TableExistsAsync("ImageDimensionCache", ct);
         Assert.False(tableExists);
 
-        // Apply incremental updates
         await DatabaseSchemaUpdater.ApplyUpdatesAsync(_context);
 
-        // Verify the table was recreated
         tableExists = await TableExistsAsync("ImageDimensionCache", ct);
         Assert.True(tableExists);
     }
@@ -68,12 +55,10 @@ public class DatabaseSchemaUpdaterTests : IAsyncDisposable
     {
         var ct = TestContext.Current.CancellationToken;
 
-        // Call multiple times — should never throw
         await DatabaseSchemaUpdater.ApplyUpdatesAsync(_context);
         await DatabaseSchemaUpdater.ApplyUpdatesAsync(_context);
         await DatabaseSchemaUpdater.ApplyUpdatesAsync(_context);
 
-        // Table should still be usable
         var count = await _context.ImageDimensionCache.CountAsync(ct);
         Assert.Equal(0, count);
     }
@@ -83,14 +68,11 @@ public class DatabaseSchemaUpdaterTests : IAsyncDisposable
     {
         var ct = TestContext.Current.CancellationToken;
 
-        // Drop the table to simulate upgrade scenario
         await _context.Database.ExecuteSqlRawAsync(
             "DROP TABLE IF EXISTS \"ImageDimensionCache\"", ct);
 
-        // Apply schema updates to recreate it
         await DatabaseSchemaUpdater.ApplyUpdatesAsync(_context);
 
-        // Insert a record to prove the table schema is correct
         _context.ImageDimensionCache.Add(new ImageDimensionCache
         {
             Url = "https://example.com/test.png",
@@ -100,7 +82,6 @@ public class DatabaseSchemaUpdaterTests : IAsyncDisposable
         });
         await _context.SaveChangesAsync(ct);
 
-        // Read it back
         var cached = await _context.ImageDimensionCache
             .FirstOrDefaultAsync(x => x.Url == "https://example.com/test.png", ct);
         Assert.NotNull(cached);
@@ -113,7 +94,6 @@ public class DatabaseSchemaUpdaterTests : IAsyncDisposable
     {
         var ct = TestContext.Current.CancellationToken;
 
-        // Insert data into the existing table
         _context.ImageDimensionCache.Add(new ImageDimensionCache
         {
             Url = "https://example.com/existing.png",
@@ -123,10 +103,8 @@ public class DatabaseSchemaUpdaterTests : IAsyncDisposable
         });
         await _context.SaveChangesAsync(ct);
 
-        // Run the schema updater (table already exists with data)
         await DatabaseSchemaUpdater.ApplyUpdatesAsync(_context);
 
-        // Existing data should still be there
         var cached = await _context.ImageDimensionCache
             .FirstOrDefaultAsync(x => x.Url == "https://example.com/existing.png", ct);
         Assert.NotNull(cached);
@@ -139,7 +117,6 @@ public class DatabaseSchemaUpdaterTests : IAsyncDisposable
     {
         var ct = TestContext.Current.CancellationToken;
 
-        // Insert a user to have data in another table
         _context.Users.Add(new User
         {
             Id = Guid.NewGuid(),
@@ -151,10 +128,8 @@ public class DatabaseSchemaUpdaterTests : IAsyncDisposable
         });
         await _context.SaveChangesAsync(ct);
 
-        // Run schema updates
         await DatabaseSchemaUpdater.ApplyUpdatesAsync(_context);
 
-        // Other tables should be unaffected
         var user = await _context.Users
             .FirstOrDefaultAsync(u => u.Username == "schema-test-user", ct);
         Assert.NotNull(user);

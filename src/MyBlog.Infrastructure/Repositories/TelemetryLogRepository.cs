@@ -1,43 +1,39 @@
 using Microsoft.EntityFrameworkCore;
 using MyBlog.Core.Interfaces;
-using MyBlog.Core.Models;
 using MyBlog.Infrastructure.Data;
 
 namespace MyBlog.Infrastructure.Repositories;
 
-/// <summary>
-/// EF Core implementation of the telemetry log repository.
-/// </summary>
 public sealed class TelemetryLogRepository : ITelemetryLogRepository
 {
     private readonly BlogDbContext _context;
 
-    /// <summary>Initializes a new instance of TelemetryLogRepository.</summary>
     public TelemetryLogRepository(BlogDbContext context)
     {
         _context = context;
     }
 
-    /// <inheritdoc />
-    public async Task WriteAsync(TelemetryLog log, CancellationToken cancellationToken = default)
-    {
-        _context.TelemetryLogs.Add(log);
-        await _context.SaveChangesAsync(cancellationToken);
-    }
-
-    /// <inheritdoc />
     public async Task<int> DeleteOlderThanAsync(
         DateTime cutoffUtc, CancellationToken cancellationToken = default) =>
         await _context.TelemetryLogs
             .Where(l => l.TimestampUtc < cutoffUtc)
             .ExecuteDeleteAsync(cancellationToken);
 
-    /// <inheritdoc />
-    public async Task<IReadOnlyList<TelemetryLog>> GetRecentAsync(
-        int count, CancellationToken cancellationToken = default) =>
-        await _context.TelemetryLogs
-            .AsNoTracking()
+    public async Task<int> TrimToNewestAsync(int maxRows, CancellationToken cancellationToken = default)
+    {
+        var threshold = await _context.TelemetryLogs
             .OrderByDescending(l => l.TimestampUtc)
-            .Take(count)
-            .ToListAsync(cancellationToken);
+            .Skip(maxRows)
+            .Select(l => (DateTime?)l.TimestampUtc)
+            .FirstOrDefaultAsync(cancellationToken);
+
+        if (threshold is null)
+        {
+            return 0;
+        }
+
+        return await _context.TelemetryLogs
+            .Where(l => l.TimestampUtc <= threshold.Value)
+            .ExecuteDeleteAsync(cancellationToken);
+    }
 }

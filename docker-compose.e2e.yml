@@ -1,10 +1,3 @@
-# Docker Compose for E2E testing with Playwright
-# Works with both Docker and Podman Compose on Fedora (with SELinux)
-#
-# Usage:
-#   podman-compose -f docker-compose.e2e.yml up --build
-#   podman-compose -f docker-compose.e2e.yml down -v
-
 services:
   myblog-web:
     build:
@@ -19,7 +12,6 @@ services:
       - ConnectionStrings__DefaultConnection=Data Source=/app/data/myblog.db
       - Authentication__DefaultAdminPassword=ChangeMe123!
     volumes:
-      # :Z suffix for SELinux on Fedora - creates private unshared label
       - myblog-data:/app/data:Z
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:5000/"]
@@ -41,9 +33,6 @@ services:
     environment:
       - MYBLOG_BASE_URL=http://myblog-web:5000
       - PLAYWRIGHT_HEADLESS=true
-    volumes:
-      # Test results output with SELinux label
-      - ./test-results:/tests/TestResults:Z
     networks:
       - myblog-network
 
@@ -53,4 +42,3 @@ networks:
 
 volumes:
   myblog-data:
-  

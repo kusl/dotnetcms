@@ -1,13 +1,10 @@
-/* UserEditor.razor.css - Component-scoped styles */
 
-/* Container styling */
 .user-editor {
     width: 100%;
     padding: 1rem;
     box-sizing: border-box;
 }
 
-/* Desktop optimization: Switch to side-by-side if screen is wide enough */
 @media (min-width: 768px) {
     .user-editor .form-group {
         flex-direction: row;

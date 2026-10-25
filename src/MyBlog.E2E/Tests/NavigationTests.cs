@@ -3,9 +3,6 @@ using Xunit;
 
 namespace MyBlog.E2E.Tests;
 
-/// <summary>
-/// E2E tests for site navigation (Epic 4: Public Browsing).
-/// </summary>
 [Collection(PlaywrightCollection.Name)]
 public sealed class NavigationTests(PlaywrightFixture fixture)
 {
@@ -18,9 +15,6 @@ public sealed class NavigationTests(PlaywrightFixture fixture)
 
         await page.GotoAsync("/");
 
-        // Anchor clicks are only handled by the interactive router once the circuit is
-        // up. Clicking sooner lets enhanced navigation change the URL while the
-        // connecting circuit re-renders the old route, so the heading never updates.
         await page.WaitForBlazorInteractiveAsync();
 
         await page.ClickAsync("nav a[href='/about']");
@@ -70,7 +64,6 @@ public sealed class NavigationTests(PlaywrightFixture fixture)
 
         await page.GotoAsync("/");
 
-        // Check all main navigation links are present
         var homeLink = page.Locator("nav a[href='/']");
         var aboutLink = page.Locator("nav a[href='/about']");
         var loginLink = page.Locator("nav a[href='/login']");
@@ -85,16 +78,13 @@ public sealed class NavigationTests(PlaywrightFixture fixture)
     {
         var page = await _fixture.CreatePageAsync();
 
-        // Check home page - use the main site footer
         await page.GotoAsync("/");
         var footer = page.Locator("footer.footer");
         await Assertions.Expect(footer).ToBeVisibleAsync();
 
-        // Check about page - the about page may have multiple footers, use the main site footer
         await page.GotoAsync("/about");
         await Assertions.Expect(footer).ToBeVisibleAsync();
 
-        // Check login page
         await page.GotoAsync("/login");
         await Assertions.Expect(footer).ToBeVisibleAsync();
     }
@@ -104,16 +94,13 @@ public sealed class NavigationTests(PlaywrightFixture fixture)
     {
         var page = await _fixture.CreatePageAsync();
 
-        // Check home page
         await page.GotoAsync("/");
         var header = page.Locator("header, .header");
         await Assertions.Expect(header.First).ToBeVisibleAsync();
 
-        // Check about page
         await page.GotoAsync("/about");
         await Assertions.Expect(header.First).ToBeVisibleAsync();
 
-        // Check login page
         await page.GotoAsync("/login");
         await Assertions.Expect(header.First).ToBeVisibleAsync();
     }
@@ -126,22 +113,11 @@ public sealed class NavigationTests(PlaywrightFixture fixture)
         await page.GotoAsync("/about");
         await page.WaitForBlazorInteractiveAsync();
 
-        // Click on the logo/brand link
-        var logoLink = page.Locator("header a.logo, .header a.logo, header a:has-text('MyBlog')");
-        if (await logoLink.CountAsync() > 0)
-        {
-            await logoLink.First.ClickAsync();
-            await page.WaitForURLAsync("**/");
+        await page.Locator("header a.logo").ClickAsync();
+        await page.WaitForURLAsync("**/");
 
-            var heading = page.Locator("h1");
-            await Assertions.Expect(heading).ToContainTextAsync("Welcome");
-        }
-        else
-        {
-            // If no logo link, just verify home link works
-            await page.ClickAsync("nav a[href='/']");
-            await page.WaitForURLAsync("**/");
-        }
+        var heading = page.Locator("h1");
+        await Assertions.Expect(heading).ToContainTextAsync("Welcome");
     }
 
     [Fact]
@@ -151,17 +127,14 @@ public sealed class NavigationTests(PlaywrightFixture fixture)
 
         var response = await page.GotoAsync("/this-page-does-not-exist-12345");
 
-        // Should either return 404 or redirect to a not found page
         Assert.NotNull(response);
 
-        // Either 404 status OR a page showing "not found" content
         if (response.Status == 404)
         {
             Assert.Equal(404, response.Status);
         }
         else
         {
-            // If redirected, check for not found content
             var content = await page.ContentAsync();
             var hasNotFoundIndicator = content.Contains("not found", StringComparison.OrdinalIgnoreCase) ||
                                         content.Contains("404", StringComparison.OrdinalIgnoreCase);
@@ -176,11 +149,8 @@ public sealed class NavigationTests(PlaywrightFixture fixture)
 
         await page.GotoAsync("/post/this-post-definitely-does-not-exist-12345");
 
-        // Wait for the page to load and Blazor to initialize
         await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
 
-        // Should show "Post Not Found" or similar message
-        // Use GetByText with regex to match case-insensitively
         var notFoundIndicator = page.GetByText("Not Found", new() { Exact = false });
         await Assertions.Expect(notFoundIndicator.First).ToBeVisibleAsync(new() { Timeout = 10000 });
     }
@@ -188,7 +158,6 @@ public sealed class NavigationTests(PlaywrightFixture fixture)
     [Fact]
     public async Task Navigation_MobileViewport_HasNavigation()
     {
-        // Create a page with mobile viewport
         var context = await _fixture.Browser.NewContextAsync(new BrowserNewContextOptions
         {
             BaseURL = _fixture.BaseUrl,
@@ -198,7 +167,6 @@ public sealed class NavigationTests(PlaywrightFixture fixture)
 
         await page.GotoAsync("/");
 
-        // Navigation should still be accessible (might be in hamburger menu or visible)
         var nav = page.Locator("nav");
         await Assertions.Expect(nav).ToBeAttachedAsync();
     }
@@ -206,7 +174,6 @@ public sealed class NavigationTests(PlaywrightFixture fixture)
     [Fact]
     public async Task Navigation_TabletViewport_HasNavigation()
     {
-        // Create a page with tablet viewport
         var context = await _fixture.Browser.NewContextAsync(new BrowserNewContextOptions
         {
             BaseURL = _fixture.BaseUrl,
@@ -216,7 +183,6 @@ public sealed class NavigationTests(PlaywrightFixture fixture)
 
         await page.GotoAsync("/");
 
-        // Navigation should be accessible
         var nav = page.Locator("nav");
         await Assertions.Expect(nav).ToBeVisibleAsync();
     }

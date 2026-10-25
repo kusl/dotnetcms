@@ -7,13 +7,10 @@ public class ReaderHub(IReaderTrackingService trackingService) : Hub
 {
     public async Task JoinPage(string slug)
     {
-        // Add this connection to the SignalR group for this slug
         await Groups.AddToGroupAsync(Context.ConnectionId, slug);
 
-        // Update state
         var newCount = trackingService.JoinPost(slug, Context.ConnectionId);
 
-        // Broadcast new count to everyone in this group
         await Clients.Group(slug).SendAsync("UpdateCount", newCount);
     }
 
@@ -28,7 +25,6 @@ public class ReaderHub(IReaderTrackingService trackingService) : Hub
 
     public override async Task OnDisconnectedAsync(Exception? exception)
     {
-        // Handle abrupt disconnects (tab closed, network lost)
         var (slug, newCount) = trackingService.Disconnect(Context.ConnectionId);
 
         if (!string.IsNullOrEmpty(slug))

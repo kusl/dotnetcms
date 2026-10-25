@@ -3,10 +3,6 @@ using Xunit;
 
 namespace MyBlog.Tests.Unit;
 
-/// <summary>
-/// Unit tests for the DatabasePathResolver.
-/// Tests XDG-compliant path resolution across platforms.
-/// </summary>
 public class DatabasePathResolverTests
 {
     [Fact]

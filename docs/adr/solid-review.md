@@ -100,3 +100,5 @@ Done on 2026-10-02 (ADR-0021): README formula erratum, stale workflow deleted,
 
 None of these is required for correctness today; each is a deliberate, reviewable
 change to be made on its own merits rather than bundled into this documentation pass.
+
+> **Amendment (2026-10-25):** resolved by ADR-0022: the `Console.WriteLine` calls (now `ILogger`), the duplicated XDG logic in the two path resolvers, and the stale `playwright.md`.

@@ -3,51 +3,17 @@ using Xunit;
 
 namespace MyBlog.E2E.Tests;
 
-/// <summary>
-/// E2E tests for admin pages (Epic 2: User Management, Epic 3: Content Management).
-/// </summary>
 [Collection(PlaywrightCollection.Name)]
 public sealed class AdminPageTests(PlaywrightFixture fixture)
 {
     private readonly PlaywrightFixture _fixture = fixture;
 
-    /// <summary>
-    /// Helper method to login with default admin credentials.
-    /// Returns once the admin dashboard is loaded and its circuit is interactive, so
-    /// callers can click links and buttons without racing Blazor's startup.
-    /// </summary>
-    private async Task LoginAsAdminAsync(IPage page)
-    {
-        await page.GotoAsync("/login");
-        await page.WaitForLoadStateAsync(LoadState.NetworkIdle);
-
-        // Attaching the circuit rebuilds the prerendered DOM, which would discard
-        // anything already typed into the form, so wait before filling the fields.
-        await page.WaitForBlazorInteractiveAsync();
-
-        await page.FillAsync("input[name='username']", "admin");
-        await page.FillAsync("input[name='password']", "ChangeMe123!");
-
-        // Click and wait for navigation in parallel to handle form submission properly
-        await Task.WhenAll(
-            page.WaitForURLAsync("**/admin**", new() { Timeout = 30000 }),
-            page.Locator("button[type='submit']").ClickAsync()
-        );
-
-        // The redirect only waits for the document; the dashboard is still prerendered
-        // at this point. Wait for its circuit too, so every admin test starts from a
-        // page where the interactive router owns navigation.
-        await page.WaitForBlazorInteractiveAsync();
-    }
-
     [Fact]
     public async Task AdminDashboard_DisplaysStatistics()
     {
         var page = await _fixture.CreatePageAsync();
-        await LoginAsAdminAsync(page);
+        await page.LoginAsAdminAsync();
 
-        // Dashboard should show post count or statistics - use proper selector pattern
-        // Cannot mix CSS selectors with text= in a comma-separated list
         var statCard = page.Locator(".stat-card").Or(page.Locator(".dashboard-stats"));
         await Assertions.Expect(statCard.First).ToBeVisibleAsync(new() { Timeout = 10000 });
     }
@@ -56,7 +22,7 @@ public sealed class AdminPageTests(PlaywrightFixture fixture)
     public async Task AdminDashboard_HasManagePostsLink()
     {
         var page = await _fixture.CreatePageAsync();
-        await LoginAsAdminAsync(page);
+        await page.LoginAsAdminAsync();
 
         var managePostsLink = page.Locator("a[href='/admin/posts']");
         await Assertions.Expect(managePostsLink).ToBeVisibleAsync(new() { Timeout = 10000 });
@@ -66,7 +32,7 @@ public sealed class AdminPageTests(PlaywrightFixture fixture)
     public async Task AdminDashboard_HasNewPostLink()
     {
         var page = await _fixture.CreatePageAsync();
-        await LoginAsAdminAsync(page);
+        await page.LoginAsAdminAsync();
 
         var newPostLink = page.Locator("a[href='/admin/posts/new']");
         await Assertions.Expect(newPostLink).ToBeVisibleAsync(new() { Timeout = 10000 });
@@ -76,7 +42,7 @@ public sealed class AdminPageTests(PlaywrightFixture fixture)
     public async Task AdminDashboard_HasManageImagesLink()
     {
         var page = await _fixture.CreatePageAsync();
-        await LoginAsAdminAsync(page);
+        await page.LoginAsAdminAsync();
 
         var manageImagesLink = page.Locator("a[href='/admin/images']");
         await Assertions.Expect(manageImagesLink).ToBeVisibleAsync(new() { Timeout = 10000 });
@@ -86,7 +52,7 @@ public sealed class AdminPageTests(PlaywrightFixture fixture)
     public async Task AdminPosts_LoadsSuccessfully()
     {
         var page = await _fixture.CreatePageAsync();
-        await LoginAsAdminAsync(page);
+        await page.LoginAsAdminAsync();
 
         await page.GotoAsync("/admin/posts");
 
@@ -98,7 +64,7 @@ public sealed class AdminPageTests(PlaywrightFixture fixture)
     public async Task AdminPosts_HasNewPostButton()
     {
         var page = await _fixture.CreatePageAsync();
-        await LoginAsAdminAsync(page);
+        await page.LoginAsAdminAsync();
 
         await page.GotoAsync("/admin/posts");
 
@@ -110,11 +76,10 @@ public sealed class AdminPageTests(PlaywrightFixture fixture)
     public async Task AdminNewPost_LoadsSuccessfully()
     {
         var page = await _fixture.CreatePageAsync();
-        await LoginAsAdminAsync(page);
+        await page.LoginAsAdminAsync();
 
         await page.GotoAsync("/admin/posts/new");
 
-        // Should have title input
         var titleInput = page.Locator("input[id='title'], input[name='title'], #title");
         await Assertions.Expect(titleInput.First).ToBeVisibleAsync(new() { Timeout = 10000 });
     }
@@ -123,11 +88,10 @@ public sealed class AdminPageTests(PlaywrightFixture fixture)
     public async Task AdminNewPost_HasContentEditor()
     {
         var page = await _fixture.CreatePageAsync();
-        await LoginAsAdminAsync(page);
+        await page.LoginAsAdminAsync();
 
         await page.GotoAsync("/admin/posts/new");
 
-        // Should have content textarea
         var contentEditor = page.Locator("textarea[id='content'], textarea[name='content'], #content");
         await Assertions.Expect(contentEditor.First).ToBeVisibleAsync(new() { Timeout = 10000 });
     }
@@ -136,7 +100,7 @@ public sealed class AdminPageTests(PlaywrightFixture fixture)
     public async Task AdminImages_LoadsSuccessfully()
     {
         var page = await _fixture.CreatePageAsync();
-        await LoginAsAdminAsync(page);
+        await page.LoginAsAdminAsync();
 
         await page.GotoAsync("/admin/images");
 
@@ -148,13 +112,11 @@ public sealed class AdminPageTests(PlaywrightFixture fixture)
     public async Task AdminNavigation_CanNavigateBetweenPages()
     {
         var page = await _fixture.CreatePageAsync();
-        await LoginAsAdminAsync(page);
+        await page.LoginAsAdminAsync();
 
-        // Start at dashboard
         var dashboardHeading = page.Locator("h1");
         await Assertions.Expect(dashboardHeading).ToContainTextAsync("Admin", new() { Timeout = 10000 });
 
-        // Navigate to posts
         await page.ClickAsync("a[href='/admin/posts']");
         await page.WaitForURLAsync("**/admin/posts");
 
@@ -166,9 +128,8 @@ public sealed class AdminPageTests(PlaywrightFixture fixture)
     public async Task AdminDashboard_ShowsRecentPosts()
     {
         var page = await _fixture.CreatePageAsync();
-        await LoginAsAdminAsync(page);
+        await page.LoginAsAdminAsync();
 
-        // Look for recent posts section - use Or pattern instead of comma-separated selectors
         var recentPostsSection = page.GetByText("Recent Posts").Or(page.Locator("h2").Filter(new() { HasText = "Recent" }));
         await Assertions.Expect(recentPostsSection.First).ToBeVisibleAsync(new() { Timeout = 10000 });
     }

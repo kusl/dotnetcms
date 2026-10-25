@@ -15,9 +15,6 @@
     {
         var content = Content ?? "";
 
-        // OnParametersSetAsync runs on every parent render, not only when Content
-        // actually changes. Re-parsing a long document on every keystroke in the
-        // editor is pure waste, so skip the parse when the input is unchanged.
         if (_parsedContent is not null && string.Equals(_parsedContent, content, StringComparison.Ordinal))
         {
             return;

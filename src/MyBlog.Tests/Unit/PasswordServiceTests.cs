@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Identity;
+using MyBlog.Core.Models;
 using MyBlog.Infrastructure.Services;
 using Xunit;
 
@@ -5,7 +7,7 @@ namespace MyBlog.Tests.Unit;
 
 public class PasswordServiceTests
 {
-    private readonly PasswordService _sut = new();
+    private readonly PasswordService _sut = new(new PasswordHasher<User>());
 
     [Fact]
     public void HashPassword_ReturnsNonEmptyHash()

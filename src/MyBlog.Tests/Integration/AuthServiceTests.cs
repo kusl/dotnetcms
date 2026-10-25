@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using MyBlog.Core.Models;
@@ -12,7 +13,7 @@ public class AuthServiceTests : IAsyncDisposable
 {
     private readonly BlogDbContext _context;
     private readonly AuthService _sut;
-    private readonly PasswordService _passwordService = new();
+    private readonly PasswordService _passwordService = new(new PasswordHasher<User>());
 
     public AuthServiceTests()
     {

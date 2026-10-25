@@ -8,11 +8,6 @@ using MyBlog.Infrastructure.Data;
 
 namespace MyBlog.Infrastructure.Services;
 
-/// <summary>
-/// Background service that warms the image dimension cache on startup.
-/// Scans all posts for images and pre-fetches their dimensions.
-/// This automates the fix for "past" images.
-/// </summary>
 public sealed class ImageCacheWarmerService(
     IServiceScopeFactory scopeFactory,
     ILogger<ImageCacheWarmerService> logger)
@@ -20,7 +15,6 @@ public sealed class ImageCacheWarmerService(
 {
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        // Give the app time to fully start up
         await Task.Delay(TimeSpan.FromSeconds(5), stoppingToken);
 
         logger.LogInformation("Image Cache Warmer started. Scanning posts for uncached images...");
@@ -31,19 +25,9 @@ public sealed class ImageCacheWarmerService(
             var db = scope.ServiceProvider.GetRequiredService<BlogDbContext>();
             var dimService = scope.ServiceProvider.GetRequiredService<IImageDimensionService>();
 
-            // Check if the ImageDimensionCache table exists
-            if (!await TableExistsAsync(db, stoppingToken))
-            {
-                logger.LogWarning("Image Cache Warmer: ImageDimensionCache table does not exist. " +
-                    "Please apply database migrations. Skipping cache warming.");
-                return;
-            }
-
             var regex = new Regex(@"!\[([^\]]*)\]\(([^)]+)\)");
             var distinctUrls = new HashSet<string>();
 
-            // 1. Stream posts one by one to avoid loading all content into memory at once.
-            //    AsAsyncEnumerable() avoids the large array allocation that ToListAsync() causes.
             await foreach (var content in db.Posts
                 .Select(p => p.Content)
                 .AsAsyncEnumerable()
@@ -61,7 +45,6 @@ public sealed class ImageCacheWarmerService(
                 }
             }
 
-            // 2. Filter out ones we already have
             HashSet<string> existingSet;
             try
             {
@@ -86,7 +69,6 @@ public sealed class ImageCacheWarmerService(
 
             logger.LogInformation("Image Cache Warmer: Found {Count} uncached images. Fetching dimensions...", missingUrls.Count);
 
-            // 3. Process missing (in parallel but throttled)
             var successCount = 0;
             var failCount = 0;
 
@@ -94,7 +76,6 @@ public sealed class ImageCacheWarmerService(
             {
                 try
                 {
-                    // Calling GetDimensionsAsync triggers the logic to fetch and save to DB
                     var dimensions = await dimService.GetDimensionsAsync(url, stoppingToken);
                     if (dimensions.HasValue)
                     {
@@ -114,7 +95,6 @@ public sealed class ImageCacheWarmerService(
                     failCount++;
                 }
 
-                // Be gentle on remote servers
                 await Task.Delay(100, stoppingToken);
             }
 
@@ -128,30 +108,6 @@ public sealed class ImageCacheWarmerService(
         catch (Exception ex)
         {
             logger.LogError(ex, "Error in Image Cache Warmer. This is non-fatal - the blog will continue to work without cached dimensions.");
-        }
-    }
-
-    /// <summary>
-    /// Checks if the ImageDimensionCache table exists in the database.
-    /// </summary>
-    private static async Task<bool> TableExistsAsync(BlogDbContext db, CancellationToken ct)
-    {
-        try
-        {
-            var connection = db.Database.GetDbConnection();
-            if (connection.State != System.Data.ConnectionState.Open)
-            {
-                await connection.OpenAsync(ct);
-            }
-
-            using var command = connection.CreateCommand();
-            command.CommandText = "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='ImageDimensionCache'";
-            var result = await command.ExecuteScalarAsync(ct);
-            return Convert.ToInt64(result) > 0;
-        }
-        catch
-        {
-            return false;
         }
     }
 }

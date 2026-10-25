@@ -6,10 +6,6 @@ using Xunit;
 
 namespace MyBlog.Tests.Integration;
 
-/// <summary>
-/// Integration tests for the UserRepository.
-/// Uses in-memory SQLite for cross-platform compatibility.
-/// </summary>
 public class UserRepositoryTests : IAsyncDisposable
 {
     private readonly BlogDbContext _context;
@@ -199,7 +195,6 @@ public class UserRepositoryTests : IAsyncDisposable
     {
         var ct = TestContext.Current.CancellationToken;
 
-        // Should not throw
         await _sut.DeleteAsync(Guid.NewGuid(), ct);
     }
 

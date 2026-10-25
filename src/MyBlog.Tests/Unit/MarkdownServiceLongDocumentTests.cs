@@ -4,23 +4,10 @@ using Xunit;
 
 namespace MyBlog.Tests.Unit;
 
-/// <summary>
-/// Regression tests for long, real-world article bodies.
-///
-/// These exist because a full-length post silently failed to save through the
-/// admin editor. The parser turned out to be fine; the failure was in the editor's
-/// data binding and the 32 KB default SignalR receive limit. These tests pin down
-/// the parser side of that boundary so a future change cannot quietly break it.
-/// </summary>
 public class MarkdownServiceLongDocumentTests
 {
     private readonly MarkdownService _sut = new(new MockImageDimensionService());
 
-    /// <summary>
-    /// Builds a document shaped like a real published article: an H1, a lede
-    /// paragraph, a horizontal rule, section headings, inline emphasis, straight
-    /// double quotes, em dashes and a trailing sourcing note.
-    /// </summary>
     private static string BuildArticle()
     {
         var lines = new[]
@@ -80,7 +67,6 @@ public class MarkdownServiceLongDocumentTests
             CountOccurrences(result, "<em>"),
             CountOccurrences(result, "</em>"));
 
-        // Every asterisk should have been consumed by the emphasis pass.
         Assert.DoesNotContain("*", result);
     }
 
@@ -89,11 +75,9 @@ public class MarkdownServiceLongDocumentTests
     {
         var result = await _sut.ToHtmlAsync(BuildArticle());
 
-        // Double quotes are escaped; Unicode punctuation is passed through untouched.
         Assert.Contains("&quot;carefully conducted&quot;", result);
         Assert.Contains("\u2014", result);
 
-        // Apostrophes are intentionally not escaped by HtmlEncode.
         Assert.Contains("children's", result);
     }
 
@@ -118,7 +102,6 @@ public class MarkdownServiceLongDocumentTests
 
         var markdown = builder.ToString();
 
-        // Sanity check: this input is deliberately larger than SignalR's 32 KB default.
         Assert.True(
             markdown.Length > 32 * 1024,
             $"Test input should exceed the 32 KB default message size, but was {markdown.Length} characters.");

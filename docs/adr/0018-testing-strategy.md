@@ -86,3 +86,5 @@ InMemory provider, mocking frameworks, and Selenium, to achieve fast determinist
 tests that exercise real SQLite and run identically everywhere, accepting direct SUT
 construction and a stale aspirational E2E design note, because faithful behavior and
 zero mocking dependencies matter more than test-time indirection.
+
+> **Amendment (2026-10-25):** `playwright.md` is deleted. RSS tests call the production feed builder, and E2E login uses shared helpers that wait for the circuit (ADR-0022).

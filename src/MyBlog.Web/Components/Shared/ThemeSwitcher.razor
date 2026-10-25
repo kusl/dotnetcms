@@ -10,16 +10,13 @@
             aria-expanded="@_isOpen"
             aria-haspopup="true"
             title="Change theme">
-        @* Sun/Moon icon that adapts to current theme *@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             @if (IsDarkTheme(_currentTheme))
             {
-                @* Moon icon for dark themes *@
                 <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
             }
             else
             {
-                @* Sun icon for light themes *@
                 <circle cx="12" cy="12" r="5"></circle>
                 <line x1="12" y1="1" x2="12" y2="3"></line>
                 <line x1="12" y1="21" x2="12" y2="23"></line>
@@ -75,10 +72,8 @@
 
             try
             {
-                // Initialize theme from localStorage or system preference
                 _currentTheme = await JS.InvokeAsync<string>("themeManager.init", _objRef);
 
-                // Register click outside handler
                 await JS.InvokeVoidAsync("themeManager.registerClickOutside", _objRef);
 
                 StateHasChanged();
@@ -113,11 +108,11 @@
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Theme selection error: {ex.Message}");
+            Logger.LogWarning(ex, "Theme selection error");
         }
     }
 
-    private static bool IsDarkTheme(string themeId) => themeId is "dark" or "nord" or "dracula";
+    private static bool IsDarkTheme(string themeId) => Themes.Any(t => t.Id == themeId && t.IsDark);
 
     public void Dispose() => _objRef?.Dispose();
 }

@@ -4,23 +4,15 @@ using Xunit;
 
 namespace MyBlog.Tests.Unit;
 
-/// <summary>
-/// Mock implementation that always returns null to test no-dimension scenarios.
-/// </summary>
 internal sealed class NullImageDimensionService : IImageDimensionService
 {
     public Task<(int Width, int Height)?> GetDimensionsAsync(string url, CancellationToken cancellationToken = default) => Task.FromResult<(int, int)?>(null);
 }
 
-/// <summary>
-/// Additional edge case tests for the MarkdownService.
-/// Tests complex scenarios not covered by the main MarkdownServiceTests.
-/// </summary>
 public class MarkdownServiceEdgeCaseTests
 {
     private readonly MarkdownService _sut = new(new NullImageDimensionService());
 
-    // Helper to normalize newlines for cross-platform comparison
     private static string NormalizeNewlines(string s) => s.Replace("\r\n", "\n");
 
     [Fact]
@@ -217,7 +209,6 @@ public class MarkdownServiceEdgeCaseTests
         var markdown = "- Item 1\n- Item 2\n# Heading";
         var result = NormalizeNewlines(await _sut.ToHtmlAsync(markdown));
 
-        // List should close before heading
         var ulCloseIndex = result.IndexOf("</ul>", StringComparison.Ordinal);
         var h1Index = result.IndexOf("<h1>", StringComparison.Ordinal);
         Assert.True(ulCloseIndex < h1Index);

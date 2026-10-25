@@ -3,10 +3,6 @@ using Xunit;
 
 namespace MyBlog.Tests.Unit;
 
-/// <summary>
-/// Unit tests for the ReaderTrackingService.
-/// Verifies thread-safe reader counting with ConcurrentDictionary operations.
-/// </summary>
 public class ReaderTrackingServiceTests
 {
     private readonly ReaderTrackingService _sut = new();
@@ -100,7 +96,6 @@ public class ReaderTrackingServiceTests
         _sut.JoinPost("test-slug", "connection-1");
         _sut.Disconnect("connection-1");
 
-        // Second disconnect should return null since connection is no longer tracked
         var (slug, _) = _sut.Disconnect("connection-1");
 
         Assert.Null(slug);
@@ -128,13 +123,10 @@ public class ReaderTrackingServiceTests
     [Fact]
     public void JoinPost_SameConnectionSwitchingPages_UpdatesMapping()
     {
-        // Connection joins slug-a
         _sut.JoinPost("slug-a", "connection-1");
 
-        // Same connection joins slug-b (switching pages)
         _sut.JoinPost("slug-b", "connection-1");
 
-        // Disconnect should return slug-b (the most recent)
         var (slug, _) = _sut.Disconnect("connection-1");
 
         Assert.Equal("slug-b", slug);
@@ -164,7 +156,6 @@ public class ReaderTrackingServiceTests
     {
         var ct = TestContext.Current.CancellationToken;
 
-        // First, add 50 connections
         for (var i = 0; i < 50; i++)
         {
             _sut.JoinPost("test-slug", $"connection-{i}");
@@ -172,7 +163,6 @@ public class ReaderTrackingServiceTests
 
         var tasks = new List<Task>();
 
-        // Concurrently add 25 more and remove 25
         for (var i = 50; i < 75; i++)
         {
             var connectionId = $"connection-{i}";
@@ -187,7 +177,6 @@ public class ReaderTrackingServiceTests
 
         await Task.WhenAll(tasks);
 
-        // Should have 50 - 25 + 25 = 50 connections
         var finalCount = _sut.GetReaderCount("test-slug");
         Assert.Equal(50, finalCount);
     }
@@ -198,13 +187,11 @@ public class ReaderTrackingServiceTests
         var ct = TestContext.Current.CancellationToken;
         const int connectionCount = 50;
 
-        // Add connections
         for (var i = 0; i < connectionCount; i++)
         {
             _sut.JoinPost("test-slug", $"connection-{i}");
         }
 
-        // Disconnect all concurrently
         var tasks = new List<Task>();
         for (var i = 0; i < connectionCount; i++)
         {

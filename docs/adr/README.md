@@ -66,6 +66,7 @@ below reflects that reality.
 | [0019](0019-iis-webdeploy-ci-cd.md) | CI/CD: IIS WebDeploy from GitHub Actions to two targets | Accepted | 2026-03-16 |
 | [0020](0020-csharp-coding-standard.md) | C# coding standard: .NET 10, nullable, warnings-as-errors | Accepted | 2025-12-28 |
 | [0021](0021-dependency-and-reflection-cleanup.md) | Dependency, reflection, and static-asset cleanup | Accepted | 2026-10-02 |
+| [0022](0022-repository-hygiene-and-log-retention.md) | Repository hygiene, working local logs, and bounded retention | Accepted | 2026-10-25 |
 
 ## SOLID and "shortcuts" review
 

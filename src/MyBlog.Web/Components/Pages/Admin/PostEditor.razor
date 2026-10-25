@@ -1,6 +1,5 @@
 @page "/admin/posts/new"
 @page "/admin/posts/edit/{Id:guid}"
-@rendermode InteractiveServer
 @attribute [Authorize]
 @implements IDisposable
 @inject IPostRepository PostRepository
@@ -82,11 +81,6 @@ else
 }
 
 @code {
-    /// <summary>
-    /// How long to wait after the last keystroke before re-rendering the Markdown
-    /// preview. Without this, binding on "oninput" would re-parse the whole document
-    /// and push a full preview diff down the circuit on every single keypress.
-    /// </summary>
     private const int PreviewDebounceMilliseconds = 500;
 
     [Parameter]
@@ -96,18 +90,13 @@ else
     private bool _loading = true;
     private bool _saving;
 
-    /// <summary>
-    /// False until the first interactive render completes. OnAfterRender does not run
-    /// during prerendering, so this is the reliable signal that the circuit is live and
-    /// that input events will actually reach the server.
-    /// </summary>
     private bool _interactive;
 
     private string _title = "";
     private string _summary = "";
     private string _content = "";
     private string _previewContent = "";
-    private bool _isPublished = true; // Default to published for new posts
+    private bool _isPublished = true;
     private string? _error;
     private Post? _existingPost;
     private System.Threading.Timer? _previewTimer;
@@ -126,7 +115,6 @@ else
                 _isPublished = _existingPost.IsPublished;
             }
         }
-        // For new posts, _isPublished stays true (the default)
         _loading = false;
     }
 
@@ -139,10 +127,6 @@ else
         }
     }
 
-    /// <summary>
-    /// Restarts the preview debounce timer. Called by @bind:after on the content
-    /// textarea, so it runs after _content has already been updated on the server.
-    /// </summary>
     private void SchedulePreviewRefresh()
     {
         _previewTimer ??= new System.Threading.Timer(_ => RefreshPreview(), null, Timeout.Infinite, Timeout.Infinite);
@@ -161,15 +145,11 @@ else
         }
         catch (ObjectDisposedException)
         {
-            // The circuit was torn down before the debounce elapsed. Nothing to render.
         }
     }
 
     private async Task Save()
     {
-        // Guard against saving while the circuit is not yet live. Without this, the
-        // fields on screen can be newer than the fields on the server, and the save
-        // would silently write back stale values.
         if (!_interactive)
         {
             _error = "The editor is still connecting. Please wait a moment and try again.";
@@ -211,16 +191,13 @@ else
 
             if (IsEdit && _existingPost is not null)
             {
-                // Generate slug from the new title
                 var newSlug = SlugService.GenerateSlugOrUuid(_title);
 
-                // Check if slug changed and if the new slug is taken by another post
                 if (newSlug != _existingPost.Slug)
                 {
                     var isSlugTaken = await PostRepository.IsSlugTakenAsync(newSlug, _existingPost.Id);
                     if (isSlugTaken)
                     {
-                        // Use UUIDv7-based slug since the title-based slug is taken
                         newSlug = SlugService.GenerateUuidSlug();
                         Logger.LogInformation(
                             "Slug collision detected for title '{Title}', using UUID slug: {Slug}",
@@ -251,14 +228,11 @@ else
             }
             else
             {
-                // Generate slug from title
                 var slug = SlugService.GenerateSlugOrUuid(_title);
 
-                // Check if slug is already taken
                 var isSlugTaken = await PostRepository.IsSlugTakenAsync(slug);
                 if (isSlugTaken)
                 {
-                    // Use UUIDv7-based slug since the title-based slug is taken
                     slug = SlugService.GenerateUuidSlug();
                     Logger.LogInformation(
                         "Slug collision detected for title '{Title}', using UUID slug: {Slug}",
@@ -288,10 +262,8 @@ else
         }
         catch (Exception ex)
         {
-            // Log the full exception including inner exception
             Logger.LogError(ex, "Failed to save post. Title: {Title}, IsEdit: {IsEdit}", _title, IsEdit);
 
-            // Show a more detailed error message
             var innerMessage = ex.InnerException?.Message ?? ex.Message;
             _error = $"Failed to save: {innerMessage}";
         }

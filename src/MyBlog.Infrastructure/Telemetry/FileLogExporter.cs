@@ -1,12 +1,11 @@
 using System.Text;
 using System.Text.Json;
-using Microsoft.Extensions.Hosting;
 using OpenTelemetry;
 using OpenTelemetry.Logs;
 
 namespace MyBlog.Infrastructure.Telemetry;
 
-public sealed class FileLogExporter : BaseExporter<LogRecord>, IHostedService
+public sealed class FileLogExporter : BaseExporter<LogRecord>
 {
     private readonly string _directory;
     private readonly string _runId;
@@ -123,8 +122,4 @@ public sealed class FileLogExporter : BaseExporter<LogRecord>, IHostedService
         }
         return true;
     }
-
-    public Task StartAsync(CancellationToken cancellationToken) => Task.CompletedTask;
-
-    public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
 }

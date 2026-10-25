@@ -3,9 +3,6 @@ using Xunit;
 
 namespace MyBlog.E2E.Tests;
 
-/// <summary>
-/// E2E tests for SEO and accessibility features.
-/// </summary>
 [Collection(PlaywrightCollection.Name)]
 public sealed class SeoTests(PlaywrightFixture fixture)
 {
@@ -51,7 +48,6 @@ public sealed class SeoTests(PlaywrightFixture fixture)
 
         await page.GotoAsync("/");
 
-        // Check for main content area with proper role
         var main = page.Locator("main, [role='main']");
         await Assertions.Expect(main.First).ToBeVisibleAsync();
     }
@@ -74,7 +70,6 @@ public sealed class SeoTests(PlaywrightFixture fixture)
 
         await page.GotoAsync("/about");
 
-        // Should have exactly one h1
         var h1Count = await page.Locator("h1").CountAsync();
         Assert.Equal(1, h1Count);
     }
@@ -86,7 +81,6 @@ public sealed class SeoTests(PlaywrightFixture fixture)
 
         await page.GotoAsync("/");
 
-        // Check for viewport meta tag (important for mobile)
         var viewportMeta = page.Locator("meta[name='viewport']");
         await Assertions.Expect(viewportMeta).ToBeAttachedAsync();
     }
@@ -98,7 +92,6 @@ public sealed class SeoTests(PlaywrightFixture fixture)
 
         await page.GotoAsync("/");
 
-        // Main navigation links should have visible text
         var homeLink = page.Locator("nav a[href='/']");
         var homeLinkText = await homeLink.TextContentAsync();
         Assert.False(string.IsNullOrWhiteSpace(homeLinkText), "Home link should have visible text");
@@ -111,12 +104,8 @@ public sealed class SeoTests(PlaywrightFixture fixture)
 
         await page.GotoAsync("/");
 
-        // Theme switcher button should have aria-label
         var themeSwitcherBtn = page.Locator(".theme-switcher-btn");
-        if (await themeSwitcherBtn.CountAsync() > 0)
-        {
-            await Assertions.Expect(themeSwitcherBtn).ToHaveAttributeAsync("aria-label", "Change theme");
-        }
+        await Assertions.Expect(themeSwitcherBtn).ToHaveAttributeAsync("aria-label", "Change theme");
     }
 
     [Fact]
@@ -126,7 +115,6 @@ public sealed class SeoTests(PlaywrightFixture fixture)
 
         await page.GotoAsync("/login");
 
-        // Form inputs should have associated labels
         var usernameLabel = page.Locator("label[for='username']");
         var passwordLabel = page.Locator("label[for='password']");
 
@@ -141,7 +129,6 @@ public sealed class SeoTests(PlaywrightFixture fixture)
 
         await page.GotoAsync("/about");
 
-        // If there are any images, they should have alt text
         var images = page.Locator("img");
         var imageCount = await images.CountAsync();
 
@@ -149,7 +136,6 @@ public sealed class SeoTests(PlaywrightFixture fixture)
         {
             var img = images.Nth(i);
             var alt = await img.GetAttributeAsync("alt");
-            // Images should have alt attribute (can be empty for decorative images)
             Assert.NotNull(alt);
         }
     }
@@ -161,7 +147,6 @@ public sealed class SeoTests(PlaywrightFixture fixture)
 
         await page.GotoAsync("/");
 
-        // HTML element should have lang attribute
         var lang = await page.Locator("html").GetAttributeAsync("lang");
         Assert.False(string.IsNullOrWhiteSpace(lang), "HTML should have lang attribute");
     }

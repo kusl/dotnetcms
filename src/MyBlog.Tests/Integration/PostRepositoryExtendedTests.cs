@@ -6,11 +6,6 @@ using Xunit;
 
 namespace MyBlog.Tests.Integration;
 
-/// <summary>
-/// Extended integration tests for the PostRepository.
-/// Tests pagination, slug collision detection, and additional edge cases.
-/// Uses in-memory SQLite for cross-platform compatibility.
-/// </summary>
 public class PostRepositoryExtendedTests : IAsyncDisposable
 {
     private readonly BlogDbContext _context;
@@ -49,7 +44,6 @@ public class PostRepositoryExtendedTests : IAsyncDisposable
     {
         var ct = TestContext.Current.CancellationToken;
 
-        // Create 5 published posts
         for (var i = 0; i < 5; i++)
         {
             await _sut.CreateAsync(CreateTestPost($"Post {i}", isPublished: true), ct);
@@ -65,7 +59,6 @@ public class PostRepositoryExtendedTests : IAsyncDisposable
     {
         var ct = TestContext.Current.CancellationToken;
 
-        // Create 5 published posts
         for (var i = 0; i < 5; i++)
         {
             await _sut.CreateAsync(CreateTestPost($"Post {i}", isPublished: true), ct);
@@ -81,7 +74,6 @@ public class PostRepositoryExtendedTests : IAsyncDisposable
     {
         var ct = TestContext.Current.CancellationToken;
 
-        // Create 5 published posts with different dates
         for (var i = 0; i < 5; i++)
         {
             var post = CreateTestPost($"Post {i}", isPublished: true);
@@ -92,7 +84,6 @@ public class PostRepositoryExtendedTests : IAsyncDisposable
         var (page1Posts, _) = await _sut.GetPublishedPostsAsync(1, 2, ct);
         var (page2Posts, _) = await _sut.GetPublishedPostsAsync(2, 2, ct);
 
-        // Should be different posts on each page
         Assert.NotEqual(page1Posts[0].Id, page2Posts[0].Id);
     }
 
@@ -251,7 +242,6 @@ public class PostRepositoryExtendedTests : IAsyncDisposable
         var post = CreateTestPost("Test", slug: "test-slug");
         await _sut.CreateAsync(post, ct);
 
-        // Same slug should not be considered taken when excluding the post that has it
         var isTaken = await _sut.IsSlugTakenAsync("test-slug", post.Id, ct);
 
         Assert.False(isTaken);
@@ -264,7 +254,6 @@ public class PostRepositoryExtendedTests : IAsyncDisposable
         var post = CreateTestPost("Test", slug: "test-slug");
         await _sut.CreateAsync(post, ct);
 
-        // Different post ID should not affect the result
         var isTaken = await _sut.IsSlugTakenAsync("test-slug", Guid.NewGuid(), ct);
 
         Assert.True(isTaken);
@@ -333,7 +322,6 @@ public class PostRepositoryExtendedTests : IAsyncDisposable
     {
         var ct = TestContext.Current.CancellationToken;
 
-        // Should not throw
         await _sut.DeleteAsync(Guid.NewGuid(), ct);
     }
 

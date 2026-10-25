@@ -8,7 +8,6 @@ using MyBlog.Core.Services;
 using MyBlog.Infrastructure.Data;
 using MyBlog.Infrastructure.Repositories;
 using MyBlog.Infrastructure.Services;
-using MyBlog.Infrastructure.Telemetry;
 
 namespace MyBlog.Infrastructure;
 
@@ -50,25 +49,6 @@ public static class ServiceCollectionExtensions
 
         services.AddHostedService<TelemetryCleanupService>();
         services.AddHostedService<ImageCacheWarmerService>();
-
-        var enableFileLogging = configuration.GetValue("Telemetry:EnableFileLogging", true);
-        if (enableFileLogging)
-        {
-            var telemetryDir = TelemetryPathResolver.GetTelemetryDirectory();
-            if (telemetryDir is not null)
-            {
-                var logsDir = Path.Combine(telemetryDir, "logs");
-                services.AddSingleton<FileLogExporter>(sp => new FileLogExporter(logsDir));
-                services.AddHostedService(sp => sp.GetRequiredService<FileLogExporter>());
-            }
-        }
-
-        var enableDbLogging = configuration.GetValue("Telemetry:EnableDatabaseLogging", true);
-        if (enableDbLogging)
-        {
-            services.AddSingleton<DatabaseLogExporter>();
-            services.AddHostedService(sp => sp.GetRequiredService<DatabaseLogExporter>());
-        }
 
         return services;
     }

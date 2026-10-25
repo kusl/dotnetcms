@@ -88,3 +88,5 @@ third-party action and FTP/file-copy, to achieve reliable, repeatable, secret-sa
 deploys to independent targets, accepting real PowerShell/msdeploy complexity and a
 stale duplicate workflow file, because full control plus AppOffline is the only
 combination that met the hard "don't break a live site" constraint.
+
+> **Amendment (2026-10-25):** the two deploy jobs are one matrix job (`primary`, `nice` with the `NICE_` secret prefix, `fail-fast: false`), running from `main` only (ADR-0022).

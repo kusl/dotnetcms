@@ -1,19 +1,17 @@
 using System.Text;
 using System.Xml;
 using MyBlog.Core.Interfaces;
+using MyBlog.Core.Models;
 
 namespace MyBlog.Web.Endpoints;
 
-/// <summary>
-/// Minimal API endpoints for the RSS 2.0 feed.
-/// </summary>
 public static class RssEndpoints
 {
-    private const int FeedItemLimit = 20;
+    public const int FeedItemLimit = 20;
 
-    /// <summary>
-    /// Maps the RSS feed endpoint at /feed.xml.
-    /// </summary>
+    private const string AtomNamespace = "http://www.w3.org/2005/Atom";
+    private const string ContentNamespace = "http://purl.org/rss/1.0/modules/content/";
+
     public static IEndpointRouteBuilder MapRssEndpoints(this IEndpointRouteBuilder endpoints)
     {
         endpoints.MapGet("/feed.xml", GenerateRssFeed)
@@ -31,16 +29,26 @@ public static class RssEndpoints
         var request = context.Request;
         var baseUrl = $"{request.Scheme}://{request.Host}";
         var siteTitle = configuration["Application:Title"] ?? "MyBlog";
+
+        var bytes = await BuildFeedAsync(baseUrl, siteTitle, postRepository, markdownService, context.RequestAborted);
+        return Results.Bytes(bytes, "application/rss+xml; charset=utf-8");
+    }
+
+    public static async Task<byte[]> BuildFeedAsync(
+        string baseUrl,
+        string siteTitle,
+        IPostRepository postRepository,
+        IMarkdownService markdownService,
+        CancellationToken cancellationToken = default)
+    {
         var feedUrl = $"{baseUrl}/feed.xml";
 
-        var (posts, _) = await postRepository.GetPublishedPostsAsync(1, FeedItemLimit);
+        var (posts, _) = await postRepository.GetPublishedPostsAsync(1, FeedItemLimit, cancellationToken);
 
-        // Fetch full content for each post via slug lookup.
-        // With a cap of 20 posts and SQLite, this is perfectly fine.
-        var fullPosts = new List<(Core.Models.PostListItemDto ListItem, Core.Models.PostDetailDto? Detail)>();
+        var fullPosts = new List<(PostListItemDto ListItem, PostDetailDto? Detail)>();
         foreach (var post in posts)
         {
-            var detail = await postRepository.GetBySlugAsync(post.Slug);
+            var detail = await postRepository.GetBySlugAsync(post.Slug, cancellationToken);
             fullPosts.Add((post, detail));
         }
 
@@ -58,10 +66,9 @@ public static class RssEndpoints
 
             await writer.WriteStartElementAsync(null, "rss", null);
             await writer.WriteAttributeStringAsync(null, "version", null, "2.0");
-            await writer.WriteAttributeStringAsync("xmlns", "atom", null, "http://www.w3.org/2005/Atom");
-            await writer.WriteAttributeStringAsync("xmlns", "content", null, "http://purl.org/rss/1.0/modules/content/");
+            await writer.WriteAttributeStringAsync("xmlns", "atom", null, AtomNamespace);
+            await writer.WriteAttributeStringAsync("xmlns", "content", null, ContentNamespace);
 
-            // <channel>
             await writer.WriteStartElementAsync(null, "channel", null);
 
             await writer.WriteElementStringAsync(null, "title", null, siteTitle);
@@ -71,12 +78,11 @@ public static class RssEndpoints
             await writer.WriteElementStringAsync(null, "generator", null, "MyBlog/.NET 10");
             await writer.WriteElementStringAsync(null, "lastBuildDate", null, DateTime.UtcNow.ToString("R"));
 
-            // <atom:link rel="self">
-            await writer.WriteStartElementAsync("atom", "link", "http://www.w3.org/2005/Atom");
+            await writer.WriteStartElementAsync("atom", "link", AtomNamespace);
             await writer.WriteAttributeStringAsync(null, "href", null, feedUrl);
             await writer.WriteAttributeStringAsync(null, "rel", null, "self");
             await writer.WriteAttributeStringAsync(null, "type", null, "application/rss+xml");
-            await writer.WriteEndElementAsync(); // atom:link
+            await writer.WriteEndElementAsync();
 
             foreach (var (post, detail) in fullPosts)
             {
@@ -95,32 +101,29 @@ public static class RssEndpoints
 
                 await writer.WriteElementStringAsync(null, "author", null, post.AuthorDisplayName);
 
-                // <guid isPermaLink="true">
                 await writer.WriteStartElementAsync(null, "guid", null);
                 await writer.WriteAttributeStringAsync(null, "isPermaLink", null, "true");
                 await writer.WriteStringAsync(permalink);
-                await writer.WriteEndElementAsync(); // guid
+                await writer.WriteEndElementAsync();
 
-                // <content:encoded> — full rendered HTML so readers can read offline
                 if (detail is not null)
                 {
                     var htmlContent = await markdownService.ToHtmlAsync(detail.Content);
-                    await writer.WriteStartElementAsync("content", "encoded", "http://purl.org/rss/1.0/modules/content/");
+                    await writer.WriteStartElementAsync("content", "encoded", ContentNamespace);
                     await writer.WriteCDataAsync(htmlContent);
-                    await writer.WriteEndElementAsync(); // content:encoded
+                    await writer.WriteEndElementAsync();
                 }
 
-                await writer.WriteEndElementAsync(); // item
+                await writer.WriteEndElementAsync();
             }
 
-            await writer.WriteEndElementAsync(); // channel
-            await writer.WriteEndElementAsync(); // rss
+            await writer.WriteEndElementAsync();
+            await writer.WriteEndElementAsync();
             await writer.WriteEndDocumentAsync();
 
             await writer.FlushAsync();
         }
 
-        var bytes = stream.ToArray();
-        return Results.Bytes(bytes, "application/rss+xml; charset=utf-8");
+        return stream.ToArray();
     }
 }

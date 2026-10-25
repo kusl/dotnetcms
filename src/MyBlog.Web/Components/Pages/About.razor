@@ -1,5 +1,4 @@
 @page "/about"
-@rendermode InteractiveServer
 @inject IConfiguration Configuration
 @inject IPostRepository PostRepository
 
@@ -383,8 +382,18 @@
             <div class="config-table">
                 <div class="config-row">
                     <code>Telemetry:RetentionDays</code>
-                    <span>Days to keep telemetry logs before cleanup</span>
-                    <em>Default: 30</em>
+                    <span>Days to keep database and file logs; cleanup runs hourly</span>
+                    <em>Default and maximum: 30</em>
+                </div>
+                <div class="config-row">
+                    <code>Telemetry:MaxDatabaseRows</code>
+                    <span>Newest database log rows kept regardless of age</span>
+                    <em>Default: 50000</em>
+                </div>
+                <div class="config-row">
+                    <code>Telemetry:MaxLogFileMegabytes</code>
+                    <span>Total size budget for JSON log files</span>
+                    <em>Default: 100</em>
                 </div>
                 <div class="config-row">
                     <code>Telemetry:EnableFileLogging</code>

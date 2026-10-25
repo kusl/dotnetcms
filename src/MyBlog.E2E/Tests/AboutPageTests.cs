@@ -3,9 +3,6 @@ using Xunit;
 
 namespace MyBlog.E2E.Tests;
 
-/// <summary>
-/// E2E tests for the about page (Epic 4: Public Browsing).
-/// </summary>
 [Collection(PlaywrightCollection.Name)]
 public sealed class AboutPageTests(PlaywrightFixture fixture)
 {
@@ -52,7 +49,6 @@ public sealed class AboutPageTests(PlaywrightFixture fixture)
 
         await page.GotoAsync("/about");
 
-        // The about page should mention .NET and Blazor
         var content = await page.ContentAsync();
         Assert.Contains(".NET", content);
         Assert.Contains("Blazor", content);
@@ -65,7 +61,6 @@ public sealed class AboutPageTests(PlaywrightFixture fixture)
 
         await page.GotoAsync("/about");
 
-        // Wait for SignalR connection and reader badge
         var readerBadge = page.Locator(".reader-badge, .reader-info");
         await Assertions.Expect(readerBadge.First).ToBeVisibleAsync(new() { Timeout = 10000 });
     }
@@ -77,7 +72,6 @@ public sealed class AboutPageTests(PlaywrightFixture fixture)
 
         await page.GotoAsync("/about");
 
-        // Should have navigation links
         var homeLink = page.Locator("nav a[href='/']");
         await Assertions.Expect(homeLink).ToBeVisibleAsync();
     }

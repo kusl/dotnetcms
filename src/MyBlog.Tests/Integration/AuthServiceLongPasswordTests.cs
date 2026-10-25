@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using MyBlog.Core.Models;
@@ -8,10 +9,6 @@ using Xunit;
 
 namespace MyBlog.Tests.Integration;
 
-/// <summary>
-/// Tests for long password support and account lockout behavior.
-/// Uses in-memory SQLite for cross-platform compatibility (Windows/Linux/macOS).
-/// </summary>
 public sealed class AuthServiceLongPasswordTests : IAsyncDisposable
 {
     private readonly BlogDbContext _context;
@@ -20,7 +17,6 @@ public sealed class AuthServiceLongPasswordTests : IAsyncDisposable
 
     public AuthServiceLongPasswordTests()
     {
-        // Use in-memory SQLite - works on all platforms without file locking issues
         var options = new DbContextOptionsBuilder<BlogDbContext>()
             .UseSqlite("Data Source=:memory:")
             .Options;
@@ -29,7 +25,7 @@ public sealed class AuthServiceLongPasswordTests : IAsyncDisposable
         _context.Database.OpenConnection();
         _context.Database.EnsureCreated();
 
-        _passwordService = new PasswordService();
+        _passwordService = new PasswordService(new PasswordHasher<User>());
         var userRepository = new UserRepository(_context);
         var configuration = new ConfigurationBuilder()
             .AddInMemoryCollection(new Dictionary<string, string?>
@@ -42,10 +38,6 @@ public sealed class AuthServiceLongPasswordTests : IAsyncDisposable
     }
 
     public async ValueTask DisposeAsync() => await _context.DisposeAsync();
-
-    // =========================================================================
-    // Long Password Tests (128+ characters)
-    // =========================================================================
 
     [Fact]
     public async Task AuthenticateAsync_With128CharacterPassword_Succeeds()
@@ -142,7 +134,6 @@ public sealed class AuthServiceLongPasswordTests : IAsyncDisposable
 
         Assert.True(result);
 
-        // Verify new password works
         var authenticated = await _sut.AuthenticateAsync("change-pass-long-user", newLongPassword, ct);
         Assert.NotNull(authenticated);
     }
@@ -151,7 +142,6 @@ public sealed class AuthServiceLongPasswordTests : IAsyncDisposable
     public async Task AuthenticateAsync_WithComplexLongPassword_Succeeds()
     {
         var ct = TestContext.Current.CancellationToken;
-        // Mix of characters, 200 chars long
         var complexPassword = string.Concat(
             new string('A', 50),
             new string('1', 50),
@@ -176,10 +166,6 @@ public sealed class AuthServiceLongPasswordTests : IAsyncDisposable
         Assert.NotNull(result);
     }
 
-    // =========================================================================
-    // No Account Lockout Tests
-    // =========================================================================
-
     [Fact]
     public async Task AuthenticateAsync_After100FailedAttempts_StillAllowsLogin()
     {
@@ -198,14 +184,12 @@ public sealed class AuthServiceLongPasswordTests : IAsyncDisposable
         _context.Users.Add(user);
         await _context.SaveChangesAsync(ct);
 
-        // Attempt 100 failed logins
         for (var i = 0; i < 100; i++)
         {
             var failedResult = await _sut.AuthenticateAsync("no-lockout-user", "WrongPassword", ct);
             Assert.Null(failedResult);
         }
 
-        // User should still be able to log in with correct password
         var successResult = await _sut.AuthenticateAsync("no-lockout-user", correctPassword, ct);
         Assert.NotNull(successResult);
         Assert.Equal("no-lockout-user", successResult.Username);
@@ -229,14 +213,12 @@ public sealed class AuthServiceLongPasswordTests : IAsyncDisposable
         _context.Users.Add(user);
         await _context.SaveChangesAsync(ct);
 
-        // Attempt 1000 failed logins
         for (var i = 0; i < 1000; i++)
         {
             var failedResult = await _sut.AuthenticateAsync("no-lockout1000user", $"WrongPassword{i}", ct);
             Assert.Null(failedResult);
         }
 
-        // User should still be able to log in with correct password
         var successResult = await _sut.AuthenticateAsync("no-lockout1000user", correctPassword, ct);
         Assert.NotNull(successResult);
         Assert.Equal("no-lockout1000user", successResult.Username);
@@ -261,18 +243,15 @@ public sealed class AuthServiceLongPasswordTests : IAsyncDisposable
         _context.Users.Add(user);
         await _context.SaveChangesAsync(ct);
 
-        // Attempt 50 failed password changes
         for (var i = 0; i < 50; i++)
         {
             var failedResult = await _sut.ChangePasswordAsync(user.Id, "WrongOldPassword", "NewPass", ct);
             Assert.False(failedResult);
         }
 
-        // Should still be able to change password with correct current password
         var successResult = await _sut.ChangePasswordAsync(user.Id, originalPassword, newPassword, ct);
         Assert.True(successResult);
 
-        // Verify new password works
         var authenticated = await _sut.AuthenticateAsync("change-pass-no-lockout", newPassword, ct);
         Assert.NotNull(authenticated);
     }
@@ -295,22 +274,18 @@ public sealed class AuthServiceLongPasswordTests : IAsyncDisposable
         _context.Users.Add(user);
         await _context.SaveChangesAsync(ct);
 
-        // Interleave failed and successful attempts
         for (var i = 0; i < 20; i++)
         {
-            // 5 failed attempts
             for (var j = 0; j < 5; j++)
             {
                 var failedResult = await _sut.AuthenticateAsync("interleaved-user", "WrongPassword", ct);
                 Assert.Null(failedResult);
             }
 
-            // 1 successful attempt
             var successResult = await _sut.AuthenticateAsync("interleaved-user", correctPassword, ct);
             Assert.NotNull(successResult);
         }
 
-        // Final successful login after 100 failed attempts total
         var finalResult = await _sut.AuthenticateAsync("interleaved-user", correctPassword, ct);
         Assert.NotNull(finalResult);
         Assert.Equal("interleaved-user", finalResult.Username);

@@ -6,10 +6,6 @@ using Xunit;
 
 namespace MyBlog.Tests.Integration;
 
-/// <summary>
-/// Integration tests for the ImageRepository.
-/// Uses in-memory SQLite for cross-platform compatibility.
-/// </summary>
 public class ImageRepositoryTests : IAsyncDisposable
 {
     private readonly BlogDbContext _context;
@@ -85,7 +81,6 @@ public class ImageRepositoryTests : IAsyncDisposable
     {
         var ct = TestContext.Current.CancellationToken;
 
-        // Create images with different upload times
         var image1 = CreateTestImage("first.png");
         image1.UploadedAtUtc = DateTime.UtcNow.AddHours(-2);
         await _sut.CreateAsync(image1, ct);
@@ -101,7 +96,6 @@ public class ImageRepositoryTests : IAsyncDisposable
         var result = await _sut.GetAllAsync(ct);
 
         Assert.Equal(3, result.Count);
-        // Should be ordered by UploadedAtUtc descending (newest first)
         Assert.Equal("third.png", result[0].FileName);
         Assert.Equal("second.png", result[1].FileName);
         Assert.Equal("first.png", result[2].FileName);
@@ -135,7 +129,6 @@ public class ImageRepositoryTests : IAsyncDisposable
     {
         var ct = TestContext.Current.CancellationToken;
 
-        // Should not throw
         await _sut.DeleteAsync(Guid.NewGuid(), ct);
     }
 
@@ -143,7 +136,7 @@ public class ImageRepositoryTests : IAsyncDisposable
     public async Task CreateAsync_StoresImageData()
     {
         var ct = TestContext.Current.CancellationToken;
-        var imageData = new byte[] { 0x89, 0x50, 0x4E, 0x47 }; // PNG magic bytes
+        var imageData = new byte[] { 0x89, 0x50, 0x4E, 0x47 };
         var image = CreateTestImage("data-test.png", imageData);
 
         await _sut.CreateAsync(image, ct);
@@ -189,7 +182,6 @@ public class ImageRepositoryTests : IAsyncDisposable
 
         var result = await _sut.GetAllAsync(ct);
 
-        // AsNoTracking should mean entities are not tracked
         Assert.Single(result);
         var entry = _context.Entry(result[0]);
         Assert.Equal(EntityState.Detached, entry.State);

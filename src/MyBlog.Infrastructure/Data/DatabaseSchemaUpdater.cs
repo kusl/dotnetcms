@@ -2,17 +2,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MyBlog.Infrastructure.Data;
 
-/// <summary>
-/// Handles incremental schema updates for existing databases.
-/// Since we're not using formal EF Core migrations, this class ensures
-/// new tables and columns are added to existing databases on deployment.
-/// </summary>
 public static class DatabaseSchemaUpdater
 {
-    /// <summary>
-    /// Applies any pending schema updates to the database.
-    /// This is safe to run multiple times - it only creates objects that don't exist.
-    /// </summary>
     public static async Task ApplyUpdatesAsync(BlogDbContext db)
     {
         var connection = db.Database.GetDbConnection();
@@ -21,7 +12,6 @@ public static class DatabaseSchemaUpdater
             await connection.OpenAsync();
         }
 
-        // Check and create ImageDimensionCache table if it doesn't exist
         await EnsureImageDimensionCacheTableAsync(db);
     }
 
@@ -30,8 +20,6 @@ public static class DatabaseSchemaUpdater
         var tableExists = await TableExistsAsync(db, "ImageDimensionCache");
         if (!tableExists)
         {
-            // Create the ImageDimensionCache table using raw SQL
-            // This matches the schema defined in BlogDbContext.OnModelCreating
             await db.Database.ExecuteSqlRawAsync("""
                 CREATE TABLE IF NOT EXISTS "ImageDimensionCache" (
                     "Url" TEXT NOT NULL CONSTRAINT "PK_ImageDimensionCache" PRIMARY KEY,

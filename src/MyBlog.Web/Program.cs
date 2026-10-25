@@ -70,6 +70,13 @@ if (!string.IsNullOrWhiteSpace(configuredProtocol) &&
     otlpProtocol = OtlpExportProtocol.Grpc;
 }
 
+Action<OtlpExporterOptions> configureOtlp = o =>
+{
+    o.Endpoint = new Uri(otlpEndpoint!);
+    o.Protocol = otlpProtocol;
+    o.Headers = $"x-honeycomb-team={otlpApiKey}";
+};
+
 builder.Services.AddOpenTelemetry()
     .ConfigureResource(resource => resource.AddService(serviceName, serviceVersion))
     .WithTracing(tracing =>
@@ -81,12 +88,7 @@ builder.Services.AddOpenTelemetry()
 
         if (otlpEnabled)
         {
-            tracing.AddOtlpExporter(o =>
-            {
-                o.Endpoint = new Uri(otlpEndpoint!);
-                o.Protocol = otlpProtocol;
-                o.Headers = $"x-honeycomb-team={otlpApiKey}";
-            });
+            tracing.AddOtlpExporter(configureOtlp);
         }
     })
     .WithMetrics(metrics =>
@@ -98,12 +100,7 @@ builder.Services.AddOpenTelemetry()
 
         if (otlpEnabled)
         {
-            metrics.AddOtlpExporter(o =>
-            {
-                o.Endpoint = new Uri(otlpEndpoint!);
-                o.Protocol = otlpProtocol;
-                o.Headers = $"x-honeycomb-team={otlpApiKey}";
-            });
+            metrics.AddOtlpExporter(configureOtlp);
         }
     });
 
@@ -113,14 +110,11 @@ builder.Logging.AddOpenTelemetry(logging =>
     logging.IncludeScopes = true;
     logging.AddConsoleExporter();
 
+    logging.AddLocalExporters(builder.Configuration);
+
     if (otlpEnabled)
     {
-        logging.AddOtlpExporter(o =>
-        {
-            o.Endpoint = new Uri(otlpEndpoint!);
-            o.Protocol = otlpProtocol;
-            o.Headers = $"x-honeycomb-team={otlpApiKey}";
-        });
+        logging.AddOtlpExporter(configureOtlp);
     }
 });
 var app = builder.Build();

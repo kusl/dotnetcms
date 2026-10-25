@@ -1,229 +1,64 @@
-# MyBlog E2E Testing with Playwright
+# E2E testing with Playwright
 
-This document describes how to run End-to-End (E2E) tests for MyBlog using Playwright.
+The E2E suite (`src/MyBlog.E2E`) drives Chromium against a running MyBlog instance using Playwright for .NET and xUnit v3.
 
-## Overview
+## Running
 
-The E2E tests verify that the entire application works correctly from a user's perspective, testing real browser interactions against a running instance of MyBlog.
-
-## Prerequisites
-
-### For Local Development (Fedora)
+### Containers (Podman, matches CI behaviour)
 
 ```bash
-# Verify podman-compose is installed
-podman-compose --version
-# Expected: podman-compose version 1.5.0+, podman version 5.7+
-
-# Install .NET 10 SDK if not already installed
-sudo dnf install dotnet-sdk-10.0
+./run-e2e.sh             # build images, start MyBlog, run tests, clean up
+./run-e2e.sh --no-build  # reuse existing images
+./run-e2e.sh --clean     # remove E2E containers, networks and volumes
 ```
 
-### For GitHub Actions
+`run-e2e.sh` always rebuilds by default; unchanged layers come from the cache, so you never test a stale image by accident. It starts `myblog-web`, waits up to 120 seconds for it to answer, then runs `myblog-e2e` with `--no-deps`. Starting the test container with its dependency would make podman-compose restart `myblog-web`, which produced the old `crun exec.fifo` error. The script exits with the test container's own exit code, read with `podman inspect`. Logs from both containers are written to `test-results/`, and everything is torn down even if a step fails.
 
-No additional setup required - the workflow handles everything.
+The E2E image is based on the .NET SDK image, which already ships PowerShell, curl, git and wget. Playwright bundles its own Node.js runtime. Browsers are installed with the `playwright.ps1` that ships inside the restored `Microsoft.Playwright` package. That layer is rebuilt only when `Directory.Packages.props` or a project file changes, and the build fails if the script cannot be found.
 
-## Running E2E Tests
-
-### Option 1: Using Podman Compose (Recommended for Fedora)
-
-This is the recommended approach as it provides isolation and matches CI behavior.
+### Locally without containers
 
 ```bash
-# From the repository root
-chmod +x run-e2e.sh
-./run-e2e.sh
-
-# Force rebuild containers
-./run-e2e.sh --build
-
-# Clean up everything
-./run-e2e.sh --clean
+cd src
+dotnet build
+pwsh "$(find MyBlog.E2E/bin -name playwright.ps1 -print -quit)" install chromium --with-deps
+ASPNETCORE_ENVIRONMENT=Development ASPNETCORE_URLS=http://localhost:5000 dotnet run --project MyBlog.Web --no-build &
+MYBLOG_BASE_URL=http://localhost:5000 dotnet run --project MyBlog.E2E --no-build
 ```
 
-### Option 2: Direct Execution (Development)
+| Variable | Default | Purpose |
+|----------|---------|---------|
+| `MYBLOG_BASE_URL` | `http://localhost:5000` | Instance under test |
+| `PLAYWRIGHT_HEADLESS` | `true` | Set `false` to watch the browser (adds 100 ms slow-mo) |
 
-For faster iteration during development:
+Login rate limiting is disabled in `Development`, which the E2E environments use.
 
-```bash
-# Terminal 1: Start MyBlog
-cd src/MyBlog.Web
-ASPNETCORE_URLS=http://localhost:5000 dotnet run
+## Waiting for the Blazor circuit
 
-# Terminal 2: Install Playwright and run tests
-cd src/MyBlog.E2E
-dotnet tool install --global Microsoft.Playwright.CLI
-playwright install chromium --with-deps
-MYBLOG_BASE_URL=http://localhost:5000 dotnet run
-```
+Every page arrives twice: first as prerendered HTML, then from the interactive circuit once SignalR connects. `GotoAsync` and `WaitForLoadStateAsync` only see the first delivery.
 
-### Option 3: Using Docker Compose (Alternative)
+Two things go wrong if a test acts in that gap:
 
-If you prefer Docker over Podman:
+- **Link clicks** are handled by enhanced navigation. The URL changes, but the connecting circuit then renders the previous route, so the address bar and the markup disagree.
+- **Typed input is lost**, because attaching the circuit replaces the prerendered DOM.
 
-```bash
-docker compose -f docker-compose.e2e.yml up --build
-```
+`MainLayout` renders `data-blazor-interactive="true"` once `RendererInfo.IsInteractive` is true. The helpers in `BlazorPageExtensions` build on it:
 
-## Test Structure
-
-```
-src/MyBlog.E2E/
-├── PlaywrightFixture.cs      # Shared browser fixture
-├── PlaywrightCollection.cs   # xUnit collection definition
-└── Tests/
-    ├── HomePageTests.cs      # Homepage tests
-    ├── AboutPageTests.cs     # About page tests
-    ├── LoginPageTests.cs     # Authentication tests
-    └── ThemeSwitcherTests.cs # Theme switching tests
-```
-
-## Epic 1 Test Coverage
-
-The initial E2E tests cover Epic 1 functionality:
-
-| Feature | Tests |
-|---------|-------|
-| Homepage | Page loads, displays heading, has navigation |
-| About Page | Page loads, shows architecture, has reader badge |
-| Login | Form displays, invalid credentials show error, valid credentials redirect |
-| Theme Switcher | Visible on page, changes theme, has multiple options |
-
-## Configuration
-
-### Environment Variables
-
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `MYBLOG_BASE_URL` | `http://localhost:5000` | URL of the MyBlog instance |
-| `PLAYWRIGHT_HEADLESS` | `true` | Run browsers in headless mode |
-
-### SELinux (Fedora)
-
-The docker-compose files use `:Z` volume mounts for SELinux compatibility. If you encounter permission issues:
-
-```bash
-# Check SELinux status
-getenforce
-
-# Set context for test-results directory
-chcon -Rt svirt_sandbox_file_t test-results
-```
-
-## Troubleshooting
-
-### "MyBlog failed to start within timeout"
-
-1. Check if port 5000 is available:
-   ```bash
-   sudo ss -tlnp | grep 5000
-   ```
-
-2. View container logs:
-   ```bash
-   podman-compose -f docker-compose.e2e.yml logs myblog-web
-   ```
-
-### "Playwright browsers not found"
-
-```bash
-# Install browsers manually
-playwright install chromium --with-deps
-```
-
-### "Permission denied" on Fedora
-
-```bash
-# Fix SELinux context
-chcon -Rt svirt_sandbox_file_t ./test-results
-```
-
-### Tests timeout waiting for elements
-
-Increase the timeout in test code:
-```csharp
-await Assertions.Expect(element).ToBeVisibleAsync(new() { Timeout = 10000 });
-```
-
-## Writing New Tests
-
-### Test Structure
-
-```csharp
-using Microsoft.Playwright;
-using Xunit;
-
-namespace MyBlog.E2E.Tests;
-
-[Collection(PlaywrightCollection.Name)]
-public sealed class MyNewTests(PlaywrightFixture fixture)
-{
-    private readonly PlaywrightFixture _fixture = fixture;
-
-    [Fact]
-    public async Task MyTest_Description()
-    {
-        var page = await _fixture.CreatePageAsync();
-        
-        await page.GotoAsync("/my-page");
-        
-        var element = page.Locator("selector");
-        await Assertions.Expect(element).ToBeVisibleAsync();
-    }
-}
-```
-
-### Best Practices
-
-1. **Use semantic selectors**: Prefer `text=`, role-based, or data-testid selectors over CSS classes
-2. **Wait for elements**: Use `WaitForSelectorAsync` or `Expect().ToBeVisibleAsync()`
-3. **Wait for interactivity before interacting**: Call `page.WaitForBlazorInteractiveAsync()`
-   before clicking a link or filling a form. Asserting on prerendered content needs no wait
-4. **Handle dynamic content**: Account for SignalR connections and lazy loading
-5. **Keep tests independent**: Each test should work in isolation
-6. **Use descriptive names**: Test names should describe the scenario
-
-### Waiting for the Blazor circuit
-
-Every page is delivered twice: first as prerendered static HTML, then again from the
-interactive circuit once SignalR connects. `GotoAsync` and `WaitForLoadStateAsync` only
-know about the first delivery, so a test can act on a page that is not yet live.
-
-Two things go wrong in that window:
-
-- **Clicks on links are handled by enhanced navigation** (`history.pushState` plus a
-  background fetch) instead of the interactive router. The URL changes immediately, so
-  `WaitForURLAsync` succeeds — but the circuit was started for the *previous* URL, and
-  its first render batch rebuilds the DOM for the page you just left. The address bar
-  and the markup then disagree forever, and the assertion on the new page's heading
-  fails with the *old* page's text.
-- **Form fields are cleared**, because attaching the circuit replaces the prerendered
-  DOM along with anything already typed into it.
-
-`MainLayout` publishes `data-blazor-interactive`, which is `"false"` in prerendered
-markup and `"true"` once `RendererInfo.IsInteractive` is true.
-`BlazorPageExtensions.WaitForBlazorInteractiveAsync` waits on it:
+- `WaitForBlazorInteractiveAsync()` waits for the marker. Call it before clicking links or filling forms. Assertions on prerendered content need no wait.
+- `SubmitLoginAsync(username, password, expectedUrl)` opens `/login`, waits for the circuit, fills the form, submits and waits for the expected URL.
+- `LoginAsAdminAsync()` logs in with the seeded admin account.
 
 ```csharp
 await page.GotoAsync("/");
-await page.WaitForBlazorInteractiveAsync();   // circuit is connected and rendering
-
+await page.WaitForBlazorInteractiveAsync();
 await page.ClickAsync("nav a[href='/about']");
 await page.WaitForURLAsync("**/about");
 ```
 
-Symptoms of a missing wait: a heading assertion reports the previous page's text, or a
-login submits empty credentials. Both reproduce only under load, so they surface in CI
-and pass locally.
+## Writing tests
 
-## CI/CD Integration
-
-E2E tests run automatically in GitHub Actions:
-
-1. Unit tests must pass first
-2. MyBlog is built and started
-3. Playwright browsers are installed
-4. E2E tests run against the live instance
-5. Test results are uploaded as artifacts
-
-The E2E job only runs on `ubuntu-latest` to ensure consistent browser behavior.
+- Put tests in `[Collection(PlaywrightCollection.Name)]` so they share one browser.
+- Use the helpers above instead of hand-rolled login code.
+- Assert unconditionally. A test that skips its assertion when an element is missing can never fail.
+- Use `.Or()` for alternative locators, never comma-separated text selectors.
+- Start `WaitForURLAsync` together with the click that navigates (`Task.WhenAll`).

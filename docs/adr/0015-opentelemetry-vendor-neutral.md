@@ -86,3 +86,5 @@ and always-on export, to achieve portable instrumentation, backend-by-configurat
 and safe-by-default behavior, accepting the maintenance of custom exporters and the
 write-amplification of logging into the app's own SQLite DB, because portability and
 "off unless configured" outweigh the convenience of a turnkey vendor distro.
+
+> **Amendment (2026-10-25):** the local exporters are attached through `BatchLogRecordExportProcessor` by `AddLocalExporters`; they are no longer DI singletons or hosted services. Retention is bounded by age and size (ADR-0022).

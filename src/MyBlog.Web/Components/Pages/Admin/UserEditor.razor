@@ -1,7 +1,6 @@
 @page "/admin/users/new"
 @page "/admin/users/edit/{Id:guid}"
 @attribute [Authorize(Roles = AppConstants.AdminRole)]
-@rendermode InteractiveServer
 @inject IUserRepository UserRepository
 @inject IPasswordService PasswordService
 @inject NavigationManager Navigation
@@ -56,7 +55,6 @@
     private bool _saving;
     private string? _error;
 
-    // Form fields
     private string _username = "";
     private string _displayName = "";
     private string _email = "";
@@ -94,7 +92,6 @@
                 return;
             }
 
-            // Check if username is taken (by another user)
             var duplicate = await UserRepository.GetByUsernameAsync(_username);
             if (duplicate is not null && duplicate.Id != Id)
             {
@@ -104,12 +101,10 @@
 
             if (IsEdit && _existingUser is not null)
             {
-                // Update existing
                 _existingUser.Username = _username;
                 _existingUser.DisplayName = _displayName;
                 _existingUser.Email = _email;
 
-                // Only update password if provided
                 if (!string.IsNullOrWhiteSpace(_password))
                 {
                      if (_password.Length < 8)
@@ -124,7 +119,6 @@
             }
             else
             {
-                // Create new
                 if (string.IsNullOrWhiteSpace(_password) || _password.Length < 8)
                 {
                     _error = "Password is required (min 8 chars) for new users.";

@@ -39,7 +39,7 @@ else
         _currentPage = Page ?? 1;
         if (_currentPage < 1) _currentPage = 1;
 
-        var pageSize = Configuration.GetValue("Application:PostsPerPage", 10);
+        var pageSize = Configuration.GetValue("Application:PostsPerPage", AppConstants.DefaultPageSize);
         var (posts, totalCount) = await PostRepository.GetPublishedPostsAsync(_currentPage, pageSize);
         
         _posts = posts;

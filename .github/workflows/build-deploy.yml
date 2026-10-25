@@ -6,21 +6,26 @@ on:
   pull_request:
     branches: ['**']
 
+env:
+  DOTNET_VERSION: '10.0.x'
+  DOTNET_NOLOGO: 1
+  DOTNET_CLI_TELEMETRY_OPTOUT: 1
+
 jobs:
   build-test:
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
     runs-on: ${{ matrix.os }}
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
 
-      - name: Setup .NET 10
+      - name: Setup .NET
         uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: '10.0.x'
+          dotnet-version: ${{ env.DOTNET_VERSION }}
 
       - name: Restore dependencies
         run: dotnet restore src/MyBlog.slnx
@@ -29,20 +34,20 @@ jobs:
         run: dotnet build src/MyBlog.slnx -c Release --no-restore
 
       - name: Run unit tests
-        run: dotnet run --project src/MyBlog.Tests/MyBlog.Tests.csproj
+        run: dotnet run --project src/MyBlog.Tests/MyBlog.Tests.csproj -c Release --no-build
 
   e2e-tests:
     runs-on: ubuntu-latest
     needs: build-test
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
 
-      - name: Setup .NET 10
+      - name: Setup .NET
         uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: '10.0.x'
+          dotnet-version: ${{ env.DOTNET_VERSION }}
 
       - name: Restore dependencies
         run: dotnet restore src/MyBlog.slnx
@@ -52,7 +57,9 @@ jobs:
 
       - name: Install Playwright browsers
         run: |
-          pwsh src/MyBlog.E2E/bin/Release/net10.0/playwright.ps1 install chromium --with-deps
+          script="$(find src/MyBlog.E2E/bin/Release -name playwright.ps1 -print -quit)"
+          test -n "$script"
+          pwsh "$script" install chromium --with-deps
 
       - name: Start MyBlog application
         run: |
@@ -65,22 +72,16 @@ jobs:
 
       - name: Wait for application to be ready
         run: |
-          echo "Waiting for application to start..."
           for i in {1..60}; do
-            if curl -sf http://localhost:5000/ > /dev/null 2>&1; then
-              echo "Application is ready!"
-              curl -v http://localhost:5000/ 2>&1 | head -20
-              break
+            if curl -sf http://localhost:5000/ > /dev/null; then
+              echo "Application is ready"
+              exit 0
             fi
-            echo "Attempt $i/60: Application not ready yet..."
             sleep 2
-            if [ $i -eq 60 ]; then
-              echo "Application failed to start within timeout"
-              echo "Application logs:"
-              cat app.log || echo "No logs available"
-              exit 1
-            fi
           done
+          echo "Application failed to start within 120 seconds"
+          cat app.log
+          exit 1
 
       - name: Run E2E tests
         run: dotnet run --project src/MyBlog.E2E/MyBlog.E2E.csproj -c Release --no-build
@@ -92,39 +93,39 @@ jobs:
         if: always()
         run: |
           if [ -f app.pid ]; then
-            kill $(cat app.pid) || true
+            kill "$(cat app.pid)" || true
           fi
 
-      - name: Show application logs on failure
-        if: failure()
-        run: |
-          echo "=== Application Logs ==="
-          cat app.log || echo "No logs available"
-
-      - name: Upload test results
+      - name: Upload application log
         uses: actions/upload-artifact@v7
         if: always()
         with:
-          name: e2e-test-results
-          path: |
-            src/MyBlog.E2E/TestResults/
-            test-results/
-            app.log
+          name: e2e-app-log
+          path: app.log
           retention-days: 7
 
   deploy:
     needs: [build-test, e2e-tests]
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop'
+    if: github.ref == 'refs/heads/main'
     runs-on: windows-latest
-    
+    name: deploy (${{ matrix.target }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: primary
+            prefix: ''
+          - target: nice
+            prefix: 'NICE_'
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
 
-      - name: Setup .NET 10
+      - name: Setup .NET
         uses: actions/setup-dotnet@v5
         with:
-          dotnet-version: '10.0.x'
+          dotnet-version: ${{ env.DOTNET_VERSION }}
 
       - name: Publish application
         run: dotnet publish src/MyBlog.Web/MyBlog.Web.csproj -c Release -o ./publish -r win-x86 --self-contained false
@@ -132,200 +133,79 @@ jobs:
       - name: Inject OTLP configuration into web.config
         shell: pwsh
         env:
-          HONEYCOMB_API_KEY: ${{ secrets.HONEYCOMB_API_KEY }}
-          OTLP_ENDPOINT: ${{ secrets.OTLP_ENDPOINT }}
+          HONEYCOMB_API_KEY: ${{ secrets[format('{0}HONEYCOMB_API_KEY', matrix.prefix)] }}
+          OTLP_ENDPOINT: ${{ secrets[format('{0}OTLP_ENDPOINT', matrix.prefix)] }}
+          SECRET_PREFIX: ${{ matrix.prefix }}
         run: |
           $webConfigPath = "./publish/web.config"
           if (-not (Test-Path $webConfigPath)) {
-            Write-Host "web.config not found at $webConfigPath — skipping OTLP injection"
-            exit 0
+            Write-Error "web.config not found at $webConfigPath"
+            exit 1
           }
-
-          Write-Host "=== Current web.config ==="
-          Get-Content $webConfigPath
-          Write-Host "==========================="
 
           [xml]$xml = Get-Content $webConfigPath
 
-          # Navigate to the aspNetCore element using XPath to handle any structure
           $aspNetCore = $xml.SelectSingleNode('//aspNetCore')
           if (-not $aspNetCore) {
-            Write-Host "No aspNetCore element found in web.config — skipping OTLP injection"
-            exit 0
+            Write-Error "No aspNetCore element found in web.config"
+            exit 1
           }
 
-          # Create or get environmentVariables element
           $envVars = $aspNetCore.SelectSingleNode('environmentVariables')
           if (-not $envVars) {
             $envVars = $xml.CreateElement('environmentVariables')
             $aspNetCore.AppendChild($envVars) | Out-Null
           }
 
-          # Add OTLP API key if configured
           if (-not [string]::IsNullOrWhiteSpace($env:HONEYCOMB_API_KEY)) {
-            $envVar = $xml.CreateElement('environmentVariable')
-            $envVar.SetAttribute('name', 'Otlp__ApiKey')
-            $envVar.SetAttribute('value', $env:HONEYCOMB_API_KEY)
-            $envVars.AppendChild($envVar) | Out-Null
+            $apiKey = $xml.CreateElement('environmentVariable')
+            $apiKey.SetAttribute('name', 'Otlp__ApiKey')
+            $apiKey.SetAttribute('value', $env:HONEYCOMB_API_KEY)
+            $envVars.AppendChild($apiKey) | Out-Null
             Write-Host "Added Otlp__ApiKey to web.config"
           } else {
-            Write-Host "No HONEYCOMB_API_KEY secret configured — OTLP export will be disabled"
+            Write-Host "No $($env:SECRET_PREFIX)HONEYCOMB_API_KEY secret configured; OTLP export will be disabled"
           }
 
-          # Add OTLP endpoint (default to Honeycomb US if secret not specified)
           $endpoint = if (-not [string]::IsNullOrWhiteSpace($env:OTLP_ENDPOINT)) { $env:OTLP_ENDPOINT } else { "https://api.honeycomb.io" }
-          $envVar2 = $xml.CreateElement('environmentVariable')
-          $envVar2.SetAttribute('name', 'Otlp__Endpoint')
-          $envVar2.SetAttribute('value', $endpoint)
-          $envVars.AppendChild($envVar2) | Out-Null
+          $endpointVar = $xml.CreateElement('environmentVariable')
+          $endpointVar.SetAttribute('name', 'Otlp__Endpoint')
+          $endpointVar.SetAttribute('value', $endpoint)
+          $envVars.AppendChild($endpointVar) | Out-Null
           Write-Host "Added Otlp__Endpoint=$endpoint to web.config"
 
           $xml.Save((Resolve-Path $webConfigPath).Path)
-          Write-Host "=== Updated web.config ==="
-          Get-Content $webConfigPath
-          Write-Host "==========================="
 
       - name: Deploy via WebDeploy
         shell: pwsh
         env:
           DEPLOY_SOURCE: ${{ github.workspace }}\publish
-          DEPLOY_SITE: ${{ secrets.WEBSITE_NAME }}
-          DEPLOY_HOST: ${{ secrets.SERVER_COMPUTER_NAME }}
-          DEPLOY_USER: ${{ secrets.SERVER_USERNAME }}
-          DEPLOY_PASSWORD: ${{ secrets.SERVER_PASSWORD }}
+          DEPLOY_SITE: ${{ secrets[format('{0}WEBSITE_NAME', matrix.prefix)] }}
+          DEPLOY_HOST: ${{ secrets[format('{0}SERVER_COMPUTER_NAME', matrix.prefix)] }}
+          DEPLOY_USER: ${{ secrets[format('{0}SERVER_USERNAME', matrix.prefix)] }}
+          DEPLOY_PASSWORD: ${{ secrets[format('{0}SERVER_PASSWORD', matrix.prefix)] }}
         run: |
           $msdeployPath = "C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe"
-          
+
           if (-not (Test-Path $msdeployPath)) {
-            Write-Host "Installing Web Deploy..."
             choco install webdeploy -y --no-progress
           }
-          
+
           Write-Host "Deploying to $env:DEPLOY_HOST..."
-          Write-Host "Note: Using AppOffline rule to prevent file-in-use errors"
 
           $sourceArg = "-source:contentPath=$env:DEPLOY_SOURCE"
           $destArg = "-dest:contentPath=$env:DEPLOY_SITE,computerName=https://$($env:DEPLOY_HOST):8172/MsDeploy.axd?site=$env:DEPLOY_SITE,userName=$env:DEPLOY_USER,password=$env:DEPLOY_PASSWORD,AuthType='Basic'"
-          
+
           & $msdeployPath -verb:sync $sourceArg $destArg `
             -allowUntrusted `
             -enableRule:DoNotDeleteRule `
             -enableRule:AppOffline `
             -retryAttempts:3 `
             -retryInterval:3000
-          
+
           if ($LASTEXITCODE -ne 0) {
             Write-Error "Deployment failed with exit code $LASTEXITCODE"
             exit 1
           }
-          
-          Write-Host "Deployment completed successfully!"
 
-  deploynice:
-    needs: [build-test, e2e-tests]
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop'
-    runs-on: windows-latest
-    
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v7
-
-      - name: Setup .NET 10
-        uses: actions/setup-dotnet@v5
-        with:
-          dotnet-version: '10.0.x'
-
-      - name: Publish application
-        run: dotnet publish src/MyBlog.Web/MyBlog.Web.csproj -c Release -o ./publish -r win-x86 --self-contained false
-
-      - name: Inject OTLP configuration into web.config
-        shell: pwsh
-        env:
-          HONEYCOMB_API_KEY: ${{ secrets.NICE_HONEYCOMB_API_KEY }}
-          OTLP_ENDPOINT: ${{ secrets.NICE_OTLP_ENDPOINT }}
-        run: |
-          $webConfigPath = "./publish/web.config"
-          if (-not (Test-Path $webConfigPath)) {
-            Write-Host "web.config not found at $webConfigPath — skipping OTLP injection"
-            exit 0
-          }
-
-          Write-Host "=== Current web.config ==="
-          Get-Content $webConfigPath
-          Write-Host "==========================="
-
-          [xml]$xml = Get-Content $webConfigPath
-
-          # Navigate to the aspNetCore element using XPath to handle any structure
-          $aspNetCore = $xml.SelectSingleNode('//aspNetCore')
-          if (-not $aspNetCore) {
-            Write-Host "No aspNetCore element found in web.config — skipping OTLP injection"
-            exit 0
-          }
-
-          # Create or get environmentVariables element
-          $envVars = $aspNetCore.SelectSingleNode('environmentVariables')
-          if (-not $envVars) {
-            $envVars = $xml.CreateElement('environmentVariables')
-            $aspNetCore.AppendChild($envVars) | Out-Null
-          }
-
-          # Add OTLP API key if configured
-          if (-not [string]::IsNullOrWhiteSpace($env:HONEYCOMB_API_KEY)) {
-            $envVar = $xml.CreateElement('environmentVariable')
-            $envVar.SetAttribute('name', 'Otlp__ApiKey')
-            $envVar.SetAttribute('value', $env:HONEYCOMB_API_KEY)
-            $envVars.AppendChild($envVar) | Out-Null
-            Write-Host "Added Otlp__ApiKey to web.config"
-          } else {
-            Write-Host "No NICE_HONEYCOMB_API_KEY secret configured — OTLP export will be disabled"
-          }
-
-          # Add OTLP endpoint (default to Honeycomb US if secret not specified)
-          $endpoint = if (-not [string]::IsNullOrWhiteSpace($env:OTLP_ENDPOINT)) { $env:OTLP_ENDPOINT } else { "https://api.honeycomb.io" }
-          $envVar2 = $xml.CreateElement('environmentVariable')
-          $envVar2.SetAttribute('name', 'Otlp__Endpoint')
-          $envVar2.SetAttribute('value', $endpoint)
-          $envVars.AppendChild($envVar2) | Out-Null
-          Write-Host "Added Otlp__Endpoint=$endpoint to web.config"
-
-          $xml.Save((Resolve-Path $webConfigPath).Path)
-          Write-Host "=== Updated web.config ==="
-          Get-Content $webConfigPath
-          Write-Host "==========================="
-
-      - name: Deploy via WebDeploy
-        shell: pwsh
-        env:
-          NICE_DEPLOY_SOURCE: ${{ github.workspace }}\publish
-          NICE_DEPLOY_SITE: ${{ secrets.NICE_WEBSITE_NAME }}
-          NICE_DEPLOY_HOST: ${{ secrets.NICE_SERVER_COMPUTER_NAME }}
-          NICE_DEPLOY_USER: ${{ secrets.NICE_SERVER_USERNAME }}
-          NICE_DEPLOY_PASSWORD: ${{ secrets.NICE_SERVER_PASSWORD }}
-        run: |
-          $msdeployPath = "C:\Program Files\IIS\Microsoft Web Deploy V3\msdeploy.exe"
-          
-          if (-not (Test-Path $msdeployPath)) {
-            Write-Host "Installing Web Deploy..."
-            choco install webdeploy -y --no-progress
-          }
-          
-          Write-Host "Deploying to $env:NICE_DEPLOY_HOST..."
-          Write-Host "Note: Using AppOffline rule to prevent file-in-use errors"
-
-          $sourceArg = "-source:contentPath=$env:NICE_DEPLOY_SOURCE"
-          $destArg = "-dest:contentPath=$env:NICE_DEPLOY_SITE,computerName=https://$($env:NICE_DEPLOY_HOST):8172/MsDeploy.axd?site=$env:NICE_DEPLOY_SITE,userName=$env:NICE_DEPLOY_USER,password=$env:NICE_DEPLOY_PASSWORD,AuthType='Basic'"
-          
-          & $msdeployPath -verb:sync $sourceArg $destArg `
-            -allowUntrusted `
-            -enableRule:DoNotDeleteRule `
-            -enableRule:AppOffline `
-            -retryAttempts:3 `
-            -retryInterval:3000
-          
-          if ($LASTEXITCODE -ne 0) {
-            Write-Error "Deployment failed with exit code $LASTEXITCODE"
-            exit 1
-          }
-          
-          Write-Host "Deployment completed successfully!"
+          Write-Host "Deployment completed successfully"

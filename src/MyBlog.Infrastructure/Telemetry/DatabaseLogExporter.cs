@@ -3,7 +3,6 @@ using System.Globalization;
 using System.Text;
 using System.Text.Json;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using MyBlog.Core.Models;
 using MyBlog.Infrastructure.Data;
 using OpenTelemetry;
@@ -11,7 +10,7 @@ using OpenTelemetry.Logs;
 
 namespace MyBlog.Infrastructure.Telemetry;
 
-public sealed class DatabaseLogExporter : BaseExporter<LogRecord>, IHostedService
+public sealed class DatabaseLogExporter : BaseExporter<LogRecord>
 {
     private readonly IServiceScopeFactory _scopeFactory;
 
@@ -141,8 +140,4 @@ public sealed class DatabaseLogExporter : BaseExporter<LogRecord>, IHostedServic
                 break;
         }
     }
-
-    public Task StartAsync(CancellationToken cancellationToken) => Task.CompletedTask;
-
-    public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
 }

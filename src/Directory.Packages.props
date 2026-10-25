@@ -9,14 +9,13 @@
 
     <TestSdkVersion>18.11.0</TestSdkVersion>
     <XUnitVersion>4.0.2</XUnitVersion>
-    <TestingExtensionsVersion>2.5.1</TestingExtensionsVersion>
     <PlaywrightVersion>1.64.1</PlaywrightVersion>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageVersion Include="Microsoft.AspNetCore.SignalR.Client" Version="$(MicrosoftPackagesVersion)" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="$(MicrosoftPackagesVersion)" />
-    <PackageVersion Include="Microsoft.Extensions.Logging" Version="$(MicrosoftPackagesVersion)" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="$(MicrosoftPackagesVersion)" />
     <PackageVersion Include="OpenTelemetry" Version="$(OpenTelemetryVersion)" />
     <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="$(OpenTelemetryVersion)" />
     <PackageVersion Include="OpenTelemetry.Exporter.Console" Version="$(OpenTelemetryVersion)" />
@@ -26,7 +25,6 @@
 
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="$(TestSdkVersion)" />
     <PackageVersion Include="xunit.v3" Version="$(XUnitVersion)" />
-    <PackageVersion Include="Microsoft.Testing.Extensions.TrxReport" Version="$(TestingExtensionsVersion)" />
     <PackageVersion Include="Microsoft.Playwright" Version="$(PlaywrightVersion)" />
   </ItemGroup>
 </Project>

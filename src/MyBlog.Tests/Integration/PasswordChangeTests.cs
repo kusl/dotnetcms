@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using MyBlog.Core.Models;
@@ -12,7 +13,7 @@ public class PasswordChangeTests : IAsyncDisposable
 {
     private readonly BlogDbContext _context;
     private readonly AuthService _sut;
-    private readonly PasswordService _passwordService = new();
+    private readonly PasswordService _passwordService = new(new PasswordHasher<User>());
 
     public PasswordChangeTests()
     {
@@ -82,11 +83,9 @@ public class PasswordChangeTests : IAsyncDisposable
 
         await _sut.ChangePasswordAsync(user.Id, originalPassword, newPassword, ct);
 
-        // Should authenticate with new password
         var authenticated = await _sut.AuthenticateAsync("testuser", newPassword, ct);
         Assert.NotNull(authenticated);
 
-        // Should NOT authenticate with old password
         var oldAuth = await _sut.AuthenticateAsync("testuser", originalPassword, ct);
         Assert.Null(oldAuth);
     }
@@ -135,7 +134,6 @@ public class PasswordChangeTests : IAsyncDisposable
 
         await _sut.ChangePasswordAsync(user.Id, "WrongPassword!", "NewPass123!", ct);
 
-        // Original password should still work
         var authenticated = await _sut.AuthenticateAsync("testuser", correctPassword, ct);
         Assert.NotNull(authenticated);
     }
@@ -146,38 +144,5 @@ public class PasswordChangeTests : IAsyncDisposable
         var ct = TestContext.Current.CancellationToken;
         var result = await _sut.ChangePasswordAsync(Guid.NewGuid(), "any", "password", ct);
         Assert.False(result);
-    }
-
-    [Fact]
-    public async Task ResetPasswordAsync_SetsNewPassword()
-    {
-        var ct = TestContext.Current.CancellationToken;
-        var originalPassword = "OriginalPass123!";
-        var newPassword = "ResetPassword789!";
-
-        var user = new User
-        {
-            Id = Guid.NewGuid(),
-            Username = "testuser",
-            PasswordHash = _passwordService.HashPassword(originalPassword),
-            Email = "test@example.com",
-            DisplayName = "Test User",
-            CreatedAtUtc = DateTime.UtcNow
-        };
-        _context.Users.Add(user);
-        await _context.SaveChangesAsync(ct);
-
-        await _sut.ResetPasswordAsync(user.Id, newPassword, ct);
-
-        var authenticated = await _sut.AuthenticateAsync("testuser", newPassword, ct);
-        Assert.NotNull(authenticated);
-    }
-
-    [Fact]
-    public async Task ResetPasswordAsync_WithNonExistentUser_ThrowsException()
-    {
-        var ct = TestContext.Current.CancellationToken;
-        await Assert.ThrowsAsync<InvalidOperationException>(
-            () => _sut.ResetPasswordAsync(Guid.NewGuid(), "password", ct));
     }
 }
