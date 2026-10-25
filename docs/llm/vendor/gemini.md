@@ -264,3 +264,137 @@ Your project structure is excellent. Here are a few notable highlights and obser
 * **Security & Rate Limiting:** `LoginRateLimitMiddleware.cs` uses a highly effective exponential backoff model (never completely blocking the user, just slowing them down), which completely defeats brute-forcing while avoiding the headaches of accidental permanent IP lockouts.
 * **E2E Testing:** Using Playwright via Podman/Docker Compose to orchestrate test environments is a robust way to ensure that tests will run reliably across your CI matrix (Ubuntu, Windows, macOS). Using `.AddInMemoryCollection` for configuration overrides during integration tests is a solid approach.
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+**Interpreting the Error**
+
+I'm currently trying to understand the implications of the "MethodInvocationException" I'm seeing, specifically how it relates to the Playwright setup. I'm focusing on the PowerShell script's involvement and what might be triggering the exception at line 6 of the script. Is it environment specific, or a deeper issue?
+
+
+**Pinpointing the Root Cause**
+
+I've traced the `MethodInvocationException` back to a file not being found – specifically, `Microsoft.Playwright.dll`. The PowerShell script is trying to load this DLL, which is essential to the Playwright setup. The error message indicates the file is missing from `/root/.nuget/packages/microsoft.playwright/1.64.1/build/`, which is preventing the Playwright program from being found. Looking at the Dockerfile, I suspect this directory or file is not being copied.
+
+
+**Analyzing the PowerShell Script**
+
+I'm now diving into the `playwright.ps1` script itself, which is being called in the Dockerfile. I need to understand what this script is doing, particularly the "install chromium --with-deps" part. Is this step creating the directory and the dll files which are not found? Is it possible that this step is failing silently, or the files are being put somewhere unexpected?
+
+
+**Locating the Script**
+
+I'm now zeroing in on the file paths. My focus has shifted to understanding where `playwright.ps1` expects `Microsoft.Playwright.dll` to reside relative to itself. I've been examining the NuGet package structure and comparing it to the project output. The key clue seems to be the GitHub Actions workflow, which suggests a specific location for the script. It's looking for `playwright.ps1` within the `src/MyBlog.E2E/bin/Release` directory. Is the build copying the needed files to the correct location?
+
+
+**Clarifying the File Paths**
+
+I've clarified the file path situation; the `build` directory within the NuGet package contains the PowerShell script and build targets, but not the `Microsoft.Playwright.dll` assembly itself. Assemblies are located in the `lib/` directory structure. This means the Dockerfile's search for the script in the `build/` folder is correct. However, the assembly isn't there, and the Dockerfile's reliance on this location seems incorrect. I need to understand why the script in the package is being preferred over the one built in the project's build output.
+
+### The Cause of the Error
+
+This error is happening during the Docker build of **`src/MyBlog.E2E/Dockerfile`**:
+
+```dockerfile
+RUN dotnet restore MyBlog.E2E/MyBlog.E2E.csproj
+
+RUN PLAYWRIGHT_SCRIPT="$(find /root/.nuget/packages/microsoft.playwright -name playwright.ps1 -print -quit)" \
+    && test -n "$PLAYWRIGHT_SCRIPT" \
+    && pwsh "$PLAYWRIGHT_SCRIPT" install chromium --with-deps \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY . .
+
+RUN dotnet build MyBlog.E2E/MyBlog.E2E.csproj -c Release
+```
+
+#### Why it fails:
+1. `playwright.ps1` requires `Microsoft.Playwright.dll` to exist in the **same directory** as the script:
+   ```powershell
+   [Reflection.Assembly]::Load([System.IO.File]::ReadAllBytes($playwrightDll))
+   ```
+2. In the NuGet package cache (`/root/.nuget/packages/microsoft.playwright/1.64.1/`), the `build/` folder contains `playwright.ps1`, but the compiled binary `Microsoft.Playwright.dll` is located separately under `lib/`.
+3. `playwright.ps1` and `Microsoft.Playwright.dll` are only placed together in the same directory **after the project is built** (inside the build output directory `bin/Release/net10.0/`).
+4. Because the browser installation script failed to run during the image build, Chromium and its operating system dependencies were not installed. Consequently, the container exited with code 1 when the E2E tests ran.
+
+Notice how your GitHub Actions workflow (`.github/workflows/build-deploy.yml`) handles this:
+```bash
+# In CI, it builds FIRST, then runs playwright.ps1 from bin/Release:
+script="$(find src/MyBlog.E2E/bin/Release -name playwright.ps1 -print -quit)"
+test -n "$script"
+pwsh "$script" install chromium --with-deps
+```
+
+---
+
+### How to Fix It
+
+In **`src/MyBlog.E2E/Dockerfile`**, move the `pwsh "$PLAYWRIGHT_SCRIPT" install chromium --with-deps` step to run **after** `dotnet build`, searching inside `bin/Release` instead of `/root/.nuget/packages`:
+
+```dockerfile
+FROM mcr.microsoft.com/dotnet/sdk:10.0
+WORKDIR /src
+
+COPY Directory.Build.props .
+COPY Directory.Packages.props .
+COPY MyBlog.Core/MyBlog.Core.csproj MyBlog.Core/
+COPY MyBlog.Infrastructure/MyBlog.Infrastructure.csproj MyBlog.Infrastructure/
+COPY MyBlog.Web/MyBlog.Web.csproj MyBlog.Web/
+COPY MyBlog.E2E/MyBlog.E2E.csproj MyBlog.E2E/
+
+RUN dotnet restore MyBlog.E2E/MyBlog.E2E.csproj
+
+COPY . .
+
+RUN dotnet build MyBlog.E2E/MyBlog.E2E.csproj -c Release
+
+# Run playwright.ps1 from bin/Release where Microsoft.Playwright.dll is present
+RUN PLAYWRIGHT_SCRIPT="$(find /src/MyBlog.E2E/bin/Release -name playwright.ps1 -print -quit)" \
+    && test -n "$PLAYWRIGHT_SCRIPT" \
+    && pwsh "$PLAYWRIGHT_SCRIPT" install chromium --with-deps \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /src/MyBlog.E2E
+
+ENV MYBLOG_BASE_URL=http://myblog-web:5000
+ENV PLAYWRIGHT_HEADLESS=true
+
+ENTRYPOINT ["dotnet", "run", "-c", "Release", "--no-build"]
+```
+
+After updating the Dockerfile, re-run `./run-e2e.sh` (or `./run.sh`).
+
+
+
+
