@@ -7,7 +7,7 @@
 
 DUMP METADATA
 ═════════════════════════════════════════════════════════════════════════════════
-  Generated at   : 2026-10-25T08:13:08-04:00
+  Generated at   : 2026-10-25T08:17:40-04:00
   Generator      : export.sh
   Host           : fedora
   User           : kushal
@@ -17,10 +17,10 @@ REPOSITORY METADATA
 ═════════════════════════════════════════════════════════════════════════════════
   Repository root: /home/kushal/src/dotnet/MyBlog
   Branch         : main
-  Commit (full)  : edfd4c03df47669eeda43f93152cddee7904f95c
-  Commit (short) : edfd4c0
-  Commit date    : 2026-10-25 07:14:46 -0400
-  Commit message : run scripts
+  Commit (full)  : 85f5d96bab0231a8059ba1068adbd2c2cb158ee1
+  Commit (short) : 85f5d96
+  Commit date    : 2026-10-25 08:16:28 -0400
+  Commit message : update prompt to explain next moves
   Remote origin  : git@github.com:kusl/dotnetcms.git
   Files included : 164
   Excluded path  : docs/llm/
@@ -28,8 +28,7 @@ REPOSITORY METADATA
 
 GIT WORKING TREE STATUS (first 20 lines)
 ═════════════════════════════════════════════════════════════════════════════════
-?? docs/llm/output/2026-10-25-08-11-59.txt
-?? docs/llm/vendor/claude-002.md
+?? docs/llm/output/2026-10-25-08-16-40.txt
 
 ################################################################################
 # FILE: export.sh  [THIS SCRIPT — included for full context]
@@ -24144,7 +24143,7 @@ function showShareError(shareBtn, message) {
   Files dumped   : 164
   Total size     : 667.7 KiB (683810 bytes)
   Output file    : /home/kushal/src/dotnet/MyBlog/docs/llm/dump.txt
-  Completed at   : 2026-10-25T08:13:14-04:00
+  Completed at   : 2026-10-25T08:17:45-04:00
 ################################################################################
 # END OF DUMP
 ################################################################################
