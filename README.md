@@ -145,7 +145,7 @@ Secrets per target (the second target uses the same names with a `NICE_` prefix)
 
 ## Package versions
 
-All NuGet versions are pinned in `src/Directory.Packages.props`. Central Package Management and transitive pinning are enabled. Bumping a package, including Playwright, only requires editing that file: the E2E container and CI resolve Playwright's browser installer from the restored package rather than from a hard-coded path.
+All NuGet versions are pinned in `src/Directory.Packages.props`. Central Package Management and transitive pinning are enabled. Bumping a package, including Playwright, only requires editing that file: the E2E container installs browsers through a throwaway project that references the centrally pinned `Microsoft.Playwright`, and CI finds `playwright.ps1` in the build output instead of a hard-coded path.
 
 ## LLM context files
 
