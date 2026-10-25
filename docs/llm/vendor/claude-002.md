@@ -798,3 +798,6 @@ Claude finished the response
 
 
 
+I moved playwright install to after dotnet build
+this is based on gemini advice 
+https://aistudio.google.com/prompts/new_chat?model=gemini-3.8-flash
