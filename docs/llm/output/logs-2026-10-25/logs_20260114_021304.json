@@ -1,0 +1,92 @@
+﻿[
+{
+  "Timestamp": "2026-01-14T02:13:05.9868019Z",
+  "Level": "Warning",
+  "Category": "Microsoft.AspNetCore.DataProtection.Repositories.EphemeralXmlRepository",
+  "Message": "Using an in-memory repository. Keys will not be persisted to storage.",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+},
+{
+  "Timestamp": "2026-01-14T02:13:06.0059304Z",
+  "Level": "Warning",
+  "Category": "Microsoft.AspNetCore.DataProtection.KeyManagement.XmlKeyManager",
+  "Message": "Neither user profile nor HKLM registry available. Using an ephemeral key repository. Protected data will be unavailable when application exits.",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+},
+{
+  "Timestamp": "2026-01-14T02:13:06.1134685Z",
+  "Level": "Warning",
+  "Category": "Microsoft.AspNetCore.DataProtection.KeyManagement.XmlKeyManager",
+  "Message": "No XML encryptor configured. Key {c24b3e7c-59da-484c-acab-6f95dc2ea7e9} may be persisted to storage in unencrypted form.",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+},
+{
+  "Timestamp": "2026-01-14T02:13:06.2500918Z",
+  "Level": "Information",
+  "Category": "Microsoft.Hosting.Lifetime",
+  "Message": "Application started. Press Ctrl\u002BC to shut down.",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+},
+{
+  "Timestamp": "2026-01-14T02:13:06.2507223Z",
+  "Level": "Information",
+  "Category": "Microsoft.Hosting.Lifetime",
+  "Message": "Hosting environment: Production",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+},
+{
+  "Timestamp": "2026-01-14T02:13:06.2508653Z",
+  "Level": "Information",
+  "Category": "Microsoft.Hosting.Lifetime",
+  "Message": "Content root path: D:\\Sites\\site1561\\wwwroot",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+},
+{
+  "Timestamp": "2026-01-14T02:13:06.6728580Z",
+  "Level": "Error",
+  "Category": "Microsoft.AspNetCore.Antiforgery.DefaultAntiforgery",
+  "Message": "An exception was thrown while deserializing the token.",
+  "TraceId": "3b272dc9437734ca812178bdf3dc1f44",
+  "SpanId": "f1d0f01b1b3c2068",
+  "Exception": "Microsoft.AspNetCore.Antiforgery.AntiforgeryValidationException: The antiforgery token could not be decrypted.\r\n ---\u003E System.Security.Cryptography.CryptographicException: The key {f8526d8d-48af-4750-867c-542833f5f5a0} was not found in the key ring. For more information go to https://aka.ms/aspnet/dataprotectionwarning\r\n   at Microsoft.AspNetCore.DataProtection.KeyManagement.KeyRingBasedDataProtector.UnprotectCore(Byte[] protectedData, Boolean allowOperationsOnRevokedKeys, UnprotectStatus\u0026 status)\r\n   at Microsoft.AspNetCore.DataProtection.KeyManagement.KeyRingBasedDataProtector.Unprotect(Byte[] protectedData)\r\n   at Microsoft.AspNetCore.Antiforgery.DefaultAntiforgeryTokenSerializer.Deserialize(String serializedToken)\r\n   --- End of inner exception stack trace ---\r\n   at Microsoft.AspNetCore.Antiforgery.DefaultAntiforgeryTokenSerializer.Deserialize(String serializedToken)\r\n   at Microsoft.AspNetCore.Antiforgery.DefaultAntiforgery.GetCookieTokenDoesNotThrow(HttpContext httpContext)"
+},
+{
+  "Timestamp": "2026-01-14T02:13:06.6728650Z",
+  "Level": "Error",
+  "Category": "Microsoft.AspNetCore.Antiforgery.DefaultAntiforgery",
+  "Message": "An exception was thrown while deserializing the token.",
+  "TraceId": "58daa3cc0b1aca3be64c40bfb55eb325",
+  "SpanId": "9dae9511b4abf49e",
+  "Exception": "Microsoft.AspNetCore.Antiforgery.AntiforgeryValidationException: The antiforgery token could not be decrypted.\r\n ---\u003E System.Security.Cryptography.CryptographicException: The key {f8526d8d-48af-4750-867c-542833f5f5a0} was not found in the key ring. For more information go to https://aka.ms/aspnet/dataprotectionwarning\r\n   at Microsoft.AspNetCore.DataProtection.KeyManagement.KeyRingBasedDataProtector.UnprotectCore(Byte[] protectedData, Boolean allowOperationsOnRevokedKeys, UnprotectStatus\u0026 status)\r\n   at Microsoft.AspNetCore.DataProtection.KeyManagement.KeyRingBasedDataProtector.Unprotect(Byte[] protectedData)\r\n   at Microsoft.AspNetCore.Antiforgery.DefaultAntiforgeryTokenSerializer.Deserialize(String serializedToken)\r\n   --- End of inner exception stack trace ---\r\n   at Microsoft.AspNetCore.Antiforgery.DefaultAntiforgeryTokenSerializer.Deserialize(String serializedToken)\r\n   at Microsoft.AspNetCore.Antiforgery.DefaultAntiforgery.GetCookieTokenDoesNotThrow(HttpContext httpContext)"
+},
+{
+  "Timestamp": "2026-01-14T02:13:32.8209064Z",
+  "Level": "Error",
+  "Category": "Microsoft.AspNetCore.Antiforgery.DefaultAntiforgery",
+  "Message": "An exception was thrown while deserializing the token.",
+  "TraceId": "af4ac5a41b79fab5031ee47c6cefbb58",
+  "SpanId": "1d9712163d585cf4",
+  "Exception": "Microsoft.AspNetCore.Antiforgery.AntiforgeryValidationException: The antiforgery token could not be decrypted.\r\n ---\u003E System.Security.Cryptography.CryptographicException: The key {eaa998b2-6e1b-448b-8e00-77ed9baa8865} was not found in the key ring. For more information go to https://aka.ms/aspnet/dataprotectionwarning\r\n   at Microsoft.AspNetCore.DataProtection.KeyManagement.KeyRingBasedDataProtector.UnprotectCore(Byte[] protectedData, Boolean allowOperationsOnRevokedKeys, UnprotectStatus\u0026 status)\r\n   at Microsoft.AspNetCore.DataProtection.KeyManagement.KeyRingBasedDataProtector.Unprotect(Byte[] protectedData)\r\n   at Microsoft.AspNetCore.Antiforgery.DefaultAntiforgeryTokenSerializer.Deserialize(String serializedToken)\r\n   --- End of inner exception stack trace ---\r\n   at Microsoft.AspNetCore.Antiforgery.DefaultAntiforgeryTokenSerializer.Deserialize(String serializedToken)\r\n   at Microsoft.AspNetCore.Antiforgery.DefaultAntiforgery.GetCookieTokenDoesNotThrow(HttpContext httpContext)"
+},
+{
+  "Timestamp": "2026-01-14T02:14:17.8943482Z",
+  "Level": "Information",
+  "Category": "Microsoft.Hosting.Lifetime",
+  "Message": "Application is shutting down...",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+}
+]

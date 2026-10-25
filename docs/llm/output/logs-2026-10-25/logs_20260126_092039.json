@@ -1,0 +1,83 @@
+﻿[
+{
+  "Timestamp": "2026-01-26T09:20:41.0276422Z",
+  "Level": "Warning",
+  "Category": "Microsoft.AspNetCore.DataProtection.Repositories.EphemeralXmlRepository",
+  "Message": "Using an in-memory repository. Keys will not be persisted to storage.",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+},
+{
+  "Timestamp": "2026-01-26T09:20:41.0484110Z",
+  "Level": "Warning",
+  "Category": "Microsoft.AspNetCore.DataProtection.KeyManagement.XmlKeyManager",
+  "Message": "Neither user profile nor HKLM registry available. Using an ephemeral key repository. Protected data will be unavailable when application exits.",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+},
+{
+  "Timestamp": "2026-01-26T09:20:41.1966044Z",
+  "Level": "Warning",
+  "Category": "Microsoft.AspNetCore.DataProtection.KeyManagement.XmlKeyManager",
+  "Message": "No XML encryptor configured. Key {3b6f5412-4fac-479d-b841-5ad8c5beb8f8} may be persisted to storage in unencrypted form.",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+},
+{
+  "Timestamp": "2026-01-26T09:20:41.3315530Z",
+  "Level": "Information",
+  "Category": "Microsoft.Hosting.Lifetime",
+  "Message": "Application started. Press Ctrl\u002BC to shut down.",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+},
+{
+  "Timestamp": "2026-01-26T09:20:41.3324804Z",
+  "Level": "Information",
+  "Category": "Microsoft.Hosting.Lifetime",
+  "Message": "Hosting environment: Production",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+},
+{
+  "Timestamp": "2026-01-26T09:20:41.3326845Z",
+  "Level": "Information",
+  "Category": "Microsoft.Hosting.Lifetime",
+  "Message": "Content root path: D:\\Sites\\site1561\\wwwroot",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+},
+{
+  "Timestamp": "2026-01-26T09:20:46.2043929Z",
+  "Level": "Information",
+  "Category": "MyBlog.Infrastructure.Services.ImageCacheWarmerService",
+  "Message": "Image Cache Warmer started. Scanning posts for uncached images...",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+},
+{
+  "Timestamp": "2026-01-26T09:20:46.2254590Z",
+  "Level": "Information",
+  "Category": "MyBlog.Infrastructure.Services.ImageCacheWarmerService",
+  "Message": "Image Cache Warmer: All images are already cached.",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+},
+{
+  "Timestamp": "2026-01-26T10:10:39.7154011Z",
+  "Level": "Information",
+  "Category": "Microsoft.Hosting.Lifetime",
+  "Message": "Application is shutting down...",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+}
+]

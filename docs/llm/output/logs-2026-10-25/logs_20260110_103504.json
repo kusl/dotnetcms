@@ -1,0 +1,65 @@
+﻿[
+{
+  "Timestamp": "2026-01-10T10:35:06.0399640Z",
+  "Level": "Warning",
+  "Category": "Microsoft.AspNetCore.DataProtection.Repositories.EphemeralXmlRepository",
+  "Message": "Using an in-memory repository. Keys will not be persisted to storage.",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+},
+{
+  "Timestamp": "2026-01-10T10:35:06.0597514Z",
+  "Level": "Warning",
+  "Category": "Microsoft.AspNetCore.DataProtection.KeyManagement.XmlKeyManager",
+  "Message": "Neither user profile nor HKLM registry available. Using an ephemeral key repository. Protected data will be unavailable when application exits.",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+},
+{
+  "Timestamp": "2026-01-10T10:35:06.1597026Z",
+  "Level": "Warning",
+  "Category": "Microsoft.AspNetCore.DataProtection.KeyManagement.XmlKeyManager",
+  "Message": "No XML encryptor configured. Key {9561af53-7732-4f61-b6e8-0f2408cb9735} may be persisted to storage in unencrypted form.",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+},
+{
+  "Timestamp": "2026-01-10T10:35:06.2857387Z",
+  "Level": "Information",
+  "Category": "Microsoft.Hosting.Lifetime",
+  "Message": "Application started. Press Ctrl\u002BC to shut down.",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+},
+{
+  "Timestamp": "2026-01-10T10:35:06.2864606Z",
+  "Level": "Information",
+  "Category": "Microsoft.Hosting.Lifetime",
+  "Message": "Hosting environment: Production",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+},
+{
+  "Timestamp": "2026-01-10T10:35:06.2867310Z",
+  "Level": "Information",
+  "Category": "Microsoft.Hosting.Lifetime",
+  "Message": "Content root path: D:\\Sites\\site1561\\wwwroot",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+},
+{
+  "Timestamp": "2026-01-10T11:06:05.0039792Z",
+  "Level": "Information",
+  "Category": "Microsoft.Hosting.Lifetime",
+  "Message": "Application is shutting down...",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+}
+]

@@ -1,0 +1,200 @@
+﻿[
+{
+  "Timestamp": "2025-12-28T20:56:38.6716677Z",
+  "Level": "Warning",
+  "Category": "Microsoft.AspNetCore.DataProtection.Repositories.EphemeralXmlRepository",
+  "Message": "Using an in-memory repository. Keys will not be persisted to storage.",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+},
+{
+  "Timestamp": "2025-12-28T20:56:38.6897610Z",
+  "Level": "Warning",
+  "Category": "Microsoft.AspNetCore.DataProtection.KeyManagement.XmlKeyManager",
+  "Message": "Neither user profile nor HKLM registry available. Using an ephemeral key repository. Protected data will be unavailable when application exits.",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+},
+{
+  "Timestamp": "2025-12-28T20:56:38.7918628Z",
+  "Level": "Warning",
+  "Category": "Microsoft.AspNetCore.DataProtection.KeyManagement.XmlKeyManager",
+  "Message": "No XML encryptor configured. Key {b0c9d6ce-05c5-41b7-a88f-a80857f721e7} may be persisted to storage in unencrypted form.",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+},
+{
+  "Timestamp": "2025-12-28T20:56:38.9179538Z",
+  "Level": "Information",
+  "Category": "Microsoft.Hosting.Lifetime",
+  "Message": "Application started. Press Ctrl\u002BC to shut down.",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+},
+{
+  "Timestamp": "2025-12-28T20:56:38.9185892Z",
+  "Level": "Information",
+  "Category": "Microsoft.Hosting.Lifetime",
+  "Message": "Hosting environment: Production",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+},
+{
+  "Timestamp": "2025-12-28T20:56:38.9187494Z",
+  "Level": "Information",
+  "Category": "Microsoft.Hosting.Lifetime",
+  "Message": "Content root path: D:\\Sites\\site1561\\wwwroot",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+},
+{
+  "Timestamp": "2025-12-28T20:56:53.3949652Z",
+  "Level": "Error",
+  "Category": "Microsoft.AspNetCore.Antiforgery.DefaultAntiforgery",
+  "Message": "An exception was thrown while deserializing the token.",
+  "TraceId": "ae8f5870115506e096265dd81a32ab13",
+  "SpanId": "7cb48da925290fee",
+  "Exception": "Microsoft.AspNetCore.Antiforgery.AntiforgeryValidationException: The antiforgery token could not be decrypted.\r\n ---\u003E System.Security.Cryptography.CryptographicException: The key {b2e376cb-2800-40d3-9395-1cc4e2bfa209} was not found in the key ring. For more information go to https://aka.ms/aspnet/dataprotectionwarning\r\n   at Microsoft.AspNetCore.DataProtection.KeyManagement.KeyRingBasedDataProtector.UnprotectCore(Byte[] protectedData, Boolean allowOperationsOnRevokedKeys, UnprotectStatus\u0026 status)\r\n   at Microsoft.AspNetCore.DataProtection.KeyManagement.KeyRingBasedDataProtector.Unprotect(Byte[] protectedData)\r\n   at Microsoft.AspNetCore.Antiforgery.DefaultAntiforgeryTokenSerializer.Deserialize(String serializedToken)\r\n   --- End of inner exception stack trace ---\r\n   at Microsoft.AspNetCore.Antiforgery.DefaultAntiforgeryTokenSerializer.Deserialize(String serializedToken)\r\n   at Microsoft.AspNetCore.Antiforgery.DefaultAntiforgery.GetCookieTokenDoesNotThrow(HttpContext httpContext)"
+},
+{
+  "Timestamp": "2025-12-28T20:57:00.4055705Z",
+  "Level": "Warning",
+  "Category": "Microsoft.AspNetCore.Components.Server.Circuits.RemoteRenderer",
+  "Message": "Unhandled exception rendering component: The response headers cannot be modified because the response has already started.",
+  "TraceId": "d011855aeb9f80071fdb99dcf9f44d3c",
+  "SpanId": "8d2ca16efce3ff78",
+  "Exception": "System.InvalidOperationException: The response headers cannot be modified because the response has already started.\r\n   at Microsoft.AspNetCore.HttpSys.Internal.HeaderCollection.ThrowIfReadOnly()\r\n   at Microsoft.AspNetCore.HttpSys.Internal.HeaderCollection.set_Item(String key, StringValues value)\r\n   at Microsoft.AspNetCore.Http.IHeaderDictionary.set_SetCookie(StringValues value)\r\n   at Microsoft.AspNetCore.Http.ResponseCookies.Append(String key, String value, CookieOptions options)\r\n   at Microsoft.AspNetCore.Authentication.Cookies.ChunkingCookieManager.AppendResponseCookie(HttpContext context, String key, String value, CookieOptions options)\r\n   at Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationHandler.HandleSignInAsync(ClaimsPrincipal user, AuthenticationProperties properties)\r\n   at Microsoft.AspNetCore.Authentication.AuthenticationService.SignInAsync(HttpContext context, String scheme, ClaimsPrincipal principal, AuthenticationProperties properties)\r\n   at Microsoft.AspNetCore.Authentication.AuthenticationServiceImpl.SignInAsync(HttpContext context, String scheme, ClaimsPrincipal principal, AuthenticationProperties properties)\r\n   at MyBlog.Web.Components.Pages.Login.HandleLogin() in D:\\a\\dotnetcms\\dotnetcms\\src\\MyBlog.Web\\Components\\Pages\\Login.razor:line 81\r\n   at Microsoft.AspNetCore.Components.ComponentBase.CallStateHasChangedOnAsyncCompletion(Task task)\r\n   at Microsoft.AspNetCore.Components.RenderTree.Renderer.GetErrorHandledTask(Task taskToHandle, ComponentState owningComponentState)"
+},
+{
+  "Timestamp": "2025-12-28T20:57:00.4177485Z",
+  "Level": "Error",
+  "Category": "Microsoft.AspNetCore.Components.Server.Circuits.CircuitHost",
+  "Message": "Unhandled exception in circuit \u0027e6EY6yqH6F4Bq8Yxq24dzpFJ5vMz_HhwytYj_JfbCI4\u0027.",
+  "TraceId": "d011855aeb9f80071fdb99dcf9f44d3c",
+  "SpanId": "8d2ca16efce3ff78",
+  "Exception": "System.InvalidOperationException: The response headers cannot be modified because the response has already started.\r\n   at Microsoft.AspNetCore.HttpSys.Internal.HeaderCollection.ThrowIfReadOnly()\r\n   at Microsoft.AspNetCore.HttpSys.Internal.HeaderCollection.set_Item(String key, StringValues value)\r\n   at Microsoft.AspNetCore.Http.IHeaderDictionary.set_SetCookie(StringValues value)\r\n   at Microsoft.AspNetCore.Http.ResponseCookies.Append(String key, String value, CookieOptions options)\r\n   at Microsoft.AspNetCore.Authentication.Cookies.ChunkingCookieManager.AppendResponseCookie(HttpContext context, String key, String value, CookieOptions options)\r\n   at Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationHandler.HandleSignInAsync(ClaimsPrincipal user, AuthenticationProperties properties)\r\n   at Microsoft.AspNetCore.Authentication.AuthenticationService.SignInAsync(HttpContext context, String scheme, ClaimsPrincipal principal, AuthenticationProperties properties)\r\n   at Microsoft.AspNetCore.Authentication.AuthenticationServiceImpl.SignInAsync(HttpContext context, String scheme, ClaimsPrincipal principal, AuthenticationProperties properties)\r\n   at MyBlog.Web.Components.Pages.Login.HandleLogin() in D:\\a\\dotnetcms\\dotnetcms\\src\\MyBlog.Web\\Components\\Pages\\Login.razor:line 81\r\n   at Microsoft.AspNetCore.Components.ComponentBase.CallStateHasChangedOnAsyncCompletion(Task task)\r\n   at Microsoft.AspNetCore.Components.RenderTree.Renderer.GetErrorHandledTask(Task taskToHandle, ComponentState owningComponentState)"
+},
+{
+  "Timestamp": "2025-12-28T20:57:17.7606235Z",
+  "Level": "Warning",
+  "Category": "Microsoft.AspNetCore.Components.Server.Circuits.RemoteRenderer",
+  "Message": "Unhandled exception rendering component: The response headers cannot be modified because the response has already started.",
+  "TraceId": "27b2afd89e547fff13a995e32c3963cb",
+  "SpanId": "a4bd7b2843fc2c6f",
+  "Exception": "System.InvalidOperationException: The response headers cannot be modified because the response has already started.\r\n   at Microsoft.AspNetCore.HttpSys.Internal.HeaderCollection.set_Item(String key, StringValues value)\r\n   at Microsoft.AspNetCore.Http.IHeaderDictionary.set_SetCookie(StringValues value)\r\n   at Microsoft.AspNetCore.Http.ResponseCookies.Append(String key, String value, CookieOptions options)\r\n   at Microsoft.AspNetCore.Authentication.Cookies.ChunkingCookieManager.AppendResponseCookie(HttpContext context, String key, String value, CookieOptions options)\r\n   at Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationHandler.HandleSignInAsync(ClaimsPrincipal user, AuthenticationProperties properties)\r\n   at Microsoft.AspNetCore.Authentication.AuthenticationService.SignInAsync(HttpContext context, String scheme, ClaimsPrincipal principal, AuthenticationProperties properties)\r\n   at Microsoft.AspNetCore.Authentication.AuthenticationServiceImpl.SignInAsync(HttpContext context, String scheme, ClaimsPrincipal principal, AuthenticationProperties properties)\r\n   at MyBlog.Web.Components.Pages.Login.HandleLogin() in D:\\a\\dotnetcms\\dotnetcms\\src\\MyBlog.Web\\Components\\Pages\\Login.razor:line 81\r\n   at Microsoft.AspNetCore.Components.ComponentBase.CallStateHasChangedOnAsyncCompletion(Task task)\r\n   at Microsoft.AspNetCore.Components.RenderTree.Renderer.GetErrorHandledTask(Task taskToHandle, ComponentState owningComponentState)"
+},
+{
+  "Timestamp": "2025-12-28T20:57:17.7612652Z",
+  "Level": "Error",
+  "Category": "Microsoft.AspNetCore.Components.Server.Circuits.CircuitHost",
+  "Message": "Unhandled exception in circuit \u00275joQRp8qTmqRhnLcIwsyDZCMpeO_Uy73Uc9H0yJ-FCM\u0027.",
+  "TraceId": "27b2afd89e547fff13a995e32c3963cb",
+  "SpanId": "a4bd7b2843fc2c6f",
+  "Exception": "System.InvalidOperationException: The response headers cannot be modified because the response has already started.\r\n   at Microsoft.AspNetCore.HttpSys.Internal.HeaderCollection.set_Item(String key, StringValues value)\r\n   at Microsoft.AspNetCore.Http.IHeaderDictionary.set_SetCookie(StringValues value)\r\n   at Microsoft.AspNetCore.Http.ResponseCookies.Append(String key, String value, CookieOptions options)\r\n   at Microsoft.AspNetCore.Authentication.Cookies.ChunkingCookieManager.AppendResponseCookie(HttpContext context, String key, String value, CookieOptions options)\r\n   at Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationHandler.HandleSignInAsync(ClaimsPrincipal user, AuthenticationProperties properties)\r\n   at Microsoft.AspNetCore.Authentication.AuthenticationService.SignInAsync(HttpContext context, String scheme, ClaimsPrincipal principal, AuthenticationProperties properties)\r\n   at Microsoft.AspNetCore.Authentication.AuthenticationServiceImpl.SignInAsync(HttpContext context, String scheme, ClaimsPrincipal principal, AuthenticationProperties properties)\r\n   at MyBlog.Web.Components.Pages.Login.HandleLogin() in D:\\a\\dotnetcms\\dotnetcms\\src\\MyBlog.Web\\Components\\Pages\\Login.razor:line 81\r\n   at Microsoft.AspNetCore.Components.ComponentBase.CallStateHasChangedOnAsyncCompletion(Task task)\r\n   at Microsoft.AspNetCore.Components.RenderTree.Renderer.GetErrorHandledTask(Task taskToHandle, ComponentState owningComponentState)"
+},
+{
+  "Timestamp": "2025-12-28T20:57:33.4060182Z",
+  "Level": "Warning",
+  "Category": "Microsoft.AspNetCore.Components.Server.Circuits.RemoteRenderer",
+  "Message": "Unhandled exception rendering component: The response headers cannot be modified because the response has already started.",
+  "TraceId": "bc073698b6a2f65e88d4cd1ade57156c",
+  "SpanId": "a31e9875cb8d860d",
+  "Exception": "System.InvalidOperationException: The response headers cannot be modified because the response has already started.\r\n   at Microsoft.AspNetCore.HttpSys.Internal.HeaderCollection.set_Item(String key, StringValues value)\r\n   at Microsoft.AspNetCore.Http.IHeaderDictionary.set_SetCookie(StringValues value)\r\n   at Microsoft.AspNetCore.Http.ResponseCookies.Append(String key, String value, CookieOptions options)\r\n   at Microsoft.AspNetCore.Authentication.Cookies.ChunkingCookieManager.AppendResponseCookie(HttpContext context, String key, String value, CookieOptions options)\r\n   at Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationHandler.HandleSignInAsync(ClaimsPrincipal user, AuthenticationProperties properties)\r\n   at Microsoft.AspNetCore.Authentication.AuthenticationService.SignInAsync(HttpContext context, String scheme, ClaimsPrincipal principal, AuthenticationProperties properties)\r\n   at Microsoft.AspNetCore.Authentication.AuthenticationServiceImpl.SignInAsync(HttpContext context, String scheme, ClaimsPrincipal principal, AuthenticationProperties properties)\r\n   at MyBlog.Web.Components.Pages.Login.HandleLogin() in D:\\a\\dotnetcms\\dotnetcms\\src\\MyBlog.Web\\Components\\Pages\\Login.razor:line 81\r\n   at Microsoft.AspNetCore.Components.ComponentBase.CallStateHasChangedOnAsyncCompletion(Task task)\r\n   at Microsoft.AspNetCore.Components.RenderTree.Renderer.GetErrorHandledTask(Task taskToHandle, ComponentState owningComponentState)"
+},
+{
+  "Timestamp": "2025-12-28T20:57:33.4067164Z",
+  "Level": "Error",
+  "Category": "Microsoft.AspNetCore.Components.Server.Circuits.CircuitHost",
+  "Message": "Unhandled exception in circuit \u0027oegXJhTFamvQmP7usCKUwi9Wn5lFbdHVNXUJ2ZwU37A\u0027.",
+  "TraceId": "bc073698b6a2f65e88d4cd1ade57156c",
+  "SpanId": "a31e9875cb8d860d",
+  "Exception": "System.InvalidOperationException: The response headers cannot be modified because the response has already started.\r\n   at Microsoft.AspNetCore.HttpSys.Internal.HeaderCollection.set_Item(String key, StringValues value)\r\n   at Microsoft.AspNetCore.Http.IHeaderDictionary.set_SetCookie(StringValues value)\r\n   at Microsoft.AspNetCore.Http.ResponseCookies.Append(String key, String value, CookieOptions options)\r\n   at Microsoft.AspNetCore.Authentication.Cookies.ChunkingCookieManager.AppendResponseCookie(HttpContext context, String key, String value, CookieOptions options)\r\n   at Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationHandler.HandleSignInAsync(ClaimsPrincipal user, AuthenticationProperties properties)\r\n   at Microsoft.AspNetCore.Authentication.AuthenticationService.SignInAsync(HttpContext context, String scheme, ClaimsPrincipal principal, AuthenticationProperties properties)\r\n   at Microsoft.AspNetCore.Authentication.AuthenticationServiceImpl.SignInAsync(HttpContext context, String scheme, ClaimsPrincipal principal, AuthenticationProperties properties)\r\n   at MyBlog.Web.Components.Pages.Login.HandleLogin() in D:\\a\\dotnetcms\\dotnetcms\\src\\MyBlog.Web\\Components\\Pages\\Login.razor:line 81\r\n   at Microsoft.AspNetCore.Components.ComponentBase.CallStateHasChangedOnAsyncCompletion(Task task)\r\n   at Microsoft.AspNetCore.Components.RenderTree.Renderer.GetErrorHandledTask(Task taskToHandle, ComponentState owningComponentState)"
+},
+{
+  "Timestamp": "2025-12-28T20:57:51.1823009Z",
+  "Level": "Warning",
+  "Category": "Microsoft.AspNetCore.Components.Server.Circuits.RemoteRenderer",
+  "Message": "Unhandled exception rendering component: The response headers cannot be modified because the response has already started.",
+  "TraceId": "8e9b0a90361203966f6295dcbd1fb701",
+  "SpanId": "fffdb5f88045ac3b",
+  "Exception": "System.InvalidOperationException: The response headers cannot be modified because the response has already started.\r\n   at Microsoft.AspNetCore.HttpSys.Internal.HeaderCollection.set_Item(String key, StringValues value)\r\n   at Microsoft.AspNetCore.Http.IHeaderDictionary.set_SetCookie(StringValues value)\r\n   at Microsoft.AspNetCore.Http.ResponseCookies.Append(String key, String value, CookieOptions options)\r\n   at Microsoft.AspNetCore.Authentication.Cookies.ChunkingCookieManager.AppendResponseCookie(HttpContext context, String key, String value, CookieOptions options)\r\n   at Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationHandler.HandleSignInAsync(ClaimsPrincipal user, AuthenticationProperties properties)\r\n   at Microsoft.AspNetCore.Authentication.AuthenticationService.SignInAsync(HttpContext context, String scheme, ClaimsPrincipal principal, AuthenticationProperties properties)\r\n   at Microsoft.AspNetCore.Authentication.AuthenticationServiceImpl.SignInAsync(HttpContext context, String scheme, ClaimsPrincipal principal, AuthenticationProperties properties)\r\n   at MyBlog.Web.Components.Pages.Login.HandleLogin() in D:\\a\\dotnetcms\\dotnetcms\\src\\MyBlog.Web\\Components\\Pages\\Login.razor:line 81\r\n   at Microsoft.AspNetCore.Components.ComponentBase.CallStateHasChangedOnAsyncCompletion(Task task)\r\n   at Microsoft.AspNetCore.Components.RenderTree.Renderer.GetErrorHandledTask(Task taskToHandle, ComponentState owningComponentState)"
+},
+{
+  "Timestamp": "2025-12-28T20:57:51.1829120Z",
+  "Level": "Error",
+  "Category": "Microsoft.AspNetCore.Components.Server.Circuits.CircuitHost",
+  "Message": "Unhandled exception in circuit \u0027RmSSf682GCNe7XI5BSuS9AhVcpAmih0SqneRzS_eXQg\u0027.",
+  "TraceId": "8e9b0a90361203966f6295dcbd1fb701",
+  "SpanId": "fffdb5f88045ac3b",
+  "Exception": "System.InvalidOperationException: The response headers cannot be modified because the response has already started.\r\n   at Microsoft.AspNetCore.HttpSys.Internal.HeaderCollection.set_Item(String key, StringValues value)\r\n   at Microsoft.AspNetCore.Http.IHeaderDictionary.set_SetCookie(StringValues value)\r\n   at Microsoft.AspNetCore.Http.ResponseCookies.Append(String key, String value, CookieOptions options)\r\n   at Microsoft.AspNetCore.Authentication.Cookies.ChunkingCookieManager.AppendResponseCookie(HttpContext context, String key, String value, CookieOptions options)\r\n   at Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationHandler.HandleSignInAsync(ClaimsPrincipal user, AuthenticationProperties properties)\r\n   at Microsoft.AspNetCore.Authentication.AuthenticationService.SignInAsync(HttpContext context, String scheme, ClaimsPrincipal principal, AuthenticationProperties properties)\r\n   at Microsoft.AspNetCore.Authentication.AuthenticationServiceImpl.SignInAsync(HttpContext context, String scheme, ClaimsPrincipal principal, AuthenticationProperties properties)\r\n   at MyBlog.Web.Components.Pages.Login.HandleLogin() in D:\\a\\dotnetcms\\dotnetcms\\src\\MyBlog.Web\\Components\\Pages\\Login.razor:line 81\r\n   at Microsoft.AspNetCore.Components.ComponentBase.CallStateHasChangedOnAsyncCompletion(Task task)\r\n   at Microsoft.AspNetCore.Components.RenderTree.Renderer.GetErrorHandledTask(Task taskToHandle, ComponentState owningComponentState)"
+},
+{
+  "Timestamp": "2025-12-28T21:44:00.1682310Z",
+  "Level": "Warning",
+  "Category": "Microsoft.AspNetCore.Components.Server.Circuits.RemoteRenderer",
+  "Message": "Unhandled exception rendering component: The response headers cannot be modified because the response has already started.",
+  "TraceId": "8fbe3ded71466cac3c018e7b57e19ee1",
+  "SpanId": "21637a695c65a82a",
+  "Exception": "System.InvalidOperationException: The response headers cannot be modified because the response has already started.\r\n   at Microsoft.AspNetCore.HttpSys.Internal.HeaderCollection.set_Item(String key, StringValues value)\r\n   at Microsoft.AspNetCore.Http.IHeaderDictionary.set_SetCookie(StringValues value)\r\n   at Microsoft.AspNetCore.Http.ResponseCookies.Append(String key, String value, CookieOptions options)\r\n   at Microsoft.AspNetCore.Authentication.Cookies.ChunkingCookieManager.AppendResponseCookie(HttpContext context, String key, String value, CookieOptions options)\r\n   at Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationHandler.HandleSignInAsync(ClaimsPrincipal user, AuthenticationProperties properties)\r\n   at Microsoft.AspNetCore.Authentication.AuthenticationService.SignInAsync(HttpContext context, String scheme, ClaimsPrincipal principal, AuthenticationProperties properties)\r\n   at Microsoft.AspNetCore.Authentication.AuthenticationServiceImpl.SignInAsync(HttpContext context, String scheme, ClaimsPrincipal principal, AuthenticationProperties properties)\r\n   at MyBlog.Web.Components.Pages.Login.HandleLogin() in D:\\a\\dotnetcms\\dotnetcms\\src\\MyBlog.Web\\Components\\Pages\\Login.razor:line 81\r\n   at Microsoft.AspNetCore.Components.ComponentBase.CallStateHasChangedOnAsyncCompletion(Task task)\r\n   at Microsoft.AspNetCore.Components.RenderTree.Renderer.GetErrorHandledTask(Task taskToHandle, ComponentState owningComponentState)"
+},
+{
+  "Timestamp": "2025-12-28T21:44:00.1687693Z",
+  "Level": "Error",
+  "Category": "Microsoft.AspNetCore.Components.Server.Circuits.CircuitHost",
+  "Message": "Unhandled exception in circuit \u0027KNeps8cS0NDfs1dLAsZVsOrw2NH-BJLOPjkdgQbmVEY\u0027.",
+  "TraceId": "8fbe3ded71466cac3c018e7b57e19ee1",
+  "SpanId": "21637a695c65a82a",
+  "Exception": "System.InvalidOperationException: The response headers cannot be modified because the response has already started.\r\n   at Microsoft.AspNetCore.HttpSys.Internal.HeaderCollection.set_Item(String key, StringValues value)\r\n   at Microsoft.AspNetCore.Http.IHeaderDictionary.set_SetCookie(StringValues value)\r\n   at Microsoft.AspNetCore.Http.ResponseCookies.Append(String key, String value, CookieOptions options)\r\n   at Microsoft.AspNetCore.Authentication.Cookies.ChunkingCookieManager.AppendResponseCookie(HttpContext context, String key, String value, CookieOptions options)\r\n   at Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationHandler.HandleSignInAsync(ClaimsPrincipal user, AuthenticationProperties properties)\r\n   at Microsoft.AspNetCore.Authentication.AuthenticationService.SignInAsync(HttpContext context, String scheme, ClaimsPrincipal principal, AuthenticationProperties properties)\r\n   at Microsoft.AspNetCore.Authentication.AuthenticationServiceImpl.SignInAsync(HttpContext context, String scheme, ClaimsPrincipal principal, AuthenticationProperties properties)\r\n   at MyBlog.Web.Components.Pages.Login.HandleLogin() in D:\\a\\dotnetcms\\dotnetcms\\src\\MyBlog.Web\\Components\\Pages\\Login.razor:line 81\r\n   at Microsoft.AspNetCore.Components.ComponentBase.CallStateHasChangedOnAsyncCompletion(Task task)\r\n   at Microsoft.AspNetCore.Components.RenderTree.Renderer.GetErrorHandledTask(Task taskToHandle, ComponentState owningComponentState)"
+},
+{
+  "Timestamp": "2025-12-28T21:44:16.5825856Z",
+  "Level": "Warning",
+  "Category": "Microsoft.AspNetCore.Components.Server.Circuits.RemoteRenderer",
+  "Message": "Unhandled exception rendering component: The response headers cannot be modified because the response has already started.",
+  "TraceId": "2685a34b2033db0b4f0b35bd1a955bc9",
+  "SpanId": "9e279636c084cb7b",
+  "Exception": "System.InvalidOperationException: The response headers cannot be modified because the response has already started.\r\n   at Microsoft.AspNetCore.HttpSys.Internal.HeaderCollection.set_Item(String key, StringValues value)\r\n   at Microsoft.AspNetCore.Http.IHeaderDictionary.set_SetCookie(StringValues value)\r\n   at Microsoft.AspNetCore.Http.ResponseCookies.Append(String key, String value, CookieOptions options)\r\n   at Microsoft.AspNetCore.Authentication.Cookies.ChunkingCookieManager.AppendResponseCookie(HttpContext context, String key, String value, CookieOptions options)\r\n   at Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationHandler.HandleSignInAsync(ClaimsPrincipal user, AuthenticationProperties properties)\r\n   at Microsoft.AspNetCore.Authentication.AuthenticationService.SignInAsync(HttpContext context, String scheme, ClaimsPrincipal principal, AuthenticationProperties properties)\r\n   at Microsoft.AspNetCore.Authentication.AuthenticationServiceImpl.SignInAsync(HttpContext context, String scheme, ClaimsPrincipal principal, AuthenticationProperties properties)\r\n   at MyBlog.Web.Components.Pages.Login.HandleLogin() in D:\\a\\dotnetcms\\dotnetcms\\src\\MyBlog.Web\\Components\\Pages\\Login.razor:line 81\r\n   at Microsoft.AspNetCore.Components.ComponentBase.CallStateHasChangedOnAsyncCompletion(Task task)\r\n   at Microsoft.AspNetCore.Components.RenderTree.Renderer.GetErrorHandledTask(Task taskToHandle, ComponentState owningComponentState)"
+},
+{
+  "Timestamp": "2025-12-28T21:44:16.5831247Z",
+  "Level": "Error",
+  "Category": "Microsoft.AspNetCore.Components.Server.Circuits.CircuitHost",
+  "Message": "Unhandled exception in circuit \u0027W1c5sX5x-Q6XYOnLmK_uEpEdILo8nxfNZwetCnzRH60\u0027.",
+  "TraceId": "2685a34b2033db0b4f0b35bd1a955bc9",
+  "SpanId": "9e279636c084cb7b",
+  "Exception": "System.InvalidOperationException: The response headers cannot be modified because the response has already started.\r\n   at Microsoft.AspNetCore.HttpSys.Internal.HeaderCollection.set_Item(String key, StringValues value)\r\n   at Microsoft.AspNetCore.Http.IHeaderDictionary.set_SetCookie(StringValues value)\r\n   at Microsoft.AspNetCore.Http.ResponseCookies.Append(String key, String value, CookieOptions options)\r\n   at Microsoft.AspNetCore.Authentication.Cookies.ChunkingCookieManager.AppendResponseCookie(HttpContext context, String key, String value, CookieOptions options)\r\n   at Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationHandler.HandleSignInAsync(ClaimsPrincipal user, AuthenticationProperties properties)\r\n   at Microsoft.AspNetCore.Authentication.AuthenticationService.SignInAsync(HttpContext context, String scheme, ClaimsPrincipal principal, AuthenticationProperties properties)\r\n   at Microsoft.AspNetCore.Authentication.AuthenticationServiceImpl.SignInAsync(HttpContext context, String scheme, ClaimsPrincipal principal, AuthenticationProperties properties)\r\n   at MyBlog.Web.Components.Pages.Login.HandleLogin() in D:\\a\\dotnetcms\\dotnetcms\\src\\MyBlog.Web\\Components\\Pages\\Login.razor:line 81\r\n   at Microsoft.AspNetCore.Components.ComponentBase.CallStateHasChangedOnAsyncCompletion(Task task)\r\n   at Microsoft.AspNetCore.Components.RenderTree.Renderer.GetErrorHandledTask(Task taskToHandle, ComponentState owningComponentState)"
+},
+{
+  "Timestamp": "2025-12-28T21:44:40.1404190Z",
+  "Level": "Warning",
+  "Category": "Microsoft.AspNetCore.Components.Server.Circuits.RemoteRenderer",
+  "Message": "Unhandled exception rendering component: The response headers cannot be modified because the response has already started.",
+  "TraceId": "ad6e3ee2945eb52062a8b3a6bca8f999",
+  "SpanId": "40919c696c9909b7",
+  "Exception": "System.InvalidOperationException: The response headers cannot be modified because the response has already started.\r\n   at Microsoft.AspNetCore.HttpSys.Internal.HeaderCollection.set_Item(String key, StringValues value)\r\n   at Microsoft.AspNetCore.Http.IHeaderDictionary.set_SetCookie(StringValues value)\r\n   at Microsoft.AspNetCore.Http.ResponseCookies.Append(String key, String value, CookieOptions options)\r\n   at Microsoft.AspNetCore.Authentication.Cookies.ChunkingCookieManager.AppendResponseCookie(HttpContext context, String key, String value, CookieOptions options)\r\n   at Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationHandler.HandleSignInAsync(ClaimsPrincipal user, AuthenticationProperties properties)\r\n   at Microsoft.AspNetCore.Authentication.AuthenticationService.SignInAsync(HttpContext context, String scheme, ClaimsPrincipal principal, AuthenticationProperties properties)\r\n   at Microsoft.AspNetCore.Authentication.AuthenticationServiceImpl.SignInAsync(HttpContext context, String scheme, ClaimsPrincipal principal, AuthenticationProperties properties)\r\n   at MyBlog.Web.Components.Pages.Login.HandleLogin() in D:\\a\\dotnetcms\\dotnetcms\\src\\MyBlog.Web\\Components\\Pages\\Login.razor:line 81\r\n   at Microsoft.AspNetCore.Components.ComponentBase.CallStateHasChangedOnAsyncCompletion(Task task)\r\n   at Microsoft.AspNetCore.Components.RenderTree.Renderer.GetErrorHandledTask(Task taskToHandle, ComponentState owningComponentState)"
+},
+{
+  "Timestamp": "2025-12-28T21:44:40.1411496Z",
+  "Level": "Error",
+  "Category": "Microsoft.AspNetCore.Components.Server.Circuits.CircuitHost",
+  "Message": "Unhandled exception in circuit \u0027EmAadH5TWBQfBC2NMjOdmCifPEjHOhriY9plwBNDLoA\u0027.",
+  "TraceId": "ad6e3ee2945eb52062a8b3a6bca8f999",
+  "SpanId": "40919c696c9909b7",
+  "Exception": "System.InvalidOperationException: The response headers cannot be modified because the response has already started.\r\n   at Microsoft.AspNetCore.HttpSys.Internal.HeaderCollection.set_Item(String key, StringValues value)\r\n   at Microsoft.AspNetCore.Http.IHeaderDictionary.set_SetCookie(StringValues value)\r\n   at Microsoft.AspNetCore.Http.ResponseCookies.Append(String key, String value, CookieOptions options)\r\n   at Microsoft.AspNetCore.Authentication.Cookies.ChunkingCookieManager.AppendResponseCookie(HttpContext context, String key, String value, CookieOptions options)\r\n   at Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationHandler.HandleSignInAsync(ClaimsPrincipal user, AuthenticationProperties properties)\r\n   at Microsoft.AspNetCore.Authentication.AuthenticationService.SignInAsync(HttpContext context, String scheme, ClaimsPrincipal principal, AuthenticationProperties properties)\r\n   at Microsoft.AspNetCore.Authentication.AuthenticationServiceImpl.SignInAsync(HttpContext context, String scheme, ClaimsPrincipal principal, AuthenticationProperties properties)\r\n   at MyBlog.Web.Components.Pages.Login.HandleLogin() in D:\\a\\dotnetcms\\dotnetcms\\src\\MyBlog.Web\\Components\\Pages\\Login.razor:line 81\r\n   at Microsoft.AspNetCore.Components.ComponentBase.CallStateHasChangedOnAsyncCompletion(Task task)\r\n   at Microsoft.AspNetCore.Components.RenderTree.Renderer.GetErrorHandledTask(Task taskToHandle, ComponentState owningComponentState)"
+},
+{
+  "Timestamp": "2025-12-28T21:56:52.0714167Z",
+  "Level": "Information",
+  "Category": "Microsoft.Hosting.Lifetime",
+  "Message": "Application is shutting down...",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+}
+]

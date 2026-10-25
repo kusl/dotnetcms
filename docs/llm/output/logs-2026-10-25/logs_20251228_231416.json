@@ -1,0 +1,83 @@
+﻿[
+{
+  "Timestamp": "2025-12-28T23:14:18.3220318Z",
+  "Level": "Warning",
+  "Category": "Microsoft.AspNetCore.DataProtection.Repositories.EphemeralXmlRepository",
+  "Message": "Using an in-memory repository. Keys will not be persisted to storage.",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+},
+{
+  "Timestamp": "2025-12-28T23:14:18.3429648Z",
+  "Level": "Warning",
+  "Category": "Microsoft.AspNetCore.DataProtection.KeyManagement.XmlKeyManager",
+  "Message": "Neither user profile nor HKLM registry available. Using an ephemeral key repository. Protected data will be unavailable when application exits.",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+},
+{
+  "Timestamp": "2025-12-28T23:14:18.4509809Z",
+  "Level": "Warning",
+  "Category": "Microsoft.AspNetCore.DataProtection.KeyManagement.XmlKeyManager",
+  "Message": "No XML encryptor configured. Key {f541b318-0587-405d-bcee-dcb8f8f702cf} may be persisted to storage in unencrypted form.",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+},
+{
+  "Timestamp": "2025-12-28T23:14:18.6104522Z",
+  "Level": "Information",
+  "Category": "Microsoft.Hosting.Lifetime",
+  "Message": "Application started. Press Ctrl\u002BC to shut down.",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+},
+{
+  "Timestamp": "2025-12-28T23:14:18.6111034Z",
+  "Level": "Information",
+  "Category": "Microsoft.Hosting.Lifetime",
+  "Message": "Hosting environment: Production",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+},
+{
+  "Timestamp": "2025-12-28T23:14:18.6113523Z",
+  "Level": "Information",
+  "Category": "Microsoft.Hosting.Lifetime",
+  "Message": "Content root path: D:\\Sites\\site1561\\wwwroot",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+},
+{
+  "Timestamp": "2025-12-28T23:14:21.6833265Z",
+  "Level": "Warning",
+  "Category": "Microsoft.AspNetCore.Components.Server.Circuits.RemoteRenderer",
+  "Message": "Unhandled exception rendering component: The response headers cannot be modified because the response has already started.",
+  "TraceId": "b902ee4206d6f017eb5b8f2f91f79933",
+  "SpanId": "df2797805c40690e",
+  "Exception": "System.InvalidOperationException: The response headers cannot be modified because the response has already started.\r\n   at Microsoft.AspNetCore.HttpSys.Internal.HeaderCollection.ThrowIfReadOnly()\r\n   at Microsoft.AspNetCore.HttpSys.Internal.HeaderCollection.set_Item(String key, StringValues value)\r\n   at Microsoft.AspNetCore.Http.IHeaderDictionary.set_SetCookie(StringValues value)\r\n   at Microsoft.AspNetCore.Http.ResponseCookies.Append(String key, String value, CookieOptions options)\r\n   at Microsoft.AspNetCore.Authentication.Cookies.ChunkingCookieManager.AppendResponseCookie(HttpContext context, String key, String value, CookieOptions options)\r\n   at Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationHandler.HandleSignInAsync(ClaimsPrincipal user, AuthenticationProperties properties)\r\n   at Microsoft.AspNetCore.Authentication.AuthenticationService.SignInAsync(HttpContext context, String scheme, ClaimsPrincipal principal, AuthenticationProperties properties)\r\n   at Microsoft.AspNetCore.Authentication.AuthenticationServiceImpl.SignInAsync(HttpContext context, String scheme, ClaimsPrincipal principal, AuthenticationProperties properties)\r\n   at MyBlog.Web.Components.Pages.Login.HandleLogin() in D:\\a\\dotnetcms\\dotnetcms\\src\\MyBlog.Web\\Components\\Pages\\Login.razor:line 81\r\n   at Microsoft.AspNetCore.Components.ComponentBase.CallStateHasChangedOnAsyncCompletion(Task task)\r\n   at Microsoft.AspNetCore.Components.RenderTree.Renderer.GetErrorHandledTask(Task taskToHandle, ComponentState owningComponentState)"
+},
+{
+  "Timestamp": "2025-12-28T23:14:21.6980457Z",
+  "Level": "Error",
+  "Category": "Microsoft.AspNetCore.Components.Server.Circuits.CircuitHost",
+  "Message": "Unhandled exception in circuit \u00275bsHXY69HF0KeK48WugDkWgStgryuN_xLGxHXBDtzc0\u0027.",
+  "TraceId": "b902ee4206d6f017eb5b8f2f91f79933",
+  "SpanId": "df2797805c40690e",
+  "Exception": "System.InvalidOperationException: The response headers cannot be modified because the response has already started.\r\n   at Microsoft.AspNetCore.HttpSys.Internal.HeaderCollection.ThrowIfReadOnly()\r\n   at Microsoft.AspNetCore.HttpSys.Internal.HeaderCollection.set_Item(String key, StringValues value)\r\n   at Microsoft.AspNetCore.Http.IHeaderDictionary.set_SetCookie(StringValues value)\r\n   at Microsoft.AspNetCore.Http.ResponseCookies.Append(String key, String value, CookieOptions options)\r\n   at Microsoft.AspNetCore.Authentication.Cookies.ChunkingCookieManager.AppendResponseCookie(HttpContext context, String key, String value, CookieOptions options)\r\n   at Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationHandler.HandleSignInAsync(ClaimsPrincipal user, AuthenticationProperties properties)\r\n   at Microsoft.AspNetCore.Authentication.AuthenticationService.SignInAsync(HttpContext context, String scheme, ClaimsPrincipal principal, AuthenticationProperties properties)\r\n   at Microsoft.AspNetCore.Authentication.AuthenticationServiceImpl.SignInAsync(HttpContext context, String scheme, ClaimsPrincipal principal, AuthenticationProperties properties)\r\n   at MyBlog.Web.Components.Pages.Login.HandleLogin() in D:\\a\\dotnetcms\\dotnetcms\\src\\MyBlog.Web\\Components\\Pages\\Login.razor:line 81\r\n   at Microsoft.AspNetCore.Components.ComponentBase.CallStateHasChangedOnAsyncCompletion(Task task)\r\n   at Microsoft.AspNetCore.Components.RenderTree.Renderer.GetErrorHandledTask(Task taskToHandle, ComponentState owningComponentState)"
+},
+{
+  "Timestamp": "2025-12-28T23:45:17.1304206Z",
+  "Level": "Information",
+  "Category": "Microsoft.Hosting.Lifetime",
+  "Message": "Application is shutting down...",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+}
+]

@@ -1,0 +1,200 @@
+﻿[
+{
+  "Timestamp": "2025-12-31T03:19:22.5035271Z",
+  "Level": "Warning",
+  "Category": "Microsoft.AspNetCore.DataProtection.Repositories.EphemeralXmlRepository",
+  "Message": "Using an in-memory repository. Keys will not be persisted to storage.",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+},
+{
+  "Timestamp": "2025-12-31T03:19:22.5214695Z",
+  "Level": "Warning",
+  "Category": "Microsoft.AspNetCore.DataProtection.KeyManagement.XmlKeyManager",
+  "Message": "Neither user profile nor HKLM registry available. Using an ephemeral key repository. Protected data will be unavailable when application exits.",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+},
+{
+  "Timestamp": "2025-12-31T03:19:22.6523865Z",
+  "Level": "Warning",
+  "Category": "Microsoft.AspNetCore.DataProtection.KeyManagement.XmlKeyManager",
+  "Message": "No XML encryptor configured. Key {5263e1ac-daeb-4cfa-b691-a89b1b3f14fb} may be persisted to storage in unencrypted form.",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+},
+{
+  "Timestamp": "2025-12-31T03:19:22.8128065Z",
+  "Level": "Information",
+  "Category": "Microsoft.Hosting.Lifetime",
+  "Message": "Application started. Press Ctrl\u002BC to shut down.",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+},
+{
+  "Timestamp": "2025-12-31T03:19:22.8135888Z",
+  "Level": "Information",
+  "Category": "Microsoft.Hosting.Lifetime",
+  "Message": "Hosting environment: Production",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+},
+{
+  "Timestamp": "2025-12-31T03:19:22.8137870Z",
+  "Level": "Information",
+  "Category": "Microsoft.Hosting.Lifetime",
+  "Message": "Content root path: D:\\Sites\\site1561\\wwwroot",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+},
+{
+  "Timestamp": "2025-12-31T03:19:23.2643747Z",
+  "Level": "Error",
+  "Category": "Microsoft.AspNetCore.Antiforgery.DefaultAntiforgery",
+  "Message": "An exception was thrown while deserializing the token.",
+  "TraceId": "4a0dbfb65aa0e4c0d603b193cc5817ff",
+  "SpanId": "25de4b21e5bd1299",
+  "Exception": "Microsoft.AspNetCore.Antiforgery.AntiforgeryValidationException: The antiforgery token could not be decrypted.\r\n ---\u003E System.Security.Cryptography.CryptographicException: The key {35c9ccfd-dfac-4770-9379-7df8205157fa} was not found in the key ring. For more information go to https://aka.ms/aspnet/dataprotectionwarning\r\n   at Microsoft.AspNetCore.DataProtection.KeyManagement.KeyRingBasedDataProtector.UnprotectCore(Byte[] protectedData, Boolean allowOperationsOnRevokedKeys, UnprotectStatus\u0026 status)\r\n   at Microsoft.AspNetCore.DataProtection.KeyManagement.KeyRingBasedDataProtector.Unprotect(Byte[] protectedData)\r\n   at Microsoft.AspNetCore.Antiforgery.DefaultAntiforgeryTokenSerializer.Deserialize(String serializedToken)\r\n   --- End of inner exception stack trace ---\r\n   at Microsoft.AspNetCore.Antiforgery.DefaultAntiforgeryTokenSerializer.Deserialize(String serializedToken)\r\n   at Microsoft.AspNetCore.Antiforgery.DefaultAntiforgery.GetCookieTokenDoesNotThrow(HttpContext httpContext)"
+},
+{
+  "Timestamp": "2025-12-31T03:20:37.7352971Z",
+  "Level": "Error",
+  "Category": "Microsoft.AspNetCore.Server.IIS.Core.IISHttpServer",
+  "Message": "Connection ID \u002213330663702504932110\u0022, Request ID \u00224000030f-0802-b900-b63f-84710c7967bb\u0022: An unhandled exception was thrown by the application.",
+  "TraceId": "7f76079ed1a6d5ca8dbb93d89387155d",
+  "SpanId": "9c880625f99c0430",
+  "Exception": "Microsoft.AspNetCore.Routing.Matching.AmbiguousMatchException: The request matched multiple endpoints. Matches: \r\n\r\nHTTP: POST /logout\r\n/logout (/logout)\r\n   at Microsoft.AspNetCore.Routing.Matching.DefaultEndpointSelector.ReportAmbiguity(Span\u00601 candidateState)\r\n   at Microsoft.AspNetCore.Routing.Matching.DefaultEndpointSelector.ProcessFinalCandidates(HttpContext httpContext, Span\u00601 candidateState)\r\n   at Microsoft.AspNetCore.Routing.Matching.DefaultEndpointSelector.Select(HttpContext httpContext, Span\u00601 candidateState)\r\n   at Microsoft.AspNetCore.Routing.Matching.DfaMatcher.MatchAsync(HttpContext httpContext)\r\n   at Microsoft.AspNetCore.Routing.EndpointRoutingMiddleware.Invoke(HttpContext httpContext)\r\n   at Microsoft.AspNetCore.HostFiltering.HostFilteringMiddleware.Invoke(HttpContext context)\r\n   at Microsoft.AspNetCore.Hosting.HostingApplication.ProcessRequestAsync(Context context)\r\n   at Microsoft.AspNetCore.Server.IIS.Core.IISHttpContextOfT\u00601.ProcessRequestAsync()"
+},
+{
+  "Timestamp": "2025-12-31T03:22:15.9834695Z",
+  "Level": "Error",
+  "Category": "Microsoft.AspNetCore.Server.IIS.Core.IISHttpServer",
+  "Message": "Connection ID \u0022432354365420864016\u0022, Request ID \u002240000211-0801-0600-b63f-84710c7967bb\u0022: An unhandled exception was thrown by the application.",
+  "TraceId": "c0343ef49d0db9ec348ec806e9d5b7f2",
+  "SpanId": "4d46d796487d55bd",
+  "Exception": "Microsoft.AspNetCore.Routing.Matching.AmbiguousMatchException: The request matched multiple endpoints. Matches: \r\n\r\nHTTP: POST /logout\r\n/logout (/logout)\r\n   at Microsoft.AspNetCore.Routing.Matching.DefaultEndpointSelector.ReportAmbiguity(Span\u00601 candidateState)\r\n   at Microsoft.AspNetCore.Routing.Matching.DefaultEndpointSelector.ProcessFinalCandidates(HttpContext httpContext, Span\u00601 candidateState)\r\n   at Microsoft.AspNetCore.Routing.Matching.DefaultEndpointSelector.Select(HttpContext httpContext, Span\u00601 candidateState)\r\n   at Microsoft.AspNetCore.Routing.Matching.DfaMatcher.MatchAsync(HttpContext httpContext)\r\n   at Microsoft.AspNetCore.Routing.Matching.DataSourceDependentMatcher.MatchAsync(HttpContext httpContext)\r\n   at Microsoft.AspNetCore.Routing.EndpointRoutingMiddleware.Invoke(HttpContext httpContext)\r\n   at Microsoft.AspNetCore.HostFiltering.HostFilteringMiddleware.Invoke(HttpContext context)\r\n   at Microsoft.AspNetCore.Hosting.HostingApplication.ProcessRequestAsync(Context context)\r\n   at Microsoft.AspNetCore.Server.IIS.Core.IISHttpContextOfT\u00601.ProcessRequestAsync()"
+},
+{
+  "Timestamp": "2025-12-31T03:24:00.7257576Z",
+  "Level": "Error",
+  "Category": "Microsoft.AspNetCore.Server.IIS.Core.IISHttpServer",
+  "Message": "Connection ID \u00223674946105717555463\u0022, Request ID \u002240000108-0803-3300-b63f-84710c7967bb\u0022: An unhandled exception was thrown by the application.",
+  "TraceId": "70161ebca808dc8f11a14b4c8b1142df",
+  "SpanId": "c0e37ade2a8665c3",
+  "Exception": "Microsoft.AspNetCore.Routing.Matching.AmbiguousMatchException: The request matched multiple endpoints. Matches: \r\n\r\nHTTP: POST /logout\r\n/logout (/logout)\r\n   at Microsoft.AspNetCore.Routing.Matching.DefaultEndpointSelector.ReportAmbiguity(Span\u00601 candidateState)\r\n   at Microsoft.AspNetCore.Routing.Matching.DefaultEndpointSelector.ProcessFinalCandidates(HttpContext httpContext, Span\u00601 candidateState)\r\n   at Microsoft.AspNetCore.Routing.Matching.DefaultEndpointSelector.Select(HttpContext httpContext, Span\u00601 candidateState)\r\n   at Microsoft.AspNetCore.Routing.Matching.DfaMatcher.MatchAsync(HttpContext httpContext)\r\n   at Microsoft.AspNetCore.Server.IIS.Core.IISHttpContextOfT\u00601.ProcessRequestAsync()"
+},
+{
+  "Timestamp": "2025-12-31T03:24:57.4615238Z",
+  "Level": "Error",
+  "Category": "Microsoft.AspNetCore.Server.IIS.Core.IISHttpServer",
+  "Message": "Connection ID \u00224179349263983051312\u0022, Request ID \u002240000231-0803-3a00-b63f-84710c7967bb\u0022: An unhandled exception was thrown by the application.",
+  "TraceId": "48a633a6c8fdb775893c710ce427cd5c",
+  "SpanId": "2e0b155681e941ba",
+  "Exception": "Microsoft.AspNetCore.Routing.Matching.AmbiguousMatchException: The request matched multiple endpoints. Matches: \r\n\r\nHTTP: POST /logout\r\n/logout (/logout)\r\n   at Microsoft.AspNetCore.Routing.Matching.DefaultEndpointSelector.ReportAmbiguity(Span\u00601 candidateState)\r\n   at Microsoft.AspNetCore.Routing.Matching.DefaultEndpointSelector.ProcessFinalCandidates(HttpContext httpContext, Span\u00601 candidateState)\r\n   at Microsoft.AspNetCore.Routing.Matching.DefaultEndpointSelector.Select(HttpContext httpContext, Span\u00601 candidateState)\r\n   at Microsoft.AspNetCore.Routing.Matching.DfaMatcher.MatchAsync(HttpContext httpContext)\r\n   at Microsoft.AspNetCore.Server.IIS.Core.IISHttpContextOfT\u00601.ProcessRequestAsync()"
+},
+{
+  "Timestamp": "2025-12-31T03:25:00.4515393Z",
+  "Level": "Error",
+  "Category": "Microsoft.AspNetCore.Server.IIS.Core.IISHttpServer",
+  "Message": "Connection ID \u002217437946554076889904\u0022, Request ID \u002240000331-0800-f200-b63f-84710c7967bb\u0022: An unhandled exception was thrown by the application.",
+  "TraceId": "e4241f4364528f218f3c75b1e2e56a94",
+  "SpanId": "fd920ca2b0c2f19b",
+  "Exception": "Microsoft.AspNetCore.Routing.Matching.AmbiguousMatchException: The request matched multiple endpoints. Matches: \r\n\r\nHTTP: POST /logout\r\n/logout (/logout)\r\n   at Microsoft.AspNetCore.Routing.Matching.DefaultEndpointSelector.ReportAmbiguity(Span\u00601 candidateState)\r\n   at Microsoft.AspNetCore.Routing.Matching.DefaultEndpointSelector.ProcessFinalCandidates(HttpContext httpContext, Span\u00601 candidateState)\r\n   at Microsoft.AspNetCore.Routing.Matching.DefaultEndpointSelector.Select(HttpContext httpContext, Span\u00601 candidateState)\r\n   at Microsoft.AspNetCore.Routing.Matching.DfaMatcher.MatchAsync(HttpContext httpContext)\r\n   at Microsoft.AspNetCore.Server.IIS.Core.IISHttpContextOfT\u00601.ProcessRequestAsync()"
+},
+{
+  "Timestamp": "2025-12-31T03:27:54.7152401Z",
+  "Level": "Information",
+  "Category": "MyBlog.Web.Middleware.LoginRateLimitMiddleware",
+  "Message": "Rate limiting login attempt from 24.182.102.163, delaying 1s",
+  "TraceId": "eb60ff49ff9a027348bf8ce82517d583",
+  "SpanId": "d5cba1e123cc8fa1",
+  "Exception": null
+},
+{
+  "Timestamp": "2025-12-31T03:28:00.0472760Z",
+  "Level": "Information",
+  "Category": "MyBlog.Web.Middleware.LoginRateLimitMiddleware",
+  "Message": "Rate limiting login attempt from 24.182.102.163, delaying 2s",
+  "TraceId": "9b314ca5c196e798e485e8b094a5231c",
+  "SpanId": "3abc05ace9f18fc3",
+  "Exception": null
+},
+{
+  "Timestamp": "2025-12-31T03:28:07.3705047Z",
+  "Level": "Information",
+  "Category": "MyBlog.Web.Middleware.LoginRateLimitMiddleware",
+  "Message": "Rate limiting login attempt from 24.182.102.163, delaying 4s",
+  "TraceId": "90e845007c99c397e8c758f232626e08",
+  "SpanId": "a4105493afafae82",
+  "Exception": null
+},
+{
+  "Timestamp": "2025-12-31T03:28:14.2803575Z",
+  "Level": "Information",
+  "Category": "MyBlog.Web.Middleware.LoginRateLimitMiddleware",
+  "Message": "Rate limiting login attempt from 24.182.102.163, delaying 8s",
+  "TraceId": "9326c25caf564a5fc5806272bee610d3",
+  "SpanId": "eb37927d9ef5d98a",
+  "Exception": null
+},
+{
+  "Timestamp": "2025-12-31T03:28:21.8104694Z",
+  "Level": "Information",
+  "Category": "MyBlog.Web.Middleware.LoginRateLimitMiddleware",
+  "Message": "Rate limiting login attempt from 24.182.102.163, delaying 8s",
+  "TraceId": "8ac06f89b585da6766e3dd797403996d",
+  "SpanId": "a87755976d40d036",
+  "Exception": null
+},
+{
+  "Timestamp": "2025-12-31T03:28:25.8424854Z",
+  "Level": "Information",
+  "Category": "MyBlog.Web.Middleware.LoginRateLimitMiddleware",
+  "Message": "Rate limiting login attempt from 24.182.102.163, delaying 8s",
+  "TraceId": "4f282676bbcbbf67eaa3a84e08fffaf8",
+  "SpanId": "476178f4f23e8903",
+  "Exception": null
+},
+{
+  "Timestamp": "2025-12-31T03:28:26.6994925Z",
+  "Level": "Information",
+  "Category": "MyBlog.Web.Middleware.LoginRateLimitMiddleware",
+  "Message": "Rate limiting login attempt from 24.182.102.163, delaying 8s",
+  "TraceId": "53b7f4b727a58f120dadd00fc5edba9a",
+  "SpanId": "315199e653bc4569",
+  "Exception": null
+},
+{
+  "Timestamp": "2025-12-31T03:28:27.1827329Z",
+  "Level": "Information",
+  "Category": "MyBlog.Web.Middleware.LoginRateLimitMiddleware",
+  "Message": "Rate limiting login attempt from 24.182.102.163, delaying 8s",
+  "TraceId": "8a229fed7b710d742265dd45c550bf4f",
+  "SpanId": "a28e5adfac5a7de1",
+  "Exception": null
+},
+{
+  "Timestamp": "2025-12-31T03:28:27.4094109Z",
+  "Level": "Information",
+  "Category": "MyBlog.Web.Middleware.LoginRateLimitMiddleware",
+  "Message": "Rate limiting login attempt from 24.182.102.163, delaying 8s",
+  "TraceId": "cc647e62b1d6bfa90be6116a848be1f2",
+  "SpanId": "f5076f06ee411c44",
+  "Exception": null
+},
+{
+  "Timestamp": "2025-12-31T04:02:49.8571249Z",
+  "Level": "Information",
+  "Category": "Microsoft.Hosting.Lifetime",
+  "Message": "Application is shutting down...",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+}
+]

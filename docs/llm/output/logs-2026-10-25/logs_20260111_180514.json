@@ -1,0 +1,119 @@
+﻿[
+{
+  "Timestamp": "2026-01-11T18:05:16.1172830Z",
+  "Level": "Warning",
+  "Category": "Microsoft.AspNetCore.DataProtection.Repositories.EphemeralXmlRepository",
+  "Message": "Using an in-memory repository. Keys will not be persisted to storage.",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+},
+{
+  "Timestamp": "2026-01-11T18:05:16.1361788Z",
+  "Level": "Warning",
+  "Category": "Microsoft.AspNetCore.DataProtection.KeyManagement.XmlKeyManager",
+  "Message": "Neither user profile nor HKLM registry available. Using an ephemeral key repository. Protected data will be unavailable when application exits.",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+},
+{
+  "Timestamp": "2026-01-11T18:05:16.2403059Z",
+  "Level": "Warning",
+  "Category": "Microsoft.AspNetCore.DataProtection.KeyManagement.XmlKeyManager",
+  "Message": "No XML encryptor configured. Key {2eda4ab1-425e-49e6-ad3f-239e34cc9f68} may be persisted to storage in unencrypted form.",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+},
+{
+  "Timestamp": "2026-01-11T18:05:16.3802448Z",
+  "Level": "Information",
+  "Category": "Microsoft.Hosting.Lifetime",
+  "Message": "Application started. Press Ctrl\u002BC to shut down.",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+},
+{
+  "Timestamp": "2026-01-11T18:05:16.3810089Z",
+  "Level": "Information",
+  "Category": "Microsoft.Hosting.Lifetime",
+  "Message": "Hosting environment: Production",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+},
+{
+  "Timestamp": "2026-01-11T18:05:16.3813156Z",
+  "Level": "Information",
+  "Category": "Microsoft.Hosting.Lifetime",
+  "Message": "Content root path: D:\\Sites\\site1561\\wwwroot",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+},
+{
+  "Timestamp": "2026-01-11T18:05:45.2661463Z",
+  "Level": "Information",
+  "Category": "MyBlog.Web.Middleware.LoginRateLimitMiddleware",
+  "Message": "Rate limiting login attempt from 108.11.180.130, delaying 1s",
+  "TraceId": "1a22a9b793a1d778364e4006a85d6e77",
+  "SpanId": "d9c1cca8760e02de",
+  "Exception": null
+},
+{
+  "Timestamp": "2026-01-11T18:05:49.7057144Z",
+  "Level": "Information",
+  "Category": "MyBlog.Web.Middleware.LoginRateLimitMiddleware",
+  "Message": "Rate limiting login attempt from 108.11.180.130, delaying 2s",
+  "TraceId": "bd0bc9b671998b237ef6c24fd47fd329",
+  "SpanId": "af585860b824f116",
+  "Exception": null
+},
+{
+  "Timestamp": "2026-01-11T18:05:56.2931478Z",
+  "Level": "Information",
+  "Category": "MyBlog.Web.Middleware.LoginRateLimitMiddleware",
+  "Message": "Rate limiting login attempt from 108.11.180.130, delaying 4s",
+  "TraceId": "993ed762897225333865174c79659b7f",
+  "SpanId": "6db1c03b86199f9e",
+  "Exception": null
+},
+{
+  "Timestamp": "2026-01-11T18:06:04.6812302Z",
+  "Level": "Information",
+  "Category": "MyBlog.Web.Middleware.LoginRateLimitMiddleware",
+  "Message": "Rate limiting login attempt from 108.11.180.130, delaying 8s",
+  "TraceId": "e4d09ab7c77c778826fdc8e94ff33047",
+  "SpanId": "c9302cf3eb6dcad1",
+  "Exception": null
+},
+{
+  "Timestamp": "2026-01-11T18:06:29.8271798Z",
+  "Level": "Information",
+  "Category": "MyBlog.Web.Middleware.LoginRateLimitMiddleware",
+  "Message": "Rate limiting login attempt from 108.11.180.130, delaying 16s",
+  "TraceId": "4acf936e63174375b1b2b2047281b4a5",
+  "SpanId": "d6429859572fbbc4",
+  "Exception": null
+},
+{
+  "Timestamp": "2026-01-11T18:09:11.5528255Z",
+  "Level": "Information",
+  "Category": "MyBlog.Web.Middleware.LoginRateLimitMiddleware",
+  "Message": "Rate limiting login attempt from 108.11.180.130, delaying 30s",
+  "TraceId": "0c5f3a87728cd8692caba8d71a4a151e",
+  "SpanId": "3df0c39215468e64",
+  "Exception": null
+},
+{
+  "Timestamp": "2026-01-11T18:40:14.7459333Z",
+  "Level": "Information",
+  "Category": "Microsoft.Hosting.Lifetime",
+  "Message": "Application is shutting down...",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+}
+]

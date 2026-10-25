@@ -1,0 +1,110 @@
+﻿[
+{
+  "Timestamp": "2026-01-20T01:18:36.7970942Z",
+  "Level": "Warning",
+  "Category": "Microsoft.AspNetCore.DataProtection.Repositories.EphemeralXmlRepository",
+  "Message": "Using an in-memory repository. Keys will not be persisted to storage.",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+},
+{
+  "Timestamp": "2026-01-20T01:18:36.8198988Z",
+  "Level": "Warning",
+  "Category": "Microsoft.AspNetCore.DataProtection.KeyManagement.XmlKeyManager",
+  "Message": "Neither user profile nor HKLM registry available. Using an ephemeral key repository. Protected data will be unavailable when application exits.",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+},
+{
+  "Timestamp": "2026-01-20T01:18:36.9826889Z",
+  "Level": "Warning",
+  "Category": "Microsoft.AspNetCore.DataProtection.KeyManagement.XmlKeyManager",
+  "Message": "No XML encryptor configured. Key {c37b696d-b805-4df2-949f-2196bd898976} may be persisted to storage in unencrypted form.",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+},
+{
+  "Timestamp": "2026-01-20T01:18:36.9997157Z",
+  "Level": "Information",
+  "Category": "MyBlog.Infrastructure.Services.ImageCacheWarmerService",
+  "Message": "Image Cache Warmer started. Scanning posts for uncached images...",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+},
+{
+  "Timestamp": "2026-01-20T01:18:37.1050343Z",
+  "Level": "Error",
+  "Category": "Microsoft.EntityFrameworkCore.Database.Command",
+  "Message": "Failed executing DbCommand (2ms) [Parameters=[], CommandType=\u0027Text\u0027, CommandTimeout=\u002730\u0027]\r\nSELECT \u0022i\u0022.\u0022Url\u0022\r\nFROM \u0022ImageDimensionCache\u0022 AS \u0022i\u0022",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+},
+{
+  "Timestamp": "2026-01-20T01:18:37.1140345Z",
+  "Level": "Information",
+  "Category": "Microsoft.Hosting.Lifetime",
+  "Message": "Application started. Press Ctrl\u002BC to shut down.",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+},
+{
+  "Timestamp": "2026-01-20T01:18:37.1143666Z",
+  "Level": "Information",
+  "Category": "Microsoft.Hosting.Lifetime",
+  "Message": "Hosting environment: Production",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+},
+{
+  "Timestamp": "2026-01-20T01:18:37.1144815Z",
+  "Level": "Information",
+  "Category": "Microsoft.Hosting.Lifetime",
+  "Message": "Content root path: D:\\Sites\\site1561\\wwwroot",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+},
+{
+  "Timestamp": "2026-01-20T01:18:37.1232163Z",
+  "Level": "Error",
+  "Category": "Microsoft.EntityFrameworkCore.Query",
+  "Message": "An exception occurred while iterating over the results of a query for context type \u0027MyBlog.Infrastructure.Data.BlogDbContext\u0027.\r\nMicrosoft.Data.Sqlite.SqliteException (0x80004005): SQLite Error 1: \u0027no such table: ImageDimensionCache\u0027.\r\n   at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)\r\n   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()\u002BMoveNext()\r\n   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()\u002BMoveNext()\r\n   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()\r\n   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)\r\n   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)\r\n   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)\r\n   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)\r\n   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)\r\n   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable\u00601.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)\r\n   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable\u00601.AsyncEnumerator.MoveNextAsync()",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": "Microsoft.Data.Sqlite.SqliteException (0x80004005): SQLite Error 1: \u0027no such table: ImageDimensionCache\u0027.\r\n   at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)\r\n   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()\u002BMoveNext()\r\n   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()\u002BMoveNext()\r\n   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()\r\n   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)\r\n   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)\r\n   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)\r\n   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)\r\n   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)\r\n   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable\u00601.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)\r\n   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable\u00601.AsyncEnumerator.MoveNextAsync()\r\n   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable\u00601 source, CancellationToken cancellationToken)\r\n   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable\u00601 source, CancellationToken cancellationToken)\r\n   at MyBlog.Infrastructure.Services.ImageCacheWarmerService.ExecuteAsync(CancellationToken stoppingToken) in D:\\a\\dotnetcms\\dotnetcms\\src\\MyBlog.Infrastructure\\Services\\ImageCacheWarmerService.cs:line 62"
+},
+{
+  "Timestamp": "2026-01-20T01:18:37.1292046Z",
+  "Level": "Error",
+  "Category": "MyBlog.Infrastructure.Services.ImageCacheWarmerService",
+  "Message": "Error in Image Cache Warmer",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": "Microsoft.Data.Sqlite.SqliteException (0x80004005): SQLite Error 1: \u0027no such table: ImageDimensionCache\u0027.\r\n   at Microsoft.Data.Sqlite.SqliteException.ThrowExceptionForRC(Int32 rc, sqlite3 db)\r\n   at Microsoft.Data.Sqlite.SqliteCommand.PrepareAndEnumerateStatements()\u002BMoveNext()\r\n   at Microsoft.Data.Sqlite.SqliteCommand.GetStatements()\u002BMoveNext()\r\n   at Microsoft.Data.Sqlite.SqliteDataReader.NextResult()\r\n   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReader(CommandBehavior behavior)\r\n   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)\r\n   at Microsoft.Data.Sqlite.SqliteCommand.ExecuteDbDataReaderAsync(CommandBehavior behavior, CancellationToken cancellationToken)\r\n   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)\r\n   at Microsoft.EntityFrameworkCore.Storage.RelationalCommand.ExecuteReaderAsync(RelationalCommandParameterObject parameterObject, CancellationToken cancellationToken)\r\n   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable\u00601.AsyncEnumerator.InitializeReaderAsync(AsyncEnumerator enumerator, CancellationToken cancellationToken)\r\n   at Microsoft.EntityFrameworkCore.Query.Internal.SingleQueryingEnumerable\u00601.AsyncEnumerator.MoveNextAsync()\r\n   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable\u00601 source, CancellationToken cancellationToken)\r\n   at Microsoft.EntityFrameworkCore.EntityFrameworkQueryableExtensions.ToListAsync[TSource](IQueryable\u00601 source, CancellationToken cancellationToken)\r\n   at MyBlog.Infrastructure.Services.ImageCacheWarmerService.ExecuteAsync(CancellationToken stoppingToken) in D:\\a\\dotnetcms\\dotnetcms\\src\\MyBlog.Infrastructure\\Services\\ImageCacheWarmerService.cs:line 62"
+},
+{
+  "Timestamp": "2026-01-20T01:18:37.4257372Z",
+  "Level": "Error",
+  "Category": "Microsoft.AspNetCore.Antiforgery.DefaultAntiforgery",
+  "Message": "An exception was thrown while deserializing the token.",
+  "TraceId": "60d61c0fb0d057b777356b15fab0d7bc",
+  "SpanId": "620eb0677a49c1f8",
+  "Exception": "Microsoft.AspNetCore.Antiforgery.AntiforgeryValidationException: The antiforgery token could not be decrypted.\r\n ---\u003E System.Security.Cryptography.CryptographicException: The key {1308a5e7-8709-444c-ab67-8ff716ecb6aa} was not found in the key ring. For more information go to https://aka.ms/aspnet/dataprotectionwarning\r\n   at Microsoft.AspNetCore.DataProtection.KeyManagement.KeyRingBasedDataProtector.UnprotectCore(Byte[] protectedData, Boolean allowOperationsOnRevokedKeys, UnprotectStatus\u0026 status)\r\n   at Microsoft.AspNetCore.DataProtection.KeyManagement.KeyRingBasedDataProtector.Unprotect(Byte[] protectedData)\r\n   at Microsoft.AspNetCore.Antiforgery.DefaultAntiforgeryTokenSerializer.Deserialize(String serializedToken)\r\n   --- End of inner exception stack trace ---\r\n   at Microsoft.AspNetCore.Antiforgery.DefaultAntiforgeryTokenSerializer.Deserialize(String serializedToken)\r\n   at Microsoft.AspNetCore.Antiforgery.DefaultAntiforgery.GetCookieTokenDoesNotThrow(HttpContext httpContext)"
+},
+{
+  "Timestamp": "2026-01-20T01:31:19.0930956Z",
+  "Level": "Information",
+  "Category": "Microsoft.Hosting.Lifetime",
+  "Message": "Application is shutting down...",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+}
+]

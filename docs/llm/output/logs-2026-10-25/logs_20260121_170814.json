@@ -1,0 +1,200 @@
+﻿[
+{
+  "Timestamp": "2026-01-21T17:08:16.4590404Z",
+  "Level": "Warning",
+  "Category": "Microsoft.AspNetCore.DataProtection.Repositories.EphemeralXmlRepository",
+  "Message": "Using an in-memory repository. Keys will not be persisted to storage.",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+},
+{
+  "Timestamp": "2026-01-21T17:08:16.4786065Z",
+  "Level": "Warning",
+  "Category": "Microsoft.AspNetCore.DataProtection.KeyManagement.XmlKeyManager",
+  "Message": "Neither user profile nor HKLM registry available. Using an ephemeral key repository. Protected data will be unavailable when application exits.",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+},
+{
+  "Timestamp": "2026-01-21T17:08:16.6619105Z",
+  "Level": "Warning",
+  "Category": "Microsoft.AspNetCore.DataProtection.KeyManagement.XmlKeyManager",
+  "Message": "No XML encryptor configured. Key {419143b5-1726-4fc9-a818-2c379350cd09} may be persisted to storage in unencrypted form.",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+},
+{
+  "Timestamp": "2026-01-21T17:08:16.7863202Z",
+  "Level": "Information",
+  "Category": "Microsoft.Hosting.Lifetime",
+  "Message": "Application started. Press Ctrl\u002BC to shut down.",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+},
+{
+  "Timestamp": "2026-01-21T17:08:16.7870066Z",
+  "Level": "Information",
+  "Category": "Microsoft.Hosting.Lifetime",
+  "Message": "Hosting environment: Production",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+},
+{
+  "Timestamp": "2026-01-21T17:08:16.7873209Z",
+  "Level": "Information",
+  "Category": "Microsoft.Hosting.Lifetime",
+  "Message": "Content root path: D:\\Sites\\site1561\\wwwroot",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+},
+{
+  "Timestamp": "2026-01-21T17:08:21.6691882Z",
+  "Level": "Information",
+  "Category": "MyBlog.Infrastructure.Services.ImageCacheWarmerService",
+  "Message": "Image Cache Warmer started. Scanning posts for uncached images...",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+},
+{
+  "Timestamp": "2026-01-21T17:08:21.6904372Z",
+  "Level": "Information",
+  "Category": "MyBlog.Infrastructure.Services.ImageCacheWarmerService",
+  "Message": "Image Cache Warmer: Found 3 uncached images. Fetching dimensions...",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+},
+{
+  "Timestamp": "2026-01-21T17:08:21.7743063Z",
+  "Level": "Information",
+  "Category": "System.Net.Http.HttpClient.IImageDimensionService.LogicalHandler",
+  "Message": "Start processing HTTP request GET https://level1techs.us-east-1.linodeobjects.com/original/4X/e/c/f/ecfbf9a7c0d7b82ee469a3ee40e727c2cbadd4b0.jpeg",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+},
+{
+  "Timestamp": "2026-01-21T17:08:21.7774590Z",
+  "Level": "Information",
+  "Category": "System.Net.Http.HttpClient.IImageDimensionService.ClientHandler",
+  "Message": "Sending HTTP request GET https://level1techs.us-east-1.linodeobjects.com/original/4X/e/c/f/ecfbf9a7c0d7b82ee469a3ee40e727c2cbadd4b0.jpeg",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+},
+{
+  "Timestamp": "2026-01-21T17:08:22.2191470Z",
+  "Level": "Information",
+  "Category": "System.Net.Http.HttpClient.IImageDimensionService.ClientHandler",
+  "Message": "Received HTTP response headers after 434.9504ms - 200",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+},
+{
+  "Timestamp": "2026-01-21T17:08:22.2209357Z",
+  "Level": "Information",
+  "Category": "System.Net.Http.HttpClient.IImageDimensionService.LogicalHandler",
+  "Message": "End processing HTTP request after 452.4476ms - 200",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+},
+{
+  "Timestamp": "2026-01-21T17:08:22.3443223Z",
+  "Level": "Information",
+  "Category": "System.Net.Http.HttpClient.IImageDimensionService.LogicalHandler",
+  "Message": "Start processing HTTP request GET https://res.cloudinary.com/dvjcceuln/image/upload/v1710455808/samples/balloons.jpg",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+},
+{
+  "Timestamp": "2026-01-21T17:08:22.3445670Z",
+  "Level": "Information",
+  "Category": "System.Net.Http.HttpClient.IImageDimensionService.ClientHandler",
+  "Message": "Sending HTTP request GET https://res.cloudinary.com/dvjcceuln/image/upload/v1710455808/samples/balloons.jpg",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+},
+{
+  "Timestamp": "2026-01-21T17:08:22.7372345Z",
+  "Level": "Information",
+  "Category": "System.Net.Http.HttpClient.IImageDimensionService.ClientHandler",
+  "Message": "Received HTTP response headers after 392.3759ms - 200",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+},
+{
+  "Timestamp": "2026-01-21T17:08:22.7374031Z",
+  "Level": "Information",
+  "Category": "System.Net.Http.HttpClient.IImageDimensionService.LogicalHandler",
+  "Message": "End processing HTTP request after 393.2346ms - 200",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+},
+{
+  "Timestamp": "2026-01-21T17:08:22.8422166Z",
+  "Level": "Information",
+  "Category": "System.Net.Http.HttpClient.IImageDimensionService.LogicalHandler",
+  "Message": "Start processing HTTP request GET https://res.cloudinary.com/dvjcceuln/image/upload/v1710455813/samples/coffee.jpg",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+},
+{
+  "Timestamp": "2026-01-21T17:08:22.8425059Z",
+  "Level": "Information",
+  "Category": "System.Net.Http.HttpClient.IImageDimensionService.ClientHandler",
+  "Message": "Sending HTTP request GET https://res.cloudinary.com/dvjcceuln/image/upload/v1710455813/samples/coffee.jpg",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+},
+{
+  "Timestamp": "2026-01-21T17:08:22.8863757Z",
+  "Level": "Information",
+  "Category": "System.Net.Http.HttpClient.IImageDimensionService.ClientHandler",
+  "Message": "Received HTTP response headers after 43.6524ms - 200",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+},
+{
+  "Timestamp": "2026-01-21T17:08:22.8865473Z",
+  "Level": "Information",
+  "Category": "System.Net.Http.HttpClient.IImageDimensionService.LogicalHandler",
+  "Message": "End processing HTTP request after 44.3858ms - 200",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+},
+{
+  "Timestamp": "2026-01-21T17:08:22.9810621Z",
+  "Level": "Information",
+  "Category": "MyBlog.Infrastructure.Services.ImageCacheWarmerService",
+  "Message": "Image Cache Warmer completed. Cached: 0, Failed: 3",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+},
+{
+  "Timestamp": "2026-01-21T17:33:13.9183546Z",
+  "Level": "Information",
+  "Category": "Microsoft.Hosting.Lifetime",
+  "Message": "Application is shutting down...",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+}
+]

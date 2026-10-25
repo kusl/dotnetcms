@@ -1,0 +1,92 @@
+﻿[
+{
+  "Timestamp": "2026-01-01T02:08:17.7600166Z",
+  "Level": "Warning",
+  "Category": "Microsoft.AspNetCore.DataProtection.Repositories.EphemeralXmlRepository",
+  "Message": "Using an in-memory repository. Keys will not be persisted to storage.",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+},
+{
+  "Timestamp": "2026-01-01T02:08:17.7791753Z",
+  "Level": "Warning",
+  "Category": "Microsoft.AspNetCore.DataProtection.KeyManagement.XmlKeyManager",
+  "Message": "Neither user profile nor HKLM registry available. Using an ephemeral key repository. Protected data will be unavailable when application exits.",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+},
+{
+  "Timestamp": "2026-01-01T02:08:17.8847998Z",
+  "Level": "Warning",
+  "Category": "Microsoft.AspNetCore.DataProtection.KeyManagement.XmlKeyManager",
+  "Message": "No XML encryptor configured. Key {a499e53e-f5b7-49a3-b2fc-2147a87d5735} may be persisted to storage in unencrypted form.",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+},
+{
+  "Timestamp": "2026-01-01T02:08:18.0303001Z",
+  "Level": "Information",
+  "Category": "Microsoft.Hosting.Lifetime",
+  "Message": "Application started. Press Ctrl\u002BC to shut down.",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+},
+{
+  "Timestamp": "2026-01-01T02:08:18.0309655Z",
+  "Level": "Information",
+  "Category": "Microsoft.Hosting.Lifetime",
+  "Message": "Hosting environment: Production",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+},
+{
+  "Timestamp": "2026-01-01T02:08:18.0313310Z",
+  "Level": "Information",
+  "Category": "Microsoft.Hosting.Lifetime",
+  "Message": "Content root path: D:\\Sites\\site1561\\wwwroot",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+},
+{
+  "Timestamp": "2026-01-01T02:08:28.6477951Z",
+  "Level": "Error",
+  "Category": "Microsoft.AspNetCore.Server.IIS.Core.IISHttpServer",
+  "Message": "Connection ID \u002211168935881367093769\u0022, Request ID \u00224000020a-0802-9b00-b63f-84710c7967bb\u0022: An unhandled exception was thrown by the application.",
+  "TraceId": "00ea6dd76e94e8df540233204addb1ff",
+  "SpanId": "8e811dd71f00923f",
+  "Exception": "Microsoft.AspNetCore.Routing.Matching.AmbiguousMatchException: The request matched multiple endpoints. Matches: \r\n\r\nHTTP: POST /logout\r\n/logout (/logout)\r\n   at Microsoft.AspNetCore.Routing.Matching.DefaultEndpointSelector.ReportAmbiguity(Span\u00601 candidateState)\r\n   at Microsoft.AspNetCore.Routing.Matching.DefaultEndpointSelector.ProcessFinalCandidates(HttpContext httpContext, Span\u00601 candidateState)\r\n   at Microsoft.AspNetCore.Routing.Matching.DefaultEndpointSelector.Select(HttpContext httpContext, Span\u00601 candidateState)\r\n   at Microsoft.AspNetCore.Routing.Matching.DfaMatcher.MatchAsync(HttpContext httpContext)\r\n   at Microsoft.AspNetCore.Routing.EndpointRoutingMiddleware.Invoke(HttpContext httpContext)\r\n   at Microsoft.AspNetCore.HostFiltering.HostFilteringMiddleware.Invoke(HttpContext context)\r\n   at Microsoft.AspNetCore.Hosting.HostingApplication.ProcessRequestAsync(Context context)\r\n   at Microsoft.AspNetCore.Server.IIS.Core.IISHttpContextOfT\u00601.ProcessRequestAsync()"
+},
+{
+  "Timestamp": "2026-01-01T02:08:50.5350459Z",
+  "Level": "Error",
+  "Category": "Microsoft.AspNetCore.Server.IIS.Core.IISHttpServer",
+  "Message": "Connection ID \u00222738197383224493392\u0022, Request ID \u002240000551-0803-2600-b63f-84710c7967bb\u0022: An unhandled exception was thrown by the application.",
+  "TraceId": "c3d1ab21722755f83307273b0cd3cb04",
+  "SpanId": "2d893e19d2c94396",
+  "Exception": "Microsoft.AspNetCore.Routing.Matching.AmbiguousMatchException: The request matched multiple endpoints. Matches: \r\n\r\nHTTP: POST /logout\r\n/logout (/logout)\r\n   at Microsoft.AspNetCore.Routing.Matching.DefaultEndpointSelector.ReportAmbiguity(Span\u00601 candidateState)\r\n   at Microsoft.AspNetCore.Routing.Matching.DefaultEndpointSelector.ProcessFinalCandidates(HttpContext httpContext, Span\u00601 candidateState)\r\n   at Microsoft.AspNetCore.Routing.Matching.DefaultEndpointSelector.Select(HttpContext httpContext, Span\u00601 candidateState)\r\n   at Microsoft.AspNetCore.Routing.Matching.DfaMatcher.MatchAsync(HttpContext httpContext)\r\n   at Microsoft.AspNetCore.Routing.EndpointRoutingMiddleware.Invoke(HttpContext httpContext)\r\n   at Microsoft.AspNetCore.HostFiltering.HostFilteringMiddleware.Invoke(HttpContext context)\r\n   at Microsoft.AspNetCore.Hosting.HostingApplication.ProcessRequestAsync(Context context)\r\n   at Microsoft.AspNetCore.Server.IIS.Core.IISHttpContextOfT\u00601.ProcessRequestAsync()"
+},
+{
+  "Timestamp": "2026-01-01T02:08:53.9692111Z",
+  "Level": "Error",
+  "Category": "Microsoft.AspNetCore.Server.IIS.Core.IISHttpServer",
+  "Message": "Connection ID \u002217221782589530965036\u0022, Request ID \u00224000042d-1005-ef00-b63f-84710c7967bb\u0022: An unhandled exception was thrown by the application.",
+  "TraceId": "ba12da31ae4d4bab41d02bacf58ccfa9",
+  "SpanId": "da68c7a08be335f1",
+  "Exception": "Microsoft.AspNetCore.Routing.Matching.AmbiguousMatchException: The request matched multiple endpoints. Matches: \r\n\r\nHTTP: POST /logout\r\n/logout (/logout)\r\n   at Microsoft.AspNetCore.Routing.Matching.DefaultEndpointSelector.ReportAmbiguity(Span\u00601 candidateState)\r\n   at Microsoft.AspNetCore.Routing.Matching.DefaultEndpointSelector.ProcessFinalCandidates(HttpContext httpContext, Span\u00601 candidateState)\r\n   at Microsoft.AspNetCore.Routing.Matching.DefaultEndpointSelector.Select(HttpContext httpContext, Span\u00601 candidateState)\r\n   at Microsoft.AspNetCore.Routing.Matching.DfaMatcher.MatchAsync(HttpContext httpContext)\r\n   at Microsoft.AspNetCore.Routing.EndpointRoutingMiddleware.Invoke(HttpContext httpContext)\r\n   at Microsoft.AspNetCore.HostFiltering.HostFilteringMiddleware.Invoke(HttpContext context)\r\n   at Microsoft.AspNetCore.Hosting.HostingApplication.ProcessRequestAsync(Context context)\r\n   at Microsoft.AspNetCore.Server.IIS.Core.IISHttpContextOfT\u00601.ProcessRequestAsync()"
+},
+{
+  "Timestamp": "2026-01-01T02:41:16.7331137Z",
+  "Level": "Information",
+  "Category": "Microsoft.Hosting.Lifetime",
+  "Message": "Application is shutting down...",
+  "TraceId": "00000000000000000000000000000000",
+  "SpanId": "0000000000000000",
+  "Exception": null
+}
+]
