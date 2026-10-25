@@ -7,7 +7,7 @@
 
 DUMP METADATA
 ═════════════════════════════════════════════════════════════════════════════════
-  Generated at   : 2026-10-25T06:57:44-04:00
+  Generated at   : 2026-10-25T07:12:49-04:00
   Generator      : export.sh
   Host           : fedora
   User           : kushal
@@ -17,10 +17,10 @@ REPOSITORY METADATA
 ═════════════════════════════════════════════════════════════════════════════════
   Repository root: /home/kushal/src/dotnet/MyBlog
   Branch         : main
-  Commit (full)  : da330ef82aee984a4bdd074b2c8a20731a1d37e6
-  Commit (short) : da330ef
-  Commit date    : 2026-10-02 19:48:34 -0400
-  Commit message : run scripts
+  Commit (full)  : 98ef9ae679573826a29ca3bbfb1f1369e93e05dc
+  Commit (short) : 98ef9ae
+  Commit date    : 2026-10-25 07:08:24 -0400
+  Commit message : update nuget package
   Remote origin  : git@github.com:kusl/dotnetcms.git
   Files included : 164
   Excluded path  : docs/llm/
@@ -28,7 +28,7 @@ REPOSITORY METADATA
 
 GIT WORKING TREE STATUS (first 20 lines)
 ═════════════════════════════════════════════════════════════════════════════════
-?? docs/llm/output/2026-10-25-06-56-35.txt
+?? docs/llm/output/2026-10-25-07-11-43.txt
 
 ################################################################################
 # FILE: export.sh  [THIS SCRIPT — included for full context]
@@ -5161,7 +5161,7 @@ myblog-data/
   Relative path:         README.md
   Absolute path:         /home/kushal/src/dotnet/MyBlog/README.md
   Size:                  57.8 KiB (59225 bytes)
-  Last modified:         2026-10-02 19:34:48.000000000 -0400
+  Last modified:         2026-10-25 07:09:40.501439497 -0400
   Permissions:           -rw-r--r--
   Owner:                 kushal:kushal
   Inode:                 64864867
@@ -7542,29 +7542,29 @@ exit 0
   Relative path:         src/Directory.Packages.props
   Absolute path:         /home/kushal/src/dotnet/MyBlog/src/Directory.Packages.props
   Size:                  1.9 KiB (1965 bytes)
-  Last modified:         2026-10-02 19:30:45.000000000 -0400
+  Last modified:         2026-10-25 07:08:40.800856433 -0400
   Permissions:           -rw-r--r--
   Owner:                 kushal:kushal
   Inode:                 64864791
   Hard links:            1
   MIME type:             text/plain
-  SHA-256:               ae9cd1e1884b6f7d8bfdbde3fbbdd96b6d303525a8edd768aae7b4b4daf604c0
-  Last git commit:       e509465 2026-10-02 19:39:45 -0400 add claude response
+  SHA-256:               49579ccdc7ae3ab131141083f5842209ed75d75bf61b03932e005e98bff3cb18
+  Last git commit:       98ef9ae 2026-10-25 07:08:24 -0400 update nuget package
 
 --- CONTENT ---
 <Project>
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
     <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
-    <MicrosoftPackagesVersion>10.0.12</MicrosoftPackagesVersion>
-    <OpenTelemetryVersion>1.19.1</OpenTelemetryVersion>
-    <OtelAspNetCoreInstrVersion>1.19.0</OtelAspNetCoreInstrVersion>
-    <OtelHttpInstrVersion>1.19.0</OtelHttpInstrVersion>
+    <MicrosoftPackagesVersion>10.0.13</MicrosoftPackagesVersion>
+    <OpenTelemetryVersion>1.20.1</OpenTelemetryVersion>
+    <OtelAspNetCoreInstrVersion>1.20.1</OtelAspNetCoreInstrVersion>
+    <OtelHttpInstrVersion>1.20.1</OtelHttpInstrVersion>
 
-    <TestSdkVersion>18.10.1</TestSdkVersion>
-    <XUnitVersion>4.0.1</XUnitVersion>
-    <TestingExtensionsVersion>2.4.1</TestingExtensionsVersion>
-    <PlaywrightVersion>1.63.0</PlaywrightVersion>
+    <TestSdkVersion>18.11.0</TestSdkVersion>
+    <XUnitVersion>4.0.2</XUnitVersion>
+    <TestingExtensionsVersion>2.5.1</TestingExtensionsVersion>
+    <PlaywrightVersion>1.64.1</PlaywrightVersion>
   </PropertyGroup>
 
   <ItemGroup>
@@ -24143,7 +24143,7 @@ function showShareError(shareBtn, message) {
   Files dumped   : 164
   Total size     : 667.7 KiB (683810 bytes)
   Output file    : /home/kushal/src/dotnet/MyBlog/docs/llm/dump.txt
-  Completed at   : 2026-10-25T06:57:50-04:00
+  Completed at   : 2026-10-25T07:12:55-04:00
 ################################################################################
 # END OF DUMP
 ################################################################################
