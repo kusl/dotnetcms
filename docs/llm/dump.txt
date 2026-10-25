@@ -1,7 +1,7 @@
 # Repository dump
-# Commit: d6ef91c (main)
-# Message: add prompt
-# Generated: 2026-10-25T09:32:35-04:00
+# Commit: eb63867 (main)
+# Message: add claude response
+# Generated: 2026-10-25T09:54:44-04:00
 # Uncommitted:
 
 ===== docker-compose.e2e.yml =====
@@ -1802,6 +1802,8 @@ The app runs on a free host with 5 GB of storage, so enabling local logs require
 
 **Y-statement:** In the context of a free-tier host with 5 GB of storage, facing silently disabled logging, tests that could not fail, and accumulated dead code, we decided for wired local exporters with hourly age-and-size retention, tests that exercise production code, and aggressive removal of dead code and duplicated configuration, and neglected deleting the exporters outright, to achieve working, bounded diagnostics and loud failures, accepting extra SQLite writes, because the host cannot afford unbounded logs and silent failures had already gone unnoticed for months.
 
+> **Amendment (2026-10-25):** running `playwright.ps1` from the NuGet cache fails, because it loads `Microsoft.Playwright.dll` from its own folder and the package's `build/` folder has no DLL. Building before `COPY . .` also fails, because there is no source yet (CS5001). The E2E image now builds a throwaway `PlaywrightInstaller` project that references the central `Microsoft.Playwright` version, runs the installer from its output, and fails if Chromium is not installed. Browser caching and the single version source are both kept.
+
 ===== docs/adr/README.md =====
 # Architecture Decision Records
 
@@ -2005,7 +2007,7 @@ The E2E suite (`src/MyBlog.E2E`) drives Chromium against a running MyBlog instan
 
 `run-e2e.sh` always rebuilds by default; unchanged layers come from the cache, so you never test a stale image by accident. It starts `myblog-web`, waits up to 120 seconds for it to answer, then runs `myblog-e2e` with `--no-deps`. Starting the test container with its dependency would make podman-compose restart `myblog-web`, which produced the old `crun exec.fifo` error. The script exits with the test container's own exit code, read with `podman inspect`. Logs from both containers are written to `test-results/`, and everything is torn down even if a step fails.
 
-The E2E image is based on the .NET SDK image, which already ships PowerShell, curl, git and wget. Playwright bundles its own Node.js runtime. Browsers are installed with the `playwright.ps1` that ships inside the restored `Microsoft.Playwright` package. That layer is rebuilt only when `Directory.Packages.props` or a project file changes, and the build fails if the script cannot be found.
+The E2E image is based on the .NET SDK image, which already ships PowerShell, curl, git and wget. Playwright bundles its own Node.js runtime. `playwright.ps1` only works from a build output, because it loads `Microsoft.Playwright.dll` from its own folder; the copy under the NuGet cache's `build/` folder cannot run. Before the source is copied in, the image builds a throwaway `PlaywrightInstaller` project that references `Microsoft.Playwright` at the central version and runs the installer from its output. The ~280 MB browser layer is therefore rebuilt only when `Directory.Packages.props` or a project file changes, not on every source edit. The build fails if Chromium is missing afterwards, because `playwright.ps1` can exit 0 even when it fails.
 
 ### Locally without containers
 
@@ -3053,7 +3055,7 @@ Secrets per target (the second target uses the same names with a `NICE_` prefix)
 
 ## Package versions
 
-All NuGet versions are pinned in `src/Directory.Packages.props`. Central Package Management and transitive pinning are enabled. Bumping a package, including Playwright, only requires editing that file: the E2E container and CI resolve Playwright's browser installer from the restored package rather than from a hard-coded path.
+All NuGet versions are pinned in `src/Directory.Packages.props`. Central Package Management and transitive pinning are enabled. Bumping a package, including Playwright, only requires editing that file: the E2E container installs browsers through a throwaway project that references the centrally pinned `Microsoft.Playwright`, and CI finds `playwright.ps1` in the build output instead of a hard-coded path.
 
 ## LLM context files
 
@@ -3999,14 +4001,16 @@ COPY MyBlog.E2E/MyBlog.E2E.csproj MyBlog.E2E/
 
 RUN dotnet restore MyBlog.E2E/MyBlog.E2E.csproj
 
-RUN dotnet build MyBlog.E2E/MyBlog.E2E.csproj -c Release
-
-RUN PLAYWRIGHT_SCRIPT="$(find /root/.nuget/packages/microsoft.playwright -name playwright.ps1 -print -quit)" \
-    && test -n "$PLAYWRIGHT_SCRIPT" \
-    && pwsh "$PLAYWRIGHT_SCRIPT" install chromium --with-deps \
-    && rm -rf /var/lib/apt/lists/*
+RUN mkdir PlaywrightInstaller \
+    && printf '<Project Sdk="Microsoft.NET.Sdk"><ItemGroup><PackageReference Include="Microsoft.Playwright" /></ItemGroup></Project>\n' > PlaywrightInstaller/PlaywrightInstaller.csproj \
+    && dotnet build PlaywrightInstaller/PlaywrightInstaller.csproj -c Release -o /tmp/playwright -p:TreatWarningsAsErrors=false \
+    && pwsh /tmp/playwright/playwright.ps1 install chromium --with-deps \
+    && find /root/.cache/ms-playwright -maxdepth 1 -name 'chromium*' | grep -q . \
+    && rm -rf PlaywrightInstaller /tmp/playwright /var/lib/apt/lists/*
 
 COPY . .
+
+RUN dotnet build MyBlog.E2E/MyBlog.E2E.csproj -c Release
 
 WORKDIR /src/MyBlog.E2E
 

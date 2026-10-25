@@ -1282,14 +1282,16 @@ COPY MyBlog.E2E/MyBlog.E2E.csproj MyBlog.E2E/
 
 RUN dotnet restore MyBlog.E2E/MyBlog.E2E.csproj
 
-RUN dotnet build MyBlog.E2E/MyBlog.E2E.csproj -c Release
-
-RUN PLAYWRIGHT_SCRIPT="$(find /root/.nuget/packages/microsoft.playwright -name playwright.ps1 -print -quit)" \
-    && test -n "$PLAYWRIGHT_SCRIPT" \
-    && pwsh "$PLAYWRIGHT_SCRIPT" install chromium --with-deps \
-    && rm -rf /var/lib/apt/lists/*
+RUN mkdir PlaywrightInstaller \
+    && printf '<Project Sdk="Microsoft.NET.Sdk"><ItemGroup><PackageReference Include="Microsoft.Playwright" /></ItemGroup></Project>\n' > PlaywrightInstaller/PlaywrightInstaller.csproj \
+    && dotnet build PlaywrightInstaller/PlaywrightInstaller.csproj -c Release -o /tmp/playwright -p:TreatWarningsAsErrors=false \
+    && pwsh /tmp/playwright/playwright.ps1 install chromium --with-deps \
+    && find /root/.cache/ms-playwright -maxdepth 1 -name 'chromium*' | grep -q . \
+    && rm -rf PlaywrightInstaller /tmp/playwright /var/lib/apt/lists/*
 
 COPY . .
+
+RUN dotnet build MyBlog.E2E/MyBlog.E2E.csproj -c Release
 
 WORKDIR /src/MyBlog.E2E
 
