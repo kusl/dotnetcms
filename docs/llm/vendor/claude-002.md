@@ -587,3 +587,14 @@ Claude finished the response
 26
 
 Please continue 
+and yes, please fix the tests 
+and yes, please turn on logging 
+but ONLY if we have a fool proof way of deleting all logs 
+older than thirty days 
+we only have 5GB of storage available 
+and we are running on a free tier 
+so we need to be kind and nice to ourselves and our host 
+this increases the scope of this prompt 
+
+
+
