@@ -1898,3 +1898,503 @@ kushal@fedora:~/src/dotnet/MyBlog$
 
 
 
+Claude
+/
+Ran 6 commands
+Diagnosing a Playwright NuGet package loading issue.
+Deciding whether to amend or replace an architecture decision record.
+Both failures are my mistake, and the Gemini change didn’t fix it.
+
+Before Gemini’s change: I ran playwright.ps1 straight from the NuGet cache. That script loads Microsoft.Playwright.dll from its own folder, and the package’s build/ folder has no DLL. It also exits with code 0 when it fails, so the image built with no browser installed and the tests failed at runtime.
+
+After Gemini’s change: dotnet build now runs before COPY . .. At that point only the .csproj files are in the image and there is no Program.cs, which is why you got CS5001.
+
+The fix:
+
+Before the source is copied in, build a small throwaway project that references only Microsoft.Playwright at the version pinned in Directory.Packages.props.
+Run playwright.ps1 from that project’s build output, where the DLL sits beside it.
+Fail the image build if Chromium isn’t actually installed afterwards.
+The ~280 MB browser layer still only rebuilds when package versions or project files change, and a Playwright bump still only touches Directory.Packages.props. CI is unaffected because it already runs the script from the build output.
+
+I still can’t run builds here, so please run bash run-e2e.sh to confirm. Four files change and nothing is deleted.
+
+src/MyBlog.E2E/Dockerfile
+dockerfile
+FROM mcr.microsoft.com/dotnet/sdk:10.0
+WORKDIR /src
+
+COPY Directory.Build.props .
+COPY Directory.Packages.props .
+COPY MyBlog.Core/MyBlog.Core.csproj MyBlog.Core/
+COPY MyBlog.Infrastructure/MyBlog.Infrastructure.csproj MyBlog.Infrastructure/
+COPY MyBlog.Web/MyBlog.Web.csproj MyBlog.Web/
+COPY MyBlog.E2E/MyBlog.E2E.csproj MyBlog.E2E/
+
+RUN dotnet restore MyBlog.E2E/MyBlog.E2E.csproj
+
+RUN mkdir PlaywrightInstaller \
+    && printf '<Project Sdk="Microsoft.NET.Sdk"><ItemGroup><PackageReference Include="Microsoft.Playwright" /></ItemGroup></Project>\n' > PlaywrightInstaller/PlaywrightInstaller.csproj \
+    && dotnet build PlaywrightInstaller/PlaywrightInstaller.csproj -c Release -o /tmp/playwright -p:TreatWarningsAsErrors=false \
+    && pwsh /tmp/playwright/playwright.ps1 install chromium --with-deps \
+    && find /root/.cache/ms-playwright -maxdepth 1 -name 'chromium*' | grep -q . \
+    && rm -rf PlaywrightInstaller /tmp/playwright /var/lib/apt/lists/*
+
+COPY . .
+
+RUN dotnet build MyBlog.E2E/MyBlog.E2E.csproj -c Release
+
+WORKDIR /src/MyBlog.E2E
+
+ENV MYBLOG_BASE_URL=http://myblog-web:5000
+ENV PLAYWRIGHT_HEADLESS=true
+
+ENTRYPOINT ["dotnet", "run", "-c", "Release", "--no-build"]
+docs/E2E-TESTING.md
+markdown
+# E2E testing with Playwright
+
+The E2E suite (`src/MyBlog.E2E`) drives Chromium against a running MyBlog instance using Playwright for .NET and xUnit v3.
+
+## Running
+
+### Containers (Podman, matches CI behaviour)
+
+```bash
+./run-e2e.sh             # build images, start MyBlog, run tests, clean up
+./run-e2e.sh --no-build  # reuse existing images
+./run-e2e.sh --clean     # remove E2E containers, networks and volumes
+```
+
+`run-e2e.sh` always rebuilds by default; unchanged layers come from the cache, so you never test a stale image by accident. It starts `myblog-web`, waits up to 120 seconds for it to answer, then runs `myblog-e2e` with `--no-deps`. Starting the test container with its dependency would make podman-compose restart `myblog-web`, which produced the old `crun exec.fifo` error. The script exits with the test container's own exit code, read with `podman inspect`. Logs from both containers are written to `test-results/`, and everything is torn down even if a step fails.
+
+The E2E image is based on the .NET SDK image, which already ships PowerShell, curl, git and wget. Playwright bundles its own Node.js runtime. `playwright.ps1` only works from a build output, because it loads `Microsoft.Playwright.dll` from its own folder; the copy under the NuGet cache's `build/` folder cannot run. Before the source is copied in, the image builds a throwaway `PlaywrightInstaller` project that references `Microsoft.Playwright` at the central version and runs the installer from its output. The ~280 MB browser layer is therefore rebuilt only when `Directory.Packages.props` or a project file changes, not on every source edit. The build fails if Chromium is missing afterwards, because `playwright.ps1` can exit 0 even when it fails.
+
+### Locally without containers
+
+```bash
+cd src
+dotnet build
+pwsh "$(find MyBlog.E2E/bin -name playwright.ps1 -print -quit)" install chromium --with-deps
+ASPNETCORE_ENVIRONMENT=Development ASPNETCORE_URLS=http://localhost:5000 dotnet run --project MyBlog.Web --no-build &
+MYBLOG_BASE_URL=http://localhost:5000 dotnet run --project MyBlog.E2E --no-build
+```
+
+| Variable | Default | Purpose |
+|----------|---------|---------|
+| `MYBLOG_BASE_URL` | `http://localhost:5000` | Instance under test |
+| `PLAYWRIGHT_HEADLESS` | `true` | Set `false` to watch the browser (adds 100 ms slow-mo) |
+
+Login rate limiting is disabled in `Development`, which the E2E environments use.
+
+## Waiting for the Blazor circuit
+
+Every page arrives twice: first as prerendered HTML, then from the interactive circuit once SignalR connects. `GotoAsync` and `WaitForLoadStateAsync` only see the first delivery.
+
+Two things go wrong if a test acts in that gap:
+
+- **Link clicks** are handled by enhanced navigation. The URL changes, but the connecting circuit then renders the previous route, so the address bar and the markup disagree.
+- **Typed input is lost**, because attaching the circuit replaces the prerendered DOM.
+
+`MainLayout` renders `data-blazor-interactive="true"` once `RendererInfo.IsInteractive` is true. The helpers in `BlazorPageExtensions` build on it:
+
+- `WaitForBlazorInteractiveAsync()` waits for the marker. Call it before clicking links or filling forms. Assertions on prerendered content need no wait.
+- `SubmitLoginAsync(username, password, expectedUrl)` opens `/login`, waits for the circuit, fills the form, submits and waits for the expected URL.
+- `LoginAsAdminAsync()` logs in with the seeded admin account.
+
+```csharp
+await page.GotoAsync("/");
+await page.WaitForBlazorInteractiveAsync();
+await page.ClickAsync("nav a[href='/about']");
+await page.WaitForURLAsync("**/about");
+```
+
+## Writing tests
+
+- Put tests in `[Collection(PlaywrightCollection.Name)]` so they share one browser.
+- Use the helpers above instead of hand-rolled login code.
+- Assert unconditionally. A test that skips its assertion when an element is missing can never fail.
+- Use `.Or()` for alternative locators, never comma-separated text selectors.
+- Start `WaitForURLAsync` together with the click that navigates (`Task.WhenAll`).
+docs/adr/0022-repository-hygiene-and-log-retention.md
+markdown
+---
+status: accepted
+date: 2026-10-25
+deciders: Kushal (with AI assistance from Claude)
+tags: [maintenance, telemetry, testing, ci]
+---
+
+# 0022 — Repository hygiene, working local logs, and bounded retention
+
+## Context and Problem Statement
+
+A cleanup review found:
+
+- Silent failures: the file and database log exporters were constructed but never attached to the logging pipeline (since `cbc15ad`, 2026-01-26).
+- Tests that could not fail: RSS tests exercised a copy of the endpoint code, and several E2E tests had assertions inside `if` branches.
+- Dead code and duplicated configuration.
+
+The app runs on a free host with 5 GB of storage, so enabling local logs requires hard limits on their size and age.
+
+## Decision Outcome
+
+**Logging and retention**
+- `TelemetryLoggingExtensions.AddLocalExporters` attaches `FileLogExporter` and `DatabaseLogExporter` through `BatchLogRecordExportProcessor`. The exporters are no longer DI singletons or no-op hosted services.
+- `TelemetryCleanupService` runs at startup and hourly. It deletes database rows older than `RetentionDays` (clamped to 1–30) and trims the table to `MaxDatabaseRows` (default 50,000). It deletes `logs_*.json` files older than the cutoff and the oldest files beyond `MaxLogFileMegabytes` (default 100), always keeping the newest file. Database and file cleanup are isolated from each other, and failures are logged.
+- Database and log directories share one platform-path implementation (`DatabasePathResolver.GetPreferredDataDirectory`).
+
+**Tests**
+- RSS tests call `RssEndpoints.BuildFeedAsync`, the code the endpoint uses.
+- New tests cover the exporter pipeline end to end (logger → `TelemetryLogs` row; file exporter → valid JSON array), database trimming, and file retention.
+- E2E login goes through `SubmitLoginAsync`/`LoginAsAdminAsync`, which wait for the circuit before typing. Conditional assertions were made unconditional, and tests duplicated across classes were removed.
+
+**Dead code removed**
+- `CreatePostDto`, `UpdatePostDto`, `IAuthService.ResetPasswordAsync`, `ITelemetryLogRepository.WriteAsync`/`GetRecentAsync`, the parameterless `PasswordService` constructor, and the image warmer's table-existence probe.
+- The duplicate theme bootstrap script, unused JavaScript helpers, page-level `@rendermode` (set globally on `Routes`), and unused `_Imports` usings.
+- `Microsoft.Testing.Extensions.TrxReport`; `Microsoft.Extensions.Logging` in Core (replaced by `.Abstractions`); redundant `RootNamespace`/`IsTestProject`.
+- From the E2E image: Node.js/npm (Playwright bundles node), the Debian 12 PowerShell repository (the Ubuntu 24.04 SDK image ships `pwsh`), redundant restores, and the `net10.0` fallback path. Also the unused test-results volume, `src/.gitkeep`, and `docs/playwright.md`.
+- All code comments. Rationale lives in ADRs and docs.
+
+**Single source of truth**
+- One `DOTNET_VERSION` in the workflow. One deploy job with a two-target matrix (`fail-fast: false`) replaces two copies. Deploys run from `main` only.
+- Playwright's installer is located from the restored package, so a version bump touches only `Directory.Packages.props`.
+- `src/.dockerignore` keeps host `bin/`/`obj/` out of image builds.
+
+**Scripts**
+- `run-e2e.sh` builds by default (cached), runs the test container with `--no-deps`, exits with that container's exit code, and always captures logs and cleans up. `--clean` no longer runs a system-wide `podman system prune`.
+- `export.sh` writes a compact `dump.txt` and a code-only `slim.md`, and prints only a summary.
+
+### Consequences
+
+- Good: local logs work as documented, and their age and size are bounded. Failures in exporters, retention, feeds and E2E runs are now visible.
+- Neutral: database logging adds a batched write every few seconds to the application database (ADR-0015). SQLite reuses freed pages but does not shrink the file.
+- Neutral: deploy check names are now `deploy (primary)` and `deploy (nice)`.
+
+**Y-statement:** In the context of a free-tier host with 5 GB of storage, facing silently disabled logging, tests that could not fail, and accumulated dead code, we decided for wired local exporters with hourly age-and-size retention, tests that exercise production code, and aggressive removal of dead code and duplicated configuration, and neglected deleting the exporters outright, to achieve working, bounded diagnostics and loud failures, accepting extra SQLite writes, because the host cannot afford unbounded logs and silent failures had already gone unnoticed for months.
+
+> **Amendment (2026-10-25):** running `playwright.ps1` from the NuGet cache fails, because it loads `Microsoft.Playwright.dll` from its own folder and the package's `build/` folder has no DLL. Building before `COPY . .` also fails, because there is no source yet (CS5001). The E2E image now builds a throwaway `PlaywrightInstaller` project that references the central `Microsoft.Playwright` version, runs the installer from its output, and fails if Chromium is not installed. Browser caching and the single version source are both kept.
+README.md
+markdown
+# MyBlog
+
+> **AI-assisted development notice:** this project contains code written with help from Large Language Models (Claude by Anthropic and Gemini by Google). Human review and testing have been applied, but treat the code as experimental and use caution in production.
+
+A lightweight, self-hosted blog engine built with .NET 10 and Blazor Server, following Clean Architecture. Free and open source.
+
+**Live:** [kush.runasp.net](https://kush.runasp.net) · **Source:** [github.com/kusl/dotnetcms](https://github.com/kusl/dotnetcms)
+
+## Features
+
+- Markdown posts rendered by a small hand-written parser (headings, emphasis, links, images, inline and fenced code, blockquotes, lists, horizontal rules). All HTML in posts is escaped.
+- Images stored as BLOBs in SQLite (JPEG, PNG, GIF, WebP, up to 5 MB), served from `/api/images/{id}`. Image width and height are probed once and cached to prevent layout shift.
+- Admin area: dashboard, post editor with live preview, image library, user management, password change.
+- Live "people reading now" counts through SignalR.
+- RSS 2.0 feed at `/feed.xml` with full post content.
+- Six themes (light, dark, sepia, nord, solarized light, dracula), persisted in `localStorage`.
+- SEO metadata: Open Graph, Twitter cards, JSON-LD, canonical URLs.
+- Cookie authentication with login rate limiting that slows attackers down but never locks anyone out.
+- OpenTelemetry traces, metrics and logs, exported over vendor-neutral OTLP when configured, plus local file and database logs with strict retention.
+
+## Architecture
+
+```
+src/
+├── MyBlog.Core            Domain models, interfaces, MarkdownService, SlugService (no infrastructure dependencies)
+├── MyBlog.Infrastructure  EF Core + SQLite, repositories, auth, image probing, telemetry exporters and cleanup
+├── MyBlog.Web             Blazor Server UI, minimal API endpoints, SignalR hub, login rate limiting
+├── MyBlog.Tests           xUnit v3 unit and integration tests (in-memory SQLite)
+└── MyBlog.E2E             Playwright end-to-end tests
+```
+
+Dependencies point inward: Web → Infrastructure → Core. Design decisions are recorded as ADRs in [`docs/adr`](docs/adr/README.md).
+
+Notable choices:
+
+- **No EF Core migrations.** `EnsureCreated` builds a new database; `DatabaseSchemaUpdater` adds newer tables to existing databases idempotently (ADR-0005).
+- **Login is a static form** that posts to `POST /account/login`, because `HttpContext` is not available inside an interactive circuit (ADR-0013).
+- **All routes are Interactive Server**, set once on `Routes` in `App.razor`. Pages are prerendered first. `MainLayout` exposes `data-blazor-interactive` so tests can wait for the circuit.
+
+## Quick start
+
+Requires the [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0).
+
+```bash
+git clone https://github.com/kusl/dotnetcms.git
+cd dotnetcms/src
+dotnet run --project MyBlog.Web
+```
+
+The first start creates the database and an `admin` user with password `ChangeMe123!`. To choose a different initial password, set `MYBLOG_ADMIN_PASSWORD` (or `Authentication:DefaultAdminPassword`) before the first run. The setting is only read when no user exists; change the password afterwards at `/admin/change-password`.
+
+With containers:
+
+```bash
+podman-compose up --build
+```
+
+## Testing
+
+```bash
+cd src
+dotnet run --project MyBlog.Tests/MyBlog.Tests.csproj
+```
+
+The test projects use Microsoft.Testing.Platform (`src/global.json`). Integration tests use in-memory SQLite, so they run the same on Windows, Linux and macOS.
+
+End-to-end tests run against a real instance in containers:
+
+```bash
+./run-e2e.sh             # build images (cached layers) and run the suite
+./run-e2e.sh --no-build  # reuse existing images
+./run-e2e.sh --clean     # remove E2E containers, networks and volumes
+```
+
+The script exits with the test container's exit code and writes both containers' logs to `test-results/`. See [`docs/E2E-TESTING.md`](docs/E2E-TESTING.md).
+
+`run.sh` runs format, restore, clean, build, unit tests, package listings, `export.sh` and the E2E suite. It logs everything to `docs/llm/output/` and exits non-zero if any step failed.
+
+## Configuration
+
+Settings live in `src/MyBlog.Web/appsettings.json` and can be overridden by environment variables (`Section__Key`).
+
+| Key | Default | Purpose |
+|-----|---------|---------|
+| `ConnectionStrings:DefaultConnection` | `Data Source=myblog.db` | SQLite connection. The default value is redirected to the platform data directory (below). |
+| `Application:Title` | `MyBlog` | Site title |
+| `Application:PostsPerPage` | `10` | Home page size |
+| `Application:RequireHttps` | `false` | Marks the auth cookie Secure-only |
+| `Application:GitForgeUrl` | repository URL | Footer source link (http/https only) |
+| `Authentication:SessionTimeoutMinutes` | `30` | Sliding cookie lifetime |
+| `Authentication:DefaultAdminPassword` | `ChangeMe123!` | Initial admin password (first run only) |
+| `Blazor:MaximumReceiveMessageSizeBytes` | `1048576` | SignalR message limit, so long posts can be saved |
+| `Telemetry:EnableFileLogging` | `true` | Write JSON log files |
+| `Telemetry:EnableDatabaseLogging` | `true` | Write logs to the `TelemetryLogs` table |
+| `Telemetry:RetentionDays` | `30` | Log retention; values above 30 are clamped to 30 |
+| `Telemetry:MaxDatabaseRows` | `50000` | Newest database log rows kept regardless of age |
+| `Telemetry:MaxLogFileMegabytes` | `100` | Total size budget for JSON log files |
+| `Otlp:Endpoint` / `Otlp:ApiKey` | empty | OTLP export, enabled only when both are set |
+| `Otlp:Protocol` | `HttpProtobuf` | `HttpProtobuf` or `Grpc` |
+
+### Data locations
+
+| OS | Database | Log files |
+|----|----------|-----------|
+| Linux | `$XDG_DATA_HOME/MyBlog/myblog.db` (default `~/.local/share`) | `…/MyBlog/telemetry/logs/` |
+| macOS | `~/Library/Application Support/MyBlog/myblog.db` | `…/MyBlog/telemetry/logs/` |
+| Windows | `%LOCALAPPDATA%\MyBlog\myblog.db` | `…\MyBlog\telemetry\logs\` |
+
+If the preferred directory is not writable, the database falls back to `data/` and logs fall back to `telemetry/logs/`, both next to the application binaries. If neither log location is writable, file logging is skipped.
+
+## Logging and retention
+
+Logs go to the console, to rotating JSON files (`logs_<run>.json`, 25 MB per file), to the `TelemetryLogs` table, and to OTLP when configured. Default levels are `Information`, with `Warning` for `Microsoft.AspNetCore` and `Microsoft.EntityFrameworkCore`.
+
+`TelemetryCleanupService` keeps local logs bounded. It runs at startup and then every hour. On each run it:
+
+1. Deletes database log rows older than `RetentionDays` (at most 30).
+2. Trims the table to the newest `MaxDatabaseRows` rows.
+3. Deletes `logs_*.json` files older than `RetentionDays`.
+4. Deletes the oldest remaining log files until the total is within `MaxLogFileMegabytes`. The newest file is always kept.
+
+Database and file cleanup run independently, so a failure in one does not skip the other. Failures are logged. SQLite reuses freed pages, so the database file stops growing once retention is in steady state; it does not shrink on its own.
+
+## Endpoints
+
+| Endpoint | Purpose |
+|----------|---------|
+| `GET /feed.xml` | RSS 2.0 feed of the 20 newest published posts (cached 10 minutes) |
+| `GET /api/images/{id}` | Image bytes |
+| `POST /account/login` | Form login (rate limited outside Development) |
+| `POST /logout` | Sign out (requires authentication) |
+| `/readerHub` | SignalR hub for reader counts |
+
+## Deployment
+
+`.github/workflows/build-deploy.yml`:
+
+1. **build-test**: restore, build and unit tests on Ubuntu, Windows and macOS.
+2. **e2e-tests**: builds, starts the app, installs Chromium and runs the Playwright suite.
+3. **deploy**: runs on `main` only. It is a matrix with two IIS targets (`primary`, `nice`) that deploy independently (`fail-fast: false`). Each publishes for `win-x86`, injects OTLP settings into `web.config`, and syncs with WebDeploy using `AppOffline` and `DoNotDeleteRule`.
+
+The .NET SDK version used by CI is set once in the workflow's `DOTNET_VERSION`.
+
+Secrets per target (the second target uses the same names with a `NICE_` prefix): `WEBSITE_NAME` (the IIS site name, not the domain), `SERVER_COMPUTER_NAME`, `SERVER_USERNAME`, `SERVER_PASSWORD`, and optionally `HONEYCOMB_API_KEY` and `OTLP_ENDPOINT`.
+
+## Package versions
+
+All NuGet versions are pinned in `src/Directory.Packages.props`. Central Package Management and transitive pinning are enabled. Bumping a package, including Playwright, only requires editing that file: the E2E container installs browsers through a throwaway project that references the centrally pinned `Microsoft.Playwright`, and CI finds `playwright.ps1` in the build output instead of a hard-coded path.
+
+## LLM context files
+
+`export.sh` writes two files to `docs/llm/`:
+
+- `dump.txt`: every tracked file, with a one-line header per file.
+- `slim.md`: code and configuration only (no Markdown, no `export.sh`), as fenced blocks labelled with language and path.
+
+## License
+
+MIT License. Copyright (c) 2026.
+2026-10-25-09-56-10.txt
+2026-10-25-09-56-10.txt
+TXT
+dump_1.txt
+dump_1.txt
+TXT
+This is still failing 
+
+kushal@fedora:~/src/dotnet/MyBlog$ mylogpath="/home/kushal/src/dotnet/MyBlog/docs/llm/output/$(date +%Y-%m-%d-%H-%M-%S).txt";cd ~/src/dotnet/MyBlog/ && pwd > ${mylogpath} && export DOTNET_CLI_TELEMETRY_OPTOUT=1 && (cd src && time dotnet format >> ${mylogpath}; time dotnet restore >> ${mylogpath}; time dotnet clean >> ${mylogpath}; time dotnet build >> ${mylogpath}; time dotnet run --project MyBlog.Tests/MyBlog.Tests.csproj >> ${mylogpath}; time dotnet list package >> ${mylogpath}; time dotnet list package --outdated >> ${mylogpath}); cd ~/src/dotnet/MyBlog/ >> ${mylogpath}; cat export.sh >> ${mylogpath}; time bash export.sh >> ${mylogpath}; cat run-e2e.sh >> ${mylogpath}; time bash run-e2e.sh >> ${mylogpath};
+
+real    0m9.830s
+user    0m19.550s
+sys    0m1.229s
+
+real    0m0.811s
+user    0m0.905s
+sys    0m0.186s
+
+real    0m0.746s
+user    0m0.756s
+sys    0m0.193s
+
+real    0m3.494s
+user    0m2.172s
+sys    0m0.480s
+
+real    0m44.090s
+user    0m49.770s
+sys    0m0.950s
+
+real    0m1.630s
+user    0m1.789s
+sys    0m0.375s
+
+real    0m3.039s
+user    0m2.180s
+sys    0m0.433s
+
+real    0m1.471s
+user    0m0.838s
+sys    0m1.092s
+MethodInvocationException: /tmp/playwright/playwright.ps1:6
+Line |
+   6 |  [Reflection.Assembly]::Load([System.IO.File]::ReadAllBytes($playwrigh …
+     |  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | Exception calling "ReadAllBytes" with "1" argument(s): "Could not find
+     | file '/tmp/playwright/Microsoft.Playwright.dll'."
+InvalidOperation: /tmp/playwright/playwright.ps1:7
+Line |
+   7 |  exit [Microsoft.Playwright.Program]::Main($args)
+     |       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | Unable to find type [Microsoft.Playwright.Program].
+find: '/root/.cache/ms-playwright': No such file or directory
+Error: building at STEP "RUN mkdir PlaywrightInstaller     && printf '<Project Sdk="Microsoft.NET.Sdk"><ItemGroup><PackageReference Include="Microsoft.Playwright" /></ItemGroup></Project>\n' > PlaywrightInstaller/PlaywrightInstaller.csproj     && dotnet build PlaywrightInstaller/PlaywrightInstaller.csproj -c Release -o /tmp/playwright -p:TreatWarningsAsErrors=false     && pwsh /tmp/playwright/playwright.ps1 install chromium --with-deps     && find /root/.cache/ms-playwright -maxdepth 1 -name 'chromium*' | grep -q .     && rm -rf PlaywrightInstaller /tmp/playwright /var/lib/apt/lists/*": while running runtime: exit status 1
+
+real    0m4.837s
+user    0m4.474s
+sys    0m2.844s
+kushal@fedora:~/src/dotnet/MyBlog$
+
+Ran a command
+The installer project now builds, but Microsoft.Playwright.dll never reaches its output folder. Your log shows only PlaywrightInstaller.dll there. A class library project doesn’t copy its NuGet packages’ DLLs into its build output; console apps and test projects do. playwright.ps1 and the .playwright driver folder are copied anyway, because the package’s own build targets add them. That’s why the script was present but the DLL it loads was missing.
+
+The fix is to set CopyLocalLockFileAssemblies to true in the throwaway project, so package DLLs are copied to its output. Only one file changes, and the docs stay accurate. I can’t run a container build here, so please confirm with bash run-e2e.sh.
+
+src/MyBlog.E2E/Dockerfile
+dockerfile
+FROM mcr.microsoft.com/dotnet/sdk:10.0
+WORKDIR /src
+
+COPY Directory.Build.props .
+COPY Directory.Packages.props .
+COPY MyBlog.Core/MyBlog.Core.csproj MyBlog.Core/
+COPY MyBlog.Infrastructure/MyBlog.Infrastructure.csproj MyBlog.Infrastructure/
+COPY MyBlog.Web/MyBlog.Web.csproj MyBlog.Web/
+COPY MyBlog.E2E/MyBlog.E2E.csproj MyBlog.E2E/
+
+RUN dotnet restore MyBlog.E2E/MyBlog.E2E.csproj
+
+RUN mkdir PlaywrightInstaller \
+    && printf '<Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies></PropertyGroup><ItemGroup><PackageReference Include="Microsoft.Playwright" /></ItemGroup></Project>\n' > PlaywrightInstaller/PlaywrightInstaller.csproj \
+    && dotnet build PlaywrightInstaller/PlaywrightInstaller.csproj -c Release -o /tmp/playwright -p:TreatWarningsAsErrors=false \
+    && test -f /tmp/playwright/Microsoft.Playwright.dll \
+    && pwsh /tmp/playwright/playwright.ps1 install chromium --with-deps \
+    && find /root/.cache/ms-playwright -maxdepth 1 -name 'chromium*' | grep -q . \
+    && rm -rf PlaywrightInstaller /tmp/playwright /var/lib/apt/lists/*
+
+COPY . .
+
+RUN dotnet build MyBlog.E2E/MyBlog.E2E.csproj -c Release
+
+WORKDIR /src/MyBlog.E2E
+
+ENV MYBLOG_BASE_URL=http://myblog-web:5000
+ENV PLAYWRIGHT_HEADLESS=true
+
+ENTRYPOINT ["dotnet", "run", "-c", "Release", "--no-build"]
+I also added test -f /tmp/playwright/Microsoft.Playwright.dll straight after the build. If the DLL is missing again, the build stops at that check instead of at a PowerShell stack trace.
+
+
+
+
+Claude is AI and can make mistakes. Please double-check responses.
+
+
+
+
+
+
+
+
+Claude finished the response
+
+68
+29
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

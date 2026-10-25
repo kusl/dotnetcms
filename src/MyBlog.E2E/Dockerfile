@@ -11,8 +11,9 @@ COPY MyBlog.E2E/MyBlog.E2E.csproj MyBlog.E2E/
 RUN dotnet restore MyBlog.E2E/MyBlog.E2E.csproj
 
 RUN mkdir PlaywrightInstaller \
-    && printf '<Project Sdk="Microsoft.NET.Sdk"><ItemGroup><PackageReference Include="Microsoft.Playwright" /></ItemGroup></Project>\n' > PlaywrightInstaller/PlaywrightInstaller.csproj \
+    && printf '<Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies></PropertyGroup><ItemGroup><PackageReference Include="Microsoft.Playwright" /></ItemGroup></Project>\n' > PlaywrightInstaller/PlaywrightInstaller.csproj \
     && dotnet build PlaywrightInstaller/PlaywrightInstaller.csproj -c Release -o /tmp/playwright -p:TreatWarningsAsErrors=false \
+    && test -f /tmp/playwright/Microsoft.Playwright.dll \
     && pwsh /tmp/playwright/playwright.ps1 install chromium --with-deps \
     && find /root/.cache/ms-playwright -maxdepth 1 -name 'chromium*' | grep -q . \
     && rm -rf PlaywrightInstaller /tmp/playwright /var/lib/apt/lists/*
