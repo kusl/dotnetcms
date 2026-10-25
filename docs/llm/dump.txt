@@ -1,7 +1,7 @@
 # Repository dump
-# Commit: 29f3caa (main)
-# Message: run scripts
-# Generated: 2026-10-25T10:16:14-04:00
+# Commit: 250ace1 (main)
+# Message: add logs
+# Generated: 2026-10-25T10:42:38-04:00
 # Uncommitted:
 
 ===== docker-compose.e2e.yml =====
