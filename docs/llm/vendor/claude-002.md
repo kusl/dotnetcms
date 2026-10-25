@@ -1802,75 +1802,37 @@ This is still failing
 
 kushal@fedora:~/src/dotnet/MyBlog$ mylogpath="/home/kushal/src/dotnet/MyBlog/docs/llm/output/$(date +%Y-%m-%d-%H-%M-%S).txt";cd ~/src/dotnet/MyBlog/ && pwd > ${mylogpath} && export DOTNET_CLI_TELEMETRY_OPTOUT=1 && (cd src && time dotnet format >> ${mylogpath}; time dotnet restore >> ${mylogpath}; time dotnet clean >> ${mylogpath}; time dotnet build >> ${mylogpath}; time dotnet run --project MyBlog.Tests/MyBlog.Tests.csproj >> ${mylogpath}; time dotnet list package >> ${mylogpath}; time dotnet list package --outdated >> ${mylogpath}); cd ~/src/dotnet/MyBlog/ >> ${mylogpath}; cat export.sh >> ${mylogpath}; time bash export.sh >> ${mylogpath}; cat run-e2e.sh >> ${mylogpath}; time bash run-e2e.sh >> ${mylogpath};
 
-real	0m11.193s
-user	0m22.702s
-sys	0m1.426s
+real	0m9.830s
+user	0m19.550s
+sys	0m1.229s
 
-real	0m0.940s
-user	0m1.033s
-sys	0m0.220s
+real	0m0.811s
+user	0m0.905s
+sys	0m0.186s
 
-real	0m0.873s
-user	0m0.914s
-sys	0m0.185s
+real	0m0.746s
+user	0m0.756s
+sys	0m0.193s
 
-real	0m4.150s
-user	0m2.451s
-sys	0m0.519s
+real	0m3.494s
+user	0m2.172s
+sys	0m0.480s
 
-real	0m46.326s
-user	0m52.480s
-sys	0m1.026s
+real	0m44.090s
+user	0m49.770s
+sys	0m0.950s
 
-real	0m1.901s
-user	0m1.914s
-sys	0m0.416s
+real	0m1.630s
+user	0m1.789s
+sys	0m0.375s
 
-real	0m2.207s
-user	0m2.174s
-sys	0m0.424s
+real	0m3.039s
+user	0m2.180s
+sys	0m0.433s
 
-real	0m1.691s
-user	0m0.817s
-sys	0m1.355s
-Error: building at STEP "RUN dotnet build MyBlog.E2E/MyBlog.E2E.csproj -c Release": while running runtime: exit status 1
-
-real	0m25.952s
-user	0m23.420s
-sys	0m13.727s
-kushal@fedora:~/src/dotnet/MyBlog$ mylogpath="/home/kushal/src/dotnet/MyBlog/docs/llm/output/$(date +%Y-%m-%d-%H-%M-%S).txt";cd ~/src/dotnet/MyBlog/ && pwd > ${mylogpath} && export DOTNET_CLI_TELEMETRY_OPTOUT=1 && (cd src && time dotnet format >> ${mylogpath}; time dotnet restore >> ${mylogpath}; time dotnet clean >> ${mylogpath}; time dotnet build >> ${mylogpath}; time dotnet run --project MyBlog.Tests/MyBlog.Tests.csproj >> ${mylogpath}; time dotnet list package >> ${mylogpath}; time dotnet list package --outdated >> ${mylogpath}); cd ~/src/dotnet/MyBlog/ >> ${mylogpath}; cat export.sh >> ${mylogpath}; time bash export.sh >> ${mylogpath}; cat run-e2e.sh >> ${mylogpath}; time bash run-e2e.sh >> ${mylogpath};
-
-real	0m9.236s
-user	0m20.670s
-sys	0m1.084s
-
-real	0m0.716s
-user	0m0.797s
-sys	0m0.167s
-
-real	0m0.674s
-user	0m0.719s
-sys	0m0.173s
-
-real	0m7.417s
-user	0m2.474s
-sys	0m0.460s
-
-real	0m43.076s
-user	0m47.282s
-sys	0m0.809s
-
-real	0m1.597s
-user	0m1.655s
-sys	0m0.378s
-
-real	0m1.977s
-user	0m1.816s
-sys	0m0.408s
-
-real	0m1.481s
-user	0m0.843s
-sys	0m1.083s
+real	0m1.471s
+user	0m0.838s
+sys	0m1.092s
 MethodInvocationException: /tmp/playwright/playwright.ps1:6
 Line |
    6 |  [Reflection.Assembly]::Load([System.IO.File]::ReadAllBytes($playwrigh …
@@ -1885,7 +1847,7 @@ Line |
 find: '/root/.cache/ms-playwright': No such file or directory
 Error: building at STEP "RUN mkdir PlaywrightInstaller     && printf '<Project Sdk="Microsoft.NET.Sdk"><ItemGroup><PackageReference Include="Microsoft.Playwright" /></ItemGroup></Project>\n' > PlaywrightInstaller/PlaywrightInstaller.csproj     && dotnet build PlaywrightInstaller/PlaywrightInstaller.csproj -c Release -o /tmp/playwright -p:TreatWarningsAsErrors=false     && pwsh /tmp/playwright/playwright.ps1 install chromium --with-deps     && find /root/.cache/ms-playwright -maxdepth 1 -name 'chromium*' | grep -q .     && rm -rf PlaywrightInstaller /tmp/playwright /var/lib/apt/lists/*": while running runtime: exit status 1
 
-real	0m5.005s
-user	0m4.501s
-sys	0m2.783s
+real	0m4.837s
+user	0m4.474s
+sys	0m2.844s
 kushal@fedora:~/src/dotnet/MyBlog$ 
