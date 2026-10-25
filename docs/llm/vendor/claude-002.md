@@ -45,12 +45,19 @@ but this prompt in particular is a clean up prompt
 clean up should include but not be limited to 
 1. updating readme and documentation to match the package updates I have done 
 2. inconsistencies and defects such as the following IF they are indeed inconsistencies and defects -- for example why do we get debian packages if we are on noble / ubuntu 24? once again this is an example so don't only fix this one file if you fix something fix it for the whole repo 
-3. removal of dead code / code comments
+3. removal of dead code / code comments. for example, if you determine that the powershell block int he docker file is redundant and that the upstream noble sdk dockerfile installs powershell and symlinks things like pwsh, git, curl, wget, you should remove the dead code, not attempt to fix it. or for example whether nodejs npm install is redundant as well? be very aggressive with removing dead code, also remove unused references 
 4. failures should be self evident. we should have enough test coverage that defects and failures are very loud and obvious. add/modify tests if necessary 
     this is also important because next we will create a new branch for dotnet 11 release candidate to prepare to migrate to dotnet 11 at some point. 
     we will migrate to dotnet 11 on the main branch at some point but we don't want to do that before the stable release of dotnet 11 
     therefore it must be a separate branch and a separate ci cd process or github action, again nothing to do about that here but make sure our code is clean 
     and doesn't have unnecessary dead code. 
+5. we should strive to have a single source of truth. the idea is that when we update directory packages props to update playwright from 1.63.0 to 1.64.1 that should be the only file that should change, ideally. not everything is within our control but we have a bash file in export.sh so we can use it if necessary. single source of truth as much as possible and practical please. 
+6. cut down, like really cut down on the dump.txt size. perhaps we need two versions of this dump.txt -- one dump.txt and one slim.md both in the same folder but the second one has NO metadata, only the code and each file included is in blocks like this. so no markdown files no documentation in this slim.md, only code. do not include the export.sh in slim.md 
+```csharp relative/file/location.cs
+using System; 
+// bla bla you get the idea
+```
+and yes that means a fully rebuilt export.sh file with all the comments removed
 
 ```dockerfile /home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/Dockerfile
 # E2E Test Runner Dockerfile
