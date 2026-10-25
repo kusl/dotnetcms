@@ -47,6 +47,10 @@ clean up should include but not be limited to
 2. inconsistencies and defects such as the following IF they are indeed inconsistencies and defects -- for example why do we get debian packages if we are on noble / ubuntu 24? once again this is an example so don't only fix this one file if you fix something fix it for the whole repo 
 3. removal of dead code / code comments
 4. failures should be self evident. we should have enough test coverage that defects and failures are very loud and obvious. add/modify tests if necessary 
+    this is also important because next we will create a new branch for dotnet 11 release candidate to prepare to migrate to dotnet 11 at some point. 
+    we will migrate to dotnet 11 on the main branch at some point but we don't want to do that before the stable release of dotnet 11 
+    therefore it must be a separate branch and a separate ci cd process or github action, again nothing to do about that here but make sure our code is clean 
+    and doesn't have unnecessary dead code. 
 
 ```dockerfile /home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/Dockerfile
 # E2E Test Runner Dockerfile
