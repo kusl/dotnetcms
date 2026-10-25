@@ -801,3 +801,159 @@ Claude finished the response
 I moved playwright install to after dotnet build
 this is based on gemini advice 
 https://aistudio.google.com/prompts/new_chat?model=gemini-3.8-flash
+
+kushal@fedora:~/src/dotnet/MyBlog$ mylogpath="/home/kushal/src/dotnet/MyBlog/docs/llm/output/$(date +%Y-%m-%d-%H-%M-%S).txt";cd ~/src/dotnet/MyBlog/ && pwd > ${mylogpath} && export DOTNET_CLI_TELEMETRY_OPTOUT=1 && (cd src && time dotnet format >> ${mylogpath}; time dotnet restore >> ${mylogpath}; time dotnet clean >> ${mylogpath}; time dotnet build >> ${mylogpath}; time dotnet run --project MyBlog.Tests/MyBlog.Tests.csproj >> ${mylogpath}; time dotnet list package >> ${mylogpath}; time dotnet list package --outdated >> ${mylogpath}); cd ~/src/dotnet/MyBlog/ >> ${mylogpath}; cat export.sh >> ${mylogpath}; time bash export.sh >> ${mylogpath}; cat run-e2e.sh >> ${mylogpath}; time bash run-e2e.sh >> ${mylogpath};
+
+real	0m9.998s
+user	0m19.321s
+sys	0m1.299s
+
+real	0m0.779s
+user	0m0.861s
+sys	0m0.193s
+
+real	0m0.703s
+user	0m0.736s
+sys	0m0.175s
+
+real	0m7.828s
+user	0m2.545s
+sys	0m0.501s
+
+real	0m44.568s
+user	0m50.362s
+sys	0m0.888s
+
+real	0m1.729s
+user	0m1.783s
+sys	0m0.364s
+
+real	0m3.345s
+user	0m2.414s
+sys	0m0.478s
+
+real	0m6.024s
+user	0m2.820s
+sys	0m3.845s
+
+real	0m38.011s
+user	0m2.312s
+sys	0m1.878s
+kushal@fedora:~/src/dotnet/MyBlog$ mylogpath="/home/kushal/src/dotnet/MyBlog/docs/llm/output/$(date +%Y-%m-%d-%H-%M-%S).txt";cd ~/src/dotnet/MyBlog/ && pwd > ${mylogpath} && export DOTNET_CLI_TELEMETRY_OPTOUT=1 && (cd src && time dotnet format >> ${mylogpath}; time dotnet restore >> ${mylogpath}; time dotnet clean >> ${mylogpath}; time dotnet build >> ${mylogpath}; time dotnet run --project MyBlog.Tests/MyBlog.Tests.csproj >> ${mylogpath}; time dotnet list package >> ${mylogpath}; time dotnet list package --outdated >> ${mylogpath}); cd ~/src/dotnet/MyBlog/ >> ${mylogpath}; cat export.sh >> ${mylogpath}; time bash export.sh >> ${mylogpath}; cat run-e2e.sh >> ${mylogpath}; time bash run-e2e.sh >> ${mylogpath};
+
+real	0m9.013s
+user	0m18.722s
+sys	0m1.113s
+
+real	0m0.717s
+user	0m0.789s
+sys	0m0.159s
+
+real	0m0.662s
+user	0m0.691s
+sys	0m0.148s
+
+real	0m2.418s
+user	0m1.790s
+sys	0m0.408s
+
+real	0m43.271s
+user	0m49.156s
+sys	0m0.865s
+
+real	0m1.613s
+user	0m1.648s
+sys	0m0.379s
+
+real	0m1.828s
+user	0m1.738s
+sys	0m0.443s
+
+real	0m5.944s
+user	0m2.879s
+sys	0m3.716s
+
+real	0m36.074s
+user	0m2.479s
+sys	0m1.834s
+kushal@fedora:~/src/dotnet/MyBlog$ git rm docs/playwright.md src/.gitkeep src/MyBlog.Tests/Integration/TelemetryLogRepositoryTests.cs
+rm 'docs/playwright.md'
+rm 'src/.gitkeep'
+rm 'src/MyBlog.Tests/Integration/TelemetryLogRepositoryTests.cs'
+kushal@fedora:~/src/dotnet/MyBlog$ mylogpath="/home/kushal/src/dotnet/MyBlog/docs/llm/output/$(date +%Y-%m-%d-%H-%M-%S).txt";cd ~/src/dotnet/MyBlog/ && pwd > ${mylogpath} && export DOTNET_CLI_TELEMETRY_OPTOUT=1 && (cd src && time dotnet format >> ${mylogpath}; time dotnet restore >> ${mylogpath}; time dotnet clean >> ${mylogpath}; time dotnet build >> ${mylogpath}; time dotnet run --project MyBlog.Tests/MyBlog.Tests.csproj >> ${mylogpath}; time dotnet list package >> ${mylogpath}; time dotnet list package --outdated >> ${mylogpath}); cd ~/src/dotnet/MyBlog/ >> ${mylogpath}; cat export.sh >> ${mylogpath}; time bash export.sh >> ${mylogpath}; cat run-e2e.sh >> ${mylogpath}; time bash run-e2e.sh >> ${mylogpath};
+
+real	0m10.017s
+user	0m19.097s
+sys	0m1.256s
+
+real	0m0.744s
+user	0m0.772s
+sys	0m0.205s
+
+real	0m0.675s
+user	0m0.716s
+sys	0m0.170s
+
+real	0m7.649s
+user	0m2.511s
+sys	0m0.446s
+
+real	0m44.313s
+user	0m49.882s
+sys	0m0.922s
+
+real	0m1.616s
+user	0m1.597s
+sys	0m0.398s
+
+real	0m3.041s
+user	0m2.146s
+sys	0m0.441s
+
+real	0m1.571s
+user	0m0.820s
+sys	0m1.137s
+Trying to pull mcr.microsoft.com/dotnet/sdk:10.0...
+Getting image source signatures
+Copying blob 9b660e3f3a1a done   | 
+Copying blob 809fe014b8c9 done   | 
+Copying blob 4ce2187f4e63 done   | 
+Copying blob e271a0d133c8 done   | 
+Copying blob f2b4ef06ff01 skipped: already exists  
+Copying blob 2aa13cb6e986 done   | 
+Copying blob 933395b9676f done   | 
+Copying blob dcb1426b01f7 done   | 
+Copying blob e26e39803a84 done   | 
+Copying blob aa348bf96432 done   | 
+Copying blob d890623d2022 done   | 
+Copying config 7ca4958c64 done   | 
+Writing manifest to image destination
+MethodInvocationException: /root/.nuget/packages/microsoft.playwright/1.64.1/build/playwright.ps1:6
+Line |
+   6 |  [Reflection.Assembly]::Load([System.IO.File]::ReadAllBytes($playwrigh …
+     |  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | Exception calling "ReadAllBytes" with "1" argument(s): "Could not find
+     | file
+     | '/root/.nuget/packages/microsoft.playwright/1.64.1/build/Microsoft.Playwright.dll'."
+InvalidOperation: /root/.nuget/packages/microsoft.playwright/1.64.1/build/playwright.ps1:7
+Line |
+   7 |  exit [Microsoft.Playwright.Program]::Main($args)
+     |       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | Unable to find type [Microsoft.Playwright.Program].
+Trying to pull mcr.microsoft.com/dotnet/aspnet:10.0...
+Getting image source signatures
+Copying blob 9b660e3f3a1a skipped: already exists  
+Copying blob f2b4ef06ff01 skipped: already exists  
+Copying blob e271a0d133c8 skipped: already exists  
+Copying blob 2aa13cb6e986 skipped: already exists  
+Copying blob 4ce2187f4e63 skipped: already exists  
+Copying blob 809fe014b8c9 skipped: already exists  
+Copying config 3ad8ff9991 done   | 
+Writing manifest to image destination
+debconf: delaying package configuration, since apt-utils is not installed
+[ERROR] E2E tests failed with exit code 1 (logs in test-results/)
+
+real	0m58.167s
+user	0m49.010s
+sys	0m22.751s
+kushal@fedora:~/src/dotnet/MyBlog$ 
