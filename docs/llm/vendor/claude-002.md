@@ -957,3 +957,60 @@ real	0m58.167s
 user	0m49.010s
 sys	0m22.751s
 kushal@fedora:~/src/dotnet/MyBlog$ 
+
+However, when I made the change, I got a different error 
+
+kushal@fedora:~/src/dotnet/MyBlog$ mylogpath="/home/kushal/src/dotnet/MyBlog/docs/llm/output/$(date +%Y-%m-%d-%H-%M-%S).txt";cd ~/src/dotnet/MyBlog/ && pwd > ${mylogpath} && export DOTNET_CLI_TELEMETRY_OPTOUT=1 && (cd src && time dotnet format >> ${mylogpath}; time dotnet restore >> ${mylogpath}; time dotnet clean >> ${mylogpath}; time dotnet build >> ${mylogpath}; time dotnet run --project MyBlog.Tests/MyBlog.Tests.csproj >> ${mylogpath}; time dotnet list package >> ${mylogpath}; time dotnet list package --outdated >> ${mylogpath}); cd ~/src/dotnet/MyBlog/ >> ${mylogpath}; cat export.sh >> ${mylogpath}; time bash export.sh >> ${mylogpath}; cat run-e2e.sh >> ${mylogpath}; time bash run-e2e.sh >> ${mylogpath};
+
+real	0m11.193s
+user	0m22.702s
+sys	0m1.426s
+
+real	0m0.940s
+user	0m1.033s
+sys	0m0.220s
+
+real	0m0.873s
+user	0m0.914s
+sys	0m0.185s
+
+real	0m4.150s
+user	0m2.451s
+sys	0m0.519s
+
+real	0m46.326s
+user	0m52.480s
+sys	0m1.026s
+
+real	0m1.901s
+user	0m1.914s
+sys	0m0.416s
+
+real	0m2.207s
+user	0m2.174s
+sys	0m0.424s
+
+real	0m1.691s
+user	0m0.817s
+sys	0m1.355s
+Error: building at STEP "RUN dotnet build MyBlog.E2E/MyBlog.E2E.csproj -c Release": while running runtime: exit status 1
+
+real	0m25.952s
+user	0m23.420s
+sys	0m13.727s
+kushal@fedora:~/src/dotnet/MyBlog$ 
+
+STEP 10/16: RUN dotnet build MyBlog.E2E/MyBlog.E2E.csproj -c Release
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  MyBlog.Core -> /src/MyBlog.Core/bin/Release/net10.0/MyBlog.Core.dll
+  MyBlog.Infrastructure -> /src/MyBlog.Infrastructure/bin/Release/net10.0/MyBlog.Infrastructure.dll
+CSC : error CS5001: Program does not contain a static 'Main' method suitable for an entry point [/src/MyBlog.Web/MyBlog.Web.csproj]
+
+Build FAILED.
+
+CSC : error CS5001: Program does not contain a static 'Main' method suitable for an entry point [/src/MyBlog.Web/MyBlog.Web.csproj]
+    0 Warning(s)
+    1 Error(s)
+
+Time Elapsed 00:00:03.71

@@ -1,7 +1,7 @@
 # Repository dump
-# Commit: e37effb (main)
-# Message: add claude response
-# Generated: 2026-10-25T09:24:56-04:00
+# Commit: d6ef91c (main)
+# Message: add prompt
+# Generated: 2026-10-25T09:32:35-04:00
 # Uncommitted:
 
 ===== docker-compose.e2e.yml =====
@@ -3999,14 +3999,14 @@ COPY MyBlog.E2E/MyBlog.E2E.csproj MyBlog.E2E/
 
 RUN dotnet restore MyBlog.E2E/MyBlog.E2E.csproj
 
+RUN dotnet build MyBlog.E2E/MyBlog.E2E.csproj -c Release
+
 RUN PLAYWRIGHT_SCRIPT="$(find /root/.nuget/packages/microsoft.playwright -name playwright.ps1 -print -quit)" \
     && test -n "$PLAYWRIGHT_SCRIPT" \
     && pwsh "$PLAYWRIGHT_SCRIPT" install chromium --with-deps \
     && rm -rf /var/lib/apt/lists/*
 
 COPY . .
-
-RUN dotnet build MyBlog.E2E/MyBlog.E2E.csproj -c Release
 
 WORKDIR /src/MyBlog.E2E
 
