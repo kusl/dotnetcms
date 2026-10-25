@@ -7,7 +7,7 @@
     <OtelAspNetCoreInstrVersion>1.20.1</OtelAspNetCoreInstrVersion>
     <OtelHttpInstrVersion>1.20.1</OtelHttpInstrVersion>
 
-    <TestSdkVersion>18.10.1</TestSdkVersion>
+    <TestSdkVersion>18.11.0</TestSdkVersion>
     <XUnitVersion>4.0.2</XUnitVersion>
     <TestingExtensionsVersion>2.5.1</TestingExtensionsVersion>
     <PlaywrightVersion>1.64.1</PlaywrightVersion>
