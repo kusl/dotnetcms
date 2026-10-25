@@ -1,7 +1,7 @@
 # Repository dump
-# Commit: d3d70cb (main)
-# Message: run scripts
-# Generated: 2026-10-25T09:57:14-04:00
+# Commit: a3cfd28 (main)
+# Message: add claude response
+# Generated: 2026-10-25T10:12:52-04:00
 # Uncommitted:
 
 ===== docker-compose.e2e.yml =====
@@ -4002,8 +4002,9 @@ COPY MyBlog.E2E/MyBlog.E2E.csproj MyBlog.E2E/
 RUN dotnet restore MyBlog.E2E/MyBlog.E2E.csproj
 
 RUN mkdir PlaywrightInstaller \
-    && printf '<Project Sdk="Microsoft.NET.Sdk"><ItemGroup><PackageReference Include="Microsoft.Playwright" /></ItemGroup></Project>\n' > PlaywrightInstaller/PlaywrightInstaller.csproj \
+    && printf '<Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies></PropertyGroup><ItemGroup><PackageReference Include="Microsoft.Playwright" /></ItemGroup></Project>\n' > PlaywrightInstaller/PlaywrightInstaller.csproj \
     && dotnet build PlaywrightInstaller/PlaywrightInstaller.csproj -c Release -o /tmp/playwright -p:TreatWarningsAsErrors=false \
+    && test -f /tmp/playwright/Microsoft.Playwright.dll \
     && pwsh /tmp/playwright/playwright.ps1 install chromium --with-deps \
     && find /root/.cache/ms-playwright -maxdepth 1 -name 'chromium*' | grep -q . \
     && rm -rf PlaywrightInstaller /tmp/playwright /var/lib/apt/lists/*

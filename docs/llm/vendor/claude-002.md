@@ -2398,3 +2398,103 @@ Claude finished the response
 
 
 
+here is the latest output 
+
+kushal@fedora:~/src/dotnet/MyBlog$ mylogpath="/home/kushal/src/dotnet/MyBlog/docs/llm/output/$(date +%Y-%m-%d-%H-%M-%S).txt";cd ~/src/dotnet/MyBlog/ && pwd > ${mylogpath} && export DOTNET_CLI_TELEMETRY_OPTOUT=1 && (cd src && time dotnet format >> ${mylogpath}; time dotnet restore >> ${mylogpath}; time dotnet clean >> ${mylogpath}; time dotnet build >> ${mylogpath}; time dotnet run --project MyBlog.Tests/MyBlog.Tests.csproj >> ${mylogpath}; time dotnet list package >> ${mylogpath}; time dotnet list package --outdated >> ${mylogpath}); cd ~/src/dotnet/MyBlog/ >> ${mylogpath}; cat export.sh >> ${mylogpath}; time bash export.sh >> ${mylogpath}; cat run-e2e.sh >> ${mylogpath}; time bash run-e2e.sh >> ${mylogpath};
+
+real	0m8.671s
+user	0m17.890s
+sys	0m1.042s
+
+real	0m0.711s
+user	0m0.780s
+sys	0m0.205s
+
+real	0m0.670s
+user	0m0.705s
+sys	0m0.175s
+
+real	0m7.528s
+user	0m2.524s
+sys	0m0.453s
+
+real	0m43.494s
+user	0m47.585s
+sys	0m0.865s
+
+real	0m1.608s
+user	0m1.630s
+sys	0m0.389s
+
+real	0m1.736s
+user	0m1.757s
+sys	0m0.374s
+
+real	0m1.484s
+user	0m0.782s
+sys	0m1.163s
+debconf: delaying package configuration, since apt-utils is not installed
+
+real	1m10.034s
+user	0m27.226s
+sys	0m15.709s
+kushal@fedora:~/src/dotnet/MyBlog$ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
