@@ -155,3 +155,146 @@ The pattern: Grants.gov is a shared front door for finding opportunities and (us
 *Research for this article was done on October 26, 2026. Verify dates, rules, and hostnames before relying on them.*
 ```
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+kushal@fedora:~/src/dotnet/MyImapDownloader$ mylogpath="/home/kushal/src/dotnet/MyBlog/docs/llm/output/$(date +%Y-%m-%d-%H-%M-%S).txt";cd ~/src/dotnet/MyBlog/ && pwd > ${mylogpath} && export DOTNET_CLI_TELEMETRY_OPTOUT=1 && (cd src && time dotnet format >> ${mylogpath}; time dotnet restore >> ${mylogpath}; time dotnet clean >> ${mylogpath}; time dotnet build >> ${mylogpath}; time dotnet run --project MyBlog.Tests/MyBlog.Tests.csproj >> ${mylogpath}; time dotnet list package >> ${mylogpath}; time dotnet list package --outdated >> ${mylogpath}); cd ~/src/dotnet/MyBlog/ >> ${mylogpath}; cat export.sh >> ${mylogpath}; time bash export.sh >> ${mylogpath}; cat run-e2e.sh >> ${mylogpath}; time bash run-e2e.sh >> ${mylogpath};
+
+real	0m10.528s
+user	0m19.860s
+sys	0m1.401s
+
+real	0m0.749s
+user	0m0.818s
+sys	0m0.193s
+
+real	0m0.698s
+user	0m0.719s
+sys	0m0.193s
+
+real	0m7.859s
+user	0m2.569s
+sys	0m0.505s
+
+real	0m44.778s
+user	0m50.171s
+sys	0m1.067s
+
+real	0m1.647s
+user	0m1.658s
+sys	0m0.383s
+
+real	0m3.217s
+user	0m2.368s
+sys	0m0.491s
+
+real	0m1.561s
+user	0m0.749s
+sys	0m1.253s
+Trying to pull mcr.microsoft.com/dotnet/sdk:10.0...
+Getting image source signatures
+Copying blob 017220401ab5 done   | 
+Copying blob aa37eb26c52c done   | 
+Copying blob 7a48b8f0e5c7 done   | 
+Copying blob d12f340d58c7 done   | 
+Copying blob f3c239e1a838 done   | 
+Copying blob 1f8c14bc5847 done   | 
+Copying blob 7ed664a3150a done   | 
+Copying blob cb09e947f848 done   | 
+Copying blob 7a3f8cedb109 done   | 
+Copying blob 463481a04bb2 done   | 
+Copying blob 3465c8a1b95f done   | 
+Copying config 3192b81636 done   | 
+Writing manifest to image destination
+Trying to pull mcr.microsoft.com/dotnet/aspnet:10.0...
+Getting image source signatures
+Copying blob 017220401ab5 skipped: already exists  
+Copying blob 1f8c14bc5847 skipped: already exists  
+Copying blob aa37eb26c52c skipped: already exists  
+Copying blob d12f340d58c7 skipped: already exists  
+Copying blob f3c239e1a838 skipped: already exists  
+Copying blob 7a48b8f0e5c7 skipped: already exists  
+Copying config cfeca9a55d done   | 
+Writing manifest to image destination
+debconf: delaying package configuration, since apt-utils is not installed
+
+real	1m16.148s
+user	0m25.764s
+sys	0m11.206s
+kushal@fedora:~/src/dotnet/MyBlog$ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
