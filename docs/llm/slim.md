@@ -911,6 +911,7 @@ public sealed class User
 ```
 
 ````csharp src/MyBlog.Core/Services/MarkdownService.cs
+using System.Globalization;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -924,7 +925,12 @@ public sealed partial class MarkdownService(
     ILogger<MarkdownService>? logger = null)
     : IMarkdownService
 {
+    private const string TokenStart = "\uE000";
+    private const string TokenEnd = "\uE001";
+
     private enum ListType { None, Unordered, Ordered }
+
+    private enum TableAlignment { None, Left, Center, Right }
 
     public async Task<string> ToHtmlAsync(string markdown)
     {
@@ -939,9 +945,9 @@ public sealed partial class MarkdownService(
         var currentListType = ListType.None;
         var codeBlockContent = new StringBuilder();
 
-        foreach (var rawLine in lines)
+        for (var index = 0; index < lines.Length; index++)
         {
-            var line = rawLine;
+            var line = lines[index];
 
             if (line.StartsWith("```"))
             {
@@ -992,6 +998,13 @@ public sealed partial class MarkdownService(
                 continue;
             }
 
+            if (index + 1 < lines.Length && TryParseTableHeader(line, lines[index + 1], out var alignments))
+            {
+                result.Append(CloseList(ref currentListType));
+                index = await AppendTableAsync(result, lines, index, alignments);
+                continue;
+            }
+
             var unorderedMatch = UnorderedListPattern().Match(line);
             if (unorderedMatch.Success)
             {
@@ -1012,11 +1025,11 @@ public sealed partial class MarkdownService(
                 if (currentListType != ListType.Ordered)
                 {
                     result.Append(CloseList(ref currentListType));
-                    result.AppendLine("<ol>");
+                    result.AppendLine(OpenOrderedList(orderedMatch.Groups[1].Value));
                     currentListType = ListType.Ordered;
                 }
 
-                var itemText = await ProcessInlineAsync(orderedMatch.Groups[1].Value);
+                var itemText = await ProcessInlineAsync(orderedMatch.Groups[2].Value);
                 result.AppendLine($"<li>{itemText}</li>");
                 continue;
             }
@@ -1060,6 +1073,153 @@ public sealed partial class MarkdownService(
         return result;
     }
 
+    private static string OpenOrderedList(string number)
+    {
+        return int.TryParse(number, NumberStyles.None, CultureInfo.InvariantCulture, out var start) && start != 1 ?
+            $"<ol start=\"{start}\">" :
+            "<ol>";
+    }
+
+    private static bool TryParseTableHeader(string headerLine, string delimiterLine, out TableAlignment[] alignments)
+    {
+        alignments = [];
+
+        if (!headerLine.Contains('|') || !delimiterLine.Contains('|'))
+        {
+            return false;
+        }
+
+        var delimiterCells = SplitTableRow(delimiterLine);
+        var parsed = new TableAlignment[delimiterCells.Count];
+        for (var i = 0; i < delimiterCells.Count; i++)
+        {
+            var cell = delimiterCells[i];
+            if (!TableDelimiterCellPattern().IsMatch(cell))
+            {
+                return false;
+            }
+
+            parsed[i] = (cell.StartsWith(':'), cell.EndsWith(':')) switch
+            {
+                (true, true) => TableAlignment.Center,
+                (true, false) => TableAlignment.Left,
+                (false, true) => TableAlignment.Right,
+                _ => TableAlignment.None
+            };
+        }
+
+        if (SplitTableRow(headerLine).Count != parsed.Length)
+        {
+            return false;
+        }
+
+        alignments = parsed;
+        return true;
+    }
+
+    private async Task<int> AppendTableAsync(StringBuilder result, string[] lines, int headerIndex, TableAlignment[] alignments)
+    {
+        result.AppendLine("<div class=\"table-wrapper\"><table>");
+        result.AppendLine("<thead>");
+        await AppendTableRowAsync(result, lines[headerIndex], "th", alignments);
+        result.AppendLine("</thead>");
+
+        var index = headerIndex + 2;
+        var hasBody = false;
+        while (index < lines.Length && IsTableBodyRow(lines[index]))
+        {
+            if (!hasBody)
+            {
+                result.AppendLine("<tbody>");
+                hasBody = true;
+            }
+
+            await AppendTableRowAsync(result, lines[index], "td", alignments);
+            index++;
+        }
+
+        if (hasBody)
+        {
+            result.AppendLine("</tbody>");
+        }
+
+        result.AppendLine("</table></div>");
+        return index - 1;
+    }
+
+    private async Task AppendTableRowAsync(StringBuilder result, string line, string cellTag, TableAlignment[] alignments)
+    {
+        var cells = SplitTableRow(line);
+        result.Append("<tr>");
+        for (var i = 0; i < alignments.Length; i++)
+        {
+            var content = i < cells.Count ? await ProcessInlineAsync(cells[i]) : string.Empty;
+            var style = alignments[i] switch
+            {
+                TableAlignment.Left => " style=\"text-align: left\"",
+                TableAlignment.Center => " style=\"text-align: center\"",
+                TableAlignment.Right => " style=\"text-align: right\"",
+                _ => ""
+            };
+            result.Append($"<{cellTag}{style}>{content}</{cellTag}>");
+        }
+        result.AppendLine("</tr>");
+    }
+
+    private static bool IsTableBodyRow(string line)
+    {
+        return !string.IsNullOrWhiteSpace(line)
+            && !line.StartsWith("```")
+            && !line.StartsWith("> ")
+            && !HorizontalRulePattern().IsMatch(line)
+            && !HeadingPattern().IsMatch(line)
+            && !UnorderedListPattern().IsMatch(line)
+            && !OrderedListPattern().IsMatch(line);
+    }
+
+    private static List<string> SplitTableRow(string line)
+    {
+        var row = line.Trim();
+        if (row.StartsWith('|'))
+        {
+            row = row[1..];
+        }
+
+        if (row.EndsWith('|') && !row.EndsWith("\\|", StringComparison.Ordinal))
+        {
+            row = row[..^1];
+        }
+
+        var cells = new List<string>();
+        var cell = new StringBuilder();
+        var position = 0;
+        while (position < row.Length)
+        {
+            var c = row[position];
+            if (c == '\\' && position + 1 < row.Length && row[position + 1] == '|')
+            {
+                cell.Append('|');
+                position += 2;
+                continue;
+            }
+
+            if (c == '|')
+            {
+                cells.Add(cell.ToString().Trim());
+                cell.Clear();
+            }
+            else
+            {
+                cell.Append(c);
+            }
+
+            position++;
+        }
+
+        cells.Add(cell.ToString().Trim());
+        return cells;
+    }
+
     private static string HtmlEncode(string text)
     {
         if (string.IsNullOrEmpty(text))
@@ -1092,11 +1252,21 @@ public sealed partial class MarkdownService(
         return sb.ToString();
     }
 
+    private static string Protect(List<string> protectedHtml, string html)
+    {
+        protectedHtml.Add(html);
+        return $"{TokenStart}{protectedHtml.Count - 1}{TokenEnd}";
+    }
+
     private async Task<string> ProcessInlineAsync(string text)
     {
-        text = HtmlEncode(text);
+        text = HtmlEncode(text)
+            .Replace(TokenStart, "&#xE000;")
+            .Replace(TokenEnd, "&#xE001;");
 
-        text = InlineCodePattern().Replace(text, "<code>$1</code>");
+        var protectedHtml = new List<string>();
+
+        text = InlineCodePattern().Replace(text, match => Protect(protectedHtml, $"<code>{match.Groups[1].Value}</code>"));
 
         var matches = ImagePattern().Matches(text);
         if (matches.Count > 0)
@@ -1122,11 +1292,11 @@ public sealed partial class MarkdownService(
                     imgTag = $"<img src=\"{url}\" alt=\"{alt}\" />";
                 }
 
-                text = text.Remove(match.Index, match.Length).Insert(match.Index, imgTag);
+                text = text.Remove(match.Index, match.Length).Insert(match.Index, Protect(protectedHtml, imgTag));
             }
         }
 
-        text = LinkPattern().Replace(text, "<a href=\"$2\">$1</a>");
+        text = LinkPattern().Replace(text, match => $"{Protect(protectedHtml, $"<a href=\"{match.Groups[2].Value}\">")}{match.Groups[1].Value}</a>");
 
         text = BoldPattern().Replace(text, match =>
         {
@@ -1140,7 +1310,7 @@ public sealed partial class MarkdownService(
             return $"<em>{content}</em>";
         });
 
-        return text;
+        return ProtectedTokenPattern().Replace(text, match => protectedHtml[int.Parse(match.Groups[1].Value, CultureInfo.InvariantCulture)]);
     }
 
     [GeneratedRegex(@"^(#{1,6})\s+(.+)$")]
@@ -1149,11 +1319,14 @@ public sealed partial class MarkdownService(
     [GeneratedRegex(@"^[-*]\s+(.+)$")]
     private static partial Regex UnorderedListPattern();
 
-    [GeneratedRegex(@"^\d+\.\s+(.+)$")]
+    [GeneratedRegex(@"^(\d+)\.\s+(.+)$")]
     private static partial Regex OrderedListPattern();
 
     [GeneratedRegex(@"^[-*_]{3,}\s*$")]
     private static partial Regex HorizontalRulePattern();
+
+    [GeneratedRegex(@"^:?-+:?$")]
+    private static partial Regex TableDelimiterCellPattern();
 
     [GeneratedRegex(@"`([^`]+)`")]
     private static partial Regex InlineCodePattern();
@@ -1164,11 +1337,14 @@ public sealed partial class MarkdownService(
     [GeneratedRegex(@"\[([^\]]+)\]\(([^)]+)\)")]
     private static partial Regex LinkPattern();
 
-    [GeneratedRegex(@"\*\*(.+?)\*\*|__(.+?)__")]
+    [GeneratedRegex(@"\*\*(.+?)\*\*|(?<![\p{L}\p{N}_])__(.+?)__(?![\p{L}\p{N}_])")]
     private static partial Regex BoldPattern();
 
-    [GeneratedRegex(@"(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)|(?<!_)_(?!_)(.+?)(?<!_)_(?!_)")]
+    [GeneratedRegex(@"(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)|(?<![\p{L}\p{N}_])_(?!_)(.+?)(?<!_)_(?![\p{L}\p{N}_])")]
     private static partial Regex ItalicPattern();
+
+    [GeneratedRegex(@"\uE000(\d+)\uE001")]
+    private static partial Regex ProtectedTokenPattern();
 }
 ````
 
@@ -7312,6 +7488,139 @@ public class MarkdownServiceImageUrlTests
 }
 ```
 
+```csharp src/MyBlog.Tests/Unit/MarkdownServiceInlineTests.cs
+using MyBlog.Core.Services;
+using Xunit;
+
+namespace MyBlog.Tests.Unit;
+
+public class MarkdownServiceInlineTests
+{
+    private readonly MarkdownService _sut = new(new MockImageDimensionService());
+
+    [Fact]
+    public async Task ToHtml_WithUnderscoresInLinkUrl_PreservesUrl()
+    {
+        var result = await _sut.ToHtmlAsync("[page](https://example.com/mp_/http://example.org/applicant_s2s/page.jsp)");
+
+        Assert.Contains("<a href=\"https://example.com/mp_/http://example.org/applicant_s2s/page.jsp\">page</a>", result);
+        Assert.DoesNotContain("<em>", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithAsterisksInLinkUrl_PreservesUrl()
+    {
+        var result = await _sut.ToHtmlAsync("[a](https://example.com/*x*) and [b](https://example.com/*y*)");
+
+        Assert.Contains("href=\"https://example.com/*x*\"", result);
+        Assert.Contains("href=\"https://example.com/*y*\"", result);
+        Assert.DoesNotContain("<em>", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithEmphasisInLinkText_ProcessesEmphasis()
+    {
+        var result = await _sut.ToHtmlAsync("[**bold** link](https://example.com)");
+
+        Assert.Contains("<a href=\"https://example.com\"><strong>bold</strong> link</a>", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithEmphasisMarkersInInlineCode_LeavesCodeLiteral()
+    {
+        var result = await _sut.ToHtmlAsync("Call `__init__` and `*args*` here");
+
+        Assert.Contains("<code>__init__</code>", result);
+        Assert.Contains("<code>*args*</code>", result);
+        Assert.DoesNotContain("<strong>", result);
+        Assert.DoesNotContain("<em>", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithMarkdownInsideInlineCode_LeavesCodeLiteral()
+    {
+        var result = await _sut.ToHtmlAsync("Write `[text](url)` or `![alt](img.png)`");
+
+        Assert.Contains("<code>[text](url)</code>", result);
+        Assert.Contains("<code>![alt](img.png)</code>", result);
+        Assert.DoesNotContain("<a ", result);
+        Assert.DoesNotContain("<img ", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithEmphasisMarkersInImageAlt_LeavesAltLiteral()
+    {
+        var result = await _sut.ToHtmlAsync("![a *b* c](https://example.com/unknown.jpg)");
+
+        Assert.Contains("<img src=\"https://example.com/unknown.jpg\" alt=\"a *b* c\" />", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithLinkedImage_RendersImageInsideAnchor()
+    {
+        var result = await _sut.ToHtmlAsync("[![alt](https://example.com/unknown.jpg)](https://example.com)");
+
+        Assert.Contains("<a href=\"https://example.com\"><img src=\"https://example.com/unknown.jpg\" alt=\"alt\" /></a>", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithIntrawordUnderscores_DoesNotEmphasize()
+    {
+        var result = await _sut.ToHtmlAsync("Use snake_case_names and __dunder__method here");
+
+        Assert.Contains("snake_case_names", result);
+        Assert.DoesNotContain("<em>", result);
+        Assert.DoesNotContain("<strong>", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithUnderscoreEmphasis_StillEmphasizes()
+    {
+        var result = await _sut.ToHtmlAsync("This is _italic_ and __bold__ text.");
+
+        Assert.Contains("<em>italic</em>", result);
+        Assert.Contains("<strong>bold</strong>", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithPrivateUseCharacters_PreservesThemEncoded()
+    {
+        var result = await _sut.ToHtmlAsync("a\uE0000\uE001b");
+
+        Assert.Contains("<p>a&#xE000;0&#xE001;b</p>", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithOrderedListNotStartingAtOne_SetsStart()
+    {
+        var result = await _sut.ToHtmlAsync("5. Fifth\n6. Sixth");
+
+        Assert.Contains("<ol start=\"5\">", result);
+        Assert.Contains("<li>Fifth</li>", result);
+        Assert.Contains("<li>Sixth</li>", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithOrderedListStartingAtOne_OmitsStart()
+    {
+        var result = await _sut.ToHtmlAsync("1. First\n2. Second");
+
+        Assert.Contains("<ol>", result);
+        Assert.DoesNotContain("start=", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithOrderedListContinuedAfterParagraph_KeepsNumbering()
+    {
+        var markdown = "1. One\n2. Two\n\n**Award**\n\n3. Three";
+        var result = await _sut.ToHtmlAsync(markdown);
+
+        Assert.Contains("<p><strong>Award</strong></p>", result);
+        Assert.Contains("<ol start=\"3\">", result);
+    }
+}
+```
+
 ```csharp src/MyBlog.Tests/Unit/MarkdownServiceLongDocumentTests.cs
 using System.Text;
 using MyBlog.Core.Services;
@@ -7432,6 +7741,279 @@ public class MarkdownServiceLongDocumentTests
     }
 }
 ```
+
+````csharp src/MyBlog.Tests/Unit/MarkdownServiceTableTests.cs
+using MyBlog.Core.Services;
+using Xunit;
+
+namespace MyBlog.Tests.Unit;
+
+public class MarkdownServiceTableTests
+{
+    private readonly MarkdownService _sut = new(new MockImageDimensionService());
+
+    private static string NormalizeNewlines(string s) => s.Replace("\r\n", "\n");
+
+    private static int CountOccurrences(string haystack, string needle)
+    {
+        var count = 0;
+        var index = haystack.IndexOf(needle, StringComparison.Ordinal);
+        while (index >= 0)
+        {
+            count++;
+            index = haystack.IndexOf(needle, index + needle.Length, StringComparison.Ordinal);
+        }
+        return count;
+    }
+
+    [Fact]
+    public async Task ToHtml_WithSimpleTable_RendersHeaderAndBody()
+    {
+        var markdown = "| Name | Value |\n|---|---|\n| a | 1 |\n| b | 2 |";
+        var result = NormalizeNewlines(await _sut.ToHtmlAsync(markdown));
+
+        Assert.Equal(
+            "<div class=\"table-wrapper\"><table>\n" +
+            "<thead>\n" +
+            "<tr><th>Name</th><th>Value</th></tr>\n" +
+            "</thead>\n" +
+            "<tbody>\n" +
+            "<tr><td>a</td><td>1</td></tr>\n" +
+            "<tr><td>b</td><td>2</td></tr>\n" +
+            "</tbody>\n" +
+            "</table></div>\n",
+            result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithTableWithoutOuterPipes_RendersTable()
+    {
+        var markdown = "Name | Value\n--- | ---\na | 1";
+        var result = await _sut.ToHtmlAsync(markdown);
+
+        Assert.Contains("<tr><th>Name</th><th>Value</th></tr>", result);
+        Assert.Contains("<tr><td>a</td><td>1</td></tr>", result);
+        Assert.DoesNotContain("<p>", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithAlignedColumns_AppliesTextAlign()
+    {
+        var markdown = "| L | C | R | N |\n|:--|:-:|--:|---|\n| 1 | 2 | 3 | 4 |";
+        var result = await _sut.ToHtmlAsync(markdown);
+
+        Assert.Contains("<th style=\"text-align: left\">L</th>", result);
+        Assert.Contains("<th style=\"text-align: center\">C</th>", result);
+        Assert.Contains("<th style=\"text-align: right\">R</th>", result);
+        Assert.Contains("<th>N</th>", result);
+        Assert.Contains("<td style=\"text-align: right\">3</td>", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithDelimiterSpacing_RendersTable()
+    {
+        var markdown = "| A | B |\n| :--- | ---: |\n| x | y |";
+        var result = await _sut.ToHtmlAsync(markdown);
+
+        Assert.Contains("<th style=\"text-align: left\">A</th>", result);
+        Assert.Contains("<td style=\"text-align: right\">y</td>", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithInlineMarkdownInCells_ProcessesInline()
+    {
+        var markdown = "| Term | Source |\n|---|---|\n| **Bold** and *italic* | [Docs](https://example.com/a_b_c) and `code` |";
+        var result = await _sut.ToHtmlAsync(markdown);
+
+        Assert.Contains("<td><strong>Bold</strong> and <em>italic</em></td>", result);
+        Assert.Contains("<td><a href=\"https://example.com/a_b_c\">Docs</a> and <code>code</code></td>", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithEscapedPipe_KeepsPipeInCell()
+    {
+        var markdown = "| Expression | Meaning |\n|---|---|\n| a \\| b | either |";
+        var result = await _sut.ToHtmlAsync(markdown);
+
+        Assert.Contains("<tr><td>a | b</td><td>either</td></tr>", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithShortAndLongRows_NormalizesToHeaderColumnCount()
+    {
+        var markdown = "| A | B | C |\n|---|---|---|\n| 1 |\n| 1 | 2 | 3 | 4 |";
+        var result = await _sut.ToHtmlAsync(markdown);
+
+        Assert.Contains("<tr><td>1</td><td></td><td></td></tr>", result);
+        Assert.Contains("<tr><td>1</td><td>2</td><td>3</td></tr>", result);
+        Assert.DoesNotContain("4", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithHeaderOnly_OmitsBody()
+    {
+        var markdown = "| A | B |\n|---|---|";
+        var result = await _sut.ToHtmlAsync(markdown);
+
+        Assert.Contains("<thead>", result);
+        Assert.DoesNotContain("<tbody>", result);
+        Assert.Contains("</table></div>", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithMismatchedDelimiterCount_DoesNotRenderTable()
+    {
+        var markdown = "| A | B |\n|---|\n| 1 | 2 |";
+        var result = await _sut.ToHtmlAsync(markdown);
+
+        Assert.DoesNotContain("<table>", result);
+        Assert.Contains("<p>| A | B |</p>", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithPipeLineFollowedByHorizontalRule_DoesNotRenderTable()
+    {
+        var markdown = "a | b\n---";
+        var result = await _sut.ToHtmlAsync(markdown);
+
+        Assert.DoesNotContain("<table>", result);
+        Assert.Contains("<p>a | b</p>", result);
+        Assert.Contains("<hr />", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithTableFollowedByBlankLineAndParagraph_EndsTable()
+    {
+        var markdown = "| A |\n|---|\n| 1 |\n\nAfter the table.";
+        var result = NormalizeNewlines(await _sut.ToHtmlAsync(markdown));
+
+        Assert.Contains("</table></div>\n<p>After the table.</p>", result);
+        Assert.Equal(1, CountOccurrences(result, "<td>"));
+    }
+
+    [Fact]
+    public async Task ToHtml_WithTableFollowedByHeading_EndsTable()
+    {
+        var markdown = "| A |\n|---|\n| 1 |\n## Next";
+        var result = NormalizeNewlines(await _sut.ToHtmlAsync(markdown));
+
+        Assert.Contains("</table></div>\n<h2>Next</h2>", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithTableFollowedByList_EndsTable()
+    {
+        var markdown = "| A |\n|---|\n| 1 |\n- item";
+        var result = NormalizeNewlines(await _sut.ToHtmlAsync(markdown));
+
+        Assert.Contains("</table></div>\n<ul>\n<li>item</li>\n</ul>", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithListBeforeTable_ClosesListFirst()
+    {
+        var markdown = "- item\n| A |\n|---|\n| 1 |";
+        var result = NormalizeNewlines(await _sut.ToHtmlAsync(markdown));
+
+        var ulCloseIndex = result.IndexOf("</ul>", StringComparison.Ordinal);
+        var tableIndex = result.IndexOf("<table>", StringComparison.Ordinal);
+        Assert.True(ulCloseIndex >= 0 && ulCloseIndex < tableIndex);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithHtmlInCells_EscapesHtml()
+    {
+        var markdown = "| A |\n|---|\n| <script>alert(1)</script> |";
+        var result = await _sut.ToHtmlAsync(markdown);
+
+        Assert.Contains("<td>&lt;script&gt;alert(1)&lt;/script&gt;</td>", result);
+        Assert.DoesNotContain("<script>", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithTableInsideCodeBlock_RendersAsCode()
+    {
+        var markdown = "```\n| A | B |\n|---|---|\n```";
+        var result = await _sut.ToHtmlAsync(markdown);
+
+        Assert.DoesNotContain("<table>", result);
+        Assert.Contains("| A | B |", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithMultipleTablesOfDifferentSizes_RendersEach()
+    {
+        var markdown = "| A | B |\n|---|---|\n| 1 | 2 |\n\n| C | D | E | F |\n|---|---|---|---|\n| 1 | 2 | 3 | 4 |\n| 5 | 6 | 7 | 8 |";
+        var result = await _sut.ToHtmlAsync(markdown);
+
+        Assert.Equal(2, CountOccurrences(result, "<table>"));
+        Assert.Equal(6, CountOccurrences(result, "<th>"));
+        Assert.Equal(10, CountOccurrences(result, "<td>"));
+    }
+
+    [Fact]
+    public async Task ToHtml_WithImageInCell_InjectsDimensions()
+    {
+        var markdown = "| Image |\n|---|\n| ![alt](https://example.com/image.png) |";
+        var result = await _sut.ToHtmlAsync(markdown);
+
+        Assert.Contains("<td><img src=\"https://example.com/image.png\" alt=\"alt\" width=\"100\" height=\"200\" /></td>", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithCrlfTable_RendersTable()
+    {
+        var markdown = "| A | B |\r\n|---|---|\r\n| 1 | 2 |";
+        var result = await _sut.ToHtmlAsync(markdown);
+
+        Assert.Contains("<tr><td>1</td><td>2</td></tr>", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithRealWorldArticle_RendersTablesListsAndLinks()
+    {
+        var lines = new[]
+        {
+            "## 2. The building blocks (glossary)",
+            "",
+            "| Term | Plain-language meaning | Source |",
+            "|---|---|---|",
+            "| **Grant / cooperative agreement** | The two kinds of assistance opportunities Grants.gov lists. | [Grants 101](https://www.grants.gov/learn-grants/grants-101.html) |",
+            "| **Solicitation** | An informal synonym, also called a \"solicitation.\" In *procurement* (contracts), it differs. | [NIH glossary](https://www.ninds.nih.gov/glossary?title=NOFO), [NSF PAPPG 2022](https://www.nsf.gov/pubs/policydocs/pappg22_1/pappg_1.jsp) |",
+            "| **AOR (Authorized Organization Representative)** | The person who can actually submit. | [NIH](https://grants.nih.gov/grants/tracking_application.htm) |",
+            "",
+            "**Pre-award**",
+            "1. The agency posts the opportunity.",
+            "2. Applicants search for it.",
+            "",
+            "**Award**",
+            "5. Federal staff make recommendations.",
+            "",
+            "- **[Inference]** Older docs used hostnames like `apply07` ([archived testing page](https://cybercemetery.unt.edu/oilspill/20130213205425mp_/http://grants.gov/applicant_s2s/applicant-testing.jsp)).",
+            "",
+            "| Agency / office | What public sources show | Source |",
+            "|---|---|---|",
+            "| **NIH** | Opportunities are listed in Grants.gov. | [NIH tracking](https://grants.nih.gov/grants/tracking_application.htm) |"
+        };
+
+        var result = await _sut.ToHtmlAsync(string.Join("\n", lines));
+
+        Assert.Equal(2, CountOccurrences(result, "<table>"));
+        Assert.Equal(2, CountOccurrences(result, "<div class=\"table-wrapper\">"));
+        Assert.Equal(6, CountOccurrences(result, "<tr>"));
+        Assert.Contains("<th>Plain-language meaning</th>", result);
+        Assert.Contains("<td><strong>Solicitation</strong></td>", result);
+        Assert.Contains("&quot;solicitation.&quot; In <em>procurement</em> (contracts), it differs.", result);
+        Assert.Contains("<a href=\"https://www.nsf.gov/pubs/policydocs/pappg22_1/pappg_1.jsp\">NSF PAPPG 2022</a>", result);
+        Assert.Contains("<a href=\"https://cybercemetery.unt.edu/oilspill/20130213205425mp_/http://grants.gov/applicant_s2s/applicant-testing.jsp\">archived testing page</a>", result);
+        Assert.Contains("<code>apply07</code>", result);
+        Assert.Contains("<ol start=\"5\">", result);
+        Assert.DoesNotContain("|", result);
+        Assert.Equal(CountOccurrences(result, "<em>"), CountOccurrences(result, "</em>"));
+        Assert.Equal(CountOccurrences(result, "<strong>"), CountOccurrences(result, "</strong>"));
+    }
+}
+````
 
 ````csharp src/MyBlog.Tests/Unit/MarkdownServiceTests.cs
 using MyBlog.Core.Interfaces;
@@ -8456,14 +9038,16 @@ public class TelemetrySerializationTests
                 <p>
                     Write posts in Markdown with a custom-built renderer that supports headings (h1-h6),
                     <strong>bold</strong> and <em>italic</em> text, links, images, fenced code blocks with
-                    syntax preservation, blockquotes, horizontal rules, and both unordered and ordered lists.
+                    syntax preservation, blockquotes, horizontal rules, unordered and ordered lists, and
+                    GitHub-style tables that scroll horizontally on narrow screens.
                 </p>
                 <div class="feature-details">
                     <strong>Supported Syntax:</strong>
                     <code># Headings</code>, <code>**bold**</code>, <code>*italic*</code>,
                     <code>[links](url)</code>, <code>![images](url)</code>, <code>`inline code`</code>,
                     <code>```code blocks```</code>, <code>> blockquotes</code>, <code>- unordered lists</code>,
-                    <code>1. ordered lists</code>, <code>---</code> horizontal rules
+                    <code>1. ordered lists</code>, <code>---</code> horizontal rules,
+                    <code>| a | b |</code> tables with <code>:--:</code> alignment
                 </div>
             </div>
 
@@ -13015,6 +13599,56 @@ a:hover {
 .markdown-content a {
     text-decoration: underline;
     text-underline-offset: 2px;
+}
+
+.markdown-content .table-wrapper {
+    max-width: 100%;
+    margin: 0 0 1rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+}
+
+.markdown-content table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9375em;
+    line-height: 1.6;
+}
+
+.markdown-content th,
+.markdown-content td {
+    min-width: 6rem;
+    padding: 0.5rem 0.75rem;
+    text-align: start;
+    vertical-align: top;
+    border-bottom: 1px solid var(--color-border);
+    word-break: normal;
+    overflow-wrap: break-word;
+}
+
+.markdown-content th + th,
+.markdown-content td + td {
+    border-inline-start: 1px solid var(--color-border-light);
+}
+
+.markdown-content thead th {
+    background-color: var(--color-bg-alt);
+    font-weight: 600;
+    color: var(--color-text);
+}
+
+.markdown-content tbody tr:nth-child(even) {
+    background-color: color-mix(in srgb, var(--color-bg-alt) 50%, transparent);
+}
+
+.markdown-content tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.markdown-content thead:last-child th {
+    border-bottom: none;
 }
 
 .admin-table {
