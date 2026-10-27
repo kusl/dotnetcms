@@ -534,7 +534,7 @@ printf '%s\n' "$SUMMARY" >&2
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
     <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
-    <MicrosoftPackagesVersion>10.0.13</MicrosoftPackagesVersion>
+    <MicrosoftPackagesVersion>10.0.14</MicrosoftPackagesVersion>
     <OpenTelemetryVersion>1.20.1</OpenTelemetryVersion>
     <OtelAspNetCoreInstrVersion>1.20.1</OtelAspNetCoreInstrVersion>
     <OtelHttpInstrVersion>1.20.1</OtelHttpInstrVersion>
