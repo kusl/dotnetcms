@@ -8,7 +8,7 @@ A lightweight, self-hosted blog engine built with .NET 10 and Blazor Server, fol
 
 ## Features
 
-- Markdown posts rendered by a small hand-written parser (headings, emphasis, links, images, inline and fenced code, blockquotes, lists, horizontal rules). All HTML in posts is escaped.
+- Markdown posts rendered by a small hand-written parser (headings, emphasis, links, images, inline and fenced code, blockquotes, lists, horizontal rules, tables). All HTML in posts is escaped. See [Writing posts](#writing-posts).
 - Images stored as BLOBs in SQLite (JPEG, PNG, GIF, WebP, up to 5 MB), served from `/api/images/{id}`. Image width and height are probed once and cached to prevent layout shift.
 - Admin area: dashboard, post editor with live preview, image library, user management, password change.
 - Live "people reading now" counts through SignalR.
@@ -54,6 +54,42 @@ With containers:
 ```bash
 podman-compose up --build
 ```
+
+## Writing posts
+
+Posts are written in Markdown. The parser is hand-written (no third-party library, ADR-0006) and supports this subset:
+
+| Syntax | Result |
+|--------|--------|
+| `#` to `######` | Headings |
+| `**bold**`, `__bold__`, `*italic*`, `_italic_` | Emphasis. Underscores inside words (`snake_case`) are left alone. |
+| `` `code` `` | Inline code, rendered literally |
+| ```` ``` ```` fences | Code blocks |
+| `[text](url)`, `![alt](url)` | Links and images. Images get `width`/`height` from the dimension cache. |
+| `> text` | Single-line blockquote |
+| `- item`, `* item` | Unordered list |
+| `1. item` | Ordered list. A list starting at another number keeps it (`5.` renders as 5). |
+| `---`, `***`, `___` | Horizontal rule |
+| Pipe tables | Tables (below) |
+
+Tables use GitHub syntax:
+
+```markdown
+| Term | Meaning | Source |
+|:-----|:-------:|-------:|
+| **SAM.gov** | Entity registration | [link](https://sam.gov) |
+| Escaped \| pipe | Centered | Right-aligned |
+```
+
+- The second line is required. Its cell count must match the header, or both lines render as plain text.
+- Outer pipes are optional. Use `\|` for a literal pipe in a cell, including inside inline code.
+- `:--` left, `:-:` center, `--:` right. Alignment is an inline style, so it also works in RSS readers.
+- A table ends at a blank line or at a heading, list, blockquote, rule or code fence. Leave a blank line before any following paragraph.
+- Short rows are padded with empty cells; extra cells are ignored.
+- Cells support links, images, emphasis and inline code. HTML is escaped.
+- Tables fill the content width. When they don't fit, for example on a phone, they scroll horizontally inside a bordered box and the page itself does not.
+
+Raw HTML, nested lists, multi-line blockquotes, reference links and setext headings are not supported. Link and image URLs are not scheme-filtered, which is safe only because every author is an admin (ADR-0007).
 
 ## Testing
 

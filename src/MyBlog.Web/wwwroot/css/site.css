@@ -687,6 +687,56 @@ a:hover {
     text-underline-offset: 2px;
 }
 
+.markdown-content .table-wrapper {
+    max-width: 100%;
+    margin: 0 0 1rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+}
+
+.markdown-content table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9375em;
+    line-height: 1.6;
+}
+
+.markdown-content th,
+.markdown-content td {
+    min-width: 6rem;
+    padding: 0.5rem 0.75rem;
+    text-align: start;
+    vertical-align: top;
+    border-bottom: 1px solid var(--color-border);
+    word-break: normal;
+    overflow-wrap: break-word;
+}
+
+.markdown-content th + th,
+.markdown-content td + td {
+    border-inline-start: 1px solid var(--color-border-light);
+}
+
+.markdown-content thead th {
+    background-color: var(--color-bg-alt);
+    font-weight: 600;
+    color: var(--color-text);
+}
+
+.markdown-content tbody tr:nth-child(even) {
+    background-color: color-mix(in srgb, var(--color-bg-alt) 50%, transparent);
+}
+
+.markdown-content tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.markdown-content thead:last-child th {
+    border-bottom: none;
+}
+
 .admin-table {
     width: 100%;
     border-collapse: collapse;

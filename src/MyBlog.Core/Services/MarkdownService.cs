@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -11,7 +12,12 @@ public sealed partial class MarkdownService(
     ILogger<MarkdownService>? logger = null)
     : IMarkdownService
 {
+    private const string TokenStart = "\uE000";
+    private const string TokenEnd = "\uE001";
+
     private enum ListType { None, Unordered, Ordered }
+
+    private enum TableAlignment { None, Left, Center, Right }
 
     public async Task<string> ToHtmlAsync(string markdown)
     {
@@ -26,9 +32,9 @@ public sealed partial class MarkdownService(
         var currentListType = ListType.None;
         var codeBlockContent = new StringBuilder();
 
-        foreach (var rawLine in lines)
+        for (var index = 0; index < lines.Length; index++)
         {
-            var line = rawLine;
+            var line = lines[index];
 
             if (line.StartsWith("```"))
             {
@@ -79,6 +85,13 @@ public sealed partial class MarkdownService(
                 continue;
             }
 
+            if (index + 1 < lines.Length && TryParseTableHeader(line, lines[index + 1], out var alignments))
+            {
+                result.Append(CloseList(ref currentListType));
+                index = await AppendTableAsync(result, lines, index, alignments);
+                continue;
+            }
+
             var unorderedMatch = UnorderedListPattern().Match(line);
             if (unorderedMatch.Success)
             {
@@ -99,11 +112,11 @@ public sealed partial class MarkdownService(
                 if (currentListType != ListType.Ordered)
                 {
                     result.Append(CloseList(ref currentListType));
-                    result.AppendLine("<ol>");
+                    result.AppendLine(OpenOrderedList(orderedMatch.Groups[1].Value));
                     currentListType = ListType.Ordered;
                 }
 
-                var itemText = await ProcessInlineAsync(orderedMatch.Groups[1].Value);
+                var itemText = await ProcessInlineAsync(orderedMatch.Groups[2].Value);
                 result.AppendLine($"<li>{itemText}</li>");
                 continue;
             }
@@ -147,6 +160,153 @@ public sealed partial class MarkdownService(
         return result;
     }
 
+    private static string OpenOrderedList(string number)
+    {
+        return int.TryParse(number, NumberStyles.None, CultureInfo.InvariantCulture, out var start) && start != 1 ?
+            $"<ol start=\"{start}\">" :
+            "<ol>";
+    }
+
+    private static bool TryParseTableHeader(string headerLine, string delimiterLine, out TableAlignment[] alignments)
+    {
+        alignments = [];
+
+        if (!headerLine.Contains('|') || !delimiterLine.Contains('|'))
+        {
+            return false;
+        }
+
+        var delimiterCells = SplitTableRow(delimiterLine);
+        var parsed = new TableAlignment[delimiterCells.Count];
+        for (var i = 0; i < delimiterCells.Count; i++)
+        {
+            var cell = delimiterCells[i];
+            if (!TableDelimiterCellPattern().IsMatch(cell))
+            {
+                return false;
+            }
+
+            parsed[i] = (cell.StartsWith(':'), cell.EndsWith(':')) switch
+            {
+                (true, true) => TableAlignment.Center,
+                (true, false) => TableAlignment.Left,
+                (false, true) => TableAlignment.Right,
+                _ => TableAlignment.None
+            };
+        }
+
+        if (SplitTableRow(headerLine).Count != parsed.Length)
+        {
+            return false;
+        }
+
+        alignments = parsed;
+        return true;
+    }
+
+    private async Task<int> AppendTableAsync(StringBuilder result, string[] lines, int headerIndex, TableAlignment[] alignments)
+    {
+        result.AppendLine("<div class=\"table-wrapper\"><table>");
+        result.AppendLine("<thead>");
+        await AppendTableRowAsync(result, lines[headerIndex], "th", alignments);
+        result.AppendLine("</thead>");
+
+        var index = headerIndex + 2;
+        var hasBody = false;
+        while (index < lines.Length && IsTableBodyRow(lines[index]))
+        {
+            if (!hasBody)
+            {
+                result.AppendLine("<tbody>");
+                hasBody = true;
+            }
+
+            await AppendTableRowAsync(result, lines[index], "td", alignments);
+            index++;
+        }
+
+        if (hasBody)
+        {
+            result.AppendLine("</tbody>");
+        }
+
+        result.AppendLine("</table></div>");
+        return index - 1;
+    }
+
+    private async Task AppendTableRowAsync(StringBuilder result, string line, string cellTag, TableAlignment[] alignments)
+    {
+        var cells = SplitTableRow(line);
+        result.Append("<tr>");
+        for (var i = 0; i < alignments.Length; i++)
+        {
+            var content = i < cells.Count ? await ProcessInlineAsync(cells[i]) : string.Empty;
+            var style = alignments[i] switch
+            {
+                TableAlignment.Left => " style=\"text-align: left\"",
+                TableAlignment.Center => " style=\"text-align: center\"",
+                TableAlignment.Right => " style=\"text-align: right\"",
+                _ => ""
+            };
+            result.Append($"<{cellTag}{style}>{content}</{cellTag}>");
+        }
+        result.AppendLine("</tr>");
+    }
+
+    private static bool IsTableBodyRow(string line)
+    {
+        return !string.IsNullOrWhiteSpace(line)
+            && !line.StartsWith("```")
+            && !line.StartsWith("> ")
+            && !HorizontalRulePattern().IsMatch(line)
+            && !HeadingPattern().IsMatch(line)
+            && !UnorderedListPattern().IsMatch(line)
+            && !OrderedListPattern().IsMatch(line);
+    }
+
+    private static List<string> SplitTableRow(string line)
+    {
+        var row = line.Trim();
+        if (row.StartsWith('|'))
+        {
+            row = row[1..];
+        }
+
+        if (row.EndsWith('|') && !row.EndsWith("\\|", StringComparison.Ordinal))
+        {
+            row = row[..^1];
+        }
+
+        var cells = new List<string>();
+        var cell = new StringBuilder();
+        var position = 0;
+        while (position < row.Length)
+        {
+            var c = row[position];
+            if (c == '\\' && position + 1 < row.Length && row[position + 1] == '|')
+            {
+                cell.Append('|');
+                position += 2;
+                continue;
+            }
+
+            if (c == '|')
+            {
+                cells.Add(cell.ToString().Trim());
+                cell.Clear();
+            }
+            else
+            {
+                cell.Append(c);
+            }
+
+            position++;
+        }
+
+        cells.Add(cell.ToString().Trim());
+        return cells;
+    }
+
     private static string HtmlEncode(string text)
     {
         if (string.IsNullOrEmpty(text))
@@ -179,11 +339,21 @@ public sealed partial class MarkdownService(
         return sb.ToString();
     }
 
+    private static string Protect(List<string> protectedHtml, string html)
+    {
+        protectedHtml.Add(html);
+        return $"{TokenStart}{protectedHtml.Count - 1}{TokenEnd}";
+    }
+
     private async Task<string> ProcessInlineAsync(string text)
     {
-        text = HtmlEncode(text);
+        text = HtmlEncode(text)
+            .Replace(TokenStart, "&#xE000;")
+            .Replace(TokenEnd, "&#xE001;");
 
-        text = InlineCodePattern().Replace(text, "<code>$1</code>");
+        var protectedHtml = new List<string>();
+
+        text = InlineCodePattern().Replace(text, match => Protect(protectedHtml, $"<code>{match.Groups[1].Value}</code>"));
 
         var matches = ImagePattern().Matches(text);
         if (matches.Count > 0)
@@ -209,11 +379,11 @@ public sealed partial class MarkdownService(
                     imgTag = $"<img src=\"{url}\" alt=\"{alt}\" />";
                 }
 
-                text = text.Remove(match.Index, match.Length).Insert(match.Index, imgTag);
+                text = text.Remove(match.Index, match.Length).Insert(match.Index, Protect(protectedHtml, imgTag));
             }
         }
 
-        text = LinkPattern().Replace(text, "<a href=\"$2\">$1</a>");
+        text = LinkPattern().Replace(text, match => $"{Protect(protectedHtml, $"<a href=\"{match.Groups[2].Value}\">")}{match.Groups[1].Value}</a>");
 
         text = BoldPattern().Replace(text, match =>
         {
@@ -227,7 +397,7 @@ public sealed partial class MarkdownService(
             return $"<em>{content}</em>";
         });
 
-        return text;
+        return ProtectedTokenPattern().Replace(text, match => protectedHtml[int.Parse(match.Groups[1].Value, CultureInfo.InvariantCulture)]);
     }
 
     [GeneratedRegex(@"^(#{1,6})\s+(.+)$")]
@@ -236,11 +406,14 @@ public sealed partial class MarkdownService(
     [GeneratedRegex(@"^[-*]\s+(.+)$")]
     private static partial Regex UnorderedListPattern();
 
-    [GeneratedRegex(@"^\d+\.\s+(.+)$")]
+    [GeneratedRegex(@"^(\d+)\.\s+(.+)$")]
     private static partial Regex OrderedListPattern();
 
     [GeneratedRegex(@"^[-*_]{3,}\s*$")]
     private static partial Regex HorizontalRulePattern();
+
+    [GeneratedRegex(@"^:?-+:?$")]
+    private static partial Regex TableDelimiterCellPattern();
 
     [GeneratedRegex(@"`([^`]+)`")]
     private static partial Regex InlineCodePattern();
@@ -251,9 +424,12 @@ public sealed partial class MarkdownService(
     [GeneratedRegex(@"\[([^\]]+)\]\(([^)]+)\)")]
     private static partial Regex LinkPattern();
 
-    [GeneratedRegex(@"\*\*(.+?)\*\*|__(.+?)__")]
+    [GeneratedRegex(@"\*\*(.+?)\*\*|(?<![\p{L}\p{N}_])__(.+?)__(?![\p{L}\p{N}_])")]
     private static partial Regex BoldPattern();
 
-    [GeneratedRegex(@"(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)|(?<!_)_(?!_)(.+?)(?<!_)_(?!_)")]
+    [GeneratedRegex(@"(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)|(?<![\p{L}\p{N}_])_(?!_)(.+?)(?<!_)_(?![\p{L}\p{N}_])")]
     private static partial Regex ItalicPattern();
+
+    [GeneratedRegex(@"\uE000(\d+)\uE001")]
+    private static partial Regex ProtectedTokenPattern();
 }
