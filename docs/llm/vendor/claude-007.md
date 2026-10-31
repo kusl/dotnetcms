@@ -1,0 +1,5 @@
+07
+81
+
+please write a new series of comprehensive blog posts -- you can decide where each post ends and where the next begins and how many there are in total -- this time a comprehensive timeline that follows Rome -- the republic and the empire from beginning to the end, including all conquests, mutiny, attempted revolutions against it, and what else was happening all across the world at the same time. use tables where necessary. goal should be to show a timeline of things that happened at the same time or near about the same time that the reader might not know about. also include major world events in the timeline that are not exactly related to Rome but are relevant or are notable as a contemporary world event. 
+please add a title and summary in plain text as well for each post. please do not stop in between and finish the whole setting, when in doubt, cite sources if possible, or flag if not possible, and do not stop. keep going and finish the whole series. keep it approachable and concise but comprehensive at the same time.
