@@ -301,3 +301,64 @@ dotnet-cms
 00
 29
 
+This is an interesting case. 
+Tests are failing on Windows. 
+https://github.com/kusl/dotnetcms/actions/runs/41939117864/job/126955053765
+however macos build 
+https://github.com/kusl/dotnetcms/actions/runs/41939117864/job/126955053441
+and ubuntu linux build 
+https://github.com/kusl/dotnetcms/actions/runs/41939117864/job/126955053166
+looks green 
+```powershell
+Run dotnet run --project src/MyBlog.Tests/MyBlog.Tests.csproj -c Release --no-build
+  dotnet run --project src/MyBlog.Tests/MyBlog.Tests.csproj -c Release --no-build
+  shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+  env:
+    DOTNET_VERSION: 10.0.x
+    DOTNET_NOLOGO: 1
+    DOTNET_CLI_TELEMETRY_OPTOUT: 1
+    DOTNET_ROOT: C:\Program Files\dotnet
+xUnit.net v3 In-Process Runner v4.0.2+0c7aa4991f (64-bit .NET 10.0.14)
+  Discovering: MyBlog.Tests
+  Discovered:  MyBlog.Tests
+  Starting:    MyBlog.Tests
+    MyBlog.Tests.Unit.MarkdownServiceBlockTests.ToHtml_WithCodeFenceInsideQuote_PreservesCodeLines [FAIL]
+      Assert.Contains() Failure: Sub-string not found
+      String:    "<blockquote><pre><code>a\r\nb</code></pre></blockquo"···
+      Not found: "<blockquote><pre><code>a\nb</code></pre></blockquot"···
+      Stack Trace:
+        src\MyBlog.Tests\Unit\MarkdownServiceBlockTests.cs(32,0): at MyBlog.Tests.Unit.MarkdownServiceBlockTests.ToHtml_WithCodeFenceInsideQuote_PreservesCodeLines()
+        --- End of stack trace from previous location ---
+    MyBlog.Tests.Unit.MarkdownServiceBlockTests.ToHtml_WithTableFollowedByQuote_EndsTable [FAIL]
+      Assert.Contains() Failure: Sub-string not found
+      String:    "<div class="table-wrapper"><table>\r\n<thead>\r\n<tr><"···
+      Not found: "</table></div>\n<blockquote><p>quote</p></blockquot"···
+      Stack Trace:
+        src\MyBlog.Tests\Unit\MarkdownServiceBlockTests.cs(48,0): at MyBlog.Tests.Unit.MarkdownServiceBlockTests.ToHtml_WithTableFollowedByQuote_EndsTable()
+        --- End of stack trace from previous location ---
+    MyBlog.Tests.Unit.MarkdownServiceBlockTests.ToHtml_WithBlocksInsideQuote_RendersNestedBlocks [FAIL]
+      Assert.Contains() Failure: Sub-string not found
+      String:    "<blockquote><h2>Note</h2>\r\n<ul>\r\n<li>one</li>\r\n<li"···
+      Not found: "<blockquote><h2>Note</h2>\n<ul>\n<li>one</li>\n<li>tw"···
+      Stack Trace:
+        src\MyBlog.Tests\Unit\MarkdownServiceBlockTests.cs(24,0): at MyBlog.Tests.Unit.MarkdownServiceBlockTests.ToHtml_WithBlocksInsideQuote_RendersNestedBlocks()
+        --- End of stack trace from previous location ---
+    MyBlog.Tests.Unit.MarkdownServiceBlockTests.ToHtml_WithPlusBullets_RendersUnorderedList [FAIL]
+      Assert.Contains() Failure: Sub-string not found
+      String:    "<ul>\r\n<li>one</li>\r\n<li>two</li>\r\n</ul>\n"
+      Not found: "<ul>\n<li>one</li>\n<li>two</li>\n</ul>"
+      Stack Trace:
+        src\MyBlog.Tests\Unit\MarkdownServiceBlockTests.cs(83,0): at MyBlog.Tests.Unit.MarkdownServiceBlockTests.ToHtml_WithPlusBullets_RendersUnorderedList()
+        --- End of stack trace from previous location ---
+    MyBlog.Tests.Unit.MarkdownServiceBlockTests.ToHtml_WithConsecutiveQuoteLines_RendersOneBlockquote [FAIL]
+      Assert.Contains() Failure: Sub-string not found
+      String:    "<blockquote><p>First line</p>\r\n<p>Second line</p>\r"···
+      Not found: "<blockquote><p>First line</p>\n<p>Second line</p>\n<"···
+      Stack Trace:
+        src\MyBlog.Tests\Unit\MarkdownServiceBlockTests.cs(16,0): at MyBlog.Tests.Unit.MarkdownServiceBlockTests.ToHtml_WithConsecutiveQuoteLines_RendersOneBlockquote()
+        --- End of stack trace from previous location ---
+  Finished:    MyBlog.Tests (ID = '466858c420420bc5bd6afab2909714fa894b822a4b40d0105b9db65ca24f0a78')
+=== TEST EXECUTION SUMMARY ===
+   MyBlog.Tests  Total: 290, Errors: 0, Failed: 5, Skipped: 0, Not Run: 0, Time: 86.528s
+Error: Process completed with exit code 1.
+```
