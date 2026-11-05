@@ -15,6 +15,8 @@ public sealed partial class MarkdownService(
     private const string TokenStart = "\uE000";
     private const string TokenEnd = "\uE001";
 
+    private static readonly string[] SafeUrlSchemes = ["http", "https", "mailto"];
+
     private enum ListType { None, Unordered, Ordered }
 
     private enum TableAlignment { None, Left, Center, Right }
@@ -77,11 +79,19 @@ public sealed partial class MarkdownService(
                 continue;
             }
 
-            if (line.StartsWith("> "))
+            if (BlockquotePattern().IsMatch(line))
             {
                 result.Append(CloseList(ref currentListType));
-                var quoteText = await ProcessInlineAsync(line[2..]);
-                result.AppendLine($"<blockquote><p>{quoteText}</p></blockquote>");
+                var quoteLines = new List<string>();
+                while (index < lines.Length && BlockquotePattern().Match(lines[index]) is { Success: true } quoteMatch)
+                {
+                    quoteLines.Add(quoteMatch.Groups[1].Value);
+                    index++;
+                }
+
+                index--;
+                var quoteHtml = await ToHtmlAsync(string.Join('\n', quoteLines));
+                result.AppendLine($"<blockquote>{quoteHtml.TrimEnd()}</blockquote>");
                 continue;
             }
 
@@ -146,6 +156,43 @@ public sealed partial class MarkdownService(
         }
 
         return result.ToString();
+    }
+
+    public IReadOnlyList<string> GetImageUrls(string markdown)
+    {
+        var urls = new List<string>();
+        if (string.IsNullOrWhiteSpace(markdown))
+        {
+            return urls;
+        }
+
+        var inCodeBlock = false;
+        foreach (var line in markdown.Replace("\r\n", "\n").Split('\n'))
+        {
+            if (line.StartsWith("```"))
+            {
+                inCodeBlock = !inCodeBlock;
+                continue;
+            }
+
+            if (inCodeBlock)
+            {
+                continue;
+            }
+
+            var protectedHtml = new List<string>();
+            var text = EncodeAndProtectLiterals(line, protectedHtml);
+            foreach (Match match in ImagePattern().Matches(text))
+            {
+                var url = Restore(protectedHtml, match.Groups["url"].Value);
+                if (IsSafeUrl(url))
+                {
+                    urls.Add(WebUtility.HtmlDecode(url));
+                }
+            }
+        }
+
+        return urls;
     }
 
     private static string CloseList(ref ListType listType)
@@ -257,7 +304,7 @@ public sealed partial class MarkdownService(
     {
         return !string.IsNullOrWhiteSpace(line)
             && !line.StartsWith("```")
-            && !line.StartsWith("> ")
+            && !BlockquotePattern().IsMatch(line)
             && !HorizontalRulePattern().IsMatch(line)
             && !HeadingPattern().IsMatch(line)
             && !UnorderedListPattern().IsMatch(line)
@@ -345,15 +392,46 @@ public sealed partial class MarkdownService(
         return $"{TokenStart}{protectedHtml.Count - 1}{TokenEnd}";
     }
 
-    private async Task<string> ProcessInlineAsync(string text)
+    private static string Restore(List<string> protectedHtml, string text)
+    {
+        return ProtectedTokenPattern().Replace(text, match =>
+            Restore(protectedHtml, protectedHtml[int.Parse(match.Groups[1].Value, CultureInfo.InvariantCulture)]));
+    }
+
+    private static string RestorePlainText(List<string> protectedHtml, string text)
+    {
+        return HtmlTagPattern().Replace(Restore(protectedHtml, text), string.Empty);
+    }
+
+    private static string EncodeAndProtectLiterals(string text, List<string> protectedHtml)
     {
         text = HtmlEncode(text)
             .Replace(TokenStart, "&#xE000;")
             .Replace(TokenEnd, "&#xE001;");
 
+        return CodeOrEscapePattern().Replace(text, match => match.Groups["code"].Success ?
+            Protect(protectedHtml, $"<code>{match.Groups["code"].Value}</code>") :
+            Protect(protectedHtml, match.Groups["escaped"].Value));
+    }
+
+    private static bool IsSafeUrl(string url)
+    {
+        var decoded = WebUtility.HtmlDecode(url);
+        var candidate = string.Concat(decoded.Where(c => c > ' '));
+        var schemeMatch = UrlSchemePattern().Match(candidate);
+        return !schemeMatch.Success || SafeUrlSchemes.Contains(schemeMatch.Groups[1].Value, StringComparer.OrdinalIgnoreCase);
+    }
+
+    private static string TitleAttribute(List<string> protectedHtml, Group title)
+    {
+        return title.Success ? $" title=\"{RestorePlainText(protectedHtml, title.Value)}\"" : string.Empty;
+    }
+
+    private async Task<string> ProcessInlineAsync(string text)
+    {
         var protectedHtml = new List<string>();
 
-        text = InlineCodePattern().Replace(text, match => Protect(protectedHtml, $"<code>{match.Groups[1].Value}</code>"));
+        text = EncodeAndProtectLiterals(text, protectedHtml);
 
         var matches = ImagePattern().Matches(text);
         if (matches.Count > 0)
@@ -361,29 +439,54 @@ public sealed partial class MarkdownService(
             for (var i = matches.Count - 1; i >= 0; i--)
             {
                 var match = matches[i];
-                var alt = match.Groups[1].Value;
-                var url = match.Groups[2].Value;
+                var alt = RestorePlainText(protectedHtml, match.Groups["text"].Value);
+                var url = Restore(protectedHtml, match.Groups["url"].Value);
+                var title = TitleAttribute(protectedHtml, match.Groups["title"]);
 
                 string imgTag;
-                try
+                if (!IsSafeUrl(url))
                 {
-                    var dimensions = await imageDimensionService.GetDimensionsAsync(WebUtility.HtmlDecode(url));
-
-                    imgTag = dimensions.HasValue ?
-                        $"<img src=\"{url}\" alt=\"{alt}\" width=\"{dimensions.Value.Width}\" height=\"{dimensions.Value.Height}\" />" :
-                        $"<img src=\"{url}\" alt=\"{alt}\" />";
+                    imgTag = alt;
                 }
-                catch (Exception ex)
+                else
                 {
-                    logger?.LogWarning(ex, "Failed to get dimensions for image {Url}. Rendering without dimensions.", url);
-                    imgTag = $"<img src=\"{url}\" alt=\"{alt}\" />";
+                    try
+                    {
+                        var dimensions = await imageDimensionService.GetDimensionsAsync(WebUtility.HtmlDecode(url));
+
+                        imgTag = dimensions.HasValue ?
+                            $"<img src=\"{url}\" alt=\"{alt}\"{title} width=\"{dimensions.Value.Width}\" height=\"{dimensions.Value.Height}\" />" :
+                            $"<img src=\"{url}\" alt=\"{alt}\"{title} />";
+                    }
+                    catch (Exception ex)
+                    {
+                        logger?.LogWarning(ex, "Failed to get dimensions for image {Url}. Rendering without dimensions.", url);
+                        imgTag = $"<img src=\"{url}\" alt=\"{alt}\"{title} />";
+                    }
                 }
 
                 text = text.Remove(match.Index, match.Length).Insert(match.Index, Protect(protectedHtml, imgTag));
             }
         }
 
-        text = LinkPattern().Replace(text, match => $"{Protect(protectedHtml, $"<a href=\"{match.Groups[2].Value}\">")}{match.Groups[1].Value}</a>");
+        text = LinkPattern().Replace(text, match =>
+        {
+            var url = Restore(protectedHtml, match.Groups["url"].Value);
+            if (!IsSafeUrl(url))
+            {
+                return match.Groups["text"].Value;
+            }
+
+            var title = TitleAttribute(protectedHtml, match.Groups["title"]);
+            return $"{Protect(protectedHtml, $"<a href=\"{url}\"{title}>")}{match.Groups["text"].Value}</a>";
+        });
+
+        text = AutolinkPattern().Replace(text, match =>
+        {
+            var url = Restore(protectedHtml, match.Groups["url"].Success ? match.Groups["url"].Value : match.Groups["email"].Value);
+            var href = match.Groups["url"].Success ? url : $"mailto:{url}";
+            return IsSafeUrl(href) ? Protect(protectedHtml, $"<a href=\"{href}\">{url}</a>") : match.Value;
+        });
 
         text = BoldPattern().Replace(text, match =>
         {
@@ -397,32 +500,44 @@ public sealed partial class MarkdownService(
             return $"<em>{content}</em>";
         });
 
-        return ProtectedTokenPattern().Replace(text, match => protectedHtml[int.Parse(match.Groups[1].Value, CultureInfo.InvariantCulture)]);
+        return Restore(protectedHtml, text);
     }
 
-    [GeneratedRegex(@"^(#{1,6})\s+(.+)$")]
+    [GeneratedRegex(@"^(#{1,6})\s+(.+?)(?:\s+#+)?\s*$")]
     private static partial Regex HeadingPattern();
 
-    [GeneratedRegex(@"^[-*]\s+(.+)$")]
+    [GeneratedRegex(@"^>[ ]?(.*)$")]
+    private static partial Regex BlockquotePattern();
+
+    [GeneratedRegex(@"^[-*+]\s+(.+)$")]
     private static partial Regex UnorderedListPattern();
 
     [GeneratedRegex(@"^(\d+)\.\s+(.+)$")]
     private static partial Regex OrderedListPattern();
 
-    [GeneratedRegex(@"^[-*_]{3,}\s*$")]
+    [GeneratedRegex(@"^([-*_])(?:[ \t]*\1){2,}[ \t]*$")]
     private static partial Regex HorizontalRulePattern();
 
     [GeneratedRegex(@"^:?-+:?$")]
     private static partial Regex TableDelimiterCellPattern();
 
-    [GeneratedRegex(@"`([^`]+)`")]
-    private static partial Regex InlineCodePattern();
+    [GeneratedRegex(@"`(?<code>[^`]+)`|\\(?<escaped>&(?:lt|gt|amp|quot);|[!#$%'()*+,\-./:;=?@\[\\\]^_`{|}~])")]
+    private static partial Regex CodeOrEscapePattern();
 
-    [GeneratedRegex(@"!\[([^\]]*)\]\(([^)]+)\)")]
+    [GeneratedRegex(@"!\[(?<text>(?>(?:[^\[\]]|(?<open>\[)|(?<-open>\]))*)(?(open)(?!)))\]\(\s*(?:&lt;(?<url>(?:(?!&lt;|&gt;).)*)&gt;|(?<url>(?>(?:[^\s()]|(?<paren>\()|(?<-paren>\)))+)(?(paren)(?!))))(?:\s+(?:&quot;(?<title>(?:(?!&quot;).)*)&quot;|'(?<title>[^']*)'|\((?<title>[^()]*)\)))?\s*\)")]
     private static partial Regex ImagePattern();
 
-    [GeneratedRegex(@"\[([^\]]+)\]\(([^)]+)\)")]
+    [GeneratedRegex(@"\[(?<text>(?>(?:[^\[\]]|(?<open>\[)|(?<-open>\]))+)(?(open)(?!)))\]\(\s*(?:&lt;(?<url>(?:(?!&lt;|&gt;).)*)&gt;|(?<url>(?>(?:[^\s()]|(?<paren>\()|(?<-paren>\)))+)(?(paren)(?!))))(?:\s+(?:&quot;(?<title>(?:(?!&quot;).)*)&quot;|'(?<title>[^']*)'|\((?<title>[^()]*)\)))?\s*\)")]
     private static partial Regex LinkPattern();
+
+    [GeneratedRegex(@"&lt;(?:(?<url>[A-Za-z][A-Za-z0-9+.\-]{1,31}:(?:(?!&lt;|&gt;)\S)+)|(?<email>[A-Za-z0-9.!#$%'*+/=?^_`{|}~\-]+@[A-Za-z0-9](?:[A-Za-z0-9\-]*[A-Za-z0-9])?(?:\.[A-Za-z0-9](?:[A-Za-z0-9\-]*[A-Za-z0-9])?)*))&gt;")]
+    private static partial Regex AutolinkPattern();
+
+    [GeneratedRegex(@"^([A-Za-z][A-Za-z0-9+.\-]*):")]
+    private static partial Regex UrlSchemePattern();
+
+    [GeneratedRegex(@"<[^>]*>")]
+    private static partial Regex HtmlTagPattern();
 
     [GeneratedRegex(@"\*\*(.+?)\*\*|(?<![\p{L}\p{N}_])__(.+?)__(?![\p{L}\p{N}_])")]
     private static partial Regex BoldPattern();

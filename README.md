@@ -8,7 +8,7 @@ A lightweight, self-hosted blog engine built with .NET 10 and Blazor Server, fol
 
 ## Features
 
-- Markdown posts rendered by a small hand-written parser (headings, emphasis, links, images, inline and fenced code, blockquotes, lists, horizontal rules, tables). All HTML in posts is escaped. See [Writing posts](#writing-posts).
+- Markdown posts rendered by a small hand-written parser (headings, emphasis, links, autolinks, images, inline and fenced code, blockquotes, lists, horizontal rules, tables, backslash escapes). All HTML in posts is escaped and link URLs are limited to safe schemes. See [Writing posts](#writing-posts).
 - Images stored as BLOBs in SQLite (JPEG, PNG, GIF, WebP, up to 5 MB), served from `/api/images/{id}`. Image width and height are probed once and cached to prevent layout shift.
 - Admin area: dashboard, post editor with live preview, image library, user management, password change.
 - Live "people reading now" counts through SignalR.
@@ -61,16 +61,26 @@ Posts are written in Markdown. The parser is hand-written (no third-party librar
 
 | Syntax | Result |
 |--------|--------|
-| `#` to `######` | Headings |
+| `#` to `######` | Headings. Closing hashes (`## Title ##`) are removed. |
 | `**bold**`, `__bold__`, `*italic*`, `_italic_` | Emphasis. Underscores inside words (`snake_case`) are left alone. |
 | `` `code` `` | Inline code, rendered literally |
 | ```` ``` ```` fences | Code blocks |
-| `[text](url)`, `![alt](url)` | Links and images. Images get `width`/`height` from the dimension cache. |
-| `> text` | Single-line blockquote |
-| `- item`, `* item` | Unordered list |
+| `[text](url)`, `![alt](url)` | Links and images (below). Images get `width`/`height` from the dimension cache. |
+| `<https://example.com>`, `<me@example.com>` | Autolinks |
+| `> text` | Blockquote. Consecutive `>` lines form one quote and may contain paragraphs, lists, headings, code and nested quotes. |
+| `- item`, `* item`, `+ item` | Unordered list |
 | `1. item` | Ordered list. A list starting at another number keeps it (`5.` renders as 5). |
-| `---`, `***`, `___` | Horizontal rule |
+| `---`, `***`, `___`, `* * *` | Horizontal rule |
+| `\*`, `\_`, `\[`, `\\` … | Backslash escapes for ASCII punctuation (not inside code) |
 | Pipe tables | Tables (below) |
+
+Links and images:
+
+- URLs may contain balanced parentheses, so `[Reconciliation](https://en.wikipedia.org/wiki/Reconciliation_(United_States_Congress))` works as pasted. Percent-encoded `%28`/`%29` also works.
+- For unbalanced parentheses or spaces, wrap the URL in angle brackets (`[x](<a b).html>)`) or escape the parenthesis (`\)`).
+- An optional title becomes a tooltip: `[x](https://example.com "Title")`, also `'Title'` or `(Title)`.
+- URLs must be relative or use `http`, `https` or `mailto`. Anything else (`javascript:`, `data:`) renders the link text or image alt text without a link.
+- The first image in a post is used as its Open Graph and Twitter preview image.
 
 Tables use GitHub syntax:
 
@@ -89,7 +99,7 @@ Tables use GitHub syntax:
 - Cells support links, images, emphasis and inline code. HTML is escaped.
 - Tables fill the content width. When they don't fit, for example on a phone, they scroll horizontally inside a bordered box and the page itself does not.
 
-Raw HTML, nested lists, multi-line blockquotes, reference links and setext headings are not supported. Link and image URLs are not scheme-filtered, which is safe only because every author is an admin (ADR-0007).
+Raw HTML, nested lists, reference links, setext headings and bare-URL autolinking are not supported. Consecutive lines are separate paragraphs. See ADR-0007, ADR-0023 and ADR-0024.
 
 ## Testing
 

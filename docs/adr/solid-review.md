@@ -102,3 +102,5 @@ None of these is required for correctness today; each is a deliberate, reviewabl
 change to be made on its own merits rather than bundled into this documentation pass.
 
 > **Amendment (2026-10-25):** resolved by ADR-0022: the `Console.WriteLine` calls (now `ILogger`), the duplicated XDG logic in the two path resolvers, and the stale `playwright.md`.
+
+> **Amendment (2026-11-04):** resolved by ADR-0024: recommendation 1 and the "No URL scheme filtering" deviation. Link, image and autolink URLs are now limited to `http`, `https`, `mailto` and relative URLs.

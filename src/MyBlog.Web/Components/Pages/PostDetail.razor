@@ -1,7 +1,7 @@
 @page "/post/{Slug}"
 @using System.Text.Json.Nodes
-@using System.Text.RegularExpressions
 @inject IPostRepository PostRepository
+@inject IMarkdownService MarkdownService
 @inject NavigationManager Navigation
 @inject IConfiguration Configuration
 
@@ -142,6 +142,7 @@ else
     {
         _post = await PostRepository.GetBySlugAsync(Slug);
         _notFound = _post is null;
+        _previewImage = null;
 
         if (_post is not null && !_post.IsPublished)
         {
@@ -153,10 +154,9 @@ else
         {
             _currentUrl = Navigation.Uri;
 
-            var imageMatch = Regex.Match(_post.Content, @"!\[.*?\]\((.*?)\)");
-            if (imageMatch.Success)
+            var url = MarkdownService.GetImageUrls(_post.Content).FirstOrDefault();
+            if (url is not null)
             {
-                var url = imageMatch.Groups[1].Value;
                 if (url.StartsWith("/"))
                 {
                     _previewImage = Navigation.ToAbsoluteUri(url).ToString();

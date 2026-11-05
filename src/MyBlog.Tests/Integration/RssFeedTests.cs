@@ -308,5 +308,7 @@ public class RssFeedTests : IAsyncDisposable
     {
         public Task<string> ToHtmlAsync(string markdown) =>
             Task.FromResult($"<p>{markdown}</p>");
+
+        public IReadOnlyList<string> GetImageUrls(string markdown) => [];
     }
 }

@@ -1,4 +1,3 @@
-using System.Text.RegularExpressions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -24,8 +23,8 @@ public sealed class ImageCacheWarmerService(
             using var scope = scopeFactory.CreateScope();
             var db = scope.ServiceProvider.GetRequiredService<BlogDbContext>();
             var dimService = scope.ServiceProvider.GetRequiredService<IImageDimensionService>();
+            var markdownService = scope.ServiceProvider.GetRequiredService<IMarkdownService>();
 
-            var regex = new Regex(@"!\[([^\]]*)\]\(([^)]+)\)");
             var distinctUrls = new HashSet<string>();
 
             await foreach (var content in db.Posts
@@ -38,11 +37,7 @@ public sealed class ImageCacheWarmerService(
                     continue;
                 }
 
-                var matches = regex.Matches(content);
-                foreach (Match match in matches)
-                {
-                    distinctUrls.Add(match.Groups[2].Value);
-                }
+                distinctUrls.UnionWith(markdownService.GetImageUrls(content));
             }
 
             HashSet<string> existingSet;
