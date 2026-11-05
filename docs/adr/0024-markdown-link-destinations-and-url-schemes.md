@@ -46,6 +46,8 @@ Follow CommonMark for these constructs, still without a third-party library (ADR
 - Thematic breaks allow spaces between three or more of the same character.
 - `+` is an unordered list marker.
 
+**Line endings:** generated HTML uses `\n` on every platform. `StringBuilder.AppendLine` wrote `Environment.NewLine`, so Windows output mixed `\r\n` with the `\n` from closing list tags and put `\r\n` inside `<pre>` blocks.
+
 ### Consequences
 
 - Good: Wikipedia-style URLs work as written; percent-encoded URLs still work.

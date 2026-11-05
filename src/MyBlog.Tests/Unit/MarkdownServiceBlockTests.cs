@@ -76,6 +76,17 @@ public class MarkdownServiceBlockTests
     }
 
     [Fact]
+    public async Task ToHtml_OnAnyPlatform_UsesLineFeedOnly()
+    {
+        var markdown = "# H\r\n\r\npara\r\n\r\n- a\r\n1. b\r\n> q\r\n> ```\r\n> x\r\n> y\r\n> ```\r\n---\r\n| a |\r\n| - |\r\n| 1 |\r\n```\r\ncode\r\nmore\r\n```";
+
+        var result = await _sut.ToHtmlAsync(markdown);
+
+        Assert.DoesNotContain("\r", result);
+        Assert.Contains("<pre><code>code\nmore</code></pre>", result);
+    }
+
+    [Fact]
     public async Task ToHtml_WithPlusBullets_RendersUnorderedList()
     {
         var result = await _sut.ToHtmlAsync("+ one\n+ two");

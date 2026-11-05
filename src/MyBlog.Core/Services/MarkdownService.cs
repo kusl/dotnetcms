@@ -44,7 +44,7 @@ public sealed partial class MarkdownService(
                 {
                     result.Append("<pre><code>");
                     result.Append(HtmlEncode(codeBlockContent.ToString().TrimEnd()));
-                    result.AppendLine("</code></pre>");
+                    result.Append("</code></pre>").Append('\n');
                     codeBlockContent.Clear();
                     inCodeBlock = false;
                 }
@@ -58,14 +58,14 @@ public sealed partial class MarkdownService(
 
             if (inCodeBlock)
             {
-                codeBlockContent.AppendLine(line);
+                codeBlockContent.Append(line).Append('\n');
                 continue;
             }
 
             if (HorizontalRulePattern().IsMatch(line))
             {
                 result.Append(CloseList(ref currentListType));
-                result.AppendLine("<hr />");
+                result.Append("<hr />").Append('\n');
                 continue;
             }
 
@@ -75,7 +75,7 @@ public sealed partial class MarkdownService(
                 result.Append(CloseList(ref currentListType));
                 var level = headingMatch.Groups[1].Value.Length;
                 var text = await ProcessInlineAsync(headingMatch.Groups[2].Value);
-                result.AppendLine($"<h{level}>{text}</h{level}>");
+                result.Append($"<h{level}>{text}</h{level}>").Append('\n');
                 continue;
             }
 
@@ -91,7 +91,7 @@ public sealed partial class MarkdownService(
 
                 index--;
                 var quoteHtml = await ToHtmlAsync(string.Join('\n', quoteLines));
-                result.AppendLine($"<blockquote>{quoteHtml.TrimEnd()}</blockquote>");
+                result.Append($"<blockquote>{quoteHtml.TrimEnd()}</blockquote>").Append('\n');
                 continue;
             }
 
@@ -108,11 +108,11 @@ public sealed partial class MarkdownService(
                 if (currentListType != ListType.Unordered)
                 {
                     result.Append(CloseList(ref currentListType));
-                    result.AppendLine("<ul>");
+                    result.Append("<ul>").Append('\n');
                     currentListType = ListType.Unordered;
                 }
                 var itemText = await ProcessInlineAsync(unorderedMatch.Groups[1].Value);
-                result.AppendLine($"<li>{itemText}</li>");
+                result.Append($"<li>{itemText}</li>").Append('\n');
                 continue;
             }
 
@@ -122,12 +122,12 @@ public sealed partial class MarkdownService(
                 if (currentListType != ListType.Ordered)
                 {
                     result.Append(CloseList(ref currentListType));
-                    result.AppendLine(OpenOrderedList(orderedMatch.Groups[1].Value));
+                    result.Append(OpenOrderedList(orderedMatch.Groups[1].Value)).Append('\n');
                     currentListType = ListType.Ordered;
                 }
 
                 var itemText = await ProcessInlineAsync(orderedMatch.Groups[2].Value);
-                result.AppendLine($"<li>{itemText}</li>");
+                result.Append($"<li>{itemText}</li>").Append('\n');
                 continue;
             }
 
@@ -143,7 +143,7 @@ public sealed partial class MarkdownService(
             }
 
             var paragraphText = await ProcessInlineAsync(line);
-            result.AppendLine($"<p>{paragraphText}</p>");
+            result.Append($"<p>{paragraphText}</p>").Append('\n');
         }
 
         result.Append(CloseList(ref currentListType));
@@ -152,7 +152,7 @@ public sealed partial class MarkdownService(
         {
             result.Append("<pre><code>");
             result.Append(HtmlEncode(codeBlockContent.ToString().TrimEnd()));
-            result.AppendLine("</code></pre>");
+            result.Append("</code></pre>").Append('\n');
         }
 
         return result.ToString();
@@ -253,10 +253,10 @@ public sealed partial class MarkdownService(
 
     private async Task<int> AppendTableAsync(StringBuilder result, string[] lines, int headerIndex, TableAlignment[] alignments)
     {
-        result.AppendLine("<div class=\"table-wrapper\"><table>");
-        result.AppendLine("<thead>");
+        result.Append("<div class=\"table-wrapper\"><table>").Append('\n');
+        result.Append("<thead>").Append('\n');
         await AppendTableRowAsync(result, lines[headerIndex], "th", alignments);
-        result.AppendLine("</thead>");
+        result.Append("</thead>").Append('\n');
 
         var index = headerIndex + 2;
         var hasBody = false;
@@ -264,7 +264,7 @@ public sealed partial class MarkdownService(
         {
             if (!hasBody)
             {
-                result.AppendLine("<tbody>");
+                result.Append("<tbody>").Append('\n');
                 hasBody = true;
             }
 
@@ -274,10 +274,10 @@ public sealed partial class MarkdownService(
 
         if (hasBody)
         {
-            result.AppendLine("</tbody>");
+            result.Append("</tbody>").Append('\n');
         }
 
-        result.AppendLine("</table></div>");
+        result.Append("</table></div>").Append('\n');
         return index - 1;
     }
 
@@ -297,7 +297,7 @@ public sealed partial class MarkdownService(
             };
             result.Append($"<{cellTag}{style}>{content}</{cellTag}>");
         }
-        result.AppendLine("</tr>");
+        result.Append("</tr>").Append('\n');
     }
 
     private static bool IsTableBodyRow(string line)
