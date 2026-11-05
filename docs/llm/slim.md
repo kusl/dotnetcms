@@ -650,6 +650,8 @@ namespace MyBlog.Core.Interfaces;
 public interface IMarkdownService
 {
     Task<string> ToHtmlAsync(string markdown);
+
+    IReadOnlyList<string> GetImageUrls(string markdown);
 }
 ```
 
@@ -928,6 +930,8 @@ public sealed partial class MarkdownService(
     private const string TokenStart = "\uE000";
     private const string TokenEnd = "\uE001";
 
+    private static readonly string[] SafeUrlSchemes = ["http", "https", "mailto"];
+
     private enum ListType { None, Unordered, Ordered }
 
     private enum TableAlignment { None, Left, Center, Right }
@@ -990,11 +994,19 @@ public sealed partial class MarkdownService(
                 continue;
             }
 
-            if (line.StartsWith("> "))
+            if (BlockquotePattern().IsMatch(line))
             {
                 result.Append(CloseList(ref currentListType));
-                var quoteText = await ProcessInlineAsync(line[2..]);
-                result.AppendLine($"<blockquote><p>{quoteText}</p></blockquote>");
+                var quoteLines = new List<string>();
+                while (index < lines.Length && BlockquotePattern().Match(lines[index]) is { Success: true } quoteMatch)
+                {
+                    quoteLines.Add(quoteMatch.Groups[1].Value);
+                    index++;
+                }
+
+                index--;
+                var quoteHtml = await ToHtmlAsync(string.Join('\n', quoteLines));
+                result.AppendLine($"<blockquote>{quoteHtml.TrimEnd()}</blockquote>");
                 continue;
             }
 
@@ -1059,6 +1071,43 @@ public sealed partial class MarkdownService(
         }
 
         return result.ToString();
+    }
+
+    public IReadOnlyList<string> GetImageUrls(string markdown)
+    {
+        var urls = new List<string>();
+        if (string.IsNullOrWhiteSpace(markdown))
+        {
+            return urls;
+        }
+
+        var inCodeBlock = false;
+        foreach (var line in markdown.Replace("\r\n", "\n").Split('\n'))
+        {
+            if (line.StartsWith("```"))
+            {
+                inCodeBlock = !inCodeBlock;
+                continue;
+            }
+
+            if (inCodeBlock)
+            {
+                continue;
+            }
+
+            var protectedHtml = new List<string>();
+            var text = EncodeAndProtectLiterals(line, protectedHtml);
+            foreach (Match match in ImagePattern().Matches(text))
+            {
+                var url = Restore(protectedHtml, match.Groups["url"].Value);
+                if (IsSafeUrl(url))
+                {
+                    urls.Add(WebUtility.HtmlDecode(url));
+                }
+            }
+        }
+
+        return urls;
     }
 
     private static string CloseList(ref ListType listType)
@@ -1170,7 +1219,7 @@ public sealed partial class MarkdownService(
     {
         return !string.IsNullOrWhiteSpace(line)
             && !line.StartsWith("```")
-            && !line.StartsWith("> ")
+            && !BlockquotePattern().IsMatch(line)
             && !HorizontalRulePattern().IsMatch(line)
             && !HeadingPattern().IsMatch(line)
             && !UnorderedListPattern().IsMatch(line)
@@ -1258,15 +1307,46 @@ public sealed partial class MarkdownService(
         return $"{TokenStart}{protectedHtml.Count - 1}{TokenEnd}";
     }
 
-    private async Task<string> ProcessInlineAsync(string text)
+    private static string Restore(List<string> protectedHtml, string text)
+    {
+        return ProtectedTokenPattern().Replace(text, match =>
+            Restore(protectedHtml, protectedHtml[int.Parse(match.Groups[1].Value, CultureInfo.InvariantCulture)]));
+    }
+
+    private static string RestorePlainText(List<string> protectedHtml, string text)
+    {
+        return HtmlTagPattern().Replace(Restore(protectedHtml, text), string.Empty);
+    }
+
+    private static string EncodeAndProtectLiterals(string text, List<string> protectedHtml)
     {
         text = HtmlEncode(text)
             .Replace(TokenStart, "&#xE000;")
             .Replace(TokenEnd, "&#xE001;");
 
+        return CodeOrEscapePattern().Replace(text, match => match.Groups["code"].Success ?
+            Protect(protectedHtml, $"<code>{match.Groups["code"].Value}</code>") :
+            Protect(protectedHtml, match.Groups["escaped"].Value));
+    }
+
+    private static bool IsSafeUrl(string url)
+    {
+        var decoded = WebUtility.HtmlDecode(url);
+        var candidate = string.Concat(decoded.Where(c => c > ' '));
+        var schemeMatch = UrlSchemePattern().Match(candidate);
+        return !schemeMatch.Success || SafeUrlSchemes.Contains(schemeMatch.Groups[1].Value, StringComparer.OrdinalIgnoreCase);
+    }
+
+    private static string TitleAttribute(List<string> protectedHtml, Group title)
+    {
+        return title.Success ? $" title=\"{RestorePlainText(protectedHtml, title.Value)}\"" : string.Empty;
+    }
+
+    private async Task<string> ProcessInlineAsync(string text)
+    {
         var protectedHtml = new List<string>();
 
-        text = InlineCodePattern().Replace(text, match => Protect(protectedHtml, $"<code>{match.Groups[1].Value}</code>"));
+        text = EncodeAndProtectLiterals(text, protectedHtml);
 
         var matches = ImagePattern().Matches(text);
         if (matches.Count > 0)
@@ -1274,29 +1354,54 @@ public sealed partial class MarkdownService(
             for (var i = matches.Count - 1; i >= 0; i--)
             {
                 var match = matches[i];
-                var alt = match.Groups[1].Value;
-                var url = match.Groups[2].Value;
+                var alt = RestorePlainText(protectedHtml, match.Groups["text"].Value);
+                var url = Restore(protectedHtml, match.Groups["url"].Value);
+                var title = TitleAttribute(protectedHtml, match.Groups["title"]);
 
                 string imgTag;
-                try
+                if (!IsSafeUrl(url))
                 {
-                    var dimensions = await imageDimensionService.GetDimensionsAsync(WebUtility.HtmlDecode(url));
-
-                    imgTag = dimensions.HasValue ?
-                        $"<img src=\"{url}\" alt=\"{alt}\" width=\"{dimensions.Value.Width}\" height=\"{dimensions.Value.Height}\" />" :
-                        $"<img src=\"{url}\" alt=\"{alt}\" />";
+                    imgTag = alt;
                 }
-                catch (Exception ex)
+                else
                 {
-                    logger?.LogWarning(ex, "Failed to get dimensions for image {Url}. Rendering without dimensions.", url);
-                    imgTag = $"<img src=\"{url}\" alt=\"{alt}\" />";
+                    try
+                    {
+                        var dimensions = await imageDimensionService.GetDimensionsAsync(WebUtility.HtmlDecode(url));
+
+                        imgTag = dimensions.HasValue ?
+                            $"<img src=\"{url}\" alt=\"{alt}\"{title} width=\"{dimensions.Value.Width}\" height=\"{dimensions.Value.Height}\" />" :
+                            $"<img src=\"{url}\" alt=\"{alt}\"{title} />";
+                    }
+                    catch (Exception ex)
+                    {
+                        logger?.LogWarning(ex, "Failed to get dimensions for image {Url}. Rendering without dimensions.", url);
+                        imgTag = $"<img src=\"{url}\" alt=\"{alt}\"{title} />";
+                    }
                 }
 
                 text = text.Remove(match.Index, match.Length).Insert(match.Index, Protect(protectedHtml, imgTag));
             }
         }
 
-        text = LinkPattern().Replace(text, match => $"{Protect(protectedHtml, $"<a href=\"{match.Groups[2].Value}\">")}{match.Groups[1].Value}</a>");
+        text = LinkPattern().Replace(text, match =>
+        {
+            var url = Restore(protectedHtml, match.Groups["url"].Value);
+            if (!IsSafeUrl(url))
+            {
+                return match.Groups["text"].Value;
+            }
+
+            var title = TitleAttribute(protectedHtml, match.Groups["title"]);
+            return $"{Protect(protectedHtml, $"<a href=\"{url}\"{title}>")}{match.Groups["text"].Value}</a>";
+        });
+
+        text = AutolinkPattern().Replace(text, match =>
+        {
+            var url = Restore(protectedHtml, match.Groups["url"].Success ? match.Groups["url"].Value : match.Groups["email"].Value);
+            var href = match.Groups["url"].Success ? url : $"mailto:{url}";
+            return IsSafeUrl(href) ? Protect(protectedHtml, $"<a href=\"{href}\">{url}</a>") : match.Value;
+        });
 
         text = BoldPattern().Replace(text, match =>
         {
@@ -1310,32 +1415,44 @@ public sealed partial class MarkdownService(
             return $"<em>{content}</em>";
         });
 
-        return ProtectedTokenPattern().Replace(text, match => protectedHtml[int.Parse(match.Groups[1].Value, CultureInfo.InvariantCulture)]);
+        return Restore(protectedHtml, text);
     }
 
-    [GeneratedRegex(@"^(#{1,6})\s+(.+)$")]
+    [GeneratedRegex(@"^(#{1,6})\s+(.+?)(?:\s+#+)?\s*$")]
     private static partial Regex HeadingPattern();
 
-    [GeneratedRegex(@"^[-*]\s+(.+)$")]
+    [GeneratedRegex(@"^>[ ]?(.*)$")]
+    private static partial Regex BlockquotePattern();
+
+    [GeneratedRegex(@"^[-*+]\s+(.+)$")]
     private static partial Regex UnorderedListPattern();
 
     [GeneratedRegex(@"^(\d+)\.\s+(.+)$")]
     private static partial Regex OrderedListPattern();
 
-    [GeneratedRegex(@"^[-*_]{3,}\s*$")]
+    [GeneratedRegex(@"^([-*_])(?:[ \t]*\1){2,}[ \t]*$")]
     private static partial Regex HorizontalRulePattern();
 
     [GeneratedRegex(@"^:?-+:?$")]
     private static partial Regex TableDelimiterCellPattern();
 
-    [GeneratedRegex(@"`([^`]+)`")]
-    private static partial Regex InlineCodePattern();
+    [GeneratedRegex(@"`(?<code>[^`]+)`|\\(?<escaped>&(?:lt|gt|amp|quot);|[!#$%'()*+,\-./:;=?@\[\\\]^_`{|}~])")]
+    private static partial Regex CodeOrEscapePattern();
 
-    [GeneratedRegex(@"!\[([^\]]*)\]\(([^)]+)\)")]
+    [GeneratedRegex(@"!\[(?<text>(?>(?:[^\[\]]|(?<open>\[)|(?<-open>\]))*)(?(open)(?!)))\]\(\s*(?:&lt;(?<url>(?:(?!&lt;|&gt;).)*)&gt;|(?<url>(?>(?:[^\s()]|(?<paren>\()|(?<-paren>\)))+)(?(paren)(?!))))(?:\s+(?:&quot;(?<title>(?:(?!&quot;).)*)&quot;|'(?<title>[^']*)'|\((?<title>[^()]*)\)))?\s*\)")]
     private static partial Regex ImagePattern();
 
-    [GeneratedRegex(@"\[([^\]]+)\]\(([^)]+)\)")]
+    [GeneratedRegex(@"\[(?<text>(?>(?:[^\[\]]|(?<open>\[)|(?<-open>\]))+)(?(open)(?!)))\]\(\s*(?:&lt;(?<url>(?:(?!&lt;|&gt;).)*)&gt;|(?<url>(?>(?:[^\s()]|(?<paren>\()|(?<-paren>\)))+)(?(paren)(?!))))(?:\s+(?:&quot;(?<title>(?:(?!&quot;).)*)&quot;|'(?<title>[^']*)'|\((?<title>[^()]*)\)))?\s*\)")]
     private static partial Regex LinkPattern();
+
+    [GeneratedRegex(@"&lt;(?:(?<url>[A-Za-z][A-Za-z0-9+.\-]{1,31}:(?:(?!&lt;|&gt;)\S)+)|(?<email>[A-Za-z0-9.!#$%'*+/=?^_`{|}~\-]+@[A-Za-z0-9](?:[A-Za-z0-9\-]*[A-Za-z0-9])?(?:\.[A-Za-z0-9](?:[A-Za-z0-9\-]*[A-Za-z0-9])?)*))&gt;")]
+    private static partial Regex AutolinkPattern();
+
+    [GeneratedRegex(@"^([A-Za-z][A-Za-z0-9+.\-]*):")]
+    private static partial Regex UrlSchemePattern();
+
+    [GeneratedRegex(@"<[^>]*>")]
+    private static partial Regex HtmlTagPattern();
 
     [GeneratedRegex(@"\*\*(.+?)\*\*|(?<![\p{L}\p{N}_])__(.+?)__(?![\p{L}\p{N}_])")]
     private static partial Regex BoldPattern();
@@ -3241,7 +3358,6 @@ public sealed class AuthService : IAuthService
 ```
 
 ```csharp src/MyBlog.Infrastructure/Services/ImageCacheWarmerService.cs
-using System.Text.RegularExpressions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -3267,8 +3383,8 @@ public sealed class ImageCacheWarmerService(
             using var scope = scopeFactory.CreateScope();
             var db = scope.ServiceProvider.GetRequiredService<BlogDbContext>();
             var dimService = scope.ServiceProvider.GetRequiredService<IImageDimensionService>();
+            var markdownService = scope.ServiceProvider.GetRequiredService<IMarkdownService>();
 
-            var regex = new Regex(@"!\[([^\]]*)\]\(([^)]+)\)");
             var distinctUrls = new HashSet<string>();
 
             await foreach (var content in db.Posts
@@ -3281,11 +3397,7 @@ public sealed class ImageCacheWarmerService(
                     continue;
                 }
 
-                var matches = regex.Matches(content);
-                foreach (Match match in matches)
-                {
-                    distinctUrls.Add(match.Groups[2].Value);
-                }
+                distinctUrls.UnionWith(markdownService.GetImageUrls(content));
             }
 
             HashSet<string> existingSet;
@@ -6380,6 +6492,8 @@ public class RssFeedTests : IAsyncDisposable
     {
         public Task<string> ToHtmlAsync(string markdown) =>
             Task.FromResult($"<p>{markdown}</p>");
+
+        public IReadOnlyList<string> GetImageUrls(string markdown) => [];
     }
 }
 ```
@@ -7223,6 +7337,94 @@ public sealed class LoginRateLimitMiddlewareTests : IDisposable
 }
 ```
 
+````csharp src/MyBlog.Tests/Unit/MarkdownServiceBlockTests.cs
+using MyBlog.Core.Services;
+using Xunit;
+
+namespace MyBlog.Tests.Unit;
+
+public class MarkdownServiceBlockTests
+{
+    private readonly MarkdownService _sut = new(new MockImageDimensionService());
+
+    [Fact]
+    public async Task ToHtml_WithConsecutiveQuoteLines_RendersOneBlockquote()
+    {
+        var result = await _sut.ToHtmlAsync("> First line\n> Second line\n>\n>Third");
+
+        Assert.Equal(1, result.Split("<blockquote>").Length - 1);
+        Assert.Contains("<blockquote><p>First line</p>\n<p>Second line</p>\n<p>Third</p></blockquote>", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithBlocksInsideQuote_RendersNestedBlocks()
+    {
+        var result = await _sut.ToHtmlAsync("> ## Note\n> - one\n> - two\n> > inner");
+
+        Assert.Contains("<blockquote><h2>Note</h2>\n<ul>\n<li>one</li>\n<li>two</li>\n</ul>\n<blockquote><p>inner</p></blockquote></blockquote>", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithCodeFenceInsideQuote_PreservesCodeLines()
+    {
+        var result = await _sut.ToHtmlAsync("> ```\n> a\n> b\n> ```");
+
+        Assert.Contains("<blockquote><pre><code>a\nb</code></pre></blockquote>", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithQuoteAfterList_ClosesList()
+    {
+        var result = await _sut.ToHtmlAsync("- item\n> quote");
+
+        Assert.Contains("</ul>\n<blockquote><p>quote</p></blockquote>", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithTableFollowedByQuote_EndsTable()
+    {
+        var result = await _sut.ToHtmlAsync("| a |\n| - |\n| 1 |\n>quote");
+
+        Assert.Contains("</table></div>\n<blockquote><p>quote</p></blockquote>", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithClosingHashesInHeading_StripsThem()
+    {
+        var result = await _sut.ToHtmlAsync("## Title ##\n### C#\n# Spaces   ");
+
+        Assert.Contains("<h2>Title</h2>", result);
+        Assert.Contains("<h3>C#</h3>", result);
+        Assert.Contains("<h1>Spaces</h1>", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithSpacedHorizontalRules_RendersRules()
+    {
+        var result = await _sut.ToHtmlAsync("* * *\n\n- - -\n\n_ _ _");
+
+        Assert.Equal(3, result.Split("<hr />").Length - 1);
+        Assert.DoesNotContain("<li>", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithMixedRuleCharacters_DoesNotRenderRule()
+    {
+        var result = await _sut.ToHtmlAsync("-*-");
+
+        Assert.DoesNotContain("<hr />", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithPlusBullets_RendersUnorderedList()
+    {
+        var result = await _sut.ToHtmlAsync("+ one\n+ two");
+
+        Assert.Contains("<ul>\n<li>one</li>\n<li>two</li>\n</ul>", result);
+    }
+}
+````
+
 ````csharp src/MyBlog.Tests/Unit/MarkdownServiceEdgeCaseTests.cs
 using MyBlog.Core.Interfaces;
 using MyBlog.Core.Services;
@@ -7620,6 +7822,238 @@ public class MarkdownServiceInlineTests
     }
 }
 ```
+
+````csharp src/MyBlog.Tests/Unit/MarkdownServiceLinkTests.cs
+using MyBlog.Core.Interfaces;
+using MyBlog.Core.Services;
+using Xunit;
+
+namespace MyBlog.Tests.Unit;
+
+public class MarkdownServiceLinkTests
+{
+    private readonly MarkdownService _sut = new(new MockImageDimensionService());
+
+    [Fact]
+    public async Task ToHtml_WithParenthesesInLinkUrl_KeepsWholeUrl()
+    {
+        var result = await _sut.ToHtmlAsync("- **The president still signs or vetoes.** [Congress can override a veto](https://en.wikipedia.org/wiki/Reconciliation_(United_States_Congress)) only with two-thirds of both chambers.");
+
+        Assert.Contains("<li><strong>The president still signs or vetoes.</strong> <a href=\"https://en.wikipedia.org/wiki/Reconciliation_(United_States_Congress)\">Congress can override a veto</a> only with two-thirds of both chambers.</li>", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithNestedParenthesesInLinkUrl_KeepsWholeUrl()
+    {
+        var result = await _sut.ToHtmlAsync("[x](https://example.com/a_(b_(c))_d) after");
+
+        Assert.Contains("<a href=\"https://example.com/a_(b_(c))_d\">x</a> after", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithPercentEncodedParentheses_KeepsUrl()
+    {
+        var result = await _sut.ToHtmlAsync("[x](https://en.wikipedia.org/wiki/Reconciliation_%28United_States_Congress%29)");
+
+        Assert.Contains("<a href=\"https://en.wikipedia.org/wiki/Reconciliation_%28United_States_Congress%29\">x</a>", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithLinkInsideParentheses_DoesNotSwallowClosingParenthesis()
+    {
+        var result = await _sut.ToHtmlAsync("(see [docs](https://example.com/docs))");
+
+        Assert.Contains("<p>(see <a href=\"https://example.com/docs\">docs</a>)</p>", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithUnbalancedParenthesisInLinkUrl_RendersLiteralText()
+    {
+        var result = await _sut.ToHtmlAsync("[x](https://example.com/a(b)");
+
+        Assert.DoesNotContain("<a ", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithEscapedParenthesisInLinkUrl_KeepsWholeUrl()
+    {
+        var result = await _sut.ToHtmlAsync("[x](https://example.com/a\\)b)");
+
+        Assert.Contains("<a href=\"https://example.com/a)b\">x</a>", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithAngleBracketLinkDestination_AllowsSpacesAndParentheses()
+    {
+        var result = await _sut.ToHtmlAsync("[x](<https://example.com/a b)c>)");
+
+        Assert.Contains("<a href=\"https://example.com/a b)c\">x</a>", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithLinkTitle_RendersTitleAttribute()
+    {
+        var result = await _sut.ToHtmlAsync("[x](https://example.com/a_(b) \"The *title*\") and [y](https://example.com 'Single')");
+
+        Assert.Contains("<a href=\"https://example.com/a_(b)\" title=\"The *title*\">x</a>", result);
+        Assert.Contains("<a href=\"https://example.com\" title=\"Single\">y</a>", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithBracketsInLinkText_KeepsWholeText()
+    {
+        var result = await _sut.ToHtmlAsync("[see [1] here](https://example.com)");
+
+        Assert.Contains("<a href=\"https://example.com\">see [1] here</a>", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithSpaceInBareLinkUrl_RendersLiteralText()
+    {
+        var result = await _sut.ToHtmlAsync("[x](not a url)");
+
+        Assert.Contains("<p>[x](not a url)</p>", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithParenthesesInImageUrl_KeepsWholeUrl()
+    {
+        var result = await _sut.ToHtmlAsync("![chart](https://example.com/image.png?v=(2)) done");
+
+        Assert.Contains("<img src=\"https://example.com/image.png?v=(2)\" alt=\"chart\" width=\"100\" height=\"200\" /> done", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithImageTitle_RendersTitleAttribute()
+    {
+        var result = await _sut.ToHtmlAsync("![alt](https://example.com/unknown.jpg \"Caption\")");
+
+        Assert.Contains("<img src=\"https://example.com/unknown.jpg\" alt=\"alt\" title=\"Caption\" />", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithInlineCodeInImageAlt_RendersPlainAlt()
+    {
+        var result = await _sut.ToHtmlAsync("![run `make`](https://example.com/unknown.jpg)");
+
+        Assert.Contains("<img src=\"https://example.com/unknown.jpg\" alt=\"run make\" />", result);
+        Assert.DoesNotContain("\uE000", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithJavaScriptLink_RendersTextOnly()
+    {
+        var result = await _sut.ToHtmlAsync("[click](javascript:alert(1)) and [b](JaVaScRiPt:alert(2)) and [c](<  javascript:alert(3)>)");
+
+        Assert.DoesNotContain("<a ", result);
+        Assert.DoesNotContain("href", result);
+        Assert.Contains("click", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithEscapedColonInJavaScriptLink_RendersTextOnly()
+    {
+        var result = await _sut.ToHtmlAsync("[click](javascript\\:alert(1))");
+
+        Assert.DoesNotContain("<a ", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithDataImage_RendersAltOnly()
+    {
+        var result = await _sut.ToHtmlAsync("![pic](data:text/html,x)");
+
+        Assert.DoesNotContain("<img", result);
+        Assert.Contains("<p>pic</p>", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithSafeSchemesAndRelativeUrls_RendersLinks()
+    {
+        var result = await _sut.ToHtmlAsync("[a](mailto:me@example.com) [b](/post/x) [c](#top) [d](HTTPS://example.com) [e](?q=a:b)");
+
+        Assert.Contains("<a href=\"mailto:me@example.com\">a</a>", result);
+        Assert.Contains("<a href=\"/post/x\">b</a>", result);
+        Assert.Contains("<a href=\"#top\">c</a>", result);
+        Assert.Contains("<a href=\"HTTPS://example.com\">d</a>", result);
+        Assert.Contains("<a href=\"?q=a:b\">e</a>", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithAutolink_RendersAnchorWithoutEmphasis()
+    {
+        var result = await _sut.ToHtmlAsync("See <https://example.com/a_b_c?x=1&y=2> or <me@example.com>.");
+
+        Assert.Contains("<a href=\"https://example.com/a_b_c?x=1&amp;y=2\">https://example.com/a_b_c?x=1&amp;y=2</a>", result);
+        Assert.Contains("<a href=\"mailto:me@example.com\">me@example.com</a>", result);
+        Assert.DoesNotContain("<em>", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithJavaScriptAutolink_RendersLiteralText()
+    {
+        var result = await _sut.ToHtmlAsync("<javascript:alert(1)>");
+
+        Assert.DoesNotContain("<a ", result);
+        Assert.Contains("&lt;javascript:alert(1)&gt;", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithBackslashEscapes_RendersLiteralCharacters()
+    {
+        var result = await _sut.ToHtmlAsync("\\*not italic\\* \\_nor this\\_ \\[not a link\\](x) \\`tick\\` \\\\ \\<b\\>");
+
+        Assert.Contains("<p>*not italic* _nor this_ [not a link](x) `tick` \\ &lt;b&gt;</p>", result);
+    }
+
+    [Fact]
+    public async Task ToHtml_WithBackslashInInlineCode_KeepsBackslash()
+    {
+        var result = await _sut.ToHtmlAsync("Use `C:\\temp\\*` and C:\\Users");
+
+        Assert.Contains("<code>C:\\temp\\*</code> and C:\\Users", result);
+    }
+
+    [Fact]
+    public void GetImageUrls_ReturnsDecodedUrlsOutsideCode()
+    {
+        var markdown = "![a](https://example.com/a_(1).png \"t\")\n```\n![b](https://example.com/b.png)\n```\nText `![c](https://example.com/c.png)` and ![d](https://example.com/d.png?x=1&y=2) ![e](javascript:alert(1))";
+
+        var urls = _sut.GetImageUrls(markdown);
+
+        Assert.Equal(new[] { "https://example.com/a_(1).png", "https://example.com/d.png?x=1&y=2" }, urls);
+    }
+
+    [Fact]
+    public void GetImageUrls_WithEmptyMarkdown_ReturnsEmpty()
+    {
+        Assert.Empty(_sut.GetImageUrls(""));
+    }
+
+    [Fact]
+    public async Task ToHtml_WithImageUrlFromGetImageUrls_LooksUpSameUrl()
+    {
+        var recorder = new RecordingDimensionService();
+        var sut = new MarkdownService(recorder);
+        var markdown = "![a](https://example.com/a_(1).png?x=1&y=2 \"t\")";
+
+        await sut.ToHtmlAsync(markdown);
+
+        Assert.Equal(sut.GetImageUrls(markdown), recorder.Urls);
+    }
+
+    private sealed class RecordingDimensionService : IImageDimensionService
+    {
+        public List<string> Urls { get; } = [];
+
+        public Task<(int Width, int Height)?> GetDimensionsAsync(string url, CancellationToken cancellationToken = default)
+        {
+            Urls.Add(url);
+            return Task.FromResult<(int, int)?>(null);
+        }
+    }
+}
+````
 
 ```csharp src/MyBlog.Tests/Unit/MarkdownServiceLongDocumentTests.cs
 using System.Text;
@@ -11522,8 +11956,8 @@ else
 ```razor src/MyBlog.Web/Components/Pages/PostDetail.razor
 @page "/post/{Slug}"
 @using System.Text.Json.Nodes
-@using System.Text.RegularExpressions
 @inject IPostRepository PostRepository
+@inject IMarkdownService MarkdownService
 @inject NavigationManager Navigation
 @inject IConfiguration Configuration
 
@@ -11664,6 +12098,7 @@ else
     {
         _post = await PostRepository.GetBySlugAsync(Slug);
         _notFound = _post is null;
+        _previewImage = null;
 
         if (_post is not null && !_post.IsPublished)
         {
@@ -11675,10 +12110,9 @@ else
         {
             _currentUrl = Navigation.Uri;
 
-            var imageMatch = Regex.Match(_post.Content, @"!\[.*?\]\((.*?)\)");
-            if (imageMatch.Success)
+            var url = MarkdownService.GetImageUrls(_post.Content).FirstOrDefault();
+            if (url is not null)
             {
-                var url = imageMatch.Groups[1].Value;
                 if (url.StartsWith("/"))
                 {
                     _previewImage = Navigation.ToAbsoluteUri(url).ToString();
