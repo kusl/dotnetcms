@@ -1,3 +1,27 @@
+The post is written and attached as `cuban-missile-crisis-timeline.md`. It covers the Cuban Missile Crisis, with a close look at Black Saturday (October 27, 1962). That was the day Washington, Moscow, Havana, the Arctic and the Atlantic all nearly spun out of control at once.
+
+**Title**
+Black Saturday, October 27, 1962: One Day, Five Places, and the Closest the World Came to Nuclear War
+
+**Summary**
+In October 1962 the United States and the Soviet Union came closer to nuclear war than at any other point in the Cold War. This plain-English timeline follows all 13 days of the Cuban Missile Crisis in tables, then slows down to Black Saturday, when a pilot was shot down over Cuba, a stray spy plane crossed into Soviet airspace, and a Soviet submarine's captain wanted to fire a nuclear torpedo. It also lists where the sources disagree and which claims could not be confirmed.
+
+**What's in the article**
+- **Tables:**
+  - who was involved
+  - how the crisis started
+  - the 13 days, one row per day
+  - Black Saturday in time order
+  - Black Saturday by place
+  - how it ended
+  - where the sources disagree
+- **Source links:** every row links to a source, mainly the JFK Library, the State Department historians, the National Security Archive, the Council on Foreign Relations (CFR) day-by-day series and Defense Media Network.
+- **Flags:** claims I couldn't tie to a source are marked "Not confirmed" and collected in their own section. For example, no source I read gives a clock time for the Anderson shootdown, so I left the time out.
+
+After a final read I tightened a few lines, including the timing of the "Trollope ploy" decision, the Arkhipov caveat and the Turkey-deal row. The JFK Library day pages and the other sources were read earlier in this session. I did not re-open every page for a second check, so the "sources disagree" table is the best guide to where a link is worth clicking.
+
+I haven't published anything to your blog. If you want, I can also save the article into the Project.
+
 ## The short version
 
 In October 1962, the United States and the Soviet Union came closer to nuclear war than at any other time in the Cold War. The U.S. State Department's historians describe it as [the moment when the two superpowers came closest to nuclear conflict](https://history.state.gov/milestones/1961-1968/cuban-missile-crisis).
