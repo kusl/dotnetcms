@@ -1,7 +1,7 @@
 # Repository dump
-# Commit: 4a8e539 (main)
-# Message: add prompt
-# Generated: 2026-11-06T14:24:10-05:00
+# Commit: 09cbcbc (main)
+# Message: add another angle
+# Generated: 2026-11-06T14:29:21-05:00
 # Uncommitted:
 
 ===== docker-compose.e2e.yml =====
@@ -3447,8 +3447,8 @@ printf '%s\n' "$SUMMARY" >&2
     <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
     <MicrosoftPackagesVersion>10.0.14</MicrosoftPackagesVersion>
     <OpenTelemetryVersion>1.20.1</OpenTelemetryVersion>
-    <OtelAspNetCoreInstrVersion>1.20.1</OtelAspNetCoreInstrVersion>
-    <OtelHttpInstrVersion>1.20.1</OtelHttpInstrVersion>
+    <OtelAspNetCoreInstrVersion>1.20.2</OtelAspNetCoreInstrVersion>
+    <OtelHttpInstrVersion>1.20.2</OtelHttpInstrVersion>
 
     <TestSdkVersion>18.11.0</TestSdkVersion>
     <XUnitVersion>4.0.2</XUnitVersion>
