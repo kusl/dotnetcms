@@ -14,12 +14,12 @@ some possible angles include
 - have side projects or canary projects where you can ship early ship early and ship often
 - build and maintain comprehensive automated test suites so when things break, they break early and loudly 
 - reduce the number of dependencies 
+- in a world where an LLM can do "all the work", perhaps the one work a human can do best is to care
 there could be a lot of other angles here as well 
 explore each and every angle thoroughly and make this a one stop shop complete explainer 
 as usual please also have a plain text title and summary 
 use all the markdown features we have added to our markdown service 
 such as the nice table you added 
-
 
 
 
