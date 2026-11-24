@@ -535,13 +535,13 @@ printf '%s\n' "$SUMMARY" >&2
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
     <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
     <MicrosoftPackagesVersion>10.0.14</MicrosoftPackagesVersion>
-    <OpenTelemetryVersion>1.20.1</OpenTelemetryVersion>
-    <OtelAspNetCoreInstrVersion>1.20.2</OtelAspNetCoreInstrVersion>
-    <OtelHttpInstrVersion>1.20.2</OtelHttpInstrVersion>
+    <OpenTelemetryVersion>1.21.0</OpenTelemetryVersion>
+    <OtelAspNetCoreInstrVersion>1.21.0</OtelAspNetCoreInstrVersion>
+    <OtelHttpInstrVersion>1.21.0</OtelHttpInstrVersion>
 
-    <TestSdkVersion>18.11.0</TestSdkVersion>
-    <XUnitVersion>4.0.2</XUnitVersion>
-    <PlaywrightVersion>1.64.1</PlaywrightVersion>
+    <TestSdkVersion>18.12.0</TestSdkVersion>
+    <XUnitVersion>4.0.3</XUnitVersion>
+    <PlaywrightVersion>1.65.1</PlaywrightVersion>
   </PropertyGroup>
 
   <ItemGroup>

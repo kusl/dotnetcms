@@ -1,0 +1,1499 @@
+MyBlog run.sh
+  Started    : 2026-11-24T09:05:21-05:00
+  Repository : /home/kushal/src/dotnet/MyBlog
+  Branch     : main
+  Commit     : c22c22750c759b5c52b5f944facd0db30019b6b4
+  OS         : Linux 7.3.4-300.fc45.x86_64 x86_64 GNU/Linux
+
+###############################################################################
+# STEP 1: dotnet --info
+###############################################################################
+$ dotnet --info
+
+.NET SDK:
+ Version:           10.0.113
+ Commit:            4099f83977
+ Workload version:  10.0.101.1
+ MSBuild version:   18.0.36+4099f8397
+
+Runtime Environment:
+ OS Name:     fedora
+ OS Version:  45
+ OS Platform: Linux
+ RID:         fedora.45-x64
+ Base Path:   /usr/lib64/dotnet/sdk/10.0.113/
+
+.NET workloads installed:
+ [android]
+   Installation Source: SDK 10.0.100
+   Manifest Version:    36.1.2/10.0.100
+   Manifest Path:       /home/kushal/.dotnet/sdk-manifests/10.0.100/microsoft.net.sdk.android/36.1.2/WorkloadManifest.json
+   Install Type:        FileBased
+
+Configured to use workload sets when installing new manifests.
+
+Host:
+  Version:      11.0.0-rc.3.26522.148
+  Architecture: x64
+  Commit:       5254d8bcf5
+
+.NET SDKs installed:
+  10.0.113 [/usr/lib64/dotnet/sdk]
+  11.0.100-rc.3.26522.148 [/usr/lib64/dotnet/sdk]
+
+.NET runtimes installed:
+  Microsoft.AspNetCore.App 10.0.13 [/usr/lib64/dotnet/shared/Microsoft.AspNetCore.App]
+  Microsoft.AspNetCore.App 11.0.0-rc.3.26522.148 [/usr/lib64/dotnet/shared/Microsoft.AspNetCore.App]
+  Microsoft.NETCore.App 10.0.13 [/usr/lib64/dotnet/shared/Microsoft.NETCore.App]
+  Microsoft.NETCore.App 11.0.0-rc.3.26522.148 [/usr/lib64/dotnet/shared/Microsoft.NETCore.App]
+
+Other architectures found:
+  None
+
+Environment variables:
+  DOTNET_CLI_TELEMETRY_OPTOUT              [1]
+  DOTNET_NOLOGO                            [1]
+
+global.json file:
+  /home/kushal/src/dotnet/MyBlog/src/global.json
+
+Learn more:
+  https://aka.ms/dotnet/info
+
+Download .NET:
+  https://aka.ms/dotnet/download
+
+[result] exit=0 duration=1s
+
+###############################################################################
+# STEP 2: dotnet format
+###############################################################################
+$ dotnet format
+
+
+[result] exit=0 duration=10s
+
+###############################################################################
+# STEP 3: dotnet restore
+###############################################################################
+$ dotnet restore
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+
+[result] exit=0 duration=1s
+
+###############################################################################
+# STEP 4: dotnet clean
+###############################################################################
+$ dotnet clean
+
+Build started 11/24/2026 9:05:33 AM.
+     1>Project "/home/kushal/src/dotnet/MyBlog/src/MyBlog.slnx" on node 1 (Clean target(s)).
+     1>ValidateSolutionConfiguration:
+         Building solution configuration "Debug|Any CPU".
+     1>Project "/home/kushal/src/dotnet/MyBlog/src/MyBlog.slnx" (1) is building "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Infrastructure/MyBlog.Infrastructure.csproj" (2) on node 5 (Clean target(s)).
+     2>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Infrastructure/bin/Debug/net10.0/MyBlog.Infrastructure.deps.json".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Infrastructure/bin/Debug/net10.0/MyBlog.Infrastructure.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Infrastructure/bin/Debug/net10.0/MyBlog.Infrastructure.pdb".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Infrastructure/bin/Debug/net10.0/MyBlog.Core.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Infrastructure/bin/Debug/net10.0/MyBlog.Core.pdb".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Infrastructure/obj/Debug/net10.0/MyBlog.Infrastructure.csproj.AssemblyReference.cache".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Infrastructure/obj/Debug/net10.0/MyBlog.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Infrastructure/obj/Debug/net10.0/MyBlog.Infrastructure.AssemblyInfoInputs.cache".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Infrastructure/obj/Debug/net10.0/MyBlog.Infrastructure.AssemblyInfo.cs".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Infrastructure/obj/Debug/net10.0/MyBlog.Infrastructure.csproj.CoreCompileInputs.cache".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Infrastructure/obj/Debug/net10.0/MyBlog.Infrastructure.sourcelink.json".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Infrastructure/obj/Debug/net10.0/MyBlog.I.50ADA1E9.Up2Date".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Infrastructure/obj/Debug/net10.0/MyBlog.Infrastructure.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Infrastructure/obj/Debug/net10.0/refint/MyBlog.Infrastructure.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Infrastructure/obj/Debug/net10.0/MyBlog.Infrastructure.pdb".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Infrastructure/obj/Debug/net10.0/ref/MyBlog.Infrastructure.dll".
+     1>Project "/home/kushal/src/dotnet/MyBlog/src/MyBlog.slnx" (1) is building "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Core/MyBlog.Core.csproj" (3) on node 2 (Clean target(s)).
+     3>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Core/bin/Debug/net10.0/MyBlog.Core.deps.json".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Core/bin/Debug/net10.0/MyBlog.Core.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Core/bin/Debug/net10.0/MyBlog.Core.pdb".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Core/obj/Debug/net10.0/MyBlog.Core.csproj.AssemblyReference.cache".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Core/obj/Debug/net10.0/MyBlog.Core.GeneratedMSBuildEditorConfig.editorconfig".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Core/obj/Debug/net10.0/MyBlog.Core.AssemblyInfoInputs.cache".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Core/obj/Debug/net10.0/MyBlog.Core.AssemblyInfo.cs".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Core/obj/Debug/net10.0/MyBlog.Core.csproj.CoreCompileInputs.cache".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Core/obj/Debug/net10.0/MyBlog.Core.sourcelink.json".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Core/obj/Debug/net10.0/MyBlog.Core.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Core/obj/Debug/net10.0/refint/MyBlog.Core.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Core/obj/Debug/net10.0/MyBlog.Core.pdb".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Core/obj/Debug/net10.0/ref/MyBlog.Core.dll".
+     1>Project "/home/kushal/src/dotnet/MyBlog/src/MyBlog.slnx" (1) is building "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/MyBlog.Tests.csproj" (4) on node 4 (Clean target(s)).
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/.msCoverageSourceRootsMapping_MyBlog.Tests".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/MyBlog.Web.deps.json".
+     1>Project "/home/kushal/src/dotnet/MyBlog/src/MyBlog.slnx" (1) is building "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/MyBlog.E2E.csproj" (5) on node 3 (Clean target(s)).
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.msCoverageSourceRootsMapping_MyBlog.E2E".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/MyBlog.Web.deps.json".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/MyBlog.Web.runtimeconfig.json".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/appsettings.Development.json".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/appsettings.json".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/MyBlog.Web.staticwebassets.runtime.json".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/MyBlog.Web.staticwebassets.endpoints.json".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/MyBlog.Web.runtimeconfig.json".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/appsettings.Development.json".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/appsettings.json".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/MyBlog.Web".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/MyBlog.Web.staticwebassets.runtime.json".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/MyBlog.Web.staticwebassets.endpoints.json".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/MyBlog.Web".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/MyBlog.Tests".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/node/linux-x64/node".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/MyBlog.Tests.deps.json".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/MyBlog.Tests.runtimeconfig.json".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/MyBlog.Tests.dll".
+     3>Done Building Project "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Core/MyBlog.Core.csproj" (Clean target(s)).
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/MyBlog.Tests.pdb".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/Microsoft.ApplicationInsights.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/Microsoft.AspNetCore.Connections.Abstractions.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/Microsoft.AspNetCore.Http.Connections.Client.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/node/LICENSE".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/Microsoft.AspNetCore.Http.Connections.Common.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/Microsoft.AspNetCore.SignalR.Client.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/bin/install_media_pack.ps1".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/Microsoft.AspNetCore.SignalR.Client.Core.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/bin/install_webkit_wsl.ps1".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/Microsoft.AspNetCore.SignalR.Common.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/bin/reinstall_chrome_beta_linux.sh".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/Microsoft.AspNetCore.SignalR.Protocols.Json.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/bin/reinstall_chrome_beta_mac.sh".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/Microsoft.Bcl.AsyncInterfaces.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/bin/reinstall_chrome_beta_win.ps1".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/Microsoft.VisualStudio.CodeCoverage.Shim.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/bin/reinstall_chrome_stable_linux.sh".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/bin/reinstall_chrome_stable_mac.sh".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/Microsoft.Data.Sqlite.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/Microsoft.EntityFrameworkCore.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/bin/reinstall_chrome_stable_win.ps1".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/Microsoft.EntityFrameworkCore.Abstractions.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/bin/reinstall_msedge_beta_linux.sh".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/Microsoft.EntityFrameworkCore.Relational.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/bin/reinstall_msedge_beta_mac.sh".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/Microsoft.EntityFrameworkCore.Sqlite.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/bin/reinstall_msedge_beta_win.ps1".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/Microsoft.Extensions.Caching.Abstractions.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/bin/reinstall_msedge_dev_linux.sh".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/Microsoft.Extensions.Caching.Memory.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/bin/reinstall_msedge_dev_mac.sh".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/Microsoft.Extensions.Configuration.Abstractions.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/bin/reinstall_msedge_dev_win.ps1".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/Microsoft.Extensions.DependencyInjection.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/bin/reinstall_msedge_stable_linux.sh".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/Microsoft.Extensions.DependencyInjection.Abstractions.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/bin/reinstall_msedge_stable_mac.sh".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/Microsoft.Extensions.DependencyModel.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/bin/reinstall_msedge_stable_win.ps1".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/Microsoft.Extensions.Features.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/browsers.json".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/Microsoft.Extensions.Logging.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/cli.js".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/Microsoft.Extensions.Logging.Abstractions.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/Microsoft.Extensions.Options.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/index.d.ts".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/Microsoft.Extensions.Primitives.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/index.js".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/Microsoft.Testing.Extensions.Telemetry.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/index.mjs".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/Microsoft.Testing.Extensions.TrxReport.Abstractions.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/bootstrap.js".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/Microsoft.Testing.Platform.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/coreBundle.js".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/Microsoft.Testing.Extensions.MSBuild.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/entry/cliDaemon.js".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/Microsoft.TestPlatform.CoreUtilities.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/entry/dashboardApp.js".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/Microsoft.TestPlatform.PlatformAbstractions.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/entry/mcp.js".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/Microsoft.VisualStudio.TestPlatform.ObjectModel.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/entry/oopBrowserDownload.js".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/Microsoft.TestPlatform.CommunicationUtilities.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/package.js".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/Microsoft.TestPlatform.CrossPlatEngine.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/server/chromium/appIcon.png".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/Microsoft.TestPlatform.Utilities.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/server/electron/loader.js".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/Microsoft.VisualStudio.TestPlatform.Common.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/serverRegistry.js".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/testhost.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/OpenTelemetry.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/serverRegistry.js.LICENSE".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/OpenTelemetry.Api.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/tools/cli-client/channelSessions.js".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/OpenTelemetry.Api.ProviderBuilderExtensions.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/OpenTelemetry.Exporter.Console.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/tools/cli-client/cli.js".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/OpenTelemetry.Exporter.OpenTelemetryProtocol.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/tools/cli-client/help.json".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/OpenTelemetry.Extensions.Hosting.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/tools/cli-client/minimist.js".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/tools/cli-client/output.js".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/OpenTelemetry.Instrumentation.AspNetCore.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/tools/cli-client/program.js".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/OpenTelemetry.Instrumentation.Http.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/SQLitePCLRaw.batteries_v2.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/tools/cli-client/registry.js".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/SQLitePCLRaw.core.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/tools/cli-client/session.js".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/SQLitePCLRaw.provider.e_sqlite3.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/tools/dashboard/appIcon.png".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/System.Diagnostics.DiagnosticSource.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/tools/skills/playwright-cli/references/element-attributes.md".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/xunit.v3.assert.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/xunit.v3.common.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/tools/skills/playwright-cli/references/playwright-tests.md".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/xunit.v3.mtp-v2.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/tools/skills/playwright-cli/references/pr-attachments.md".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/xunit.v3.core.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/xunit.v3.runner.common.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/tools/skills/playwright-cli/references/request-mocking.md".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/xunit.v3.runner.inproc.console.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/tools/skills/playwright-cli/references/running-code.md".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/cs/Microsoft.Testing.Extensions.Telemetry.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/tools/skills/playwright-cli/references/session-management.md".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/de/Microsoft.Testing.Extensions.Telemetry.resources.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/es/Microsoft.Testing.Extensions.Telemetry.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/tools/skills/playwright-cli/references/storage-state.md".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/fr/Microsoft.Testing.Extensions.Telemetry.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/tools/skills/playwright-cli/references/test-generation.md".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/it/Microsoft.Testing.Extensions.Telemetry.resources.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/ja/Microsoft.Testing.Extensions.Telemetry.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/tools/skills/playwright-cli/references/tracing.md".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/ko/Microsoft.Testing.Extensions.Telemetry.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/tools/skills/playwright-cli/references/video-recording.md".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/pl/Microsoft.Testing.Extensions.Telemetry.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/tools/skills/playwright-cli/SKILL.md".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/pt-BR/Microsoft.Testing.Extensions.Telemetry.resources.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/ru/Microsoft.Testing.Extensions.Telemetry.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/tools/skills/playwright-component-testing/references/gallery-spec.md".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/tr/Microsoft.Testing.Extensions.Telemetry.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/tools/skills/playwright-component-testing/references/migration.md".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/zh-Hans/Microsoft.Testing.Extensions.Telemetry.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/tools/skills/playwright-component-testing/references/react.md".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/zh-Hant/Microsoft.Testing.Extensions.Telemetry.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/tools/skills/playwright-component-testing/references/typing.md".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/cs/Microsoft.Testing.Platform.resources.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/de/Microsoft.Testing.Platform.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/tools/skills/playwright-component-testing/references/vue.md".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/es/Microsoft.Testing.Platform.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/tools/skills/playwright-component-testing/SKILL.md".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/fr/Microsoft.Testing.Platform.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/tools/skills/playwright-trace/SKILL.md".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/it/Microsoft.Testing.Platform.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/tools/utils/extension.js".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/ja/Microsoft.Testing.Platform.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/tools/utils/socketConnection.js".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/ko/Microsoft.Testing.Platform.resources.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/pl/Microsoft.Testing.Platform.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/utilsBundle.js".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/utilsBundle.js.LICENSE".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/pt-BR/Microsoft.Testing.Platform.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/vite/dashboard/assets/codeMirrorModule--QdMvsKi.css".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/ru/Microsoft.Testing.Platform.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/vite/dashboard/assets/codeMirrorModule-D5SeAdMv.js".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/tr/Microsoft.Testing.Platform.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/vite/dashboard/assets/codicon-DCmgc-ay.ttf".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/zh-Hans/Microsoft.Testing.Platform.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/vite/dashboard/assets/firefox-1bWoP6pv.svg".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/vite/dashboard/assets/firefox-beta-k3eOH_eK.svg".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/zh-Hant/Microsoft.Testing.Platform.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/vite/dashboard/assets/firefox-nightly-Cp5nfeDT.svg".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/cs/Microsoft.Testing.Extensions.MSBuild.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/vite/dashboard/assets/index-BnQkOdFO.css".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/de/Microsoft.Testing.Extensions.MSBuild.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/vite/dashboard/assets/index-C_gcIYdA.js".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/es/Microsoft.Testing.Extensions.MSBuild.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/vite/dashboard/assets/safari-na3_-uQk.svg".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/vite/dashboard/index.html".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/fr/Microsoft.Testing.Extensions.MSBuild.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/vite/dashboard/playwright-logo.svg".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/it/Microsoft.Testing.Extensions.MSBuild.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/vite/htmlReport/index.html".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/ja/Microsoft.Testing.Extensions.MSBuild.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/vite/htmlReport/report.css".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/vite/htmlReport/report.js".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/ko/Microsoft.Testing.Extensions.MSBuild.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/vite/recorder/assets/codeMirrorModule--QdMvsKi.css".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/pl/Microsoft.Testing.Extensions.MSBuild.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/vite/recorder/assets/codeMirrorModule-ClnuDfLq.js".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/pt-BR/Microsoft.Testing.Extensions.MSBuild.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/vite/recorder/assets/codicon-DCmgc-ay.ttf".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/ru/Microsoft.Testing.Extensions.MSBuild.resources.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/tr/Microsoft.Testing.Extensions.MSBuild.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/vite/recorder/assets/index-BwOPSdeb.js".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/zh-Hans/Microsoft.Testing.Extensions.MSBuild.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/vite/recorder/assets/index-BZpYJZ-P.css".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/zh-Hant/Microsoft.Testing.Extensions.MSBuild.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/vite/recorder/index.html".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/cs/Microsoft.TestPlatform.CoreUtilities.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/vite/recorder/playwright-logo.svg".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/cs/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/vite/traceViewer/assets/codeMirrorModule-DNqxPF-E.js".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/de/Microsoft.TestPlatform.CoreUtilities.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/vite/traceViewer/assets/defaultSettingsView-BQT9Z6FV.js".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/de/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/vite/traceViewer/assets/rolldown-runtime-QTnfLwEv.js".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/es/Microsoft.TestPlatform.CoreUtilities.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/vite/traceViewer/assets/urlMatch-Cgl6axSs.js".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/vite/traceViewer/assets/xtermModule-Cv6bi7od.js".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/es/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/vite/traceViewer/codeMirrorModule.-QdMvsKi.css".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/fr/Microsoft.TestPlatform.CoreUtilities.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/vite/traceViewer/codicon.DCmgc-ay.ttf".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/fr/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/vite/traceViewer/defaultSettingsView.C8BeHuxd.css".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/it/Microsoft.TestPlatform.CoreUtilities.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/vite/traceViewer/index.BY2vkw8A.js".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/it/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/vite/traceViewer/index.B_TqY17P.css".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/ja/Microsoft.TestPlatform.CoreUtilities.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/vite/traceViewer/index.html".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/ja/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/vite/traceViewer/manifest.webmanifest".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/vite/traceViewer/playwright-logo.svg".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/ko/Microsoft.TestPlatform.CoreUtilities.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/vite/traceViewer/snapshot.-ChLTbql.js".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/ko/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/vite/traceViewer/snapshot.html".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/pl/Microsoft.TestPlatform.CoreUtilities.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/vite/traceViewer/sw.bundle.js".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/pl/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/vite/traceViewer/uiMode.CyMfwkXJ.css".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/pt-BR/Microsoft.TestPlatform.CoreUtilities.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/vite/traceViewer/uiMode.DuLwZHRf.js".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/vite/traceViewer/uiMode.html".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/pt-BR/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/vite/traceViewer/xtermModule.kHJ-D0s7.css".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/ru/Microsoft.TestPlatform.CoreUtilities.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/webp_codec.LICENSE".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/webp_codec.wasm".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/ru/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/lib/xdg-open".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/tr/Microsoft.TestPlatform.CoreUtilities.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/LICENSE".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/NOTICE".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/tr/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/package.json".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/zh-Hans/Microsoft.TestPlatform.CoreUtilities.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/README.md".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/ThirdPartyNotices.txt".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/zh-Hans/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/types/protocol.d.ts".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/types/structs.d.ts".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/zh-Hant/Microsoft.TestPlatform.CoreUtilities.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/.playwright/package/types/types.d.ts".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/zh-Hant/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/playwright.ps1".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/cs/Microsoft.TestPlatform.CommunicationUtilities.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.deps.json".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/cs/Microsoft.TestPlatform.CrossPlatEngine.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.runtimeconfig.json".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/cs/Microsoft.VisualStudio.TestPlatform.Common.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.pdb".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/de/Microsoft.TestPlatform.CommunicationUtilities.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/Microsoft.ApplicationInsights.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/Microsoft.AspNetCore.Connections.Abstractions.dll".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/de/Microsoft.TestPlatform.CrossPlatEngine.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/Microsoft.AspNetCore.Http.Connections.Client.dll".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/de/Microsoft.VisualStudio.TestPlatform.Common.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/Microsoft.AspNetCore.Http.Connections.Common.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/Microsoft.AspNetCore.SignalR.Client.dll".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/es/Microsoft.TestPlatform.CommunicationUtilities.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/Microsoft.AspNetCore.SignalR.Client.Core.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/Microsoft.AspNetCore.SignalR.Common.dll".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/es/Microsoft.TestPlatform.CrossPlatEngine.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/Microsoft.AspNetCore.SignalR.Protocols.Json.dll".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/es/Microsoft.VisualStudio.TestPlatform.Common.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/Microsoft.Bcl.AsyncInterfaces.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/Microsoft.VisualStudio.CodeCoverage.Shim.dll".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/fr/Microsoft.TestPlatform.CommunicationUtilities.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/Microsoft.Data.Sqlite.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/Microsoft.EntityFrameworkCore.dll".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/fr/Microsoft.TestPlatform.CrossPlatEngine.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/Microsoft.EntityFrameworkCore.Abstractions.dll".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/fr/Microsoft.VisualStudio.TestPlatform.Common.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/Microsoft.EntityFrameworkCore.Relational.dll".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/it/Microsoft.TestPlatform.CommunicationUtilities.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/Microsoft.EntityFrameworkCore.Sqlite.dll".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/it/Microsoft.TestPlatform.CrossPlatEngine.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/Microsoft.Extensions.Caching.Abstractions.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/Microsoft.Extensions.Caching.Memory.dll".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/it/Microsoft.VisualStudio.TestPlatform.Common.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/Microsoft.Extensions.Configuration.Abstractions.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/Microsoft.Extensions.DependencyInjection.dll".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/ja/Microsoft.TestPlatform.CommunicationUtilities.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/Microsoft.Extensions.DependencyInjection.Abstractions.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/Microsoft.Extensions.DependencyModel.dll".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/ja/Microsoft.TestPlatform.CrossPlatEngine.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/Microsoft.Extensions.Features.dll".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/ja/Microsoft.VisualStudio.TestPlatform.Common.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/Microsoft.Extensions.Logging.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/Microsoft.Extensions.Logging.Abstractions.dll".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/ko/Microsoft.TestPlatform.CommunicationUtilities.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/Microsoft.Extensions.Options.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/Microsoft.Extensions.Primitives.dll".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/ko/Microsoft.TestPlatform.CrossPlatEngine.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/Microsoft.Playwright.dll".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/ko/Microsoft.VisualStudio.TestPlatform.Common.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/Microsoft.Testing.Extensions.Telemetry.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/Microsoft.Testing.Extensions.TrxReport.Abstractions.dll".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/pl/Microsoft.TestPlatform.CommunicationUtilities.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/Microsoft.Testing.Platform.dll".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/pl/Microsoft.TestPlatform.CrossPlatEngine.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/Microsoft.Testing.Extensions.MSBuild.dll".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/pl/Microsoft.VisualStudio.TestPlatform.Common.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/Microsoft.TestPlatform.CoreUtilities.dll".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/pt-BR/Microsoft.TestPlatform.CommunicationUtilities.resources.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/pt-BR/Microsoft.TestPlatform.CrossPlatEngine.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/Microsoft.TestPlatform.PlatformAbstractions.dll".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/pt-BR/Microsoft.VisualStudio.TestPlatform.Common.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/Microsoft.VisualStudio.TestPlatform.ObjectModel.dll".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/ru/Microsoft.TestPlatform.CommunicationUtilities.resources.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/ru/Microsoft.TestPlatform.CrossPlatEngine.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/Microsoft.TestPlatform.CommunicationUtilities.dll".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/ru/Microsoft.VisualStudio.TestPlatform.Common.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/Microsoft.TestPlatform.CrossPlatEngine.dll".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/tr/Microsoft.TestPlatform.CommunicationUtilities.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/Microsoft.TestPlatform.Utilities.dll".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/tr/Microsoft.TestPlatform.CrossPlatEngine.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/Microsoft.VisualStudio.TestPlatform.Common.dll".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/tr/Microsoft.VisualStudio.TestPlatform.Common.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/testhost.dll".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/zh-Hans/Microsoft.TestPlatform.CommunicationUtilities.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/OpenTelemetry.dll".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/zh-Hans/Microsoft.TestPlatform.CrossPlatEngine.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/OpenTelemetry.Api.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/OpenTelemetry.Api.ProviderBuilderExtensions.dll".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/zh-Hans/Microsoft.VisualStudio.TestPlatform.Common.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/OpenTelemetry.Exporter.Console.dll".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/zh-Hant/Microsoft.TestPlatform.CommunicationUtilities.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/OpenTelemetry.Exporter.OpenTelemetryProtocol.dll".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/zh-Hant/Microsoft.TestPlatform.CrossPlatEngine.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/OpenTelemetry.Extensions.Hosting.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/OpenTelemetry.Instrumentation.AspNetCore.dll".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/zh-Hant/Microsoft.VisualStudio.TestPlatform.Common.resources.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/OpenTelemetry.Instrumentation.Http.dll".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/runtimes/browser-wasm/nativeassets/net9.0/e_sqlite3.a".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/SQLitePCLRaw.batteries_v2.dll".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/runtimes/linux-arm/native/libe_sqlite3.so".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/SQLitePCLRaw.core.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/SQLitePCLRaw.provider.e_sqlite3.dll".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/runtimes/linux-arm64/native/libe_sqlite3.so".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/System.Diagnostics.DiagnosticSource.dll".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/runtimes/linux-armel/native/libe_sqlite3.so".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/xunit.v3.assert.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/xunit.v3.common.dll".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/runtimes/linux-mips64/native/libe_sqlite3.so".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/xunit.v3.mtp-v2.dll".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/runtimes/linux-musl-arm/native/libe_sqlite3.so".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/xunit.v3.core.dll".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/runtimes/linux-musl-arm64/native/libe_sqlite3.so".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/xunit.v3.runner.common.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/xunit.v3.runner.inproc.console.dll".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/runtimes/linux-musl-riscv64/native/libe_sqlite3.so".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/cs/Microsoft.Testing.Extensions.Telemetry.resources.dll".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/runtimes/linux-musl-s390x/native/libe_sqlite3.so".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/de/Microsoft.Testing.Extensions.Telemetry.resources.dll".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/runtimes/linux-musl-x64/native/libe_sqlite3.so".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/es/Microsoft.Testing.Extensions.Telemetry.resources.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/fr/Microsoft.Testing.Extensions.Telemetry.resources.dll".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/runtimes/linux-ppc64le/native/libe_sqlite3.so".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/it/Microsoft.Testing.Extensions.Telemetry.resources.dll".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/runtimes/linux-riscv64/native/libe_sqlite3.so".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/ja/Microsoft.Testing.Extensions.Telemetry.resources.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/ko/Microsoft.Testing.Extensions.Telemetry.resources.dll".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/runtimes/linux-s390x/native/libe_sqlite3.so".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/pl/Microsoft.Testing.Extensions.Telemetry.resources.dll".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/runtimes/linux-x64/native/libe_sqlite3.so".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/pt-BR/Microsoft.Testing.Extensions.Telemetry.resources.dll".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/runtimes/linux-x86/native/libe_sqlite3.so".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/ru/Microsoft.Testing.Extensions.Telemetry.resources.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/tr/Microsoft.Testing.Extensions.Telemetry.resources.dll".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/runtimes/maccatalyst-arm64/native/libe_sqlite3.dylib".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/zh-Hans/Microsoft.Testing.Extensions.Telemetry.resources.dll".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/runtimes/maccatalyst-x64/native/libe_sqlite3.dylib".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/zh-Hant/Microsoft.Testing.Extensions.Telemetry.resources.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/cs/Microsoft.Testing.Platform.resources.dll".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/runtimes/osx-arm64/native/libe_sqlite3.dylib".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/de/Microsoft.Testing.Platform.resources.dll".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/runtimes/osx-x64/native/libe_sqlite3.dylib".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/es/Microsoft.Testing.Platform.resources.dll".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/runtimes/win-arm64/native/e_sqlite3.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/fr/Microsoft.Testing.Platform.resources.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/it/Microsoft.Testing.Platform.resources.dll".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/runtimes/win-x64/native/e_sqlite3.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/ja/Microsoft.Testing.Platform.resources.dll".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/runtimes/win-x86/native/e_sqlite3.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/ko/Microsoft.Testing.Platform.resources.dll".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/MyBlog.Core.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/pl/Microsoft.Testing.Platform.resources.dll".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/MyBlog.Infrastructure.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/pt-BR/Microsoft.Testing.Platform.resources.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/ru/Microsoft.Testing.Platform.resources.dll".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/MyBlog.Web.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/tr/Microsoft.Testing.Platform.resources.dll".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/MyBlog.Core.pdb".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/zh-Hans/Microsoft.Testing.Platform.resources.dll".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/MyBlog.Web.pdb".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/zh-Hant/Microsoft.Testing.Platform.resources.dll".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/MyBlog.Infrastructure.pdb".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/cs/Microsoft.Testing.Extensions.MSBuild.resources.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/de/Microsoft.Testing.Extensions.MSBuild.resources.dll".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/obj/Debug/net10.0/MyBlog.Tests.csproj.AssemblyReference.cache".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/es/Microsoft.Testing.Extensions.MSBuild.resources.dll".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/obj/Debug/net10.0/MyBlog.Tests.GeneratedMSBuildEditorConfig.editorconfig".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/fr/Microsoft.Testing.Extensions.MSBuild.resources.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/it/Microsoft.Testing.Extensions.MSBuild.resources.dll".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/obj/Debug/net10.0/MyBlog.Tests.gentestingplatformentrypointinputcache.cache".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/ja/Microsoft.Testing.Extensions.MSBuild.resources.dll".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/obj/Debug/net10.0/MyBlog.Tests.genautoregisteredextensionsinputcache.cache".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/ko/Microsoft.Testing.Extensions.MSBuild.resources.dll".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/obj/Debug/net10.0/SelfRegisteredExtensions.cs".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/pl/Microsoft.Testing.Extensions.MSBuild.resources.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/pt-BR/Microsoft.Testing.Extensions.MSBuild.resources.dll".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/obj/Debug/net10.0/MyBlog.Tests.xUnit.v3.EntryPoint.cache".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/ru/Microsoft.Testing.Extensions.MSBuild.resources.dll".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/obj/Debug/net10.0/XunitAutoGeneratedEntryPoint.cs".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/tr/Microsoft.Testing.Extensions.MSBuild.resources.dll".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/obj/Debug/net10.0/MyBlog.Tests.AssemblyInfoInputs.cache".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/zh-Hans/Microsoft.Testing.Extensions.MSBuild.resources.dll".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/obj/Debug/net10.0/MyBlog.Tests.AssemblyInfo.cs".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/zh-Hant/Microsoft.Testing.Extensions.MSBuild.resources.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/cs/Microsoft.TestPlatform.CoreUtilities.resources.dll".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/obj/Debug/net10.0/MyBlog.Tests.csproj.CoreCompileInputs.cache".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/cs/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/obj/Debug/net10.0/MyBlog.Tests.sourcelink.json".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/de/Microsoft.TestPlatform.CoreUtilities.resources.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/de/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/obj/Debug/net10.0/MyBlog.T.6ACAEDA8.Up2Date".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/es/Microsoft.TestPlatform.CoreUtilities.resources.dll".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/obj/Debug/net10.0/MyBlog.Tests.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/es/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/obj/Debug/net10.0/refint/MyBlog.Tests.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/fr/Microsoft.TestPlatform.CoreUtilities.resources.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/fr/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/obj/Debug/net10.0/MyBlog.Tests.pdb".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/it/Microsoft.TestPlatform.CoreUtilities.resources.dll".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/obj/Debug/net10.0/MyBlog.Tests.genruntimeconfig.cache".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/it/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/ja/Microsoft.TestPlatform.CoreUtilities.resources.dll".
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/obj/Debug/net10.0/ref/MyBlog.Tests.dll".
+     5>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/ja/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/ko/Microsoft.TestPlatform.CoreUtilities.resources.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/ko/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/pl/Microsoft.TestPlatform.CoreUtilities.resources.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/pl/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/pt-BR/Microsoft.TestPlatform.CoreUtilities.resources.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/pt-BR/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/ru/Microsoft.TestPlatform.CoreUtilities.resources.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/ru/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/tr/Microsoft.TestPlatform.CoreUtilities.resources.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/tr/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/zh-Hans/Microsoft.TestPlatform.CoreUtilities.resources.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/zh-Hans/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/zh-Hant/Microsoft.TestPlatform.CoreUtilities.resources.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/zh-Hant/Microsoft.VisualStudio.TestPlatform.ObjectModel.resources.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/cs/Microsoft.TestPlatform.CommunicationUtilities.resources.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/cs/Microsoft.TestPlatform.CrossPlatEngine.resources.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/cs/Microsoft.VisualStudio.TestPlatform.Common.resources.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/de/Microsoft.TestPlatform.CommunicationUtilities.resources.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/de/Microsoft.TestPlatform.CrossPlatEngine.resources.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/de/Microsoft.VisualStudio.TestPlatform.Common.resources.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/es/Microsoft.TestPlatform.CommunicationUtilities.resources.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/es/Microsoft.TestPlatform.CrossPlatEngine.resources.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/es/Microsoft.VisualStudio.TestPlatform.Common.resources.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/fr/Microsoft.TestPlatform.CommunicationUtilities.resources.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/fr/Microsoft.TestPlatform.CrossPlatEngine.resources.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/fr/Microsoft.VisualStudio.TestPlatform.Common.resources.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/it/Microsoft.TestPlatform.CommunicationUtilities.resources.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/it/Microsoft.TestPlatform.CrossPlatEngine.resources.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/it/Microsoft.VisualStudio.TestPlatform.Common.resources.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/ja/Microsoft.TestPlatform.CommunicationUtilities.resources.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/ja/Microsoft.TestPlatform.CrossPlatEngine.resources.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/ja/Microsoft.VisualStudio.TestPlatform.Common.resources.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/ko/Microsoft.TestPlatform.CommunicationUtilities.resources.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/ko/Microsoft.TestPlatform.CrossPlatEngine.resources.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/ko/Microsoft.VisualStudio.TestPlatform.Common.resources.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/pl/Microsoft.TestPlatform.CommunicationUtilities.resources.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/pl/Microsoft.TestPlatform.CrossPlatEngine.resources.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/pl/Microsoft.VisualStudio.TestPlatform.Common.resources.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/pt-BR/Microsoft.TestPlatform.CommunicationUtilities.resources.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/pt-BR/Microsoft.TestPlatform.CrossPlatEngine.resources.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/pt-BR/Microsoft.VisualStudio.TestPlatform.Common.resources.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/ru/Microsoft.TestPlatform.CommunicationUtilities.resources.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/ru/Microsoft.TestPlatform.CrossPlatEngine.resources.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/ru/Microsoft.VisualStudio.TestPlatform.Common.resources.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/tr/Microsoft.TestPlatform.CommunicationUtilities.resources.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/tr/Microsoft.TestPlatform.CrossPlatEngine.resources.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/tr/Microsoft.VisualStudio.TestPlatform.Common.resources.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/zh-Hans/Microsoft.TestPlatform.CommunicationUtilities.resources.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/zh-Hans/Microsoft.TestPlatform.CrossPlatEngine.resources.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/zh-Hans/Microsoft.VisualStudio.TestPlatform.Common.resources.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/zh-Hant/Microsoft.TestPlatform.CommunicationUtilities.resources.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/zh-Hant/Microsoft.TestPlatform.CrossPlatEngine.resources.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/zh-Hant/Microsoft.VisualStudio.TestPlatform.Common.resources.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/runtimes/browser-wasm/nativeassets/net9.0/e_sqlite3.a".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/runtimes/linux-arm/native/libe_sqlite3.so".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/runtimes/linux-arm64/native/libe_sqlite3.so".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/runtimes/linux-armel/native/libe_sqlite3.so".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/runtimes/linux-mips64/native/libe_sqlite3.so".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/runtimes/linux-musl-arm/native/libe_sqlite3.so".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/runtimes/linux-musl-arm64/native/libe_sqlite3.so".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/runtimes/linux-musl-riscv64/native/libe_sqlite3.so".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/runtimes/linux-musl-s390x/native/libe_sqlite3.so".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/runtimes/linux-musl-x64/native/libe_sqlite3.so".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/runtimes/linux-ppc64le/native/libe_sqlite3.so".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/runtimes/linux-riscv64/native/libe_sqlite3.so".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/runtimes/linux-s390x/native/libe_sqlite3.so".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/runtimes/linux-x64/native/libe_sqlite3.so".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/runtimes/linux-x86/native/libe_sqlite3.so".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/runtimes/maccatalyst-arm64/native/libe_sqlite3.dylib".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/runtimes/maccatalyst-x64/native/libe_sqlite3.dylib".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/runtimes/osx-arm64/native/libe_sqlite3.dylib".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/runtimes/osx-x64/native/libe_sqlite3.dylib".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/runtimes/win-arm64/native/e_sqlite3.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/runtimes/win-x64/native/e_sqlite3.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/runtimes/win-x86/native/e_sqlite3.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/MyBlog.Core.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/MyBlog.Infrastructure.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/MyBlog.Web.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/MyBlog.Web.pdb".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/MyBlog.Core.pdb".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/MyBlog.Infrastructure.pdb".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/obj/Debug/net10.0/MyBlog.E2E.csproj.AssemblyReference.cache".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/obj/Debug/net10.0/MyBlog.E2E.GeneratedMSBuildEditorConfig.editorconfig".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/obj/Debug/net10.0/MyBlog.E2E.gentestingplatformentrypointinputcache.cache".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/obj/Debug/net10.0/MyBlog.E2E.genautoregisteredextensionsinputcache.cache".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/obj/Debug/net10.0/SelfRegisteredExtensions.cs".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/obj/Debug/net10.0/MyBlog.E2E.xUnit.v3.EntryPoint.cache".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/obj/Debug/net10.0/XunitAutoGeneratedEntryPoint.cs".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/obj/Debug/net10.0/MyBlog.E2E.AssemblyInfoInputs.cache".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/obj/Debug/net10.0/MyBlog.E2E.AssemblyInfo.cs".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/obj/Debug/net10.0/MyBlog.E2E.csproj.CoreCompileInputs.cache".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/obj/Debug/net10.0/MyBlog.E2E.sourcelink.json".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/obj/Debug/net10.0/MyBlog.E2E.csproj.Up2Date".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/obj/Debug/net10.0/MyBlog.E2E.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/obj/Debug/net10.0/refint/MyBlog.E2E.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/obj/Debug/net10.0/MyBlog.E2E.pdb".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/obj/Debug/net10.0/MyBlog.E2E.genruntimeconfig.cache".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/obj/Debug/net10.0/ref/MyBlog.E2E.dll".
+     2>Done Building Project "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Infrastructure/MyBlog.Infrastructure.csproj" (Clean target(s)).
+     1>Project "/home/kushal/src/dotnet/MyBlog/src/MyBlog.slnx" (1) is building "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/MyBlog.Web.csproj" (6) on node 1 (Clean target(s)).
+     6>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/bin/Debug/net10.0/appsettings.Development.json".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/bin/Debug/net10.0/appsettings.json".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/bin/Debug/net10.0/MyBlog.Web.staticwebassets.runtime.json".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/bin/Debug/net10.0/MyBlog.Web.staticwebassets.endpoints.json".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/bin/Debug/net10.0/MyBlog.Web".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/bin/Debug/net10.0/MyBlog.Web.deps.json".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/bin/Debug/net10.0/MyBlog.Web.runtimeconfig.json".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/bin/Debug/net10.0/MyBlog.Web.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/bin/Debug/net10.0/MyBlog.Web.pdb".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/bin/Debug/net10.0/Microsoft.AspNetCore.Http.Connections.Client.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/bin/Debug/net10.0/Microsoft.AspNetCore.SignalR.Client.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/bin/Debug/net10.0/Microsoft.AspNetCore.SignalR.Client.Core.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/bin/Debug/net10.0/Microsoft.Data.Sqlite.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/bin/Debug/net10.0/Microsoft.EntityFrameworkCore.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/bin/Debug/net10.0/Microsoft.EntityFrameworkCore.Abstractions.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/bin/Debug/net10.0/Microsoft.EntityFrameworkCore.Relational.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/bin/Debug/net10.0/Microsoft.EntityFrameworkCore.Sqlite.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/bin/Debug/net10.0/Microsoft.Extensions.DependencyModel.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/bin/Debug/net10.0/OpenTelemetry.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/bin/Debug/net10.0/OpenTelemetry.Api.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/bin/Debug/net10.0/OpenTelemetry.Api.ProviderBuilderExtensions.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/bin/Debug/net10.0/OpenTelemetry.Exporter.Console.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/bin/Debug/net10.0/OpenTelemetry.Exporter.OpenTelemetryProtocol.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/bin/Debug/net10.0/OpenTelemetry.Extensions.Hosting.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/bin/Debug/net10.0/OpenTelemetry.Instrumentation.AspNetCore.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/bin/Debug/net10.0/OpenTelemetry.Instrumentation.Http.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/bin/Debug/net10.0/SQLitePCLRaw.batteries_v2.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/bin/Debug/net10.0/SQLitePCLRaw.core.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/bin/Debug/net10.0/SQLitePCLRaw.provider.e_sqlite3.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/bin/Debug/net10.0/System.Diagnostics.DiagnosticSource.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/bin/Debug/net10.0/runtimes/browser-wasm/nativeassets/net9.0/e_sqlite3.a".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/bin/Debug/net10.0/runtimes/linux-arm/native/libe_sqlite3.so".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/bin/Debug/net10.0/runtimes/linux-arm64/native/libe_sqlite3.so".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/bin/Debug/net10.0/runtimes/linux-armel/native/libe_sqlite3.so".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/bin/Debug/net10.0/runtimes/linux-mips64/native/libe_sqlite3.so".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/bin/Debug/net10.0/runtimes/linux-musl-arm/native/libe_sqlite3.so".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/bin/Debug/net10.0/runtimes/linux-musl-arm64/native/libe_sqlite3.so".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/bin/Debug/net10.0/runtimes/linux-musl-riscv64/native/libe_sqlite3.so".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/bin/Debug/net10.0/runtimes/linux-musl-s390x/native/libe_sqlite3.so".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/bin/Debug/net10.0/runtimes/linux-musl-x64/native/libe_sqlite3.so".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/bin/Debug/net10.0/runtimes/linux-ppc64le/native/libe_sqlite3.so".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/bin/Debug/net10.0/runtimes/linux-riscv64/native/libe_sqlite3.so".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/bin/Debug/net10.0/runtimes/linux-s390x/native/libe_sqlite3.so".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/bin/Debug/net10.0/runtimes/linux-x64/native/libe_sqlite3.so".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/bin/Debug/net10.0/runtimes/linux-x86/native/libe_sqlite3.so".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/bin/Debug/net10.0/runtimes/maccatalyst-arm64/native/libe_sqlite3.dylib".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/bin/Debug/net10.0/runtimes/maccatalyst-x64/native/libe_sqlite3.dylib".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/bin/Debug/net10.0/runtimes/osx-arm64/native/libe_sqlite3.dylib".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/bin/Debug/net10.0/runtimes/osx-x64/native/libe_sqlite3.dylib".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/bin/Debug/net10.0/runtimes/win-arm64/native/e_sqlite3.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/bin/Debug/net10.0/runtimes/win-x64/native/e_sqlite3.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/bin/Debug/net10.0/runtimes/win-x86/native/e_sqlite3.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/bin/Debug/net10.0/MyBlog.Core.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/bin/Debug/net10.0/MyBlog.Infrastructure.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/bin/Debug/net10.0/MyBlog.Infrastructure.pdb".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/bin/Debug/net10.0/MyBlog.Core.pdb".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/obj/Debug/net10.0/EmbeddedAttribute.cs".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/obj/Debug/net10.0/ValidatableTypeAttribute.cs".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/obj/Debug/net10.0/MyBlog.Web.csproj.AssemblyReference.cache".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/obj/Debug/net10.0/rpswa.dswa.cache.json".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/obj/Debug/net10.0/MyBlog.Web.GeneratedMSBuildEditorConfig.editorconfig".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/obj/Debug/net10.0/MyBlog.Web.AssemblyInfoInputs.cache".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/obj/Debug/net10.0/MyBlog.Web.AssemblyInfo.cs".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/obj/Debug/net10.0/MyBlog.Web.csproj.CoreCompileInputs.cache".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/obj/Debug/net10.0/MyBlog.Web.MvcApplicationPartsAssemblyInfo.cache".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/obj/Debug/net10.0/MyBlog.Web.sourcelink.json".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/obj/Debug/net10.0/rjimswa.dswa.cache.json".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/obj/Debug/net10.0/rjsmrazor.dswa.cache.json".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/obj/Debug/net10.0/rjsmcshtml.dswa.cache.json".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/obj/Debug/net10.0/scopedcss/Components/Pages/About.razor.rz.scp.css".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/obj/Debug/net10.0/scopedcss/Components/Pages/Admin/ChangePassword.razor.rz.scp.css".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/obj/Debug/net10.0/scopedcss/Components/Pages/Admin/Dashboard.razor.rz.scp.css".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/obj/Debug/net10.0/scopedcss/Components/Pages/Admin/ImageManager.razor.rz.scp.css".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/obj/Debug/net10.0/scopedcss/Components/Pages/Admin/PostEditor.razor.rz.scp.css".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/obj/Debug/net10.0/scopedcss/Components/Pages/Admin/UserEditor.razor.rz.scp.css".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/obj/Debug/net10.0/scopedcss/Components/Pages/Admin/UserList.razor.rz.scp.css".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/obj/Debug/net10.0/scopedcss/Components/Pages/Login.razor.rz.scp.css".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/obj/Debug/net10.0/scopedcss/Components/Pages/PostDetail.razor.rz.scp.css".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/obj/Debug/net10.0/scopedcss/Components/Shared/Footer.razor.rz.scp.css".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/obj/Debug/net10.0/scopedcss/Components/Shared/PostCard.razor.rz.scp.css".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/obj/Debug/net10.0/scopedcss/Components/Shared/ReaderBadge.razor.rz.scp.css".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/obj/Debug/net10.0/scopedcss/Components/Shared/ThemeSwitcher.razor.rz.scp.css".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/obj/Debug/net10.0/scopedcss/bundle/MyBlog.Web.styles.css".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/obj/Debug/net10.0/scopedcss/projectbundle/MyBlog.Web.bundle.scp.css".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/obj/Debug/net10.0/compressed/ccvegg7zyb-{0}-qt4aai34of-qt4aai34of.gz".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/obj/Debug/net10.0/compressed/82kw0rp2zf-{0}-9ztc18swo6-9ztc18swo6.gz".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/obj/Debug/net10.0/compressed/fnd36zywb3-{0}-cd06xom9c5-cd06xom9c5.gz".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/obj/Debug/net10.0/compressed/9292njuc7c-{0}-vmftroxvhh-vmftroxvhh.gz".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/obj/Debug/net10.0/compressed/9o7lialar9-{0}-d3tw8wmyus-d3tw8wmyus.gz".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/obj/Debug/net10.0/compressed/frqkhsi4xe-{0}-d3tw8wmyus-d3tw8wmyus.gz".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/obj/Debug/net10.0/staticwebassets.build.json".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/obj/Debug/net10.0/staticwebassets.build.json.cache".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/obj/Debug/net10.0/staticwebassets.development.json".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/obj/Debug/net10.0/staticwebassets.build.endpoints.json".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/obj/Debug/net10.0/swae.build.ex.cache".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/obj/Debug/net10.0/MyBlog.Web.csproj.Up2Date".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/obj/Debug/net10.0/MyBlog.Web.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/obj/Debug/net10.0/refint/MyBlog.Web.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/obj/Debug/net10.0/MyBlog.Web.pdb".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/obj/Debug/net10.0/MyBlog.Web.genruntimeconfig.cache".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/obj/Debug/net10.0/ref/MyBlog.Web.dll".
+     6>Done Building Project "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/MyBlog.Web.csproj" (Clean target(s)).
+     4>Done Building Project "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/MyBlog.Tests.csproj" (Clean target(s)).
+     5>Done Building Project "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/MyBlog.E2E.csproj" (Clean target(s)).
+     1>Done Building Project "/home/kushal/src/dotnet/MyBlog/src/MyBlog.slnx" (Clean target(s)).
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:00.50
+
+[result] exit=0 duration=0s
+
+###############################################################################
+# STEP 5: dotnet build
+###############################################################################
+$ dotnet build
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+  MyBlog.Core -> /home/kushal/src/dotnet/MyBlog/src/MyBlog.Core/bin/Debug/net10.0/MyBlog.Core.dll
+  MyBlog.Infrastructure -> /home/kushal/src/dotnet/MyBlog/src/MyBlog.Infrastructure/bin/Debug/net10.0/MyBlog.Infrastructure.dll
+  MyBlog.Web -> /home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/bin/Debug/net10.0/MyBlog.Web.dll
+  MyBlog.E2E -> /home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net10.0/MyBlog.E2E.dll
+  MyBlog.Tests -> /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net10.0/MyBlog.Tests.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:02.29
+
+[result] exit=0 duration=3s
+
+###############################################################################
+# STEP 6: dotnet run (MyBlog.Tests)
+###############################################################################
+$ dotnet run --project MyBlog.Tests/MyBlog.Tests.csproj
+
+xUnit.net v3 In-Process Runner v4.0.3+384aa7f0b4 (64-bit .NET 10.0.13)
+[37m  Discovering: MyBlog.Tests
+[0m[37m  Discovered:  MyBlog.Tests
+[0m[37m  Starting:    MyBlog.Tests
+[0m[37m  Finished:    MyBlog.Tests (ID = '24cedafe73dab5684218bb3cf04cfd49ae8ce3b87ae799399cb2e301cbc1e755')
+[0m[37m=== TEST EXECUTION SUMMARY ===
+[0m[37m   MyBlog.Tests  Total: 291, Errors: 0, Failed: 0, Skipped: 0, Not Run: 0, Time: 41.844s
+[0m[0m
+[result] exit=0 duration=43s
+
+###############################################################################
+# STEP 7: dotnet list package
+###############################################################################
+$ dotnet list package
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+Project 'MyBlog.Core' has the following package references
+   [net10.0]: 
+   Top-level Package                                Requested   Resolved
+   > Microsoft.Extensions.Logging.Abstractions      10.0.14     10.0.14 
+
+Project 'MyBlog.E2E' has the following package references
+   [net10.0]: 
+   Top-level Package             Requested   Resolved
+   > Microsoft.NET.Test.Sdk      18.12.0     18.12.0 
+   > Microsoft.Playwright        1.65.1      1.65.1  
+   > xunit.v3                    4.0.3       4.0.3   
+
+Project 'MyBlog.Infrastructure' has the following package references
+   [net10.0]: 
+   Top-level Package                           Requested   Resolved
+   > Microsoft.EntityFrameworkCore.Sqlite      10.0.14     10.0.14 
+   > OpenTelemetry                             1.21.0      1.21.0  
+
+Project 'MyBlog.Tests' has the following package references
+   [net10.0]: 
+   Top-level Package             Requested   Resolved
+   > Microsoft.NET.Test.Sdk      18.12.0     18.12.0 
+   > xunit.v3                    4.0.3       4.0.3   
+
+Project 'MyBlog.Web' has the following package references
+   [net10.0]: 
+   Top-level Package                                      Requested     Resolved
+   > Microsoft.AspNetCore.App.Internal.Assets       (A)   [10.0.13, )   10.0.13 
+   > Microsoft.AspNetCore.SignalR.Client                  10.0.14       10.0.14 
+   > OpenTelemetry.Exporter.Console                       1.21.0        1.21.0  
+   > OpenTelemetry.Exporter.OpenTelemetryProtocol         1.21.0        1.21.0  
+   > OpenTelemetry.Extensions.Hosting                     1.21.0        1.21.0  
+   > OpenTelemetry.Instrumentation.AspNetCore             1.21.0        1.21.0  
+   > OpenTelemetry.Instrumentation.Http                   1.21.0        1.21.0  
+
+(A) : Auto-referenced package.
+
+[result] exit=0 duration=2s
+
+###############################################################################
+# STEP 8: dotnet list package --outdated
+###############################################################################
+$ dotnet list package --outdated
+
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+
+The following sources were used:
+   https://api.nuget.org/v3/index.json
+
+Project `MyBlog.Core` has the following updates to its packages
+   [net10.0]: 
+   Top-level Package                                Requested   Resolved   Latest
+   > Microsoft.Extensions.Logging.Abstractions      10.0.14     10.0.14    11.0.0
+
+The given project `MyBlog.E2E` has no updates given the current sources.
+Project `MyBlog.Infrastructure` has the following updates to its packages
+   [net10.0]: 
+   Top-level Package                           Requested   Resolved   Latest
+   > Microsoft.EntityFrameworkCore.Sqlite      10.0.14     10.0.14    11.0.0
+
+The given project `MyBlog.Tests` has no updates given the current sources.
+Project `MyBlog.Web` has the following updates to its packages
+   [net10.0]: 
+   Top-level Package                          Requested   Resolved   Latest
+   > Microsoft.AspNetCore.SignalR.Client      10.0.14     10.0.14    11.0.0
+
+
+[result] exit=0 duration=2s
+
+###############################################################################
+# STEP 9: podman --version
+###############################################################################
+$ podman --version
+
+podman version 6.2.0
+
+[result] exit=0 duration=0s
+
+###############################################################################
+# STEP 10: podman-compose --version
+###############################################################################
+$ podman-compose --version
+
+podman version 6.2.0
+podman-compose version 1.6.0
+
+[result] exit=0 duration=0s
+
+###############################################################################
+# STEP 11: git status
+###############################################################################
+$ git --no-pager status --short --branch
+
+## main...origin/main [ahead 3]
+ M docs/llm/dump.txt
+ M docs/llm/slim.md
+?? docs/llm/output/2026-11-24-09-02-23.txt
+?? docs/llm/output/2026-11-24-09-05-21.txt
+
+[result] exit=0 duration=0s
+
+###############################################################################
+# STEP 12: export.sh
+###############################################################################
+$ bash /home/kushal/src/dotnet/MyBlog/export.sh
+
+dump.txt: 172 files, 586752 bytes
+slim.md : 142 files, 448619 bytes
+
+[result] exit=0 duration=2s
+
+###############################################################################
+# STEP 13: run-e2e.sh
+###############################################################################
+$ bash /home/kushal/src/dotnet/MyBlog/run-e2e.sh
+
+[0;32m[INFO][0m Building images (layer cache makes unchanged builds fast)...
+STEP 1/16: FROM mcr.microsoft.com/dotnet/sdk:10.0
+[1/2] STEP 1/12: FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+STEP 2/16: WORKDIR /src
+--> Using cache 65e50f674e27e866c6be90a2757d9143882f4d1474f98d4b6a3241ee948d4b32
+--> 65e50f674e27
+STEP 3/16: COPY Directory.Build.props .
+--> Using cache c89d360f131615cf7bf1660985b3ad8812072216e7207c9c56587c3eb63b8544
+--> c89d360f1316
+[1/2] STEP 2/12: WORKDIR /src
+STEP 4/16: COPY Directory.Packages.props .
+--> Using cache 65e50f674e27e866c6be90a2757d9143882f4d1474f98d4b6a3241ee948d4b32
+--> 65e50f674e27
+[1/2] STEP 3/12: COPY Directory.Build.props .
+--> Using cache 33f5cd318127636c195696cd493d43f4fee416a14ebd2b91bba46f5cbb9d52f6
+--> 33f5cd318127
+--> Using cache c89d360f131615cf7bf1660985b3ad8812072216e7207c9c56587c3eb63b8544
+--> c89d360f1316
+STEP 5/16: COPY MyBlog.Core/MyBlog.Core.csproj MyBlog.Core/
+[1/2] STEP 4/12: COPY Directory.Packages.props .
+--> Using cache 33f5cd318127636c195696cd493d43f4fee416a14ebd2b91bba46f5cbb9d52f6
+--> 33f5cd318127
+--> Using cache 2dd4e2b43fa6498d1d4f87aa252bd5be023f8e27dadde93d7bfd873d77ed015d
+--> 2dd4e2b43fa6
+[1/2] STEP 5/12: COPY MyBlog.Core/MyBlog.Core.csproj MyBlog.Core/
+STEP 6/16: COPY MyBlog.Infrastructure/MyBlog.Infrastructure.csproj MyBlog.Infrastructure/
+--> Using cache 2dd4e2b43fa6498d1d4f87aa252bd5be023f8e27dadde93d7bfd873d77ed015d
+--> 2dd4e2b43fa6
+--> Using cache d52c5239d302ec079791d703832de049920ec0eaa7d2620e11e6f0829962cb48
+[1/2] STEP 6/12: COPY MyBlog.Infrastructure/MyBlog.Infrastructure.csproj MyBlog.Infrastructure/
+--> d52c5239d302
+STEP 7/16: COPY MyBlog.Web/MyBlog.Web.csproj MyBlog.Web/
+--> Using cache d52c5239d302ec079791d703832de049920ec0eaa7d2620e11e6f0829962cb48
+--> d52c5239d302
+[1/2] STEP 7/12: COPY MyBlog.Web/MyBlog.Web.csproj MyBlog.Web/
+--> Using cache a80daaace43efe9b706973f22e028d03358328ad0ae73dc86daca1c044cd1d6a
+--> a80daaace43e
+STEP 8/16: COPY MyBlog.E2E/MyBlog.E2E.csproj MyBlog.E2E/
+--> Using cache a80daaace43efe9b706973f22e028d03358328ad0ae73dc86daca1c044cd1d6a
+--> a80daaace43e
+[1/2] STEP 8/12: RUN dotnet restore MyBlog.Web/MyBlog.Web.csproj
+--> Using cache 0d1150c53acee9cb8d1cdfd305f2e625de33b8ae79787dbd652a1eafc7adeede
+--> Using cache 05bded9458a7e7b4f06cae8851cfb89bc10a6c97db203d53ae3fc246d2add6f5
+--> 0d1150c53ace
+--> 05bded9458a7
+STEP 9/16: RUN dotnet restore MyBlog.E2E/MyBlog.E2E.csproj
+[1/2] STEP 9/12: COPY MyBlog.Core/ MyBlog.Core/
+--> Using cache d6b01215aa7f7898cdcb2307274f070de4ef128e1ba98d174e549cce1200b77f
+--> d6b01215aa7f
+STEP 10/16: RUN mkdir PlaywrightInstaller     && printf '<Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies></PropertyGroup><ItemGroup><PackageReference Include="Microsoft.Playwright" /></ItemGroup></Project>\n' > PlaywrightInstaller/PlaywrightInstaller.csproj     && dotnet build PlaywrightInstaller/PlaywrightInstaller.csproj -c Release -o /tmp/playwright -p:TreatWarningsAsErrors=false     && test -f /tmp/playwright/Microsoft.Playwright.dll     && pwsh /tmp/playwright/playwright.ps1 install chromium --with-deps     && find /root/.cache/ms-playwright -maxdepth 1 -name 'chromium*' | grep -q .     && rm -rf PlaywrightInstaller /tmp/playwright /var/lib/apt/lists/*
+--> Using cache 702206591c72c6504058e8307fbfe90a84bfb3033a598618bcf7c64ce19dcc86
+--> 702206591c72
+STEP 11/16: COPY . .
+--> Using cache 42e64fa0c9fd4619eae8dd1c31b866bd917c4c943e9f9a6844f5e486a730c9d0
+--> 42e64fa0c9fd
+[1/2] STEP 10/12: COPY MyBlog.Infrastructure/ MyBlog.Infrastructure/
+--> Using cache a36b2295b482cedc0ce831ee9ae07ad98df2f81b4c631e7068a256a3663184c2
+--> a36b2295b482
+STEP 12/16: RUN dotnet build MyBlog.E2E/MyBlog.E2E.csproj -c Release
+--> Using cache 8f94e4e73f62287dee807457c5286b385229f02a4310021764176cbf983898db
+--> 8f94e4e73f62
+STEP 13/16: WORKDIR /src/MyBlog.E2E
+--> Using cache 23e9b9f77c8a705fed148cafe5c96c9c34a7d2339671f30b4811694b320b9b88
+--> 23e9b9f77c8a
+--> Using cache a6124af058b74070ba89ebf6ceee46aa2d956c75679091549864cf4ba83792f5
+[1/2] STEP 11/12: COPY MyBlog.Web/ MyBlog.Web/
+--> a6124af058b7
+STEP 14/16: ENV MYBLOG_BASE_URL=http://myblog-web:5000
+--> Using cache ac4cb6e8c85dcd867a628a10a1091557033213e5e7291662214876ee8d7f5052
+--> ac4cb6e8c85d
+STEP 15/16: ENV PLAYWRIGHT_HEADLESS=true
+--> Using cache 1da914d9f1421951e2ce6253e4dafbec52bf06aa2d29da130a06aeae555804d7
+--> 1da914d9f142
+STEP 16/16: ENTRYPOINT ["dotnet", "run", "-c", "Release", "--no-build"]
+--> Using cache de89f44cf5f01a3931d03ab275656193effa53f18b9a3fda7d4f1dd97892ab44
+--> Using cache 82330d2d5cc4402c4261d1cfc6576348aecc021e4929d8b4dc10134f97c68534
+COMMIT myblog_myblog-e2e
+--> de89f44cf5f0
+[1/2] STEP 12/12: RUN dotnet publish MyBlog.Web/MyBlog.Web.csproj -c Release -o /app/publish
+--> Using cache 6ccdafd3c0cb06449eefd914927a8e695f442af00938bd8d109e0cdcfa2a7ffa
+--> 6ccdafd3c0cb
+[2/2] STEP 1/11: FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
+--> 82330d2d5cc4
+Successfully tagged localhost/myblog_myblog-e2e:latest
+82330d2d5cc4402c4261d1cfc6576348aecc021e4929d8b4dc10134f97c68534
+[2/2] STEP 2/11: WORKDIR /app
+--> Using cache b0ef23bfa89f4d86b7193410d77e0735cf05b7912066a4a89d51a17722021eb6
+--> b0ef23bfa89f
+[2/2] STEP 3/11: RUN apt-get update && apt-get install -y --no-install-recommends curl && rm -rf /var/lib/apt/lists/*
+--> Using cache af41e14c48df7ad45034787ad6b98e17a4f419e062f25413382d031e85d68def
+--> af41e14c48df
+[2/2] STEP 4/11: RUN useradd -m -s /bin/bash appuser && mkdir -p /app/data && chown appuser:appuser /app/data
+--> Using cache 72ae33c483a4c51c479fa377183be0842fea210d79797851859b9634c16b3c1e
+--> 72ae33c483a4
+[2/2] STEP 5/11: COPY --from=build --chown=appuser:appuser /app/publish .
+--> Using cache f64523a49fffc63b67f3149ab434cec5600d50a17cd04aa9166f167349c66549
+--> f64523a49fff
+[2/2] STEP 6/11: ENV ASPNETCORE_URLS=http://+:5000
+--> Using cache 1fcdf513445f14ff2ae6166488a1dfe92c69f3e7b85de7dc1cccbf9897b1d46f
+--> 1fcdf513445f
+[2/2] STEP 7/11: ENV ASPNETCORE_ENVIRONMENT=Production
+--> Using cache c1789b2bcf1067806b011e87352dab67cf9796b20493288bab7e04deed14b7b8
+--> c1789b2bcf10
+[2/2] STEP 8/11: ENV ConnectionStrings__DefaultConnection="Data Source=/app/data/myblog.db"
+--> Using cache 3ca8b5032e9022b646f0d7b57e951ade15eab13bf1f4805005c92d850a668489
+--> 3ca8b5032e90
+[2/2] STEP 9/11: USER appuser
+--> Using cache 466b9884dd070023ab49c55b7b3c7dfe2e8565414dd7acf9482654278e5d7f70
+--> 466b9884dd07
+[2/2] STEP 10/11: EXPOSE 5000
+--> Using cache ef769b50fe1f0da2cf6257357b04e788c485ecd095c4f40119b5dd0cb2c7ba30
+--> ef769b50fe1f
+[2/2] STEP 11/11: ENTRYPOINT ["dotnet", "MyBlog.Web.dll"]
+--> Using cache 1fdf3929944ddffed48aafca8eefe8d36506d8084de569d734dac9456d138e63
+[2/2] COMMIT myblog_myblog-web
+--> 1fdf3929944d
+Successfully tagged localhost/myblog_myblog-web:latest
+1fdf3929944ddffed48aafca8eefe8d36506d8084de569d734dac9456d138e63
+[0;32m[INFO][0m Starting MyBlog...
+fde0d52ed2d801c484ec58eebb984bd4a418d1b8351719e399bb2983ec7aa21c
+c8209d2e405d8a7d295db06e1a1790f60162fc1ca4c2c2a30e835ae38b7b39ff
+myblog-web
+[0;32m[INFO][0m MyBlog is ready
+[0;32m[INFO][0m Running E2E tests...
+934babb575128621e7bf7a04a197cb42d2c10dcdcabba32ec1924e7fd730c9f4
+[1;33m[myblog-e2e] |[0m xUnit.net v3 In-Process Runner v4.0.3+384aa7f0b4 (64-bit .NET 10.0.15)
+[1;33m[myblog-e2e] |[0m [37m  Discovering: MyBlog.E2E
+[1;33m[myblog-e2e] |[0m [0m[37m  Discovered:  MyBlog.E2E
+[1;33m[myblog-e2e] |[0m [0m[37m  Starting:    MyBlog.E2E
+[1;33m[myblog-e2e] |[0m [0m[37m  Finished:    MyBlog.E2E (ID = '4d488734a9156ea8719a93bca3e9cb47dfeac4715a7981582060bf185a1e7bf4')
+[1;33m[myblog-e2e] |[0m [0m[37m=== TEST EXECUTION SUMMARY ===
+[1;33m[myblog-e2e] |[0m [0m[37m   MyBlog.E2E  Total: 71, Errors: 0, Failed: 0, Skipped: 0, Not Run: 0, Time: 14.543s
+[1;33m[myblog-e2e] |[0m [0m[0m
+[0;32m[INFO][0m E2E tests passed
+
+[result] exit=0 duration=25s
+
+###############################################################################
+# SUMMARY
+###############################################################################
+  [PASS] dotnet --info                        exit=0    1s
+  [PASS] dotnet format                        exit=0    10s
+  [PASS] dotnet restore                       exit=0    1s
+  [PASS] dotnet clean                         exit=0    0s
+  [PASS] dotnet build                         exit=0    3s
+  [PASS] dotnet run (MyBlog.Tests)            exit=0    43s
+  [PASS] dotnet list package                  exit=0    2s
+  [PASS] dotnet list package --outdated       exit=0    2s
+  [PASS] podman --version                     exit=0    0s
+  [PASS] podman-compose --version             exit=0    0s
+  [PASS] git status                           exit=0    0s
+  [PASS] export.sh                            exit=0    2s
+  [PASS] run-e2e.sh                           exit=0    25s
+  Steps: 13  Failures: 0
+  Log: /home/kushal/src/dotnet/MyBlog/docs/llm/output/2026-11-24-09-05-21.txt

@@ -1,67 +1,153 @@
-kushal@fedora:~/src/bash/adb/samsung$ cd ~/src/dotnet/MyBlog/; time bash run.sh
-run.sh: repository root: /home/kushal/src/dotnet/MyBlog
-run.sh: logging to     : /home/kushal/src/dotnet/MyBlog/docs/llm/output/2026-07-12-12-16-00.txt
+kushal@fedora:~/Videos/dl$ mylogpath="/home/kushal/src/dotnet/MyBlog/docs/llm/output/$(date +%Y-%m-%d-%H-%M-%S).txt";cd ~/src/dotnet/MyBlog/ && pwd > ${mylogpath} && export DOTNET_CLI_TELEMETRY_OPTOUT=1 && (cd src && time dotnet format >> ${mylogpath}; time dotnet restore >> ${mylogpath}; time dotnet clean >> ${mylogpath}; time dotnet build >> ${mylogpath}; time dotnet run --project MyBlog.Tests/MyBlog.Tests.csproj >> ${mylogpath}; time dotnet list package >> ${mylogpath}; time dotnet list package --outdated >> ${mylogpath}); cd ~/src/dotnet/MyBlog/ >> ${mylogpath}; cat export.sh >> ${mylogpath}; time bash export.sh >> ${mylogpath}; cat run-e2e.sh >> ${mylogpath}; time bash run-e2e.sh >> ${mylogpath};
+
+real	0m10.801s
+user	0m21.895s
+sys	0m1.258s
+
+real	0m0.785s
+user	0m0.870s
+sys	0m0.196s
+
+real	0m0.694s
+user	0m0.730s
+sys	0m0.178s
+
+real	0m7.653s
+user	0m2.918s
+sys	0m0.484s
+
+real	0m43.458s
+user	0m47.666s
+sys	0m0.851s
+
+real	0m1.550s
+user	0m1.601s
+sys	0m0.343s
+
+real	0m3.303s
+user	0m2.232s
+sys	0m0.419s
+
+real	0m1.583s
+user	0m0.778s
+sys	0m1.254s
+Trying to pull mcr.microsoft.com/dotnet/sdk:10.0...
+Getting image source signatures
+Copying blob 8a289e1ea591 done   | 
+Copying blob bbb89ae32e02 done   | 
+Copying blob 590be7a8d3a7 done   | 
+Copying blob 21e39e10606f done   | 
+Copying blob 272c58efda97 done   | 
+Copying blob 245c91b0e5fd done   | 
+Copying blob d5815ddf1585 done   | 
+Copying blob 07dd3c123484 done   | 
+Copying blob 1c511099a541 done   | 
+Copying blob 0eafcc332914 done   | 
+Copying blob 34b01e5d7164 done   | 
+Copying config f5c696e82c done   | 
+Writing manifest to image destination
+debconf: delaying package configuration, since apt-utils is not installed
+Trying to pull mcr.microsoft.com/dotnet/aspnet:10.0...
+Getting image source signatures
+Copying blob 8a289e1ea591 skipped: already exists  
+Copying blob 21e39e10606f skipped: already exists  
+Copying blob bbb89ae32e02 skipped: already exists  
+Copying blob 590be7a8d3a7 skipped: already exists  
+Copying blob 272c58efda97 skipped: already exists  
+Copying blob 245c91b0e5fd skipped: already exists  
+Copying config 387e6bdedd done   | 
+Writing manifest to image destination
+debconf: delaying package configuration, since apt-utils is not installed
+
+real	1m40.558s
+user	1m43.710s
+sys	0m32.282s
+kushal@fedora:~/src/dotnet/MyBlog$ mylogpath="/home/kushal/src/dotnet/MyBlog/docs/llm/output/$(date +%Y-%m-%d-%H-%M-%S).txt";cd ~/src/dotnet/MyBlog/ && pwd > ${mylogpath} && export DOTNET_CLI_TELEMETRY_OPTOUT=1 && (cd src && time dotnet format >> ${mylogpath}; time dotnet restore >> ${mylogpath}; time dotnet clean >> ${mylogpath}; time dotnet build >> ${mylogpath}; time dotnet run --project MyBlog.Tests/MyBlog.Tests.csproj >> ${mylogpath}; time dotnet list package >> ${mylogpath}; time dotnet list package --outdated >> ${mylogpath}); cd ~/src/dotnet/MyBlog/ >> ${mylogpath}; cat export.sh >> ${mylogpath}; time bash export.sh >> ${mylogpath}; cat run-e2e.sh >> ${mylogpath}; time bash run-e2e.sh >> ${mylogpath}; time bash run.sh >> ${mylogpath};
+
+real	0m19.044s
+user	0m26.536s
+sys	0m3.548s
+
+real	0m0.723s
+user	0m0.774s
+sys	0m0.147s
+
+real	0m0.642s
+user	0m0.651s
+sys	0m0.159s
+
+real	0m7.012s
+user	0m2.370s
+sys	0m0.389s
+
+real	0m43.147s
+user	0m48.585s
+sys	0m0.909s
+
+real	0m1.579s
+user	0m1.603s
+sys	0m0.359s
+
+real	0m1.777s
+user	0m1.762s
+sys	0m0.385s
+
+real	0m1.590s
+user	0m0.776s
+sys	0m1.284s
+debconf: delaying package configuration, since apt-utils is not installed
+
+real	1m43.188s
+user	1m35.522s
+sys	0m25.749s
+run.sh: logging to /home/kushal/src/dotnet/MyBlog/docs/llm/output/2026-11-24-09-05-21.txt
 [01] dotnet --info ...
-[01] dotnet --info -> ok (0.239s)
-[02] dotnet --version ...
-[02] dotnet --version -> ok (0.100s)
-[03] dotnet --list-sdks ...
-[03] dotnet --list-sdks -> ok (0.002s)
-[04] dotnet --list-runtimes ...
-[04] dotnet --list-runtimes -> ok (0.002s)
-[05] git status ...
-[05] git status -> ok (0.023s)
-[06] git log (recent) ...
-[06] git log (recent) -> ok (0.003s)
-[07] podman --version ...
-[07] podman --version -> ok (0.017s)
-[08] podman-compose --version ...
-[08] podman-compose --version -> ok (0.165s)
-[09] dotnet format ...
-[09] dotnet format -> ok (12.197s)
-[10] dotnet restore ...
-[10] dotnet restore -> ok (1.027s)
-[11] dotnet clean ...
-[11] dotnet clean -> ok (1.045s)
-[12] dotnet build ...
-[12] dotnet build -> ok (9.302s)
-[13] dotnet run (MyBlog.Tests) ...
-[13] dotnet run (MyBlog.Tests) -> ok (47.229s)
-[14] dotnet list package ...
-[14] dotnet list package -> ok (1.767s)
-[15] dotnet list package --outdated ...
-[15] dotnet list package --outdated -> ok (3.473s)
-[16] export.sh (repository dump) ...
-[16] export.sh (repository dump) -> ok (5.424s)
-[17] run-e2e.sh (Playwright E2E) ...
-[17] run-e2e.sh (Playwright E2E) -> ok (36.721s)
+[01] dotnet --info -> ok (1s)
+[02] dotnet format ...
+[02] dotnet format -> ok (10s)
+[03] dotnet restore ...
+[03] dotnet restore -> ok (1s)
+[04] dotnet clean ...
+[04] dotnet clean -> ok (0s)
+[05] dotnet build ...
+[05] dotnet build -> ok (3s)
+[06] dotnet run (MyBlog.Tests) ...
+[06] dotnet run (MyBlog.Tests) -> ok (43s)
+[07] dotnet list package ...
+[07] dotnet list package -> ok (2s)
+[08] dotnet list package --outdated ...
+[08] dotnet list package --outdated -> ok (2s)
+[09] podman --version ...
+[09] podman --version -> ok (0s)
+[10] podman-compose --version ...
+[10] podman-compose --version -> ok (0s)
+[11] git status ...
+[11] git status -> ok (0s)
+[12] export.sh ...
+[12] export.sh -> ok (2s)
+[13] run-e2e.sh ...
+[13] run-e2e.sh -> ok (25s)
 
 ###############################################################################
 # SUMMARY
 ###############################################################################
-  [PASS] dotnet --info                            exit=0    0.239s
-  [PASS] dotnet --version                         exit=0    0.100s
-  [PASS] dotnet --list-sdks                       exit=0    0.002s
-  [PASS] dotnet --list-runtimes                   exit=0    0.002s
-  [PASS] git status                               exit=0    0.023s
-  [PASS] git log (recent)                         exit=0    0.003s
-  [PASS] podman --version                         exit=0    0.017s
-  [PASS] podman-compose --version                 exit=0    0.165s
-  [PASS] dotnet format                            exit=0    12.197s
-  [PASS] dotnet restore                           exit=0    1.027s
-  [PASS] dotnet clean                             exit=0    1.045s
-  [PASS] dotnet build                             exit=0    9.302s
-  [PASS] dotnet run (MyBlog.Tests)                exit=0    47.229s
-  [PASS] dotnet list package                      exit=0    1.767s
-  [PASS] dotnet list package --outdated           exit=0    3.473s
-  [PASS] export.sh (repository dump)              exit=0    5.424s
-  [PASS] run-e2e.sh (Playwright E2E)              exit=0    36.721s
-  ---------------------------------------------------------------------------
-  Steps: 17    Failures: 0
-  Finished: 2026-07-12T12:17:58-04:00
-  Log file: /home/kushal/src/dotnet/MyBlog/docs/llm/output/2026-07-12-12-16-00.txt
+  [PASS] dotnet --info                        exit=0    1s
+  [PASS] dotnet format                        exit=0    10s
+  [PASS] dotnet restore                       exit=0    1s
+  [PASS] dotnet clean                         exit=0    0s
+  [PASS] dotnet build                         exit=0    3s
+  [PASS] dotnet run (MyBlog.Tests)            exit=0    43s
+  [PASS] dotnet list package                  exit=0    2s
+  [PASS] dotnet list package --outdated       exit=0    2s
+  [PASS] podman --version                     exit=0    0s
+  [PASS] podman-compose --version             exit=0    0s
+  [PASS] git status                           exit=0    0s
+  [PASS] export.sh                            exit=0    2s
+  [PASS] run-e2e.sh                           exit=0    25s
+  Steps: 13  Failures: 0
+  Log: /home/kushal/src/dotnet/MyBlog/docs/llm/output/2026-11-24-09-05-21.txt
 
-real	1m58.847s
-user	1m31.672s
-sys	0m9.669s
+real	1m28.431s
+user	1m21.968s
+sys	0m8.563s
 kushal@fedora:~/src/dotnet/MyBlog$ 
