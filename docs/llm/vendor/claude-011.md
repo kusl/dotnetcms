@@ -86,3 +86,4 @@ Project `MyBlog.Web` has the following updates to its packages
 because my project is on net10 and not net 11 (I have yet to verify whether monster asp dot net supports net 11)
 I can no longer blindly upgrade dependencies anymore 
 What solutions do I have here? 
+for now I manually updated otel and left signal r client alone 
