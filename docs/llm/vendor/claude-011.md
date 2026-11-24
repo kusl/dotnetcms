@@ -87,3 +87,5 @@ because my project is on net10 and not net 11 (I have yet to verify whether mons
 I can no longer blindly upgrade dependencies anymore 
 What solutions do I have here? 
 for now I manually updated otel and left signal r client alone 
+actually I updated everything that didn't say 11 
+lets see... 
