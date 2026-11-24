@@ -698,3 +698,103 @@ Web search
 
 
 
+21
+19
+
+I got the following error when running locally 
+
+/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/Components/Pages/Admin/UserList.razor(84,29): error BL0016: JS interop call 'InvokeAsync' is not guarded with a try/catch block. [/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/MyBlog.Web.csproj]
+/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/Components/Pages/Admin/UserList.razor(68,31): error BL0013: 'UserList' calls GetAuthenticationStateAsync on AuthenticationStateProvider without subscribing to the AuthenticationStateChanged event. This may result in using stale authentication state. [/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/MyBlog.Web.csproj]
+/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/Components/Pages/Admin/ImageManager.razor(84,35): error BL0013: 'ImageManager' calls GetAuthenticationStateAsync on AuthenticationStateProvider without subscribing to the AuthenticationStateChanged event. This may result in using stale authentication state. [/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/MyBlog.Web.csproj]
+/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/Components/Pages/Admin/ChangePassword.razor(77,31): error BL0013: 'ChangePassword' calls GetAuthenticationStateAsync on AuthenticationStateProvider without subscribing to the AuthenticationStateChanged event. This may result in using stale authentication state. [/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/MyBlog.Web.csproj]
+/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/Components/Pages/Admin/PostEditor.razor(176,35): error BL0013: 'PostEditor' calls GetAuthenticationStateAsync on AuthenticationStateProvider without subscribing to the AuthenticationStateChanged event. This may result in using stale authentication state. [/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/MyBlog.Web.csproj]
+
+Build FAILED.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
