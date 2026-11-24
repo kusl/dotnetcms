@@ -118,7 +118,7 @@ on:
     branches: ['**']
 
 env:
-  DOTNET_VERSION: '10.0.x'
+  DOTNET_VERSION: '11.0.x'
   DOTNET_NOLOGO: 1
   DOTNET_CLI_TELEMETRY_OPTOUT: 1
 
@@ -126,7 +126,7 @@ jobs:
   build-test:
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [ubuntu-latest, windows-latest]
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -134,7 +134,30 @@ jobs:
         uses: actions/checkout@v7
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v5
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Restore dependencies
+        run: dotnet restore src/MyBlog.slnx
+
+      - name: Build solution
+        run: dotnet build src/MyBlog.slnx -c Release --no-restore
+
+      - name: Run unit tests
+        run: dotnet run --project src/MyBlog.Tests/MyBlog.Tests.csproj -c Release --no-build
+
+  build-test-macos:
+    runs-on: macos-latest
+    continue-on-error: true
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v6
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
@@ -156,7 +179,7 @@ jobs:
         uses: actions/checkout@v7
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v5
+        uses: actions/setup-dotnet@v6
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
@@ -234,7 +257,7 @@ jobs:
         uses: actions/checkout@v7
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v5
+        uses: actions/setup-dotnet@v6
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
@@ -476,8 +499,9 @@ if have dotnet; then
     run_step "dotnet clean" dotnet clean
     run_step "dotnet build" dotnet build
     run_step "dotnet run (MyBlog.Tests)" dotnet run --project MyBlog.Tests/MyBlog.Tests.csproj
-    run_step "dotnet list package" dotnet list package
-    run_step "dotnet list package --outdated" dotnet list package --outdated
+    run_step "dotnet package list" dotnet package list
+    run_step "dotnet package list --outdated" dotnet package list --outdated
+    run_step "outdated within major" dotnet package list --outdated --highest-minor
 else
     run_step "dotnet CLI available" false
 fi
@@ -512,10 +536,9 @@ printf '%s\n' "$SUMMARY" >&2
 ```xml src/Directory.Build.props
 <Project>
   <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
+    <TargetFramework>net11.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <LangVersion>latest</LangVersion>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <AnalysisLevel>latest</AnalysisLevel>
@@ -534,28 +557,19 @@ printf '%s\n' "$SUMMARY" >&2
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
     <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
-    <MicrosoftPackagesVersion>10.0.14</MicrosoftPackagesVersion>
+    <MicrosoftPackagesVersion>11.0.0</MicrosoftPackagesVersion>
     <OpenTelemetryVersion>1.21.0</OpenTelemetryVersion>
-    <OtelAspNetCoreInstrVersion>1.21.0</OtelAspNetCoreInstrVersion>
-    <OtelHttpInstrVersion>1.21.0</OtelHttpInstrVersion>
 
-    <TestSdkVersion>18.12.0</TestSdkVersion>
     <XUnitVersion>4.0.3</XUnitVersion>
     <PlaywrightVersion>1.65.1</PlaywrightVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageVersion Include="Microsoft.AspNetCore.SignalR.Client" Version="$(MicrosoftPackagesVersion)" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="$(MicrosoftPackagesVersion)" />
-    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="$(MicrosoftPackagesVersion)" />
     <PackageVersion Include="OpenTelemetry" Version="$(OpenTelemetryVersion)" />
     <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="$(OpenTelemetryVersion)" />
-    <PackageVersion Include="OpenTelemetry.Exporter.Console" Version="$(OpenTelemetryVersion)" />
     <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="$(OpenTelemetryVersion)" />
-    <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="$(OtelAspNetCoreInstrVersion)" />
-    <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="$(OtelHttpInstrVersion)" />
 
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="$(TestSdkVersion)" />
     <PackageVersion Include="xunit.v3" Version="$(XUnitVersion)" />
     <PackageVersion Include="Microsoft.Playwright" Version="$(PlaywrightVersion)" />
   </ItemGroup>
@@ -571,8 +585,9 @@ printf '%s\n' "$SUMMARY" >&2
 ```json src/global.json
 {
   "sdk": {
-    "version": "10.0.100",
-    "rollForward": "major"
+    "version": "11.0.100-rc.3.26522.148",
+    "allowPrerelease": true,
+    "rollForward": "latestFeature"
   },
   "test": {
     "runner": "Microsoft.Testing.Platform"
@@ -681,6 +696,9 @@ public interface IPostRepository
 
     Task<PostDetailDto?> GetBySlugAsync(string slug, CancellationToken cancellationToken = default);
 
+    Task<IReadOnlyList<PostDetailDto>> GetLatestPublishedAsync(
+        int count, CancellationToken cancellationToken = default);
+
     Task<Post?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
 
     Task<Post> CreateAsync(Post post, CancellationToken cancellationToken = default);
@@ -705,11 +723,7 @@ namespace MyBlog.Core.Interfaces;
 
 public interface IReaderTrackingService
 {
-    int JoinPost(string slug, string connectionId);
-
-    int LeavePost(string slug, string connectionId);
-
-    (string? Slug, int NewCount) Disconnect(string connectionId);
+    IDisposable Track(string slug, Action onReadersChanged);
 
     int GetReaderCount(string slug);
 }
@@ -906,9 +920,6 @@ public sealed class User
 
 ```xml src/MyBlog.Core/MyBlog.Core.csproj
 <Project Sdk="Microsoft.NET.Sdk">
-  <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
-  </ItemGroup>
 </Project>
 ```
 
@@ -1563,7 +1574,7 @@ public static class BlazorPageExtensions
 ```
 
 ```dockerfile src/MyBlog.E2E/Dockerfile
-FROM mcr.microsoft.com/dotnet/sdk:10.0
+FROM mcr.microsoft.com/dotnet/sdk:11.0
 WORKDIR /src
 
 COPY Directory.Build.props .
@@ -1598,7 +1609,6 @@ ENTRYPOINT ["dotnet", "run", "-c", "Release", "--no-build"]
 ```xml src/MyBlog.E2E/MyBlog.E2E.csproj
 <Project Sdk="Microsoft.NET.Sdk">
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <PackageReference Include="xunit.v3" />
     <PackageReference Include="Microsoft.Playwright" />
   </ItemGroup>
@@ -3057,6 +3067,27 @@ public sealed class PostRepository : IPostRepository
                 p.IsPublished))
             .FirstOrDefaultAsync(cancellationToken);
 
+    public async Task<IReadOnlyList<PostDetailDto>> GetLatestPublishedAsync(
+        int count, CancellationToken cancellationToken = default) =>
+        await _context.Posts
+            .AsNoTracking()
+            .Where(p => p.IsPublished)
+            .OrderByDescending(p => p.PublishedAtUtc)
+            .Take(count)
+            .Include(p => p.Author)
+            .Select(p => new PostDetailDto(
+                p.Id,
+                p.Title,
+                p.Slug,
+                p.Content,
+                p.Summary,
+                p.Author!.DisplayName,
+                p.CreatedAtUtc,
+                p.UpdatedAtUtc,
+                p.PublishedAtUtc,
+                p.IsPublished))
+            .ToListAsync(cancellationToken);
+
     public async Task<Post?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default) =>
         await _context.Posts
             .Include(p => p.Author)
@@ -3841,43 +3872,93 @@ public sealed class PasswordService : IPasswordService
 ```
 
 ```csharp src/MyBlog.Infrastructure/Services/ReaderTrackingService.cs
-using System.Collections.Concurrent;
 using MyBlog.Core.Interfaces;
 
 namespace MyBlog.Infrastructure.Services;
 
-public class ReaderTrackingService : IReaderTrackingService
+public sealed class ReaderTrackingService : IReaderTrackingService
 {
-    private readonly ConcurrentDictionary<string, int> _slugCounts = new();
+    private readonly Lock _gate = new();
+    private readonly Dictionary<string, List<Reader>> _readersBySlug = new(StringComparer.Ordinal);
 
-    private readonly ConcurrentDictionary<string, string> _connectionMap = new();
-
-    public int JoinPost(string slug, string connectionId)
+    public IDisposable Track(string slug, Action onReadersChanged)
     {
-        _connectionMap.AddOrUpdate(connectionId, slug, (_, _) => slug);
+        ArgumentException.ThrowIfNullOrEmpty(slug);
+        ArgumentNullException.ThrowIfNull(onReadersChanged);
 
-        return _slugCounts.AddOrUpdate(slug, 1, (_, count) => count + 1);
-    }
+        var reader = new Reader(this, slug, onReadersChanged);
+        Reader[] audience;
 
-    public int LeavePost(string slug, string connectionId)
-    {
-        _connectionMap.TryRemove(connectionId, out _);
-
-        return _slugCounts.AddOrUpdate(slug, 0, (_, count) => count > 0 ? count - 1 : 0);
-    }
-
-    public (string? Slug, int NewCount) Disconnect(string connectionId)
-    {
-        if (_connectionMap.TryRemove(connectionId, out var slug))
+        lock (_gate)
         {
-            var newCount = _slugCounts.AddOrUpdate(slug, 0, (_, count) => count > 0 ? count - 1 : 0);
-            return (slug, newCount);
+            if (!_readersBySlug.TryGetValue(slug, out var readers))
+            {
+                readers = [];
+                _readersBySlug[slug] = readers;
+            }
+
+            readers.Add(reader);
+            audience = [.. readers];
         }
 
-        return (null, 0);
+        Notify(audience);
+        return reader;
     }
 
-    public int GetReaderCount(string slug) => _slugCounts.TryGetValue(slug, out var count) ? count : 0;
+    public int GetReaderCount(string slug)
+    {
+        lock (_gate)
+        {
+            return _readersBySlug.TryGetValue(slug, out var readers) ? readers.Count : 0;
+        }
+    }
+
+    private void Release(Reader reader)
+    {
+        Reader[] audience;
+
+        lock (_gate)
+        {
+            if (!_readersBySlug.TryGetValue(reader.Slug, out var readers) || !readers.Remove(reader))
+            {
+                return;
+            }
+
+            if (readers.Count == 0)
+            {
+                _readersBySlug.Remove(reader.Slug);
+            }
+
+            audience = [.. readers];
+        }
+
+        Notify(audience);
+    }
+
+    private static void Notify(Reader[] audience)
+    {
+        foreach (var reader in audience)
+        {
+            reader.Notify();
+        }
+    }
+
+    private sealed class Reader(ReaderTrackingService owner, string slug, Action onReadersChanged) : IDisposable
+    {
+        private int _released;
+
+        public string Slug => slug;
+
+        public void Notify() => onReadersChanged();
+
+        public void Dispose()
+        {
+            if (Interlocked.Exchange(ref _released, 1) == 0)
+            {
+                owner.Release(this);
+            }
+        }
+    }
 }
 ```
 
@@ -4153,7 +4234,7 @@ public sealed class FileLogExporter : BaseExporter<LogRecord>
     private readonly string _directory;
     private readonly string _runId;
     private readonly long _maxFileSizeBytes;
-    private readonly object _lock = new();
+    private readonly Lock _lock = new();
     private StreamWriter? _writer;
     private long _currentFileSize;
     private int _fileNumber;
@@ -6379,6 +6460,38 @@ public class RssFeedTests : IAsyncDisposable
     }
 
     [Fact]
+    public async Task RssFeed_OrdersItemsNewestFirst()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var baseDate = new DateTime(2026, 3, 15, 12, 0, 0, DateTimeKind.Utc);
+        await CreateTestPost("Middle Post", isPublished: true, publishedAt: baseDate, ct: ct);
+        await CreateTestPost("Newest Post", isPublished: true, publishedAt: baseDate.AddDays(1), ct: ct);
+        await CreateTestPost("Oldest Post", isPublished: true, publishedAt: baseDate.AddDays(-1), ct: ct);
+
+        var doc = await GenerateFeedXDocument(ct);
+        var titles = doc.Descendants("item").Select(i => i.Element("title")!.Value).ToList();
+
+        Assert.Equal(new[] { "Newest Post", "Middle Post", "Oldest Post" }, titles);
+    }
+
+    [Fact]
+    public async Task RssFeed_EveryItemHasContentEncoded()
+    {
+        var ct = TestContext.Current.CancellationToken;
+
+        for (var i = 0; i < 3; i++)
+        {
+            await CreateTestPost($"Encoded Post {i}", isPublished: true, ct: ct);
+        }
+
+        var doc = await GenerateFeedXDocument(ct);
+        var items = doc.Descendants("item").ToList();
+
+        Assert.Equal(3, items.Count);
+        Assert.All(items, item => Assert.NotNull(item.Element(ContentNs + "encoded")));
+    }
+
+    [Fact]
     public async Task RssFeed_HasNoBom()
     {
         var ct = TestContext.Current.CancellationToken;
@@ -7040,7 +7153,6 @@ public class UserRepositoryTests : IAsyncDisposable
 ```xml src/MyBlog.Tests/MyBlog.Tests.csproj
 <Project Sdk="Microsoft.NET.Sdk">
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <PackageReference Include="xunit.v3" />
   </ItemGroup>
 
@@ -8721,201 +8833,217 @@ public class ReaderTrackingServiceTests
     private readonly ReaderTrackingService _sut = new();
 
     [Fact]
-    public void JoinPost_WithNewSlug_ReturnsOne()
+    public void Track_WithNewSlug_CountsOneReader()
     {
-        var count = _sut.JoinPost("test-slug", "connection-1");
+        using var reader = _sut.Track("test-slug", () => { });
 
-        Assert.Equal(1, count);
+        Assert.Equal(1, _sut.GetReaderCount("test-slug"));
     }
 
     [Fact]
-    public void JoinPost_WithMultipleConnections_ReturnsIncrementingCount()
+    public void Track_WithMultipleReaders_CountsEachReader()
     {
-        var count1 = _sut.JoinPost("test-slug", "connection-1");
-        var count2 = _sut.JoinPost("test-slug", "connection-2");
-        var count3 = _sut.JoinPost("test-slug", "connection-3");
+        using var reader1 = _sut.Track("test-slug", () => { });
+        using var reader2 = _sut.Track("test-slug", () => { });
+        using var reader3 = _sut.Track("test-slug", () => { });
 
-        Assert.Equal(1, count1);
-        Assert.Equal(2, count2);
-        Assert.Equal(3, count3);
+        Assert.Equal(3, _sut.GetReaderCount("test-slug"));
     }
 
     [Fact]
-    public void JoinPost_WithDifferentSlugs_TracksIndependently()
+    public void Track_WithDifferentSlugs_CountsIndependently()
     {
-        var count1 = _sut.JoinPost("slug-a", "connection-1");
-        var count2 = _sut.JoinPost("slug-b", "connection-2");
-        var count3 = _sut.JoinPost("slug-a", "connection-3");
+        using var reader1 = _sut.Track("slug-a", () => { });
+        using var reader2 = _sut.Track("slug-b", () => { });
+        using var reader3 = _sut.Track("slug-a", () => { });
 
-        Assert.Equal(1, count1);
-        Assert.Equal(1, count2);
-        Assert.Equal(2, count3);
+        Assert.Equal(2, _sut.GetReaderCount("slug-a"));
+        Assert.Equal(1, _sut.GetReaderCount("slug-b"));
     }
 
     [Fact]
-    public void LeavePost_WithExistingConnection_DecrementsCount()
+    public void Track_SameCallbackTwice_CountsTwoReaders()
     {
-        _sut.JoinPost("test-slug", "connection-1");
-        _sut.JoinPost("test-slug", "connection-2");
+        Action callback = () => { };
 
-        var count = _sut.LeavePost("test-slug", "connection-2");
+        using var reader1 = _sut.Track("test-slug", callback);
+        using var reader2 = _sut.Track("test-slug", callback);
 
-        Assert.Equal(1, count);
+        Assert.Equal(2, _sut.GetReaderCount("test-slug"));
     }
 
     [Fact]
-    public void LeavePost_WhenCountIsZero_ReturnsZero()
+    public void Dispose_RemovesOnlyThatReader()
     {
-        _sut.JoinPost("test-slug", "connection-1");
-        _sut.LeavePost("test-slug", "connection-1");
+        using var reader1 = _sut.Track("test-slug", () => { });
+        var reader2 = _sut.Track("test-slug", () => { });
 
-        var count = _sut.LeavePost("test-slug", "connection-1");
+        reader2.Dispose();
 
-        Assert.Equal(0, count);
+        Assert.Equal(1, _sut.GetReaderCount("test-slug"));
     }
 
     [Fact]
-    public void LeavePost_WithNonExistentSlug_ReturnsZero()
+    public void Dispose_CalledTwice_RemovesReaderOnce()
     {
-        var count = _sut.LeavePost("non-existent", "connection-1");
+        using var reader1 = _sut.Track("test-slug", () => { });
+        var reader2 = _sut.Track("test-slug", () => { });
 
-        Assert.Equal(0, count);
+        reader2.Dispose();
+        reader2.Dispose();
+
+        Assert.Equal(1, _sut.GetReaderCount("test-slug"));
     }
 
     [Fact]
-    public void Disconnect_WithKnownConnection_ReturnsSlugAndDecrementedCount()
+    public void Dispose_LastReader_ReturnsZero()
     {
-        _sut.JoinPost("test-slug", "connection-1");
-        _sut.JoinPost("test-slug", "connection-2");
+        var reader = _sut.Track("test-slug", () => { });
 
-        var (slug, newCount) = _sut.Disconnect("connection-1");
+        reader.Dispose();
 
-        Assert.Equal("test-slug", slug);
-        Assert.Equal(1, newCount);
+        Assert.Equal(0, _sut.GetReaderCount("test-slug"));
     }
 
     [Fact]
-    public void Disconnect_WithUnknownConnection_ReturnsNullSlug()
+    public void GetReaderCount_WithUnknownSlug_ReturnsZero()
     {
-        var (slug, newCount) = _sut.Disconnect("unknown-connection");
-
-        Assert.Null(slug);
-        Assert.Equal(0, newCount);
+        Assert.Equal(0, _sut.GetReaderCount("non-existent"));
     }
 
     [Fact]
-    public void Disconnect_RemovesConnectionMapping()
+    public void Track_NotifiesExistingAndNewReadersOfSameSlug()
     {
-        _sut.JoinPost("test-slug", "connection-1");
-        _sut.Disconnect("connection-1");
+        var firstNotifications = 0;
+        var secondNotifications = 0;
 
-        var (slug, _) = _sut.Disconnect("connection-1");
+        using var reader1 = _sut.Track("test-slug", () => firstNotifications++);
+        using var reader2 = _sut.Track("test-slug", () => secondNotifications++);
 
-        Assert.Null(slug);
+        Assert.Equal(2, firstNotifications);
+        Assert.Equal(1, secondNotifications);
     }
 
     [Fact]
-    public void GetReaderCount_WithExistingSlug_ReturnsCorrectCount()
+    public void Track_DoesNotNotifyReadersOfOtherSlugs()
     {
-        _sut.JoinPost("test-slug", "connection-1");
-        _sut.JoinPost("test-slug", "connection-2");
+        var notifications = 0;
 
-        var count = _sut.GetReaderCount("test-slug");
+        using var reader1 = _sut.Track("slug-a", () => notifications++);
+        using var reader2 = _sut.Track("slug-b", () => { });
 
-        Assert.Equal(2, count);
+        Assert.Equal(1, notifications);
     }
 
     [Fact]
-    public void GetReaderCount_WithNonExistentSlug_ReturnsZero()
+    public void Dispose_NotifiesRemainingReadersButNotLeavingReader()
     {
-        var count = _sut.GetReaderCount("non-existent");
+        var remainingNotifications = 0;
+        var leavingNotifications = 0;
 
-        Assert.Equal(0, count);
+        using var remaining = _sut.Track("test-slug", () => remainingNotifications++);
+        var leaving = _sut.Track("test-slug", () => leavingNotifications++);
+        remainingNotifications = 0;
+        leavingNotifications = 0;
+
+        leaving.Dispose();
+
+        Assert.Equal(1, remainingNotifications);
+        Assert.Equal(0, leavingNotifications);
     }
 
     [Fact]
-    public void JoinPost_SameConnectionSwitchingPages_UpdatesMapping()
+    public void Notification_SeesUpdatedCount()
     {
-        _sut.JoinPost("slug-a", "connection-1");
+        var observed = new List<int>();
 
-        _sut.JoinPost("slug-b", "connection-1");
+        using var reader1 = _sut.Track("test-slug", () => observed.Add(_sut.GetReaderCount("test-slug")));
+        var reader2 = _sut.Track("test-slug", () => { });
+        reader2.Dispose();
 
-        var (slug, _) = _sut.Disconnect("connection-1");
-
-        Assert.Equal("slug-b", slug);
+        Assert.Equal(new[] { 1, 2, 1 }, observed);
     }
 
     [Fact]
-    public async Task ConcurrentJoins_MaintainsAccurateCount()
+    public void Track_WithEmptySlug_Throws()
+    {
+        Assert.Throws<ArgumentException>("slug", () => _sut.Track("", () => { }));
+    }
+
+    [Fact]
+    public void Track_WithNullCallback_Throws()
+    {
+        Assert.Throws<ArgumentNullException>("onReadersChanged", () => _sut.Track("test-slug", null!));
+    }
+
+    [Fact]
+    public async Task ConcurrentTracks_MaintainAccurateCount()
     {
         var ct = TestContext.Current.CancellationToken;
-        const int connectionCount = 100;
-        var tasks = new List<Task>();
+        const int readerCount = 100;
+        var tasks = new List<Task<IDisposable>>();
 
-        for (var i = 0; i < connectionCount; i++)
+        for (var i = 0; i < readerCount; i++)
         {
-            var connectionId = $"connection-{i}";
-            tasks.Add(Task.Run(() => _sut.JoinPost("test-slug", connectionId), ct));
+            tasks.Add(Task.Run(() => _sut.Track("test-slug", () => { }), ct));
         }
 
-        await Task.WhenAll(tasks);
+        var readers = await Task.WhenAll(tasks);
 
-        var finalCount = _sut.GetReaderCount("test-slug");
-        Assert.Equal(connectionCount, finalCount);
+        Assert.Equal(readerCount, _sut.GetReaderCount("test-slug"));
+
+        foreach (var reader in readers)
+        {
+            reader.Dispose();
+        }
     }
 
     [Fact]
-    public async Task ConcurrentJoinsAndLeaves_MaintainsAccurateCount()
+    public async Task ConcurrentTracksAndDisposals_MaintainAccurateCount()
     {
         var ct = TestContext.Current.CancellationToken;
+        var initial = new List<IDisposable>();
 
         for (var i = 0; i < 50; i++)
         {
-            _sut.JoinPost("test-slug", $"connection-{i}");
+            initial.Add(_sut.Track("test-slug", () => { }));
         }
 
         var tasks = new List<Task>();
 
-        for (var i = 50; i < 75; i++)
+        for (var i = 0; i < 25; i++)
         {
-            var connectionId = $"connection-{i}";
-            tasks.Add(Task.Run(() => _sut.JoinPost("test-slug", connectionId), ct));
+            tasks.Add(Task.Run(() => _sut.Track("test-slug", () => { }), ct));
         }
 
         for (var i = 0; i < 25; i++)
         {
-            var connectionId = $"connection-{i}";
-            tasks.Add(Task.Run(() => _sut.LeavePost("test-slug", connectionId), ct));
+            var reader = initial[i];
+            tasks.Add(Task.Run(() => reader.Dispose(), ct));
         }
 
         await Task.WhenAll(tasks);
 
-        var finalCount = _sut.GetReaderCount("test-slug");
-        Assert.Equal(50, finalCount);
+        Assert.Equal(50, _sut.GetReaderCount("test-slug"));
     }
 
     [Fact]
-    public async Task ConcurrentDisconnects_MaintainsAccurateCount()
+    public async Task ConcurrentDisposals_ReturnCountToZero()
     {
         var ct = TestContext.Current.CancellationToken;
-        const int connectionCount = 50;
+        const int readerCount = 50;
+        var readers = new List<IDisposable>();
 
-        for (var i = 0; i < connectionCount; i++)
+        for (var i = 0; i < readerCount; i++)
         {
-            _sut.JoinPost("test-slug", $"connection-{i}");
+            readers.Add(_sut.Track("test-slug", () => { }));
         }
 
-        var tasks = new List<Task>();
-        for (var i = 0; i < connectionCount; i++)
-        {
-            var connectionId = $"connection-{i}";
-            tasks.Add(Task.Run(() => _sut.Disconnect(connectionId), ct));
-        }
+        var tasks = readers.Select(reader => Task.Run(() => reader.Dispose(), ct)).ToList();
 
         await Task.WhenAll(tasks);
 
-        var finalCount = _sut.GetReaderCount("test-slug");
-        Assert.Equal(0, finalCount);
+        Assert.Equal(0, _sut.GetReaderCount("test-slug"));
     }
 }
 ```
@@ -9235,7 +9363,6 @@ public class TelemetrySerializationTests
 @using MyBlog.Core.Interfaces
 @using MyBlog.Core.Models
 @using static Microsoft.AspNetCore.Components.Web.RenderMode
-@using Microsoft.AspNetCore.SignalR.Client
 ```
 
 ```razor src/MyBlog.Web/Components/Layout/MainLayout.razor
@@ -9312,7 +9439,7 @@ public class TelemetrySerializationTests
         <h2>Overview</h2>
         <p>
             Welcome to <strong>@(Configuration["Application:Title"] ?? "MyBlog")</strong>, a powerful yet lightweight
-            content management system and blogging platform built entirely with <strong>.NET 10</strong> and
+            content management system and blogging platform built entirely with <strong>.NET 11</strong> and
             <strong>Blazor Server</strong>. This application represents a modern approach to self-hosted blogging,
             combining the performance and type-safety of C# with the interactive capabilities of Blazor's
             component-based architecture.
@@ -9414,7 +9541,7 @@ public class TelemetrySerializationTests
             <div class="tech-category">
                 <h3>Backend Framework</h3>
                 <ul>
-                    <li><strong>.NET 10</strong> — Current runtime with latest features and performance improvements</li>
+                    <li><strong>.NET 11</strong> — Current runtime with latest features and performance improvements</li>
                     <li><strong>Blazor Server</strong> — Component-based UI with real-time SignalR connectivity</li>
                     <li><strong>ASP.NET Core</strong> — Web framework with middleware pipeline</li>
                     <li><strong>Entity Framework Core</strong> — ORM; schema via EnsureCreated plus an idempotent updater, no migrations</li>
@@ -9447,7 +9574,7 @@ public class TelemetrySerializationTests
                     <li><strong>OpenTelemetry</strong> — Distributed tracing and metrics</li>
                     <li><strong>File Log Exporter</strong> — JSON-formatted log files with rotation</li>
                     <li><strong>Database Log Exporter</strong> — Queryable telemetry storage</li>
-                    <li><strong>Console Exporter</strong> — Development-time debugging</li>
+                    <li><strong>Built-in Instrumentation</strong> — ASP.NET Core and HttpClient traces and metrics, exported over OTLP when configured</li>
                 </ul>
             </div>
 
@@ -9457,7 +9584,7 @@ public class TelemetrySerializationTests
                     <li><strong>xUnit v3</strong> — Modern testing framework</li>
                     <li><strong>In-Memory Database</strong> — Fast integration tests</li>
                     <li><strong>Dependency Injection</strong> — Testable delay functions</li>
-                    <li><strong>Cross-Platform CI</strong> — Windows, Linux, macOS matrix</li>
+                    <li><strong>Cross-Platform CI</strong> — Windows and Linux required, macOS best effort</li>
                 </ul>
             </div>
 
@@ -9529,13 +9656,13 @@ public class TelemetrySerializationTests
                 <h3>Real-Time Reader Tracking</h3>
                 <p>
                     See how many people are currently reading each post with live-updating reader counts.
-                    Uses a thread-safe <code>ConcurrentDictionary</code> and event-driven updates via
-                    SignalR for instant UI refresh.
+                    Each reader's badge registers in process once its Blazor circuit is interactive, and
+                    every badge on the same post rerenders when someone arrives or leaves.
                 </p>
                 <div class="feature-details">
                     <strong>Implementation:</strong>
-                    <code>IReaderTrackingService</code> with JoinPost/LeavePost lifecycle;
-                    <code>ReaderHub</code> broadcasts <code>UpdateCount</code> to each post's group
+                    <code>IReaderTrackingService.Track</code> returns an <code>IDisposable</code>;
+                    disposing the badge removes the reader and notifies the others
                 </div>
             </div>
 
@@ -9736,7 +9863,7 @@ public class TelemetrySerializationTests
         <div class="deployment-section">
             <h3>GitHub Actions Workflow</h3>
             <ol>
-                <li><strong>Build & Test</strong> — Runs on Windows, Linux, and macOS simultaneously</li>
+                <li><strong>Build & Test</strong> — Runs on Windows and Linux; macOS runs alongside without blocking</li>
                 <li><strong>Restore</strong> — <code>dotnet restore src/MyBlog.slnx</code></li>
                 <li><strong>Build</strong> — <code>dotnet build -c Release</code></li>
                 <li><strong>Test</strong> — <code>dotnet run --project src/MyBlog.Tests/MyBlog.Tests.csproj</code> (Microsoft.Testing.Platform)</li>
@@ -9918,7 +10045,7 @@ public class TelemetrySerializationTests
         <h2>Quick Start</h2>
         <div class="quickstart">
             <h3>Prerequisites</h3>
-            <p><a href="https://dotnet.microsoft.com/download/dotnet/10.0" target="_blank">.NET 10 SDK</a> or later</p>
+            <p><a href="https://dotnet.microsoft.com/download/dotnet/11.0" target="_blank">.NET 11 SDK</a> (11.0.100-rc.3 or later)</p>
 
             <h3>Running Locally</h3>
             <pre><code># Clone the repository
@@ -9978,7 +10105,7 @@ dotnet run</code></pre>
 
     <section class="about-footer">
         <p>
-            Built with ❤️ using .NET 10 and Blazor Server
+            Built with ❤️ using .NET 11 and Blazor Server
         </p>
         <p class="version-info">
             <small>
@@ -12365,9 +12492,8 @@ article {
 ```
 
 ```razor src/MyBlog.Web/Components/Shared/ReaderBadge.razor
-@inject NavigationManager Navigation
-@inject ILogger<ReaderBadge> Logger
-@implements IAsyncDisposable
+@inject IReaderTrackingService ReaderTracking
+@implements IDisposable
 
 <div class="reader-badge" title="Active readers on this post. Share this post to increase this number!">
     <span class="reader-dot">●</span>
@@ -12378,56 +12504,38 @@ article {
     [Parameter, EditorRequired]
     public string Slug { get; set; } = "";
 
-    private HubConnection? _hubConnection;
+    private IDisposable? _subscription;
+    private string? _trackedSlug;
     private int _count;
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnParametersSet()
     {
-        _hubConnection = new HubConnectionBuilder()
-            .WithUrl(Navigation.ToAbsoluteUri("/readerHub"))
-            .WithAutomaticReconnect()
-            .Build();
-
-        _hubConnection.On<int>("UpdateCount", (newCount) =>
+        if (RendererInfo.IsInteractive && !string.Equals(_trackedSlug, Slug, StringComparison.Ordinal))
         {
-            _count = newCount;
-            InvokeAsync(StateHasChanged);
-        });
+            _subscription?.Dispose();
+            _subscription = string.IsNullOrEmpty(Slug) ? null : ReaderTracking.Track(Slug, OnReadersChanged);
+            _trackedSlug = Slug;
+        }
 
+        _count = ReaderTracking.GetReaderCount(Slug);
+    }
+
+    private void OnReadersChanged()
+    {
         try
         {
-            await _hubConnection.StartAsync();
-
-            if (!string.IsNullOrEmpty(Slug))
+            _ = InvokeAsync(() =>
             {
-                await _hubConnection.InvokeAsync("JoinPage", Slug);
-            }
+                _count = ReaderTracking.GetReaderCount(Slug);
+                StateHasChanged();
+            });
         }
-        catch (Exception ex)
+        catch (ObjectDisposedException)
         {
-            Logger.LogWarning(ex, "Error connecting to ReaderHub for {Slug}", Slug);
         }
     }
 
-    public async ValueTask DisposeAsync()
-    {
-        if (_hubConnection is not null)
-        {
-            if (!string.IsNullOrEmpty(Slug) && _hubConnection.State == HubConnectionState.Connected)
-            {
-                try
-                {
-                    await _hubConnection.InvokeAsync("LeavePage", Slug);
-                }
-                catch (Exception ex)
-                {
-                    Logger.LogDebug(ex, "Could not leave ReaderHub group for {Slug}", Slug);
-                }
-            }
-
-            await _hubConnection.DisposeAsync();
-        }
-    }
+    public void Dispose() => _subscription?.Dispose();
 }
 ```
 
@@ -12746,7 +12854,7 @@ article {
 ```
 
 ```dockerfile src/MyBlog.Web/Dockerfile
-FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:11.0 AS build
 WORKDIR /src
 
 COPY Directory.Build.props .
@@ -12763,7 +12871,7 @@ COPY MyBlog.Web/ MyBlog.Web/
 
 RUN dotnet publish MyBlog.Web/MyBlog.Web.csproj -c Release -o /app/publish
 
-FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
+FROM mcr.microsoft.com/dotnet/aspnet:11.0 AS runtime
 WORKDIR /app
 
 RUN apt-get update && apt-get install -y --no-install-recommends curl && rm -rf /var/lib/apt/lists/*
@@ -12787,7 +12895,6 @@ ENTRYPOINT ["dotnet", "MyBlog.Web.dll"]
 using System.Text;
 using System.Xml;
 using MyBlog.Core.Interfaces;
-using MyBlog.Core.Models;
 
 namespace MyBlog.Web.Endpoints;
 
@@ -12829,14 +12936,7 @@ public static class RssEndpoints
     {
         var feedUrl = $"{baseUrl}/feed.xml";
 
-        var (posts, _) = await postRepository.GetPublishedPostsAsync(1, FeedItemLimit, cancellationToken);
-
-        var fullPosts = new List<(PostListItemDto ListItem, PostDetailDto? Detail)>();
-        foreach (var post in posts)
-        {
-            var detail = await postRepository.GetBySlugAsync(post.Slug, cancellationToken);
-            fullPosts.Add((post, detail));
-        }
+        var posts = await postRepository.GetLatestPublishedAsync(FeedItemLimit, cancellationToken);
 
         var settings = new XmlWriterSettings
         {
@@ -12861,7 +12961,7 @@ public static class RssEndpoints
             await writer.WriteElementStringAsync(null, "link", null, baseUrl);
             await writer.WriteElementStringAsync(null, "description", null, $"{siteTitle} — Recent posts");
             await writer.WriteElementStringAsync(null, "language", null, "en-us");
-            await writer.WriteElementStringAsync(null, "generator", null, "MyBlog/.NET 10");
+            await writer.WriteElementStringAsync(null, "generator", null, $"MyBlog/.NET {Environment.Version.Major}");
             await writer.WriteElementStringAsync(null, "lastBuildDate", null, DateTime.UtcNow.ToString("R"));
 
             await writer.WriteStartElementAsync("atom", "link", AtomNamespace);
@@ -12870,7 +12970,7 @@ public static class RssEndpoints
             await writer.WriteAttributeStringAsync(null, "type", null, "application/rss+xml");
             await writer.WriteEndElementAsync();
 
-            foreach (var (post, detail) in fullPosts)
+            foreach (var post in posts)
             {
                 var permalink = $"{baseUrl}/post/{post.Slug}";
 
@@ -12892,13 +12992,10 @@ public static class RssEndpoints
                 await writer.WriteStringAsync(permalink);
                 await writer.WriteEndElementAsync();
 
-                if (detail is not null)
-                {
-                    var htmlContent = await markdownService.ToHtmlAsync(detail.Content);
-                    await writer.WriteStartElementAsync("content", "encoded", ContentNamespace);
-                    await writer.WriteCDataAsync(htmlContent);
-                    await writer.WriteEndElementAsync();
-                }
+                var htmlContent = await markdownService.ToHtmlAsync(post.Content);
+                await writer.WriteStartElementAsync("content", "encoded", ContentNamespace);
+                await writer.WriteCDataAsync(htmlContent);
+                await writer.WriteEndElementAsync();
 
                 await writer.WriteEndElementAsync();
             }
@@ -12911,46 +13008,6 @@ public static class RssEndpoints
         }
 
         return stream.ToArray();
-    }
-}
-```
-
-```csharp src/MyBlog.Web/Hubs/ReaderHub.cs
-using Microsoft.AspNetCore.SignalR;
-using MyBlog.Core.Interfaces;
-
-namespace MyBlog.Web.Hubs;
-
-public class ReaderHub(IReaderTrackingService trackingService) : Hub
-{
-    public async Task JoinPage(string slug)
-    {
-        await Groups.AddToGroupAsync(Context.ConnectionId, slug);
-
-        var newCount = trackingService.JoinPost(slug, Context.ConnectionId);
-
-        await Clients.Group(slug).SendAsync("UpdateCount", newCount);
-    }
-
-    public async Task LeavePage(string slug)
-    {
-        await Groups.RemoveFromGroupAsync(Context.ConnectionId, slug);
-
-        var newCount = trackingService.LeavePost(slug, Context.ConnectionId);
-
-        await Clients.Group(slug).SendAsync("UpdateCount", newCount);
-    }
-
-    public override async Task OnDisconnectedAsync(Exception? exception)
-    {
-        var (slug, newCount) = trackingService.Disconnect(Context.ConnectionId);
-
-        if (!string.IsNullOrEmpty(slug))
-        {
-            await Clients.Group(slug).SendAsync("UpdateCount", newCount);
-        }
-
-        await base.OnDisconnectedAsync(exception);
     }
 }
 ```
@@ -13119,12 +13176,8 @@ public static class LoginRateLimitMiddlewareExtensions
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" />
     <PackageReference Include="OpenTelemetry.Extensions.Hosting" />
-    <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" />
-    <PackageReference Include="OpenTelemetry.Exporter.Console" />
     <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" />
-    <PackageReference Include="OpenTelemetry.Instrumentation.Http" />
   </ItemGroup>
 
   <ItemGroup>
@@ -13144,7 +13197,6 @@ using MyBlog.Infrastructure.Data;
 using MyBlog.Infrastructure.Telemetry;
 using MyBlog.Web.Components;
 using MyBlog.Web.Endpoints;
-using MyBlog.Web.Hubs;
 using MyBlog.Web.Middleware;
 using OpenTelemetry.Exporter;
 using OpenTelemetry.Logs;
@@ -13166,8 +13218,6 @@ builder.Services.AddRazorComponents()
     {
         options.MaximumReceiveMessageSize = maxCircuitMessageBytes;
     });
-
-builder.Services.AddSignalR();
 
 builder.Services.AddInfrastructure(builder.Configuration);
 
@@ -13213,38 +13263,31 @@ Action<OtlpExporterOptions> configureOtlp = o =>
     o.Headers = $"x-honeycomb-team={otlpApiKey}";
 };
 
-builder.Services.AddOpenTelemetry()
-    .ConfigureResource(resource => resource.AddService(serviceName, serviceVersion))
-    .WithTracing(tracing =>
-    {
-        tracing
-            .AddAspNetCoreInstrumentation()
-            .AddHttpClientInstrumentation()
-            .AddConsoleExporter();
+var openTelemetry = builder.Services.AddOpenTelemetry()
+    .ConfigureResource(resource => resource.AddService(serviceName, serviceVersion));
 
-        if (otlpEnabled)
-        {
-            tracing.AddOtlpExporter(configureOtlp);
-        }
-    })
-    .WithMetrics(metrics =>
-    {
-        metrics
-            .AddAspNetCoreInstrumentation()
-            .AddHttpClientInstrumentation()
-            .AddConsoleExporter();
-
-        if (otlpEnabled)
-        {
-            metrics.AddOtlpExporter(configureOtlp);
-        }
-    });
+if (otlpEnabled)
+{
+    openTelemetry
+        .WithTracing(tracing => tracing
+            .AddSource("Microsoft.AspNetCore", "System.Net.Http")
+            .AddOtlpExporter(configureOtlp))
+        .WithMetrics(metrics => metrics
+            .AddMeter(
+                "Microsoft.AspNetCore.Hosting",
+                "Microsoft.AspNetCore.Server.Kestrel",
+                "Microsoft.AspNetCore.Http.Connections",
+                "Microsoft.AspNetCore.Routing",
+                "Microsoft.AspNetCore.Diagnostics",
+                "System.Net.Http",
+                "System.Net.NameResolution")
+            .AddOtlpExporter(configureOtlp));
+}
 
 builder.Logging.AddOpenTelemetry(logging =>
 {
     logging.IncludeFormattedMessage = true;
     logging.IncludeScopes = true;
-    logging.AddConsoleExporter();
 
     logging.AddLocalExporters(builder.Configuration);
 
@@ -13325,8 +13368,6 @@ app.MapRssEndpoints();
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
-
-app.MapHub<ReaderHub>("/readerHub");
 
 using (var scope = app.Services.CreateScope())
 {
