@@ -84,3 +84,5 @@ a heavy analyzer stack, to achieve compiler-guaranteed consistency and safety wi
 minimal tooling, accepting that an SDK bump can surface a build-blocking warning and
 that a few constructors must stay explicit, because machine enforcement beats
 discipline and the modern idioms are applied with judgment rather than dogma.
+
+> **Amendment (2026-11-24):** the target is `net11.0`. `LangVersion` is no longer set, so the language version follows the target framework (C# 15). `src/global.json` accepts SDK 11.0.100-rc.3 or any later 11.0 SDK (ADR-0025).

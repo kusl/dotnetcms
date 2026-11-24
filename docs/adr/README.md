@@ -58,7 +58,7 @@ below reflects that reality.
 | [0011](0011-cookie-auth-single-admin-role.md) | Cookie authentication with a single `Admin` authorization model | Accepted | 2025-12-28 |
 | [0012](0012-seeded-admin-changeme-password.md) | Seeded default admin and the `ChangeMe123!` password | Accepted | 2025-12-28 |
 | [0013](0013-ssr-login-form.md) | Authentication via a static SSR form posting to a minimal API | Accepted | 2026-01-26 |
-| [0014](0014-signalr-reader-tracking.md) | Real-time reader counts via SignalR and in-memory state | Accepted | 2026-01-16 |
+| [0014](0014-signalr-reader-tracking.md) | Real-time reader counts via SignalR and in-memory state | Superseded by 0025 | 2026-01-16 |
 | [0015](0015-opentelemetry-vendor-neutral.md) | OpenTelemetry with vendor-neutral OTLP export to Honeycomb | Accepted | 2026-03-16 |
 | [0016](0016-xdg-storage-paths.md) | XDG-compliant storage paths with writability fallback | Accepted | 2025-12-28 |
 | [0017](0017-central-package-management.md) | Centralized package management and transitive security pinning | Accepted | 2025-12-28 |
@@ -69,6 +69,7 @@ below reflects that reality.
 | [0022](0022-repository-hygiene-and-log-retention.md) | Repository hygiene, working local logs, and bounded retention | Accepted | 2026-10-25 |
 | [0023](0023-markdown-tables-and-inline-protection.md) | Markdown tables, protected inline spans, and ordered-list start numbers | Accepted | 2026-10-26 |
 | [0024](0024-markdown-link-destinations-and-url-schemes.md) | Markdown link destinations, URL scheme allow-list, escapes, and multi-line blockquotes | Accepted | 2026-11-04 |
+| [0025](0025-dotnet-11-platform-and-lean-runtime.md) | .NET 11 platform, in-process reader tracking, and native telemetry | Accepted | 2026-11-24 |
 
 ## SOLID and "shortcuts" review
 

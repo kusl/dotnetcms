@@ -1,38 +1,88 @@
-using System.Collections.Concurrent;
 using MyBlog.Core.Interfaces;
 
 namespace MyBlog.Infrastructure.Services;
 
-public class ReaderTrackingService : IReaderTrackingService
+public sealed class ReaderTrackingService : IReaderTrackingService
 {
-    private readonly ConcurrentDictionary<string, int> _slugCounts = new();
+    private readonly Lock _gate = new();
+    private readonly Dictionary<string, List<Reader>> _readersBySlug = new(StringComparer.Ordinal);
 
-    private readonly ConcurrentDictionary<string, string> _connectionMap = new();
-
-    public int JoinPost(string slug, string connectionId)
+    public IDisposable Track(string slug, Action onReadersChanged)
     {
-        _connectionMap.AddOrUpdate(connectionId, slug, (_, _) => slug);
+        ArgumentException.ThrowIfNullOrEmpty(slug);
+        ArgumentNullException.ThrowIfNull(onReadersChanged);
 
-        return _slugCounts.AddOrUpdate(slug, 1, (_, count) => count + 1);
-    }
+        var reader = new Reader(this, slug, onReadersChanged);
+        Reader[] audience;
 
-    public int LeavePost(string slug, string connectionId)
-    {
-        _connectionMap.TryRemove(connectionId, out _);
-
-        return _slugCounts.AddOrUpdate(slug, 0, (_, count) => count > 0 ? count - 1 : 0);
-    }
-
-    public (string? Slug, int NewCount) Disconnect(string connectionId)
-    {
-        if (_connectionMap.TryRemove(connectionId, out var slug))
+        lock (_gate)
         {
-            var newCount = _slugCounts.AddOrUpdate(slug, 0, (_, count) => count > 0 ? count - 1 : 0);
-            return (slug, newCount);
+            if (!_readersBySlug.TryGetValue(slug, out var readers))
+            {
+                readers = [];
+                _readersBySlug[slug] = readers;
+            }
+
+            readers.Add(reader);
+            audience = [.. readers];
         }
 
-        return (null, 0);
+        Notify(audience);
+        return reader;
     }
 
-    public int GetReaderCount(string slug) => _slugCounts.TryGetValue(slug, out var count) ? count : 0;
+    public int GetReaderCount(string slug)
+    {
+        lock (_gate)
+        {
+            return _readersBySlug.TryGetValue(slug, out var readers) ? readers.Count : 0;
+        }
+    }
+
+    private void Release(Reader reader)
+    {
+        Reader[] audience;
+
+        lock (_gate)
+        {
+            if (!_readersBySlug.TryGetValue(reader.Slug, out var readers) || !readers.Remove(reader))
+            {
+                return;
+            }
+
+            if (readers.Count == 0)
+            {
+                _readersBySlug.Remove(reader.Slug);
+            }
+
+            audience = [.. readers];
+        }
+
+        Notify(audience);
+    }
+
+    private static void Notify(Reader[] audience)
+    {
+        foreach (var reader in audience)
+        {
+            reader.Notify();
+        }
+    }
+
+    private sealed class Reader(ReaderTrackingService owner, string slug, Action onReadersChanged) : IDisposable
+    {
+        private int _released;
+
+        public string Slug => slug;
+
+        public void Notify() => onReadersChanged();
+
+        public void Dispose()
+        {
+            if (Interlocked.Exchange(ref _released, 1) == 0)
+            {
+                owner.Release(this);
+            }
+        }
+    }
 }

@@ -76,6 +76,27 @@ public sealed class PostRepository : IPostRepository
                 p.IsPublished))
             .FirstOrDefaultAsync(cancellationToken);
 
+    public async Task<IReadOnlyList<PostDetailDto>> GetLatestPublishedAsync(
+        int count, CancellationToken cancellationToken = default) =>
+        await _context.Posts
+            .AsNoTracking()
+            .Where(p => p.IsPublished)
+            .OrderByDescending(p => p.PublishedAtUtc)
+            .Take(count)
+            .Include(p => p.Author)
+            .Select(p => new PostDetailDto(
+                p.Id,
+                p.Title,
+                p.Slug,
+                p.Content,
+                p.Summary,
+                p.Author!.DisplayName,
+                p.CreatedAtUtc,
+                p.UpdatedAtUtc,
+                p.PublishedAtUtc,
+                p.IsPublished))
+            .ToListAsync(cancellationToken);
+
     public async Task<Post?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default) =>
         await _context.Posts
             .Include(p => p.Author)

@@ -2,28 +2,19 @@
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
     <CentralPackageTransitivePinningEnabled>true</CentralPackageTransitivePinningEnabled>
-    <MicrosoftPackagesVersion>10.0.14</MicrosoftPackagesVersion>
+    <MicrosoftPackagesVersion>11.0.0</MicrosoftPackagesVersion>
     <OpenTelemetryVersion>1.21.0</OpenTelemetryVersion>
-    <OtelAspNetCoreInstrVersion>1.21.0</OtelAspNetCoreInstrVersion>
-    <OtelHttpInstrVersion>1.21.0</OtelHttpInstrVersion>
 
-    <TestSdkVersion>18.12.0</TestSdkVersion>
     <XUnitVersion>4.0.3</XUnitVersion>
     <PlaywrightVersion>1.65.1</PlaywrightVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageVersion Include="Microsoft.AspNetCore.SignalR.Client" Version="$(MicrosoftPackagesVersion)" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="$(MicrosoftPackagesVersion)" />
-    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="$(MicrosoftPackagesVersion)" />
     <PackageVersion Include="OpenTelemetry" Version="$(OpenTelemetryVersion)" />
     <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="$(OpenTelemetryVersion)" />
-    <PackageVersion Include="OpenTelemetry.Exporter.Console" Version="$(OpenTelemetryVersion)" />
     <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="$(OpenTelemetryVersion)" />
-    <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="$(OtelAspNetCoreInstrVersion)" />
-    <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="$(OtelHttpInstrVersion)" />
 
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="$(TestSdkVersion)" />
     <PackageVersion Include="xunit.v3" Version="$(XUnitVersion)" />
     <PackageVersion Include="Microsoft.Playwright" Version="$(PlaywrightVersion)" />
   </ItemGroup>

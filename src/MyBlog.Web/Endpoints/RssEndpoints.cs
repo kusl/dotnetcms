@@ -1,7 +1,6 @@
 using System.Text;
 using System.Xml;
 using MyBlog.Core.Interfaces;
-using MyBlog.Core.Models;
 
 namespace MyBlog.Web.Endpoints;
 
@@ -43,14 +42,7 @@ public static class RssEndpoints
     {
         var feedUrl = $"{baseUrl}/feed.xml";
 
-        var (posts, _) = await postRepository.GetPublishedPostsAsync(1, FeedItemLimit, cancellationToken);
-
-        var fullPosts = new List<(PostListItemDto ListItem, PostDetailDto? Detail)>();
-        foreach (var post in posts)
-        {
-            var detail = await postRepository.GetBySlugAsync(post.Slug, cancellationToken);
-            fullPosts.Add((post, detail));
-        }
+        var posts = await postRepository.GetLatestPublishedAsync(FeedItemLimit, cancellationToken);
 
         var settings = new XmlWriterSettings
         {
@@ -75,7 +67,7 @@ public static class RssEndpoints
             await writer.WriteElementStringAsync(null, "link", null, baseUrl);
             await writer.WriteElementStringAsync(null, "description", null, $"{siteTitle} — Recent posts");
             await writer.WriteElementStringAsync(null, "language", null, "en-us");
-            await writer.WriteElementStringAsync(null, "generator", null, "MyBlog/.NET 10");
+            await writer.WriteElementStringAsync(null, "generator", null, $"MyBlog/.NET {Environment.Version.Major}");
             await writer.WriteElementStringAsync(null, "lastBuildDate", null, DateTime.UtcNow.ToString("R"));
 
             await writer.WriteStartElementAsync("atom", "link", AtomNamespace);
@@ -84,7 +76,7 @@ public static class RssEndpoints
             await writer.WriteAttributeStringAsync(null, "type", null, "application/rss+xml");
             await writer.WriteEndElementAsync();
 
-            foreach (var (post, detail) in fullPosts)
+            foreach (var post in posts)
             {
                 var permalink = $"{baseUrl}/post/{post.Slug}";
 
@@ -106,13 +98,10 @@ public static class RssEndpoints
                 await writer.WriteStringAsync(permalink);
                 await writer.WriteEndElementAsync();
 
-                if (detail is not null)
-                {
-                    var htmlContent = await markdownService.ToHtmlAsync(detail.Content);
-                    await writer.WriteStartElementAsync("content", "encoded", ContentNamespace);
-                    await writer.WriteCDataAsync(htmlContent);
-                    await writer.WriteEndElementAsync();
-                }
+                var htmlContent = await markdownService.ToHtmlAsync(post.Content);
+                await writer.WriteStartElementAsync("content", "encoded", ContentNamespace);
+                await writer.WriteCDataAsync(htmlContent);
+                await writer.WriteEndElementAsync();
 
                 await writer.WriteEndElementAsync();
             }

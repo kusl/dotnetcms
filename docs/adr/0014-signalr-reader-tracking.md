@@ -1,5 +1,5 @@
 ---
-status: accepted
+status: superseded by ADR-0025
 date: 2026-01-16
 deciders: Kushal (with AI assistance from Claude and Gemini)
 tags: [realtime, signalr, state, scalability]
@@ -70,3 +70,5 @@ SignalR hub backed by in-memory concurrent state and neglected a Redis backplane
 client polling, to achieve real-time counts with no added infrastructure, accepting
 that the counts are correct only for a single instance and reset on restart, because
 the deployment is single-instance and presence data is inherently ephemeral.
+
+> **Amendment (2026-11-24):** superseded by ADR-0025. `ReaderBadge` injects `IReaderTrackingService` and registers through `Track`, which returns an `IDisposable`. `ReaderHub` and the loopback `HubConnection` are removed. State is still in memory and per process.

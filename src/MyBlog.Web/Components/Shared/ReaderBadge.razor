@@ -1,6 +1,5 @@
-@inject NavigationManager Navigation
-@inject ILogger<ReaderBadge> Logger
-@implements IAsyncDisposable
+@inject IReaderTrackingService ReaderTracking
+@implements IDisposable
 
 <div class="reader-badge" title="Active readers on this post. Share this post to increase this number!">
     <span class="reader-dot">●</span>
@@ -11,54 +10,36 @@
     [Parameter, EditorRequired]
     public string Slug { get; set; } = "";
 
-    private HubConnection? _hubConnection;
+    private IDisposable? _subscription;
+    private string? _trackedSlug;
     private int _count;
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnParametersSet()
     {
-        _hubConnection = new HubConnectionBuilder()
-            .WithUrl(Navigation.ToAbsoluteUri("/readerHub"))
-            .WithAutomaticReconnect()
-            .Build();
-
-        _hubConnection.On<int>("UpdateCount", (newCount) =>
+        if (RendererInfo.IsInteractive && !string.Equals(_trackedSlug, Slug, StringComparison.Ordinal))
         {
-            _count = newCount;
-            InvokeAsync(StateHasChanged);
-        });
+            _subscription?.Dispose();
+            _subscription = string.IsNullOrEmpty(Slug) ? null : ReaderTracking.Track(Slug, OnReadersChanged);
+            _trackedSlug = Slug;
+        }
 
+        _count = ReaderTracking.GetReaderCount(Slug);
+    }
+
+    private void OnReadersChanged()
+    {
         try
         {
-            await _hubConnection.StartAsync();
-
-            if (!string.IsNullOrEmpty(Slug))
+            _ = InvokeAsync(() =>
             {
-                await _hubConnection.InvokeAsync("JoinPage", Slug);
-            }
+                _count = ReaderTracking.GetReaderCount(Slug);
+                StateHasChanged();
+            });
         }
-        catch (Exception ex)
+        catch (ObjectDisposedException)
         {
-            Logger.LogWarning(ex, "Error connecting to ReaderHub for {Slug}", Slug);
         }
     }
 
-    public async ValueTask DisposeAsync()
-    {
-        if (_hubConnection is not null)
-        {
-            if (!string.IsNullOrEmpty(Slug) && _hubConnection.State == HubConnectionState.Connected)
-            {
-                try
-                {
-                    await _hubConnection.InvokeAsync("LeavePage", Slug);
-                }
-                catch (Exception ex)
-                {
-                    Logger.LogDebug(ex, "Could not leave ReaderHub group for {Slug}", Slug);
-                }
-            }
-
-            await _hubConnection.DisposeAsync();
-        }
-    }
+    public void Dispose() => _subscription?.Dispose();
 }

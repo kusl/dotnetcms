@@ -82,3 +82,5 @@ scheme, to achieve one source of truth and the ability to force-upgrade transiti
 packages, accepting that the central file must be actively maintained, because
 supply-chain fixes like CVE-2025-6965 require exactly this one-edit transitive
 override.
+
+> **Amendment (2026-11-24):** on `net11.0` the central file pins six packages: EF Core SQLite 11.0.0, three OpenTelemetry packages, xUnit v3 and Playwright. `Microsoft.Extensions.Logging.Abstractions` is in the shared framework (a direct reference raises NU1510), and `Microsoft.AspNetCore.SignalR.Client`, both OpenTelemetry instrumentation packages, the console exporter and `Microsoft.NET.Test.Sdk` are removed (ADR-0025).

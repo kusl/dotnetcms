@@ -88,3 +88,5 @@ write-amplification of logging into the app's own SQLite DB, because portability
 "off unless configured" outweigh the convenience of a turnkey vendor distro.
 
 > **Amendment (2026-10-25):** the local exporters are attached through `BatchLogRecordExportProcessor` by `AddLocalExporters`; they are no longer DI singletons or hosted services. Retention is bounded by age and size (ADR-0022).
+
+> **Amendment (2026-11-24):** traces and metrics are registered only when OTLP is enabled, and they use the framework's native `Microsoft.AspNetCore` and `System.Net.Http` sources and meters. The ASP.NET Core and HttpClient instrumentation packages and the console exporters are removed (ADR-0025).

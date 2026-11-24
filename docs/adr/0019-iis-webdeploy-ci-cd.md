@@ -90,3 +90,5 @@ stale duplicate workflow file, because full control plus AppOffline is the only
 combination that met the hard "don't break a live site" constraint.
 
 > **Amendment (2026-10-25):** the two deploy jobs are one matrix job (`primary`, `nice` with the `NICE_` secret prefix, `fail-fast: false`), running from `main` only (ADR-0022).
+
+> **Amendment (2026-11-24):** CI installs the .NET `11.0.x` SDK. The required build matrix is Ubuntu and Windows. macOS runs in a separate `build-test-macos` job with `continue-on-error` and a 30-minute timeout, and neither E2E nor deploy waits for it (ADR-0025).

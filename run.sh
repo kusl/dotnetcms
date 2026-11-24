@@ -74,8 +74,9 @@ if have dotnet; then
     run_step "dotnet clean" dotnet clean
     run_step "dotnet build" dotnet build
     run_step "dotnet run (MyBlog.Tests)" dotnet run --project MyBlog.Tests/MyBlog.Tests.csproj
-    run_step "dotnet list package" dotnet list package
-    run_step "dotnet list package --outdated" dotnet list package --outdated
+    run_step "dotnet package list" dotnet package list
+    run_step "dotnet package list --outdated" dotnet package list --outdated
+    run_step "outdated within major" dotnet package list --outdated --highest-minor
 else
     run_step "dotnet CLI available" false
 fi

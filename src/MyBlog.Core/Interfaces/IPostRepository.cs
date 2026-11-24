@@ -12,6 +12,9 @@ public interface IPostRepository
 
     Task<PostDetailDto?> GetBySlugAsync(string slug, CancellationToken cancellationToken = default);
 
+    Task<IReadOnlyList<PostDetailDto>> GetLatestPublishedAsync(
+        int count, CancellationToken cancellationToken = default);
+
     Task<Post?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
 
     Task<Post> CreateAsync(Post post, CancellationToken cancellationToken = default);

@@ -204,3 +204,135 @@ Waiting for a runner to pick up this job...
 Requested labels: macos-latest
 Job defined at: kusl/dotnetcms/.github/workflows/build-deploy.yml@refs/heads/main
 Waiting for a runner to pick up this job...
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+The tarball moves the project to .NET 11. The full build and test suite has not run yet: NuGet is blocked here, so the first complete build will be your CI run. What I could check, I compiled with warnings treated as errors. The new reader-tracking code passed its 17 tests plus some extra stress runs. The RSS feed came out byte-for-byte the same as the old code's, apart from the `generator` and `lastBuildDate` lines.
+
+**Apply:**
+```bash
+tar -xzf dotnetcms-dotnet11.tar.gz
+git rm src/MyBlog.Web/Hubs/ReaderHub.cs
+```
+
+**Do this before merging to `main`:** set the MonsterASP site to .NET 11 first. The publish is framework-dependent, so the host must provide the .NET 11 runtime. .NET 11 also needs an x86-64-v2 CPU; since MonsterASP lists .NET 11, that should be fine.
+
+**Your `--outdated` question:** `dotnet package list --outdated --highest-minor` lists only upgrades within the current major version. Plain `--outdated` also shows the next major, which needs the next target framework. `run.sh` now runs both.
+
+**Changes:**
+- **Target and local SDK:** everything targets `net11.0`. `src/global.json` accepts 11.0.100-rc.3 or any later 11.0 SDK, so your RC 3 laptop builds and a stable SDK takes over once installed. CI installs the stable `11.0.x`.
+- **Packages:** six removed:
+  - `Microsoft.Extensions.Logging.Abstractions` is now part of .NET 11 itself. Keeping the reference would have failed the build (warning NU1510 becomes an error under warnings-as-errors).
+  - `SignalR.Client`, because the reader badge no longer needs it.
+  - The two OpenTelemetry instrumentation packages, because ASP.NET Core 11 and HttpClient now produce that telemetry themselves.
+  - The console exporter.
+  - `Microsoft.NET.Test.Sdk`, which only the old test runner used.
+- **Reader counts:** the badge no longer opens a connection from the server back to itself. It registers directly with the in-memory tracking service, and prerendering no longer adds phantom readers. `/readerHub` is gone. This was item 6 in `solid-review.md`.
+- **Telemetry:** traces and metrics now start only when OTLP is configured. Logs still go to the console, files, the database and OTLP.
+- **RSS:** `/feed.xml` uses one database query instead of 21. The feed content is unchanged except that the generator line now reads `MyBlog/.NET 11`.
+- **CI:** Ubuntu and Windows are required. macOS runs as its own job with a 30-minute timeout and is allowed to fail. Tests and deploy no longer wait for it, so a stuck macOS runner can't block anything. `setup-dotnet` is now v6, and the Docker images use 11.0.
+- **Docs:** I added ADR-0025 and marked ADR-0014 as superseded. I also updated the README, the About page and the related ADRs.
+
+Your data is safe: no schema change, no migration, and the image-dimension cache and user data, including emails, are left as they were.
+
+I didn't use C# 15 union types or closed hierarchies, because nothing in the code models that kind of closed set, so adding them would only have been for show. ADR-0025 lists what else I left out and why.
+
+**Things that might trip the first CI run:**
+- .NET 11 analyzers may flag new warnings, which become build errors here.
+- NuGet's vulnerability audit runs on the new EF Core 11 dependency tree; I couldn't check it.
+
+If either happens, send me the log.
+
+21
+19

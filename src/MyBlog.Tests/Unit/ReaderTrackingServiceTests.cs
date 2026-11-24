@@ -8,200 +8,216 @@ public class ReaderTrackingServiceTests
     private readonly ReaderTrackingService _sut = new();
 
     [Fact]
-    public void JoinPost_WithNewSlug_ReturnsOne()
+    public void Track_WithNewSlug_CountsOneReader()
     {
-        var count = _sut.JoinPost("test-slug", "connection-1");
+        using var reader = _sut.Track("test-slug", () => { });
 
-        Assert.Equal(1, count);
+        Assert.Equal(1, _sut.GetReaderCount("test-slug"));
     }
 
     [Fact]
-    public void JoinPost_WithMultipleConnections_ReturnsIncrementingCount()
+    public void Track_WithMultipleReaders_CountsEachReader()
     {
-        var count1 = _sut.JoinPost("test-slug", "connection-1");
-        var count2 = _sut.JoinPost("test-slug", "connection-2");
-        var count3 = _sut.JoinPost("test-slug", "connection-3");
+        using var reader1 = _sut.Track("test-slug", () => { });
+        using var reader2 = _sut.Track("test-slug", () => { });
+        using var reader3 = _sut.Track("test-slug", () => { });
 
-        Assert.Equal(1, count1);
-        Assert.Equal(2, count2);
-        Assert.Equal(3, count3);
+        Assert.Equal(3, _sut.GetReaderCount("test-slug"));
     }
 
     [Fact]
-    public void JoinPost_WithDifferentSlugs_TracksIndependently()
+    public void Track_WithDifferentSlugs_CountsIndependently()
     {
-        var count1 = _sut.JoinPost("slug-a", "connection-1");
-        var count2 = _sut.JoinPost("slug-b", "connection-2");
-        var count3 = _sut.JoinPost("slug-a", "connection-3");
+        using var reader1 = _sut.Track("slug-a", () => { });
+        using var reader2 = _sut.Track("slug-b", () => { });
+        using var reader3 = _sut.Track("slug-a", () => { });
 
-        Assert.Equal(1, count1);
-        Assert.Equal(1, count2);
-        Assert.Equal(2, count3);
+        Assert.Equal(2, _sut.GetReaderCount("slug-a"));
+        Assert.Equal(1, _sut.GetReaderCount("slug-b"));
     }
 
     [Fact]
-    public void LeavePost_WithExistingConnection_DecrementsCount()
+    public void Track_SameCallbackTwice_CountsTwoReaders()
     {
-        _sut.JoinPost("test-slug", "connection-1");
-        _sut.JoinPost("test-slug", "connection-2");
+        Action callback = () => { };
 
-        var count = _sut.LeavePost("test-slug", "connection-2");
+        using var reader1 = _sut.Track("test-slug", callback);
+        using var reader2 = _sut.Track("test-slug", callback);
 
-        Assert.Equal(1, count);
+        Assert.Equal(2, _sut.GetReaderCount("test-slug"));
     }
 
     [Fact]
-    public void LeavePost_WhenCountIsZero_ReturnsZero()
+    public void Dispose_RemovesOnlyThatReader()
     {
-        _sut.JoinPost("test-slug", "connection-1");
-        _sut.LeavePost("test-slug", "connection-1");
+        using var reader1 = _sut.Track("test-slug", () => { });
+        var reader2 = _sut.Track("test-slug", () => { });
 
-        var count = _sut.LeavePost("test-slug", "connection-1");
+        reader2.Dispose();
 
-        Assert.Equal(0, count);
+        Assert.Equal(1, _sut.GetReaderCount("test-slug"));
     }
 
     [Fact]
-    public void LeavePost_WithNonExistentSlug_ReturnsZero()
+    public void Dispose_CalledTwice_RemovesReaderOnce()
     {
-        var count = _sut.LeavePost("non-existent", "connection-1");
+        using var reader1 = _sut.Track("test-slug", () => { });
+        var reader2 = _sut.Track("test-slug", () => { });
 
-        Assert.Equal(0, count);
+        reader2.Dispose();
+        reader2.Dispose();
+
+        Assert.Equal(1, _sut.GetReaderCount("test-slug"));
     }
 
     [Fact]
-    public void Disconnect_WithKnownConnection_ReturnsSlugAndDecrementedCount()
+    public void Dispose_LastReader_ReturnsZero()
     {
-        _sut.JoinPost("test-slug", "connection-1");
-        _sut.JoinPost("test-slug", "connection-2");
+        var reader = _sut.Track("test-slug", () => { });
 
-        var (slug, newCount) = _sut.Disconnect("connection-1");
+        reader.Dispose();
 
-        Assert.Equal("test-slug", slug);
-        Assert.Equal(1, newCount);
+        Assert.Equal(0, _sut.GetReaderCount("test-slug"));
     }
 
     [Fact]
-    public void Disconnect_WithUnknownConnection_ReturnsNullSlug()
+    public void GetReaderCount_WithUnknownSlug_ReturnsZero()
     {
-        var (slug, newCount) = _sut.Disconnect("unknown-connection");
-
-        Assert.Null(slug);
-        Assert.Equal(0, newCount);
+        Assert.Equal(0, _sut.GetReaderCount("non-existent"));
     }
 
     [Fact]
-    public void Disconnect_RemovesConnectionMapping()
+    public void Track_NotifiesExistingAndNewReadersOfSameSlug()
     {
-        _sut.JoinPost("test-slug", "connection-1");
-        _sut.Disconnect("connection-1");
+        var firstNotifications = 0;
+        var secondNotifications = 0;
 
-        var (slug, _) = _sut.Disconnect("connection-1");
+        using var reader1 = _sut.Track("test-slug", () => firstNotifications++);
+        using var reader2 = _sut.Track("test-slug", () => secondNotifications++);
 
-        Assert.Null(slug);
+        Assert.Equal(2, firstNotifications);
+        Assert.Equal(1, secondNotifications);
     }
 
     [Fact]
-    public void GetReaderCount_WithExistingSlug_ReturnsCorrectCount()
+    public void Track_DoesNotNotifyReadersOfOtherSlugs()
     {
-        _sut.JoinPost("test-slug", "connection-1");
-        _sut.JoinPost("test-slug", "connection-2");
+        var notifications = 0;
 
-        var count = _sut.GetReaderCount("test-slug");
+        using var reader1 = _sut.Track("slug-a", () => notifications++);
+        using var reader2 = _sut.Track("slug-b", () => { });
 
-        Assert.Equal(2, count);
+        Assert.Equal(1, notifications);
     }
 
     [Fact]
-    public void GetReaderCount_WithNonExistentSlug_ReturnsZero()
+    public void Dispose_NotifiesRemainingReadersButNotLeavingReader()
     {
-        var count = _sut.GetReaderCount("non-existent");
+        var remainingNotifications = 0;
+        var leavingNotifications = 0;
 
-        Assert.Equal(0, count);
+        using var remaining = _sut.Track("test-slug", () => remainingNotifications++);
+        var leaving = _sut.Track("test-slug", () => leavingNotifications++);
+        remainingNotifications = 0;
+        leavingNotifications = 0;
+
+        leaving.Dispose();
+
+        Assert.Equal(1, remainingNotifications);
+        Assert.Equal(0, leavingNotifications);
     }
 
     [Fact]
-    public void JoinPost_SameConnectionSwitchingPages_UpdatesMapping()
+    public void Notification_SeesUpdatedCount()
     {
-        _sut.JoinPost("slug-a", "connection-1");
+        var observed = new List<int>();
 
-        _sut.JoinPost("slug-b", "connection-1");
+        using var reader1 = _sut.Track("test-slug", () => observed.Add(_sut.GetReaderCount("test-slug")));
+        var reader2 = _sut.Track("test-slug", () => { });
+        reader2.Dispose();
 
-        var (slug, _) = _sut.Disconnect("connection-1");
-
-        Assert.Equal("slug-b", slug);
+        Assert.Equal(new[] { 1, 2, 1 }, observed);
     }
 
     [Fact]
-    public async Task ConcurrentJoins_MaintainsAccurateCount()
+    public void Track_WithEmptySlug_Throws()
+    {
+        Assert.Throws<ArgumentException>("slug", () => _sut.Track("", () => { }));
+    }
+
+    [Fact]
+    public void Track_WithNullCallback_Throws()
+    {
+        Assert.Throws<ArgumentNullException>("onReadersChanged", () => _sut.Track("test-slug", null!));
+    }
+
+    [Fact]
+    public async Task ConcurrentTracks_MaintainAccurateCount()
     {
         var ct = TestContext.Current.CancellationToken;
-        const int connectionCount = 100;
-        var tasks = new List<Task>();
+        const int readerCount = 100;
+        var tasks = new List<Task<IDisposable>>();
 
-        for (var i = 0; i < connectionCount; i++)
+        for (var i = 0; i < readerCount; i++)
         {
-            var connectionId = $"connection-{i}";
-            tasks.Add(Task.Run(() => _sut.JoinPost("test-slug", connectionId), ct));
+            tasks.Add(Task.Run(() => _sut.Track("test-slug", () => { }), ct));
         }
 
-        await Task.WhenAll(tasks);
+        var readers = await Task.WhenAll(tasks);
 
-        var finalCount = _sut.GetReaderCount("test-slug");
-        Assert.Equal(connectionCount, finalCount);
+        Assert.Equal(readerCount, _sut.GetReaderCount("test-slug"));
+
+        foreach (var reader in readers)
+        {
+            reader.Dispose();
+        }
     }
 
     [Fact]
-    public async Task ConcurrentJoinsAndLeaves_MaintainsAccurateCount()
+    public async Task ConcurrentTracksAndDisposals_MaintainAccurateCount()
     {
         var ct = TestContext.Current.CancellationToken;
+        var initial = new List<IDisposable>();
 
         for (var i = 0; i < 50; i++)
         {
-            _sut.JoinPost("test-slug", $"connection-{i}");
+            initial.Add(_sut.Track("test-slug", () => { }));
         }
 
         var tasks = new List<Task>();
 
-        for (var i = 50; i < 75; i++)
+        for (var i = 0; i < 25; i++)
         {
-            var connectionId = $"connection-{i}";
-            tasks.Add(Task.Run(() => _sut.JoinPost("test-slug", connectionId), ct));
+            tasks.Add(Task.Run(() => _sut.Track("test-slug", () => { }), ct));
         }
 
         for (var i = 0; i < 25; i++)
         {
-            var connectionId = $"connection-{i}";
-            tasks.Add(Task.Run(() => _sut.LeavePost("test-slug", connectionId), ct));
+            var reader = initial[i];
+            tasks.Add(Task.Run(() => reader.Dispose(), ct));
         }
 
         await Task.WhenAll(tasks);
 
-        var finalCount = _sut.GetReaderCount("test-slug");
-        Assert.Equal(50, finalCount);
+        Assert.Equal(50, _sut.GetReaderCount("test-slug"));
     }
 
     [Fact]
-    public async Task ConcurrentDisconnects_MaintainsAccurateCount()
+    public async Task ConcurrentDisposals_ReturnCountToZero()
     {
         var ct = TestContext.Current.CancellationToken;
-        const int connectionCount = 50;
+        const int readerCount = 50;
+        var readers = new List<IDisposable>();
 
-        for (var i = 0; i < connectionCount; i++)
+        for (var i = 0; i < readerCount; i++)
         {
-            _sut.JoinPost("test-slug", $"connection-{i}");
+            readers.Add(_sut.Track("test-slug", () => { }));
         }
 
-        var tasks = new List<Task>();
-        for (var i = 0; i < connectionCount; i++)
-        {
-            var connectionId = $"connection-{i}";
-            tasks.Add(Task.Run(() => _sut.Disconnect(connectionId), ct));
-        }
+        var tasks = readers.Select(reader => Task.Run(() => reader.Dispose(), ct)).ToList();
 
         await Task.WhenAll(tasks);
 
-        var finalCount = _sut.GetReaderCount("test-slug");
-        Assert.Equal(0, finalCount);
+        Assert.Equal(0, _sut.GetReaderCount("test-slug"));
     }
 }

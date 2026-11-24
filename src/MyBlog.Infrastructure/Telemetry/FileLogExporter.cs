@@ -10,7 +10,7 @@ public sealed class FileLogExporter : BaseExporter<LogRecord>
     private readonly string _directory;
     private readonly string _runId;
     private readonly long _maxFileSizeBytes;
-    private readonly object _lock = new();
+    private readonly Lock _lock = new();
     private StreamWriter? _writer;
     private long _currentFileSize;
     private int _fileNumber;

@@ -195,6 +195,38 @@ public class RssFeedTests : IAsyncDisposable
     }
 
     [Fact]
+    public async Task RssFeed_OrdersItemsNewestFirst()
+    {
+        var ct = TestContext.Current.CancellationToken;
+        var baseDate = new DateTime(2026, 3, 15, 12, 0, 0, DateTimeKind.Utc);
+        await CreateTestPost("Middle Post", isPublished: true, publishedAt: baseDate, ct: ct);
+        await CreateTestPost("Newest Post", isPublished: true, publishedAt: baseDate.AddDays(1), ct: ct);
+        await CreateTestPost("Oldest Post", isPublished: true, publishedAt: baseDate.AddDays(-1), ct: ct);
+
+        var doc = await GenerateFeedXDocument(ct);
+        var titles = doc.Descendants("item").Select(i => i.Element("title")!.Value).ToList();
+
+        Assert.Equal(new[] { "Newest Post", "Middle Post", "Oldest Post" }, titles);
+    }
+
+    [Fact]
+    public async Task RssFeed_EveryItemHasContentEncoded()
+    {
+        var ct = TestContext.Current.CancellationToken;
+
+        for (var i = 0; i < 3; i++)
+        {
+            await CreateTestPost($"Encoded Post {i}", isPublished: true, ct: ct);
+        }
+
+        var doc = await GenerateFeedXDocument(ct);
+        var items = doc.Descendants("item").ToList();
+
+        Assert.Equal(3, items.Count);
+        Assert.All(items, item => Assert.NotNull(item.Element(ContentNs + "encoded")));
+    }
+
+    [Fact]
     public async Task RssFeed_HasNoBom()
     {
         var ct = TestContext.Current.CancellationToken;

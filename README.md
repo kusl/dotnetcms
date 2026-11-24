@@ -2,7 +2,7 @@
 
 > **AI-assisted development notice:** this project contains code written with help from Large Language Models (Claude by Anthropic and Gemini by Google). Human review and testing have been applied, but treat the code as experimental and use caution in production.
 
-A lightweight, self-hosted blog engine built with .NET 10 and Blazor Server, following Clean Architecture. Free and open source.
+A lightweight, self-hosted blog engine built with .NET 11 and Blazor Server, following Clean Architecture. Free and open source.
 
 **Live:** [kush.runasp.net](https://kush.runasp.net) · **Source:** [github.com/kusl/dotnetcms](https://github.com/kusl/dotnetcms)
 
@@ -11,12 +11,12 @@ A lightweight, self-hosted blog engine built with .NET 10 and Blazor Server, fol
 - Markdown posts rendered by a small hand-written parser (headings, emphasis, links, autolinks, images, inline and fenced code, blockquotes, lists, horizontal rules, tables, backslash escapes). All HTML in posts is escaped and link URLs are limited to safe schemes. See [Writing posts](#writing-posts).
 - Images stored as BLOBs in SQLite (JPEG, PNG, GIF, WebP, up to 5 MB), served from `/api/images/{id}`. Image width and height are probed once and cached to prevent layout shift.
 - Admin area: dashboard, post editor with live preview, image library, user management, password change.
-- Live "people reading now" counts through SignalR.
+- Live "people reading now" counts, pushed to each reader over their existing Blazor circuit.
 - RSS 2.0 feed at `/feed.xml` with full post content.
 - Six themes (light, dark, sepia, nord, solarized light, dracula), persisted in `localStorage`.
 - SEO metadata: Open Graph, Twitter cards, JSON-LD, canonical URLs.
 - Cookie authentication with login rate limiting that slows attackers down but never locks anyone out.
-- OpenTelemetry traces, metrics and logs, exported over vendor-neutral OTLP when configured, plus local file and database logs with strict retention.
+- OpenTelemetry traces, metrics and logs from the framework's built-in instrumentation, exported over vendor-neutral OTLP when configured, plus local file and database logs with strict retention.
 
 ## Architecture
 
@@ -24,7 +24,7 @@ A lightweight, self-hosted blog engine built with .NET 10 and Blazor Server, fol
 src/
 ├── MyBlog.Core            Domain models, interfaces, MarkdownService, SlugService (no infrastructure dependencies)
 ├── MyBlog.Infrastructure  EF Core + SQLite, repositories, auth, image probing, telemetry exporters and cleanup
-├── MyBlog.Web             Blazor Server UI, minimal API endpoints, SignalR hub, login rate limiting
+├── MyBlog.Web             Blazor Server UI, minimal API endpoints, login rate limiting
 ├── MyBlog.Tests           xUnit v3 unit and integration tests (in-memory SQLite)
 └── MyBlog.E2E             Playwright end-to-end tests
 ```
@@ -36,10 +36,11 @@ Notable choices:
 - **No EF Core migrations.** `EnsureCreated` builds a new database; `DatabaseSchemaUpdater` adds newer tables to existing databases idempotently (ADR-0005).
 - **Login is a static form** that posts to `POST /account/login`, because `HttpContext` is not available inside an interactive circuit (ADR-0013).
 - **All routes are Interactive Server**, set once on `Routes` in `App.razor`. Pages are prerendered first. `MainLayout` exposes `data-blazor-interactive` so tests can wait for the circuit.
+- **Reader counts run in process.** `ReaderBadge` registers with the singleton `IReaderTrackingService` once its circuit is interactive and rerenders when another reader of the same post arrives or leaves. There is no separate hub (ADR-0025).
 
 ## Quick start
 
-Requires the [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0).
+Requires the [.NET 11 SDK](https://dotnet.microsoft.com/download/dotnet/11.0). `src/global.json` accepts 11.0.100-rc.3 or any later 11.0 SDK, so a machine that only has RC 3 still builds; CI uses the latest stable 11.0 SDK.
 
 ```bash
 git clone https://github.com/kusl/dotnetcms.git
@@ -120,7 +121,7 @@ End-to-end tests run against a real instance in containers:
 
 The script exits with the test container's exit code and writes both containers' logs to `test-results/`. See [`docs/E2E-TESTING.md`](docs/E2E-TESTING.md).
 
-`run.sh` runs format, restore, clean, build, unit tests, package listings, `export.sh` and the E2E suite. It logs everything to `docs/llm/output/` and exits non-zero if any step failed.
+`run.sh` runs format, restore, clean, build, unit tests, package listings (all outdated packages, then only upgrades within the current major version), `export.sh` and the E2E suite. It logs everything to `docs/llm/output/` and exits non-zero if any step failed.
 
 ## Configuration
 
@@ -156,7 +157,7 @@ If the preferred directory is not writable, the database falls back to `data/` a
 
 ## Logging and retention
 
-Logs go to the console, to rotating JSON files (`logs_<run>.json`, 25 MB per file), to the `TelemetryLogs` table, and to OTLP when configured. Default levels are `Information`, with `Warning` for `Microsoft.AspNetCore` and `Microsoft.EntityFrameworkCore`.
+Logs go to the console logger, to rotating JSON files (`logs_<run>.json`, 25 MB per file), to the `TelemetryLogs` table, and to OTLP when configured. Traces and metrics are collected only when OTLP is configured, from the framework's `Microsoft.AspNetCore` and `System.Net.Http` sources and meters. Default levels are `Information`, with `Warning` for `Microsoft.AspNetCore` and `Microsoft.EntityFrameworkCore`.
 
 `TelemetryCleanupService` keeps local logs bounded. It runs at startup and then every hour. On each run it:
 
@@ -175,23 +176,22 @@ Database and file cleanup run independently, so a failure in one does not skip t
 | `GET /api/images/{id}` | Image bytes |
 | `POST /account/login` | Form login (rate limited outside Development) |
 | `POST /logout` | Sign out (requires authentication) |
-| `/readerHub` | SignalR hub for reader counts |
 
 ## Deployment
 
 `.github/workflows/build-deploy.yml`:
 
-1. **build-test**: restore, build and unit tests on Ubuntu, Windows and macOS.
+1. **build-test**: restore, build and unit tests on Ubuntu and Windows. The same steps run on macOS in a separate `build-test-macos` job that is allowed to fail or time out (30 minutes); nothing waits for it.
 2. **e2e-tests**: builds, starts the app, installs Chromium and runs the Playwright suite.
 3. **deploy**: runs on `main` only. It is a matrix with two IIS targets (`primary`, `nice`) that deploy independently (`fail-fast: false`). Each publishes for `win-x86`, injects OTLP settings into `web.config`, and syncs with WebDeploy using `AppOffline` and `DoNotDeleteRule`.
 
-The .NET SDK version used by CI is set once in the workflow's `DOTNET_VERSION`.
+The .NET SDK version used by CI is set once in the workflow's `DOTNET_VERSION` (`11.0.x`). The publish is framework-dependent, so each IIS host must have the .NET 11 runtime (ASP.NET Core Module) selected before `main` deploys. .NET 11 requires an x86-64-v2 CPU.
 
 Secrets per target (the second target uses the same names with a `NICE_` prefix): `WEBSITE_NAME` (the IIS site name, not the domain), `SERVER_COMPUTER_NAME`, `SERVER_USERNAME`, `SERVER_PASSWORD`, and optionally `HONEYCOMB_API_KEY` and `OTLP_ENDPOINT`.
 
 ## Package versions
 
-All NuGet versions are pinned in `src/Directory.Packages.props`. Central Package Management and transitive pinning are enabled. Bumping a package, including Playwright, only requires editing that file: the E2E container installs browsers through a throwaway project that references the centrally pinned `Microsoft.Playwright`, and CI finds `playwright.ps1` in the build output instead of a hard-coded path.
+All NuGet versions are pinned in `src/Directory.Packages.props`. Central Package Management and transitive pinning are enabled. Packages the .NET 11 shared framework already provides are not referenced (a direct reference raises NU1510). `dotnet package list --outdated` shows every newer version, including the next major release that needs the next target framework; add `--highest-minor` to list only upgrades within the current major version. Bumping a package, including Playwright, only requires editing that file: the E2E container installs browsers through a throwaway project that references the centrally pinned `Microsoft.Playwright`, and CI finds `playwright.ps1` in the build output instead of a hard-coded path.
 
 ## LLM context files
 

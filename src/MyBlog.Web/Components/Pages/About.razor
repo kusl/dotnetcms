@@ -17,7 +17,7 @@
         <h2>Overview</h2>
         <p>
             Welcome to <strong>@(Configuration["Application:Title"] ?? "MyBlog")</strong>, a powerful yet lightweight
-            content management system and blogging platform built entirely with <strong>.NET 10</strong> and
+            content management system and blogging platform built entirely with <strong>.NET 11</strong> and
             <strong>Blazor Server</strong>. This application represents a modern approach to self-hosted blogging,
             combining the performance and type-safety of C# with the interactive capabilities of Blazor's
             component-based architecture.
@@ -119,7 +119,7 @@
             <div class="tech-category">
                 <h3>Backend Framework</h3>
                 <ul>
-                    <li><strong>.NET 10</strong> — Current runtime with latest features and performance improvements</li>
+                    <li><strong>.NET 11</strong> — Current runtime with latest features and performance improvements</li>
                     <li><strong>Blazor Server</strong> — Component-based UI with real-time SignalR connectivity</li>
                     <li><strong>ASP.NET Core</strong> — Web framework with middleware pipeline</li>
                     <li><strong>Entity Framework Core</strong> — ORM; schema via EnsureCreated plus an idempotent updater, no migrations</li>
@@ -152,7 +152,7 @@
                     <li><strong>OpenTelemetry</strong> — Distributed tracing and metrics</li>
                     <li><strong>File Log Exporter</strong> — JSON-formatted log files with rotation</li>
                     <li><strong>Database Log Exporter</strong> — Queryable telemetry storage</li>
-                    <li><strong>Console Exporter</strong> — Development-time debugging</li>
+                    <li><strong>Built-in Instrumentation</strong> — ASP.NET Core and HttpClient traces and metrics, exported over OTLP when configured</li>
                 </ul>
             </div>
 
@@ -162,7 +162,7 @@
                     <li><strong>xUnit v3</strong> — Modern testing framework</li>
                     <li><strong>In-Memory Database</strong> — Fast integration tests</li>
                     <li><strong>Dependency Injection</strong> — Testable delay functions</li>
-                    <li><strong>Cross-Platform CI</strong> — Windows, Linux, macOS matrix</li>
+                    <li><strong>Cross-Platform CI</strong> — Windows and Linux required, macOS best effort</li>
                 </ul>
             </div>
 
@@ -234,13 +234,13 @@
                 <h3>Real-Time Reader Tracking</h3>
                 <p>
                     See how many people are currently reading each post with live-updating reader counts.
-                    Uses a thread-safe <code>ConcurrentDictionary</code> and event-driven updates via
-                    SignalR for instant UI refresh.
+                    Each reader's badge registers in process once its Blazor circuit is interactive, and
+                    every badge on the same post rerenders when someone arrives or leaves.
                 </p>
                 <div class="feature-details">
                     <strong>Implementation:</strong>
-                    <code>IReaderTrackingService</code> with JoinPost/LeavePost lifecycle;
-                    <code>ReaderHub</code> broadcasts <code>UpdateCount</code> to each post's group
+                    <code>IReaderTrackingService.Track</code> returns an <code>IDisposable</code>;
+                    disposing the badge removes the reader and notifies the others
                 </div>
             </div>
 
@@ -441,7 +441,7 @@
         <div class="deployment-section">
             <h3>GitHub Actions Workflow</h3>
             <ol>
-                <li><strong>Build & Test</strong> — Runs on Windows, Linux, and macOS simultaneously</li>
+                <li><strong>Build & Test</strong> — Runs on Windows and Linux; macOS runs alongside without blocking</li>
                 <li><strong>Restore</strong> — <code>dotnet restore src/MyBlog.slnx</code></li>
                 <li><strong>Build</strong> — <code>dotnet build -c Release</code></li>
                 <li><strong>Test</strong> — <code>dotnet run --project src/MyBlog.Tests/MyBlog.Tests.csproj</code> (Microsoft.Testing.Platform)</li>
@@ -623,7 +623,7 @@
         <h2>Quick Start</h2>
         <div class="quickstart">
             <h3>Prerequisites</h3>
-            <p><a href="https://dotnet.microsoft.com/download/dotnet/10.0" target="_blank">.NET 10 SDK</a> or later</p>
+            <p><a href="https://dotnet.microsoft.com/download/dotnet/11.0" target="_blank">.NET 11 SDK</a> (11.0.100-rc.3 or later)</p>
 
             <h3>Running Locally</h3>
             <pre><code># Clone the repository
@@ -683,7 +683,7 @@ dotnet run</code></pre>
 
     <section class="about-footer">
         <p>
-            Built with ❤️ using .NET 10 and Blazor Server
+            Built with ❤️ using .NET 11 and Blazor Server
         </p>
         <p class="version-info">
             <small>

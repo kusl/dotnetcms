@@ -8,7 +8,6 @@ using MyBlog.Infrastructure.Data;
 using MyBlog.Infrastructure.Telemetry;
 using MyBlog.Web.Components;
 using MyBlog.Web.Endpoints;
-using MyBlog.Web.Hubs;
 using MyBlog.Web.Middleware;
 using OpenTelemetry.Exporter;
 using OpenTelemetry.Logs;
@@ -30,8 +29,6 @@ builder.Services.AddRazorComponents()
     {
         options.MaximumReceiveMessageSize = maxCircuitMessageBytes;
     });
-
-builder.Services.AddSignalR();
 
 builder.Services.AddInfrastructure(builder.Configuration);
 
@@ -77,38 +74,31 @@ Action<OtlpExporterOptions> configureOtlp = o =>
     o.Headers = $"x-honeycomb-team={otlpApiKey}";
 };
 
-builder.Services.AddOpenTelemetry()
-    .ConfigureResource(resource => resource.AddService(serviceName, serviceVersion))
-    .WithTracing(tracing =>
-    {
-        tracing
-            .AddAspNetCoreInstrumentation()
-            .AddHttpClientInstrumentation()
-            .AddConsoleExporter();
+var openTelemetry = builder.Services.AddOpenTelemetry()
+    .ConfigureResource(resource => resource.AddService(serviceName, serviceVersion));
 
-        if (otlpEnabled)
-        {
-            tracing.AddOtlpExporter(configureOtlp);
-        }
-    })
-    .WithMetrics(metrics =>
-    {
-        metrics
-            .AddAspNetCoreInstrumentation()
-            .AddHttpClientInstrumentation()
-            .AddConsoleExporter();
-
-        if (otlpEnabled)
-        {
-            metrics.AddOtlpExporter(configureOtlp);
-        }
-    });
+if (otlpEnabled)
+{
+    openTelemetry
+        .WithTracing(tracing => tracing
+            .AddSource("Microsoft.AspNetCore", "System.Net.Http")
+            .AddOtlpExporter(configureOtlp))
+        .WithMetrics(metrics => metrics
+            .AddMeter(
+                "Microsoft.AspNetCore.Hosting",
+                "Microsoft.AspNetCore.Server.Kestrel",
+                "Microsoft.AspNetCore.Http.Connections",
+                "Microsoft.AspNetCore.Routing",
+                "Microsoft.AspNetCore.Diagnostics",
+                "System.Net.Http",
+                "System.Net.NameResolution")
+            .AddOtlpExporter(configureOtlp));
+}
 
 builder.Logging.AddOpenTelemetry(logging =>
 {
     logging.IncludeFormattedMessage = true;
     logging.IncludeScopes = true;
-    logging.AddConsoleExporter();
 
     logging.AddLocalExporters(builder.Configuration);
 
@@ -189,8 +179,6 @@ app.MapRssEndpoints();
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
-
-app.MapHub<ReaderHub>("/readerHub");
 
 using (var scope = app.Services.CreateScope())
 {

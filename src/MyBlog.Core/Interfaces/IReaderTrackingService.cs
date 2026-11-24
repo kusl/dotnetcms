@@ -2,11 +2,7 @@ namespace MyBlog.Core.Interfaces;
 
 public interface IReaderTrackingService
 {
-    int JoinPost(string slug, string connectionId);
-
-    int LeavePost(string slug, string connectionId);
-
-    (string? Slug, int NewCount) Disconnect(string connectionId);
+    IDisposable Track(string slug, Action onReadersChanged);
 
     int GetReaderCount(string slug);
 }

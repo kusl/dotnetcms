@@ -104,3 +104,5 @@ change to be made on its own merits rather than bundled into this documentation 
 > **Amendment (2026-10-25):** resolved by ADR-0022: the `Console.WriteLine` calls (now `ILogger`), the duplicated XDG logic in the two path resolvers, and the stale `playwright.md`.
 
 > **Amendment (2026-11-04):** resolved by ADR-0024: recommendation 1 and the "No URL scheme filtering" deviation. Link, image and autolink URLs are now limited to `http`, `https`, `mailto` and relative URLs.
+
+> **Amendment (2026-11-24):** resolved by ADR-0025: recommendations 5 (console exporters removed), 6 (reader badge uses `IReaderTrackingService` directly) and 7 (single RSS query). The `ReaderTrackingService` nit is also resolved: the class is sealed and was rewritten.

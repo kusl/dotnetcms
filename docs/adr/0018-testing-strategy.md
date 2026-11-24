@@ -88,3 +88,5 @@ construction and a stale aspirational E2E design note, because faithful behavior
 zero mocking dependencies matter more than test-time indirection.
 
 > **Amendment (2026-10-25):** `playwright.md` is deleted. RSS tests call the production feed builder, and E2E login uses shared helpers that wait for the circuit (ADR-0022).
+
+> **Amendment (2026-11-24):** `Microsoft.NET.Test.Sdk` is removed. The test projects run only on Microsoft.Testing.Platform, through `dotnet run` and `src/global.json` (ADR-0025).
