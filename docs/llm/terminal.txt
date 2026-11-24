@@ -120,3 +120,111 @@ real	1m26.618s
 user	1m15.797s
 sys	0m18.666s
 kushal@fedora:~/src/dotnet/MyBlog$ 
+
+
+
+
+
+
+
+
+kushal@fedora:~/src/dotnet/MyBlog$ mylogpath="/home/kushal/src/dotnet/MyBlog/docs/llm/output/$(date +%Y-%m-%d-%H-%M-%S).txt";cd ~/src/dotnet/MyBlog/ && pwd > ${mylogpath} && export DOTNET_CLI_TELEMETRY_OPTOUT=1 && (cd src && time dotnet format >> ${mylogpath}; time dotnet restore >> ${mylogpath}; time dotnet clean >> ${mylogpath}; time dotnet build >> ${mylogpath}; time dotnet run --project MyBlog.Tests/MyBlog.Tests.csproj >> ${mylogpath}; time dotnet list package >> ${mylogpath}; time dotnet list package --outdated >> ${mylogpath}); cd ~/src/dotnet/MyBlog/ >> ${mylogpath}; cat export.sh >> ${mylogpath}; time bash export.sh >> ${mylogpath}; cat run-e2e.sh >> ${mylogpath}; time bash run-e2e.sh >> ${mylogpath}; time bash run.sh >> ${mylogpath};
+
+real	0m6.637s
+user	0m14.114s
+sys	0m0.823s
+
+real	0m0.253s
+user	0m0.098s
+sys	0m0.033s
+
+real	0m0.209s
+user	0m0.102s
+sys	0m0.025s
+
+real	0m1.084s
+user	0m0.116s
+sys	0m0.038s
+
+The build failed. Fix the build errors and run again.
+
+real	0m0.869s
+user	0m0.353s
+sys	0m0.064s
+
+real	0m1.027s
+user	0m0.757s
+sys	0m0.198s
+
+real	0m1.159s
+user	0m0.852s
+sys	0m0.215s
+
+real	0m1.487s
+user	0m0.753s
+sys	0m1.167s
+Error: building at STEP "RUN dotnet build MyBlog.E2E/MyBlog.E2E.csproj -c Release": while running runtime: exit status 1
+Error: building at STEP "RUN dotnet publish MyBlog.Web/MyBlog.Web.csproj -c Release -o /app/publish": while running runtime: exit status 1
+
+real	0m8.349s
+user	0m3.397s
+sys	0m2.686s
+run.sh: logging to /home/kushal/src/dotnet/MyBlog/docs/llm/output/2026-11-24-13-40-02.txt
+[01] dotnet --info ...
+[01] dotnet --info -> ok (0s)
+[02] dotnet format ...
+[02] dotnet format -> ok (7s)
+[03] dotnet restore ...
+[03] dotnet restore -> ok (0s)
+[04] dotnet clean ...
+[04] dotnet clean -> ok (0s)
+[05] dotnet build ...
+[05] dotnet build -> FAILED (exit 1, 1s)
+[06] dotnet run (MyBlog.Tests) ...
+[06] dotnet run (MyBlog.Tests) -> FAILED (exit 1, 1s)
+[07] dotnet package list ...
+[07] dotnet package list -> ok (1s)
+[08] dotnet package list --outdated ...
+[08] dotnet package list --outdated -> ok (1s)
+[09] outdated within major ...
+[09] outdated within major -> ok (1s)
+[10] podman --version ...
+[10] podman --version -> ok (0s)
+[11] podman-compose --version ...
+[11] podman-compose --version -> ok (0s)
+[12] git status ...
+[12] git status -> ok (0s)
+[13] export.sh ...
+[13] export.sh -> ok (2s)
+[14] run-e2e.sh ...
+[14] run-e2e.sh -> FAILED (exit 1, 8s)
+
+###############################################################################
+# SUMMARY
+###############################################################################
+  [PASS] dotnet --info                        exit=0    0s
+  [PASS] dotnet format                        exit=0    7s
+  [PASS] dotnet restore                       exit=0    0s
+  [PASS] dotnet clean                         exit=0    0s
+  [FAIL] dotnet build                         exit=1    1s
+  [FAIL] dotnet run (MyBlog.Tests)            exit=1    1s
+  [PASS] dotnet package list                  exit=0    1s
+  [PASS] dotnet package list --outdated       exit=0    1s
+  [PASS] outdated within major                exit=0    1s
+  [PASS] podman --version                     exit=0    0s
+  [PASS] podman-compose --version             exit=0    0s
+  [PASS] git status                           exit=0    0s
+  [PASS] export.sh                            exit=0    2s
+  [FAIL] run-e2e.sh                           exit=1    8s
+  Steps: 14  Failures: 3
+  Log: /home/kushal/src/dotnet/MyBlog/docs/llm/output/2026-11-24-13-40-02.txt
+
+real	0m21.565s
+user	0m21.545s
+sys	0m5.374s
+kushal@fedora:~/src/dotnet/MyBlog$ 
+
+
+
+
+
