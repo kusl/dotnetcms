@@ -10718,7 +10718,6 @@ dotnet run</code></pre>
 @page "/admin/change-password"
 @attribute [Authorize]
 @inject IAuthService AuthService
-@inject AuthenticationStateProvider AuthStateProvider
 @inject NavigationManager Navigation
 @using System.Security.Claims
 
@@ -10762,6 +10761,9 @@ dotnet run</code></pre>
 </div>
 
 @code {
+    [CascadingParameter]
+    private Task<AuthenticationState>? AuthenticationStateTask { get; set; }
+
     private string _currentPassword = "";
     private string _newPassword = "";
     private string _confirmPassword = "";
@@ -10791,8 +10793,8 @@ dotnet run</code></pre>
             return;
         }
 
-        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
-        var userIdClaim = authState.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        var authState = AuthenticationStateTask is null ? null : await AuthenticationStateTask;
+        var userIdClaim = authState?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
         
         if (string.IsNullOrEmpty(userIdClaim) || !Guid.TryParse(userIdClaim, out var userId))
         {
@@ -10949,7 +10951,6 @@ else
 @page "/admin/images"
 @attribute [Authorize]
 @inject IImageRepository ImageRepository
-@inject AuthenticationStateProvider AuthStateProvider
 @using System.Security.Claims
 
 <PageTitle>Manage Images</PageTitle>
@@ -10996,6 +10997,9 @@ else
 }
 
 @code {
+    [CascadingParameter]
+    private Task<AuthenticationState>? AuthenticationStateTask { get; set; }
+
     private IReadOnlyList<Image>? _images;
     private string? _uploadStatus;
     private bool _uploadError;
@@ -11029,8 +11033,8 @@ else
                 return;
             }
 
-            var authState = await AuthStateProvider.GetAuthenticationStateAsync();
-            var userIdClaim = authState.User.FindFirst(ClaimTypes.NameIdentifier);
+            var authState = AuthenticationStateTask is null ? null : await AuthenticationStateTask;
+            var userIdClaim = authState?.User.FindFirst(ClaimTypes.NameIdentifier);
             
             if (userIdClaim is null || !Guid.TryParse(userIdClaim.Value, out var userId))
             {
@@ -11155,7 +11159,6 @@ else
 @inject IPostRepository PostRepository
 @inject ISlugService SlugService
 @inject NavigationManager Navigation
-@inject AuthenticationStateProvider AuthStateProvider
 @inject ILogger<PostEditor> Logger
 @using System.Security.Claims
 
@@ -11232,6 +11235,9 @@ else
 
 @code {
     private const int PreviewDebounceMilliseconds = 500;
+
+    [CascadingParameter]
+    private Task<AuthenticationState>? AuthenticationStateTask { get; set; }
 
     [Parameter]
     public Guid? Id { get; set; }
@@ -11323,8 +11329,8 @@ else
 
         try
         {
-            var authState = await AuthStateProvider.GetAuthenticationStateAsync();
-            var userId = authState.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var authState = AuthenticationStateTask is null ? null : await AuthenticationStateTask;
+            var userId = authState?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             if (string.IsNullOrEmpty(userId))
             {
@@ -11811,7 +11817,6 @@ else
 @page "/admin/users"
 @attribute [Authorize(Roles = AppConstants.AdminRole)]
 @inject IUserRepository UserRepository
-@inject AuthenticationStateProvider AuthStateProvider
 @inject IJSRuntime JsRuntime
 @using System.Security.Claims
 
@@ -11870,13 +11875,16 @@ else
 </div>
 
 @code {
+    [CascadingParameter]
+    private Task<AuthenticationState>? AuthenticationStateTask { get; set; }
+
     private IReadOnlyList<User>? _users;
     private Guid _currentUserId;
 
     protected override async Task OnInitializedAsync()
     {
-        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
-        var idClaim = authState.User.FindFirst(ClaimTypes.NameIdentifier);
+        var authState = AuthenticationStateTask is null ? null : await AuthenticationStateTask;
+        var idClaim = authState?.User.FindFirst(ClaimTypes.NameIdentifier);
         if (idClaim != null && Guid.TryParse(idClaim.Value, out var id))
         {
             _currentUserId = id;
@@ -11891,7 +11899,15 @@ else
     {
         if (id == _currentUserId) return;
 
-        var confirm = await JsRuntime.InvokeAsync<bool>("confirm", "Are you sure you want to delete this user?");
+        bool confirm;
+        try
+        {
+            confirm = await JsRuntime.InvokeAsync<bool>("confirm", "Are you sure you want to delete this user?");
+        }
+        catch (Exception ex) when (ex is JSException or JSDisconnectedException or TaskCanceledException)
+        {
+            return;
+        }
         
         if (confirm)
         {

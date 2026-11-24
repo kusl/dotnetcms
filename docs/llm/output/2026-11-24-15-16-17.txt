@@ -1,0 +1,623 @@
+/home/kushal/src/dotnet/MyBlog
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+Build started 11/24/2026 3:16:24 PM.
+     1>Project "/home/kushal/src/dotnet/MyBlog/src/MyBlog.slnx" on node 1 (Clean target(s)).
+     1>ValidateSolutionConfiguration:
+         Building solution configuration "Debug|Any CPU".
+     1>Project "/home/kushal/src/dotnet/MyBlog/src/MyBlog.slnx" (1) is building "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Core/MyBlog.Core.csproj" (2) on node 3 (Clean target(s)).
+     2>_CheckForNETCoreSdkIsPreview:
+       /usr/lib64/dotnet/sdk/11.0.100-rc.3.26522.148/Sdks/Microsoft.NET.Sdk/targets/Microsoft.NET.RuntimeIdentifierInference.targets(385,5): message NETSDK1057: You are using a preview version of .NET. See: https://aka.ms/dotnet-support-policy [/home/kushal/src/dotnet/MyBlog/src/MyBlog.Core/MyBlog.Core.csproj]
+     1>Project "/home/kushal/src/dotnet/MyBlog/src/MyBlog.slnx" (1) is building "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/MyBlog.Tests.csproj" (3) on node 4 (Clean target(s)).
+     3>_CheckForNETCoreSdkIsPreview:
+       /usr/lib64/dotnet/sdk/11.0.100-rc.3.26522.148/Sdks/Microsoft.NET.Sdk/targets/Microsoft.NET.RuntimeIdentifierInference.targets(385,5): message NETSDK1057: You are using a preview version of .NET. See: https://aka.ms/dotnet-support-policy [/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/MyBlog.Tests.csproj]
+     1>Project "/home/kushal/src/dotnet/MyBlog/src/MyBlog.slnx" (1) is building "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Infrastructure/MyBlog.Infrastructure.csproj" (4) on node 2 (Clean target(s)).
+     4>_CheckForNETCoreSdkIsPreview:
+       /usr/lib64/dotnet/sdk/11.0.100-rc.3.26522.148/Sdks/Microsoft.NET.Sdk/targets/Microsoft.NET.RuntimeIdentifierInference.targets(385,5): message NETSDK1057: You are using a preview version of .NET. See: https://aka.ms/dotnet-support-policy [/home/kushal/src/dotnet/MyBlog/src/MyBlog.Infrastructure/MyBlog.Infrastructure.csproj]
+     2>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Core/bin/Debug/net11.0/MyBlog.Core.deps.json".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Core/bin/Debug/net11.0/MyBlog.Core.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Core/bin/Debug/net11.0/MyBlog.Core.pdb".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Core/obj/Debug/net11.0/MyBlog.Core.GeneratedMSBuildEditorConfig.editorconfig".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Core/obj/Debug/net11.0/MyBlog.Core.AssemblyInfoInputs.cache".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Core/obj/Debug/net11.0/MyBlog.Core.AssemblyInfo.cs".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Core/obj/Debug/net11.0/MyBlog.Core.csproj.CoreCompileInputs.cache".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Core/obj/Debug/net11.0/MyBlog.Core.sourcelink.json".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Core/obj/Debug/net11.0/MyBlog.Core.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Core/obj/Debug/net11.0/refint/MyBlog.Core.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Core/obj/Debug/net11.0/MyBlog.Core.pdb".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Core/obj/Debug/net11.0/ref/MyBlog.Core.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Core/obj/Debug/net11.0/MyBlog.C.C944C2A5.Up2Date".
+     1>Project "/home/kushal/src/dotnet/MyBlog/src/MyBlog.slnx" (1) is building "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/MyBlog.E2E.csproj" (5) on node 5 (Clean target(s)).
+     5>_CheckForNETCoreSdkIsPreview:
+       /usr/lib64/dotnet/sdk/11.0.100-rc.3.26522.148/Sdks/Microsoft.NET.Sdk/targets/Microsoft.NET.RuntimeIdentifierInference.targets(385,5): message NETSDK1057: You are using a preview version of .NET. See: https://aka.ms/dotnet-support-policy [/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/MyBlog.E2E.csproj]
+     4>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Infrastructure/bin/Debug/net11.0/MyBlog.Infrastructure.deps.json".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Infrastructure/bin/Debug/net11.0/MyBlog.Infrastructure.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Infrastructure/bin/Debug/net11.0/MyBlog.Infrastructure.pdb".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Infrastructure/bin/Debug/net11.0/MyBlog.Core.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Infrastructure/bin/Debug/net11.0/MyBlog.Core.pdb".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Infrastructure/obj/Debug/net11.0/MyBlog.Infrastructure.csproj.AssemblyReference.cache".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Infrastructure/obj/Debug/net11.0/MyBlog.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Infrastructure/obj/Debug/net11.0/MyBlog.Infrastructure.AssemblyInfoInputs.cache".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Infrastructure/obj/Debug/net11.0/MyBlog.Infrastructure.AssemblyInfo.cs".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Infrastructure/obj/Debug/net11.0/MyBlog.Infrastructure.csproj.CoreCompileInputs.cache".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Infrastructure/obj/Debug/net11.0/MyBlog.Infrastructure.sourcelink.json".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Infrastructure/obj/Debug/net11.0/MyBlog.I.50ADA1E9.Up2Date".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Infrastructure/obj/Debug/net11.0/MyBlog.Infrastructure.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Infrastructure/obj/Debug/net11.0/refint/MyBlog.Infrastructure.dll".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Infrastructure/obj/Debug/net11.0/MyBlog.Infrastructure.pdb".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Infrastructure/obj/Debug/net11.0/ref/MyBlog.Infrastructure.dll".
+     1>Project "/home/kushal/src/dotnet/MyBlog/src/MyBlog.slnx" (1) is building "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/MyBlog.Web.csproj" (6) on node 1 (Clean target(s)).
+     6>_CheckForNETCoreSdkIsPreview:
+       /usr/lib64/dotnet/sdk/11.0.100-rc.3.26522.148/Sdks/Microsoft.NET.Sdk/targets/Microsoft.NET.RuntimeIdentifierInference.targets(385,5): message NETSDK1057: You are using a preview version of .NET. See: https://aka.ms/dotnet-support-policy [/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/MyBlog.Web.csproj]
+     2>Done Building Project "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Core/MyBlog.Core.csproj" (Clean target(s)).
+     6>CoreClean:
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/obj/Debug/net11.0/MyBlog.Web.csproj.AssemblyReference.cache".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/obj/Debug/net11.0/dotnet-watch/Microsoft.NET.Sdk.BlazorWeb.DotNetWatch.lib.module.js".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/obj/Debug/net11.0/dotnet-watch/Microsoft.NET.Sdk.BlazorWeb.DotNetWatch.BrowserTools.js".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/obj/Debug/net11.0/dotnet-watch/Microsoft.NET.Sdk.BlazorWeb.DotNetWatch.BrowserTools.Config.js".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/obj/Debug/net11.0/dotnet-watch/browser-tools-key.public.json".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/obj/Debug/net11.0/dotnet-watch/browser-tools-key.private.json".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/obj/Debug/net11.0/rpswa.dswa.cache.json".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/obj/Debug/net11.0/MyBlog.Web.GeneratedMSBuildEditorConfig.editorconfig".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/obj/Debug/net11.0/MyBlog.Web.AssemblyInfoInputs.cache".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/obj/Debug/net11.0/MyBlog.Web.AssemblyInfo.cs".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/obj/Debug/net11.0/MyBlog.Web.csproj.CoreCompileInputs.cache".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/obj/Debug/net11.0/MyBlog.Web.MvcApplicationPartsAssemblyInfo.cache".
+         Deleting file "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/obj/Debug/net11.0/MyBlog.Web.sourcelink.json".
+     4>Done Building Project "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Infrastructure/MyBlog.Infrastructure.csproj" (Clean target(s)).
+     6>Done Building Project "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/MyBlog.Web.csproj" (Clean target(s)).
+     5>Done Building Project "/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/MyBlog.E2E.csproj" (Clean target(s)).
+     3>Done Building Project "/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/MyBlog.Tests.csproj" (Clean target(s)).
+     1>Done Building Project "/home/kushal/src/dotnet/MyBlog/src/MyBlog.slnx" (Clean target(s)).
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:00.21
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+/usr/lib64/dotnet/sdk/11.0.100-rc.3.26522.148/Sdks/Microsoft.NET.Sdk/targets/Microsoft.NET.RuntimeIdentifierInference.targets(385,5): message NETSDK1057: You are using a preview version of .NET. See: https://aka.ms/dotnet-support-policy [/home/kushal/src/dotnet/MyBlog/src/MyBlog.Core/MyBlog.Core.csproj]
+/usr/lib64/dotnet/sdk/11.0.100-rc.3.26522.148/Sdks/Microsoft.NET.Sdk/targets/Microsoft.NET.RuntimeIdentifierInference.targets(385,5): message NETSDK1057: You are using a preview version of .NET. See: https://aka.ms/dotnet-support-policy [/home/kushal/src/dotnet/MyBlog/src/MyBlog.Infrastructure/MyBlog.Infrastructure.csproj]
+/usr/lib64/dotnet/sdk/11.0.100-rc.3.26522.148/Sdks/Microsoft.NET.Sdk/targets/Microsoft.NET.RuntimeIdentifierInference.targets(385,5): message NETSDK1057: You are using a preview version of .NET. See: https://aka.ms/dotnet-support-policy [/home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/MyBlog.Tests.csproj]
+/usr/lib64/dotnet/sdk/11.0.100-rc.3.26522.148/Sdks/Microsoft.NET.Sdk/targets/Microsoft.NET.RuntimeIdentifierInference.targets(385,5): message NETSDK1057: You are using a preview version of .NET. See: https://aka.ms/dotnet-support-policy [/home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/MyBlog.E2E.csproj]
+/usr/lib64/dotnet/sdk/11.0.100-rc.3.26522.148/Sdks/Microsoft.NET.Sdk/targets/Microsoft.NET.RuntimeIdentifierInference.targets(385,5): message NETSDK1057: You are using a preview version of .NET. See: https://aka.ms/dotnet-support-policy [/home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/MyBlog.Web.csproj]
+  MyBlog.Core -> /home/kushal/src/dotnet/MyBlog/src/MyBlog.Core/bin/Debug/net11.0/MyBlog.Core.dll
+  MyBlog.Infrastructure -> /home/kushal/src/dotnet/MyBlog/src/MyBlog.Infrastructure/bin/Debug/net11.0/MyBlog.Infrastructure.dll
+  MyBlog.Web -> /home/kushal/src/dotnet/MyBlog/src/MyBlog.Web/bin/Debug/net11.0/MyBlog.Web.dll
+  MyBlog.E2E -> /home/kushal/src/dotnet/MyBlog/src/MyBlog.E2E/bin/Debug/net11.0/MyBlog.E2E.dll
+  MyBlog.Tests -> /home/kushal/src/dotnet/MyBlog/src/MyBlog.Tests/bin/Debug/net11.0/MyBlog.Tests.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:05.40
+xUnit.net v3 In-Process Runner v4.0.3+384aa7f0b4 (64-bit .NET 11.0.0-rc.3.26522.148)
+[37m  Discovering: MyBlog.Tests
+[0m[37m  Discovered:  MyBlog.Tests
+[0m[37m  Starting:    MyBlog.Tests
+[0m[37m  Finished:    MyBlog.Tests (ID = '1cec894d0b0bd6c0badc3c86e2c5d32dab6e86a6bc76e60ed01e0a600ab602cc')
+[0m[37m=== TEST EXECUTION SUMMARY ===
+[0m[37m   MyBlog.Tests  Total: 295, Errors: 0, Failed: 0, Skipped: 0, Not Run: 0, Time: 39.192s
+[0m[0m  Determining projects to restore...
+  All projects are up-to-date for restore.
+Project 'MyBlog.Core' has the following package references
+   [net11.0]: No packages were found for this framework.
+Project 'MyBlog.E2E' has the following package references
+   [net11.0]: 
+   Top-level Package           Requested   Resolved
+   > Microsoft.Playwright      1.65.1      1.65.1  
+   > xunit.v3                  4.0.3       4.0.3   
+
+Project 'MyBlog.Infrastructure' has the following package references
+   [net11.0]: 
+   Top-level Package                           Requested   Resolved
+   > Microsoft.EntityFrameworkCore.Sqlite      11.0.0      11.0.0  
+   > OpenTelemetry                             1.21.0      1.21.0  
+
+Project 'MyBlog.Tests' has the following package references
+   [net11.0]: 
+   Top-level Package      Requested   Resolved
+   > xunit.v3             4.0.3       4.0.3   
+
+Project 'MyBlog.Web' has the following package references
+   [net11.0]: 
+   Top-level Package                                      Requested                   Resolved             
+   > Microsoft.AspNetCore.App.Internal.Assets       (A)   [11.0.0-rc.3.26522.148, )   11.0.0-rc.3.26522.148
+   > OpenTelemetry.Exporter.OpenTelemetryProtocol         1.21.0                      1.21.0               
+   > OpenTelemetry.Extensions.Hosting                     1.21.0                      1.21.0               
+
+(A) : Auto-referenced package.
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+
+The following sources were used:
+   https://api.nuget.org/v3/index.json
+
+The given project `MyBlog.Core` has no updates given the current sources.
+The given project `MyBlog.E2E` has no updates given the current sources.
+The given project `MyBlog.Infrastructure` has no updates given the current sources.
+The given project `MyBlog.Tests` has no updates given the current sources.
+The given project `MyBlog.Web` has no updates given the current sources.
+#!/usr/bin/env bash
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)"
+REPO_ROOT="$(git -C "$SCRIPT_DIR" rev-parse --show-toplevel 2>/dev/null)" || exit 0
+
+OUTPUT_DIR="$REPO_ROOT/docs/llm"
+DUMP_FILE="$OUTPUT_DIR/dump.txt"
+SLIM_FILE="$OUTPUT_DIR/slim.md"
+
+mkdir -p "$OUTPUT_DIR"
+
+mapfile -t FILES < <(
+    git -C "$REPO_ROOT" ls-files --cached --others --exclude-standard \
+        | grep -v '^docs/llm/' \
+        | sort -u
+)
+
+is_text() {
+    [[ ! -s "$1" ]] || grep -qI '' "$1"
+}
+
+is_code() {
+    case "$1" in
+        *.md | export.sh | .gitignore) return 1 ;;
+        *) return 0 ;;
+    esac
+}
+
+language() {
+    case "$1" in
+        *.cs) echo csharp ;;
+        *.razor) echo razor ;;
+        *.css) echo css ;;
+        *.js) echo javascript ;;
+        *.json) echo json ;;
+        *.props | *.csproj | *.slnx | *.xml) echo xml ;;
+        *.yml | *.yaml) echo yaml ;;
+        *.sh) echo bash ;;
+        *Dockerfile) echo dockerfile ;;
+        *.editorconfig) echo ini ;;
+        *) echo text ;;
+    esac
+}
+
+fence_for() {
+    local longest
+    longest="$(grep -o '`\+' "$1" 2>/dev/null | awk '{ if (length($0) > m) m = length($0) } END { print m + 0 }')"
+    local width=$(( longest >= 3 ? longest + 1 : 3 ))
+    printf '%*s' "$width" '' | tr ' ' '`'
+}
+
+DUMP_TMP="$(mktemp "$OUTPUT_DIR/.dump.XXXXXX")"
+SLIM_TMP="$(mktemp "$OUTPUT_DIR/.slim.XXXXXX")"
+trap 'rm -f "$DUMP_TMP" "$SLIM_TMP"' EXIT
+
+{
+    printf '# Repository dump\n'
+    printf '# Commit: %s (%s)\n' "$(git -C "$REPO_ROOT" rev-parse --short HEAD)" "$(git -C "$REPO_ROOT" rev-parse --abbrev-ref HEAD)"
+    printf '# Message: %s\n' "$(git -C "$REPO_ROOT" log -1 --pretty=format:%s)"
+    printf '# Generated: %s\n' "$(date --iso-8601=seconds)"
+    printf '# Uncommitted:\n'
+    git -C "$REPO_ROOT" status --short | grep -v ' docs/llm/' | sed 's/^/#   /' || true
+} > "$DUMP_TMP"
+
+DUMPED=0
+SLIMMED=0
+
+for rel in "${FILES[@]}"; do
+    path="$REPO_ROOT/$rel"
+    [[ -f "$path" ]] || continue
+
+    if ! is_text "$path"; then
+        printf '\n===== %s =====\n[binary file omitted, %d bytes]\n' "$rel" "$(wc -c < "$path")" >> "$DUMP_TMP"
+        continue
+    fi
+
+    {
+        printf '\n===== %s =====\n' "$rel"
+        cat "$path"
+        [[ -s "$path" && "$(tail -c1 "$path" | wc -l)" -eq 0 ]] && printf '\n'
+    } >> "$DUMP_TMP"
+    DUMPED=$(( DUMPED + 1 ))
+
+    if is_code "$rel"; then
+        fence="$(fence_for "$path")"
+        {
+            printf '%s%s %s\n' "$fence" "$(language "$rel")" "$rel"
+            cat "$path"
+            [[ -s "$path" && "$(tail -c1 "$path" | wc -l)" -eq 0 ]] && printf '\n'
+            printf '%s\n\n' "$fence"
+        } >> "$SLIM_TMP"
+        SLIMMED=$(( SLIMMED + 1 ))
+    fi
+done
+
+mv -f "$DUMP_TMP" "$DUMP_FILE"
+mv -f "$SLIM_TMP" "$SLIM_FILE"
+
+printf 'dump.txt: %d files, %d bytes\n' "$DUMPED" "$(wc -c < "$DUMP_FILE")"
+printf 'slim.md : %d files, %d bytes\n' "$SLIMMED" "$(wc -c < "$SLIM_FILE")"
+dump.txt: 172 files, 599518 bytes
+slim.md : 141 files, 450035 bytes
+#!/usr/bin/env bash
+set -euo pipefail
+
+cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
+
+COMPOSE_FILE="docker-compose.e2e.yml"
+RESULTS_DIR="test-results"
+BUILD=true
+
+log() { printf '\033[0;32m[INFO]\033[0m %s\n' "$1"; }
+fail() { printf '\033[0;31m[ERROR]\033[0m %s\n' "$1" >&2; }
+
+compose() { podman-compose -f "$COMPOSE_FILE" "$@"; }
+
+for arg in "$@"; do
+    case "$arg" in
+        --no-build) BUILD=false ;;
+        --clean)
+            log "Removing E2E containers, networks and volumes..."
+            compose down -v --remove-orphans || true
+            exit 0
+            ;;
+        *)
+            fail "Unknown argument: $arg (supported: --no-build, --clean)"
+            exit 2
+            ;;
+    esac
+done
+
+cleanup() {
+    mkdir -p "$RESULTS_DIR"
+    compose logs myblog-web > "$RESULTS_DIR/myblog-web.log" 2>&1 || true
+    compose logs myblog-e2e > "$RESULTS_DIR/myblog-e2e.log" 2>&1 || true
+    compose down -v --remove-orphans > /dev/null 2>&1 || true
+}
+
+compose down -v --remove-orphans > /dev/null 2>&1 || true
+trap cleanup EXIT
+
+if [[ "$BUILD" == true ]]; then
+    log "Building images (layer cache makes unchanged builds fast)..."
+    compose build
+else
+    log "Skipping build (--no-build); using existing images"
+fi
+
+log "Starting MyBlog..."
+compose up -d myblog-web
+
+for attempt in $(seq 1 60); do
+    if podman exec myblog-web curl -sf http://localhost:5000/ > /dev/null 2>&1; then
+        log "MyBlog is ready"
+        break
+    fi
+    if [[ "$attempt" -eq 60 ]]; then
+        fail "MyBlog failed to start within 120 seconds"
+        compose logs myblog-web || true
+        exit 1
+    fi
+    sleep 2
+done
+
+log "Running E2E tests..."
+compose up --no-deps myblog-e2e || true
+
+E2E_EXIT_CODE="$(podman inspect --format '{{.State.ExitCode}}' myblog-e2e 2>/dev/null || echo 1)"
+
+if [[ "$E2E_EXIT_CODE" -eq 0 ]]; then
+    log "E2E tests passed"
+else
+    fail "E2E tests failed with exit code $E2E_EXIT_CODE (logs in $RESULTS_DIR/)"
+fi
+
+exit "$E2E_EXIT_CODE"
+[0;32m[INFO][0m Building images (layer cache makes unchanged builds fast)...
+[1/2] STEP 1/12: FROM mcr.microsoft.com/dotnet/sdk:11.0 AS build
+STEP 1/16: FROM mcr.microsoft.com/dotnet/sdk:11.0
+STEP 2/16: WORKDIR /src
+--> Using cache 4c285d5ace04cbd9aec63a28922b13777e455712c78c0114b546cba952659a5b
+--> 4c285d5ace04
+STEP 3/16: COPY Directory.Build.props .
+--> Using cache b15cfe8f68423affbc6527c16fc419899ec0424222a9e62387399f6748b915f5
+--> b15cfe8f6842
+STEP 4/16: COPY Directory.Packages.props .
+[1/2] STEP 2/12: WORKDIR /src
+--> Using cache 9f615a74a482b3d946eef420495d9aecb49486165b5ec6c7077cd917bf0fd04d
+--> 9f615a74a482
+STEP 5/16: COPY MyBlog.Core/MyBlog.Core.csproj MyBlog.Core/
+--> Using cache 4c285d5ace04cbd9aec63a28922b13777e455712c78c0114b546cba952659a5b
+--> 4c285d5ace04
+[1/2] STEP 3/12: COPY Directory.Build.props .
+--> Using cache de1e0b7f8c807d19aefe6c0e3ada598787cedf44bbd7f77769b45ca06e1d3ab2
+--> de1e0b7f8c80
+--> Using cache b15cfe8f68423affbc6527c16fc419899ec0424222a9e62387399f6748b915f5
+--> b15cfe8f6842
+STEP 6/16: COPY MyBlog.Infrastructure/MyBlog.Infrastructure.csproj MyBlog.Infrastructure/
+[1/2] STEP 4/12: COPY Directory.Packages.props .
+--> Using cache 767d98039c374876e33061398fd96c898a61279d4aacb068d46f077a03c70910
+--> 767d98039c37
+STEP 7/16: COPY MyBlog.Web/MyBlog.Web.csproj MyBlog.Web/
+--> Using cache 9f615a74a482b3d946eef420495d9aecb49486165b5ec6c7077cd917bf0fd04d
+--> 9f615a74a482
+[1/2] STEP 5/12: COPY MyBlog.Core/MyBlog.Core.csproj MyBlog.Core/
+--> Using cache b823e802a90a40fd7f18a30d95446e44a7d844eb1c0f179300ea4320eb78711d
+--> b823e802a90a
+STEP 8/16: COPY MyBlog.E2E/MyBlog.E2E.csproj MyBlog.E2E/
+--> Using cache de1e0b7f8c807d19aefe6c0e3ada598787cedf44bbd7f77769b45ca06e1d3ab2
+--> de1e0b7f8c80
+[1/2] STEP 6/12: COPY MyBlog.Infrastructure/MyBlog.Infrastructure.csproj MyBlog.Infrastructure/
+--> Using cache 4c322fd4934a42016487e0cb2c1660c0ae8ce5c502fc8d3366de0f2f2fd30eb7
+--> 4c322fd4934a
+STEP 9/16: RUN dotnet restore MyBlog.E2E/MyBlog.E2E.csproj
+--> Using cache 627817cb4e12954c3fa1dd84b883d9846fdabbe6a45ff8a45cf3a1b9182ec7e4
+--> 627817cb4e12
+STEP 10/16: RUN mkdir PlaywrightInstaller     && printf '<Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies></PropertyGroup><ItemGroup><PackageReference Include="Microsoft.Playwright" /></ItemGroup></Project>\n' > PlaywrightInstaller/PlaywrightInstaller.csproj     && dotnet build PlaywrightInstaller/PlaywrightInstaller.csproj -c Release -o /tmp/playwright -p:TreatWarningsAsErrors=false     && test -f /tmp/playwright/Microsoft.Playwright.dll     && pwsh /tmp/playwright/playwright.ps1 install chromium --with-deps     && find /root/.cache/ms-playwright -maxdepth 1 -name 'chromium*' | grep -q .     && rm -rf PlaywrightInstaller /tmp/playwright /var/lib/apt/lists/*
+--> Using cache 7112752925c7e87c064a111ce2363860d0213e2608958352d76d67dfda982ae0
+--> 7112752925c7
+--> Using cache 767d98039c374876e33061398fd96c898a61279d4aacb068d46f077a03c70910
+--> 767d98039c37
+STEP 11/16: COPY . .
+[1/2] STEP 7/12: COPY MyBlog.Web/MyBlog.Web.csproj MyBlog.Web/
+--> Using cache b823e802a90a40fd7f18a30d95446e44a7d844eb1c0f179300ea4320eb78711d
+--> b823e802a90a
+[1/2] STEP 8/12: RUN dotnet restore MyBlog.Web/MyBlog.Web.csproj
+--> Using cache 29861f3238ff27b8355984d6c1389b32ba5f3e5e6a0bf81cf73c9e7de6d03e37
+--> 29861f3238ff
+[1/2] STEP 9/12: COPY MyBlog.Core/ MyBlog.Core/
+--> 7a3f13c3ce6a
+STEP 12/16: RUN dotnet build MyBlog.E2E/MyBlog.E2E.csproj -c Release
+--> Using cache 0f71f4c4c55ee1d0a49ebc66633e901fddf90ea2acc11ff07969eb3effe84467
+--> 0f71f4c4c55e
+[1/2] STEP 10/12: COPY MyBlog.Infrastructure/ MyBlog.Infrastructure/
+--> Using cache dba57f83d2d7edb62812c0d8da6604fd1ea8dbb616193a402a11916d83b01d3e
+--> dba57f83d2d7
+[1/2] STEP 11/12: COPY MyBlog.Web/ MyBlog.Web/
+--> 73568377a9c5
+[1/2] STEP 12/12: RUN dotnet publish MyBlog.Web/MyBlog.Web.csproj -c Release -o /app/publish
+  Determining projects to restore...
+  Determining projects to restore...
+  Restored /src/MyBlog.E2E/MyBlog.E2E.csproj (in 349 ms).
+  Restored /src/MyBlog.Web/MyBlog.Web.csproj (in 606 ms).
+  2 of 4 projects are up-to-date for restore.
+  Restored /src/MyBlog.Web/MyBlog.Web.csproj (in 630 ms).
+  2 of 3 projects are up-to-date for restore.
+  MyBlog.Core -> /src/MyBlog.Core/bin/Release/net11.0/MyBlog.Core.dll
+  MyBlog.Core -> /src/MyBlog.Core/bin/Release/net11.0/MyBlog.Core.dll
+  MyBlog.Infrastructure -> /src/MyBlog.Infrastructure/bin/Release/net11.0/MyBlog.Infrastructure.dll
+  MyBlog.Infrastructure -> /src/MyBlog.Infrastructure/bin/Release/net11.0/MyBlog.Infrastructure.dll
+  MyBlog.Web -> /src/MyBlog.Web/bin/Release/net11.0/MyBlog.Web.dll
+  MyBlog.Web -> /src/MyBlog.Web/bin/Release/net11.0/MyBlog.Web.dll
+  MyBlog.E2E -> /src/MyBlog.E2E/bin/Release/net11.0/MyBlog.E2E.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:06.20
+  MyBlog.Web -> /app/publish/
+--> d05d2aeb6df1
+[2/2] STEP 1/11: FROM mcr.microsoft.com/dotnet/aspnet:11.0 AS runtime
+--> d94149bd9550
+STEP 13/16: WORKDIR /src/MyBlog.E2E
+--> 66f95ee3cd68
+STEP 14/16: ENV MYBLOG_BASE_URL=http://myblog-web:5000
+[2/2] STEP 2/11: WORKDIR /app
+--> 3a55de69e541
+--> 1df0a967d831
+[2/2] STEP 3/11: RUN apt-get update && apt-get install -y --no-install-recommends curl && rm -rf /var/lib/apt/lists/*
+STEP 15/16: ENV PLAYWRIGHT_HEADLESS=true
+--> 5be2943426fd
+STEP 16/16: ENTRYPOINT ["dotnet", "run", "-c", "Release", "--no-build"]
+COMMIT myblog_myblog-e2e
+Get:1 http://archive.ubuntu.com/ubuntu resolute InRelease [136 kB]
+--> c591aa3b2766
+Successfully tagged localhost/myblog_myblog-e2e:latest
+c591aa3b2766bb3544a4107fffa1d4b41555cb351232c7dfdf2cee1f95b8cbb0
+Get:2 http://security.ubuntu.com/ubuntu resolute-security InRelease [137 kB]
+Get:3 http://archive.ubuntu.com/ubuntu resolute-updates InRelease [137 kB]
+Get:4 http://archive.ubuntu.com/ubuntu resolute-backports InRelease [137 kB]
+Get:5 http://archive.ubuntu.com/ubuntu resolute/multiverse amd64 Packages [352 kB]
+Get:6 http://archive.ubuntu.com/ubuntu resolute/universe amd64 Packages [20.1 MB]
+Get:7 http://security.ubuntu.com/ubuntu resolute-security/main amd64 Packages [923 kB]
+Get:8 http://security.ubuntu.com/ubuntu resolute-security/restricted amd64 Packages [758 kB]
+Get:9 http://security.ubuntu.com/ubuntu resolute-security/multiverse amd64 Packages [24.6 kB]
+Get:10 http://security.ubuntu.com/ubuntu resolute-security/universe amd64 Packages [280 kB]
+Get:11 http://archive.ubuntu.com/ubuntu resolute/restricted amd64 Packages [189 kB]
+Get:12 http://archive.ubuntu.com/ubuntu resolute/main amd64 Packages [1874 kB]
+Get:13 http://archive.ubuntu.com/ubuntu resolute-updates/restricted amd64 Packages [788 kB]
+Get:14 http://archive.ubuntu.com/ubuntu resolute-updates/multiverse amd64 Packages [26.1 kB]
+Get:15 http://archive.ubuntu.com/ubuntu resolute-updates/universe amd64 Packages [502 kB]
+Get:16 http://archive.ubuntu.com/ubuntu resolute-updates/main amd64 Packages [1129 kB]
+Get:17 http://archive.ubuntu.com/ubuntu resolute-backports/universe amd64 Packages [3308 B]
+Fetched 27.5 MB in 2s (16.6 MB/s)
+Reading package lists...
+Reading package lists...
+Building dependency tree...
+Reading state information...
+Solving dependencies...
+The following additional packages will be installed:
+  libbrotli1 libcurl4t64 libffi8 libgnutls30t64 libgssapi-krb5-2
+  libhogweed6t64 libidn2-0 libk5crypto3 libkeyutils1 libkrb5-3 libkrb5support0
+  libldap-common libldap2 libnettle8t64 libnghttp2-14 libp11-kit0 libpsl5t64
+  librtmp1 libsasl2-2 libsasl2-modules-db libssh2-1t64 libtasn1-6
+  libunistring5
+Suggested packages:
+  gnutls-bin krb5-doc krb5-user
+Recommended packages:
+  bash-completion krb5-locales publicsuffix libsasl2-modules
+The following NEW packages will be installed:
+  curl libbrotli1 libcurl4t64 libffi8 libgnutls30t64 libgssapi-krb5-2
+  libhogweed6t64 libidn2-0 libk5crypto3 libkeyutils1 libkrb5-3 libkrb5support0
+  libldap-common libldap2 libnettle8t64 libnghttp2-14 libp11-kit0 libpsl5t64
+  librtmp1 libsasl2-2 libsasl2-modules-db libssh2-1t64 libtasn1-6
+  libunistring5
+0 upgraded, 24 newly installed, 0 to remove and 0 not upgraded.
+Need to get 4799 kB of archives.
+After this operation, 14.2 MB of additional disk space will be used.
+Get:1 http://archive.ubuntu.com/ubuntu resolute/main amd64 libffi8 amd64 3.5.2-4 [26.3 kB]
+Get:2 http://archive.ubuntu.com/ubuntu resolute/main amd64 libnettle8t64 amd64 3.10.2-1 [185 kB]
+Get:3 http://archive.ubuntu.com/ubuntu resolute/main amd64 libhogweed6t64 amd64 3.10.2-1 [201 kB]
+Get:4 http://archive.ubuntu.com/ubuntu resolute/main amd64 libunistring5 amd64 1.3-2build1 [610 kB]
+Get:5 http://archive.ubuntu.com/ubuntu resolute/main amd64 libidn2-0 amd64 2.3.8-4build1 [67.6 kB]
+Get:6 http://archive.ubuntu.com/ubuntu resolute/main amd64 libp11-kit0 amd64 0.26.2-2 [313 kB]
+Get:7 http://archive.ubuntu.com/ubuntu resolute/main amd64 libtasn1-6 amd64 4.21.0-2 [45.3 kB]
+Get:8 http://archive.ubuntu.com/ubuntu resolute-updates/main amd64 libgnutls30t64 amd64 3.8.12-2ubuntu1.1 [1029 kB]
+Get:9 http://archive.ubuntu.com/ubuntu resolute-updates/main amd64 libkrb5support0 amd64 1.22.1-2ubuntu4.1 [33.5 kB]
+Get:10 http://archive.ubuntu.com/ubuntu resolute-updates/main amd64 libk5crypto3 amd64 1.22.1-2ubuntu4.1 [82.0 kB]
+Get:11 http://archive.ubuntu.com/ubuntu resolute/main amd64 libkeyutils1 amd64 1.6.3-6ubuntu3 [10.6 kB]
+Get:12 http://archive.ubuntu.com/ubuntu resolute-updates/main amd64 libkrb5-3 amd64 1.22.1-2ubuntu4.1 [361 kB]
+Get:13 http://archive.ubuntu.com/ubuntu resolute-updates/main amd64 libgssapi-krb5-2 amd64 1.22.1-2ubuntu4.1 [147 kB]
+Get:14 http://archive.ubuntu.com/ubuntu resolute-updates/main amd64 libnghttp2-14 amd64 1.68.0-2ubuntu0.2 [71.0 kB]
+Get:15 http://archive.ubuntu.com/ubuntu resolute/main amd64 libpsl5t64 amd64 0.21.2-1.1build2 [59.5 kB]
+Get:16 http://archive.ubuntu.com/ubuntu resolute-updates/main amd64 libbrotli1 amd64 1.2.0-3ubuntu0.1 [343 kB]
+Get:17 http://archive.ubuntu.com/ubuntu resolute/main amd64 libsasl2-modules-db amd64 2.1.28+dfsg1-9ubuntu3 [21.1 kB]
+Get:18 http://archive.ubuntu.com/ubuntu resolute/main amd64 libsasl2-2 amd64 2.1.28+dfsg1-9ubuntu3 [54.0 kB]
+Get:19 http://archive.ubuntu.com/ubuntu resolute/main amd64 libldap-common all 2.6.10+dfsg-1ubuntu5 [36.0 kB]
+Get:20 http://archive.ubuntu.com/ubuntu resolute/main amd64 libldap2 amd64 2.6.10+dfsg-1ubuntu5 [204 kB]
+Get:21 http://archive.ubuntu.com/ubuntu resolute/main amd64 librtmp1 amd64 2.4+20151223.gitfa8646d.1-3 [59.0 kB]
+Get:22 http://archive.ubuntu.com/ubuntu resolute-updates/main amd64 libssh2-1t64 amd64 1.11.1-1ubuntu0.26.04.4 [138 kB]
+Get:23 http://archive.ubuntu.com/ubuntu resolute-updates/main amd64 libcurl4t64 amd64 8.18.0-1ubuntu2.8 [430 kB]
+Get:24 http://archive.ubuntu.com/ubuntu resolute-updates/main amd64 curl amd64 8.18.0-1ubuntu2.8 [273 kB]
+Fetched 4799 kB in 0s (12.7 MB/s)
+Selecting previously unselected package libffi8:amd64.
+(Reading database ... (Reading database ... 5%(Reading database ... 10%(Reading database ... 15%(Reading database ... 20%(Reading database ... 25%(Reading database ... 30%(Reading database ... 35%(Reading database ... 40%(Reading database ... 45%(Reading database ... 50%(Reading database ... 55%(Reading database ... 60%(Reading database ... 65%(Reading database ... 70%(Reading database ... 75%(Reading database ... 80%(Reading database ... 85%(Reading database ... 90%(Reading database ... 95%(Reading database ... 100%(Reading database ... 9595 files and directories currently installed.)
+Preparing to unpack .../00-libffi8_3.5.2-4_amd64.deb ...
+Unpacking libffi8:amd64 (3.5.2-4) ...
+Selecting previously unselected package libnettle8t64:amd64.
+Preparing to unpack .../01-libnettle8t64_3.10.2-1_amd64.deb ...
+Unpacking libnettle8t64:amd64 (3.10.2-1) ...
+Selecting previously unselected package libhogweed6t64:amd64.
+Preparing to unpack .../02-libhogweed6t64_3.10.2-1_amd64.deb ...
+Unpacking libhogweed6t64:amd64 (3.10.2-1) ...
+Selecting previously unselected package libunistring5:amd64.
+Preparing to unpack .../03-libunistring5_1.3-2build1_amd64.deb ...
+Unpacking libunistring5:amd64 (1.3-2build1) ...
+Selecting previously unselected package libidn2-0:amd64.
+Preparing to unpack .../04-libidn2-0_2.3.8-4build1_amd64.deb ...
+Unpacking libidn2-0:amd64 (2.3.8-4build1) ...
+Selecting previously unselected package libp11-kit0:amd64.
+Preparing to unpack .../05-libp11-kit0_0.26.2-2_amd64.deb ...
+Unpacking libp11-kit0:amd64 (0.26.2-2) ...
+Selecting previously unselected package libtasn1-6:amd64.
+Preparing to unpack .../06-libtasn1-6_4.21.0-2_amd64.deb ...
+Unpacking libtasn1-6:amd64 (4.21.0-2) ...
+Selecting previously unselected package libgnutls30t64:amd64.
+Preparing to unpack .../07-libgnutls30t64_3.8.12-2ubuntu1.1_amd64.deb ...
+Unpacking libgnutls30t64:amd64 (3.8.12-2ubuntu1.1) ...
+Selecting previously unselected package libkrb5support0:amd64.
+Preparing to unpack .../08-libkrb5support0_1.22.1-2ubuntu4.1_amd64.deb ...
+Unpacking libkrb5support0:amd64 (1.22.1-2ubuntu4.1) ...
+Selecting previously unselected package libk5crypto3:amd64.
+Preparing to unpack .../09-libk5crypto3_1.22.1-2ubuntu4.1_amd64.deb ...
+Unpacking libk5crypto3:amd64 (1.22.1-2ubuntu4.1) ...
+Selecting previously unselected package libkeyutils1:amd64.
+Preparing to unpack .../10-libkeyutils1_1.6.3-6ubuntu3_amd64.deb ...
+Unpacking libkeyutils1:amd64 (1.6.3-6ubuntu3) ...
+Selecting previously unselected package libkrb5-3:amd64.
+Preparing to unpack .../11-libkrb5-3_1.22.1-2ubuntu4.1_amd64.deb ...
+Unpacking libkrb5-3:amd64 (1.22.1-2ubuntu4.1) ...
+Selecting previously unselected package libgssapi-krb5-2:amd64.
+Preparing to unpack .../12-libgssapi-krb5-2_1.22.1-2ubuntu4.1_amd64.deb ...
+Unpacking libgssapi-krb5-2:amd64 (1.22.1-2ubuntu4.1) ...
+Selecting previously unselected package libnghttp2-14:amd64.
+Preparing to unpack .../13-libnghttp2-14_1.68.0-2ubuntu0.2_amd64.deb ...
+Unpacking libnghttp2-14:amd64 (1.68.0-2ubuntu0.2) ...
+Selecting previously unselected package libpsl5t64:amd64.
+Preparing to unpack .../14-libpsl5t64_0.21.2-1.1build2_amd64.deb ...
+Unpacking libpsl5t64:amd64 (0.21.2-1.1build2) ...
+Selecting previously unselected package libbrotli1:amd64.
+Preparing to unpack .../15-libbrotli1_1.2.0-3ubuntu0.1_amd64.deb ...
+Unpacking libbrotli1:amd64 (1.2.0-3ubuntu0.1) ...
+Selecting previously unselected package libsasl2-modules-db:amd64.
+Preparing to unpack .../16-libsasl2-modules-db_2.1.28+dfsg1-9ubuntu3_amd64.deb ...
+Unpacking libsasl2-modules-db:amd64 (2.1.28+dfsg1-9ubuntu3) ...
+Selecting previously unselected package libsasl2-2:amd64.
+Preparing to unpack .../17-libsasl2-2_2.1.28+dfsg1-9ubuntu3_amd64.deb ...
+Unpacking libsasl2-2:amd64 (2.1.28+dfsg1-9ubuntu3) ...
+Selecting previously unselected package libldap-common.
+Preparing to unpack .../18-libldap-common_2.6.10+dfsg-1ubuntu5_all.deb ...
+Unpacking libldap-common (2.6.10+dfsg-1ubuntu5) ...
+Selecting previously unselected package libldap2:amd64.
+Preparing to unpack .../19-libldap2_2.6.10+dfsg-1ubuntu5_amd64.deb ...
+Unpacking libldap2:amd64 (2.6.10+dfsg-1ubuntu5) ...
+Selecting previously unselected package librtmp1:amd64.
+Preparing to unpack .../20-librtmp1_2.4+20151223.gitfa8646d.1-3_amd64.deb ...
+Unpacking librtmp1:amd64 (2.4+20151223.gitfa8646d.1-3) ...
+Selecting previously unselected package libssh2-1t64:amd64.
+Preparing to unpack .../21-libssh2-1t64_1.11.1-1ubuntu0.26.04.4_amd64.deb ...
+Unpacking libssh2-1t64:amd64 (1.11.1-1ubuntu0.26.04.4) ...
+Selecting previously unselected package libcurl4t64:amd64.
+Preparing to unpack .../22-libcurl4t64_8.18.0-1ubuntu2.8_amd64.deb ...
+Unpacking libcurl4t64:amd64 (8.18.0-1ubuntu2.8) ...
+Selecting previously unselected package curl.
+Preparing to unpack .../23-curl_8.18.0-1ubuntu2.8_amd64.deb ...
+Unpacking curl (8.18.0-1ubuntu2.8) ...
+Setting up libkeyutils1:amd64 (1.6.3-6ubuntu3) ...
+Setting up libbrotli1:amd64 (1.2.0-3ubuntu0.1) ...
+Setting up libnghttp2-14:amd64 (1.68.0-2ubuntu0.2) ...
+Setting up libldap-common (2.6.10+dfsg-1ubuntu5) ...
+Setting up libkrb5support0:amd64 (1.22.1-2ubuntu4.1) ...
+Setting up libsasl2-modules-db:amd64 (2.1.28+dfsg1-9ubuntu3) ...
+Setting up libnettle8t64:amd64 (3.10.2-1) ...
+Setting up libunistring5:amd64 (1.3-2build1) ...
+Setting up libk5crypto3:amd64 (1.22.1-2ubuntu4.1) ...
+Setting up libsasl2-2:amd64 (2.1.28+dfsg1-9ubuntu3) ...
+Setting up libffi8:amd64 (3.5.2-4) ...
+Setting up libhogweed6t64:amd64 (3.10.2-1) ...
+Setting up libtasn1-6:amd64 (4.21.0-2) ...
+Setting up libkrb5-3:amd64 (1.22.1-2ubuntu4.1) ...
+Setting up libssh2-1t64:amd64 (1.11.1-1ubuntu0.26.04.4) ...
+Setting up libldap2:amd64 (2.6.10+dfsg-1ubuntu5) ...
+Setting up libidn2-0:amd64 (2.3.8-4build1) ...
+Setting up libp11-kit0:amd64 (0.26.2-2) ...
+Setting up libgssapi-krb5-2:amd64 (1.22.1-2ubuntu4.1) ...
+Setting up libgnutls30t64:amd64 (3.8.12-2ubuntu1.1) ...
+Setting up libpsl5t64:amd64 (0.21.2-1.1build2) ...
+Setting up librtmp1:amd64 (2.4+20151223.gitfa8646d.1-3) ...
+Setting up libcurl4t64:amd64 (8.18.0-1ubuntu2.8) ...
+Setting up curl (8.18.0-1ubuntu2.8) ...
+Processing triggers for libc-bin (2.43-2ubuntu2.7) ...
+--> f3ca48151f8a
+[2/2] STEP 4/11: RUN useradd -m -s /bin/bash appuser && mkdir -p /app/data && chown appuser:appuser /app/data
+--> 7920ca55aa3e
+[2/2] STEP 5/11: COPY --from=build --chown=appuser:appuser /app/publish .
+--> ac1b7d08e2af
+[2/2] STEP 6/11: ENV ASPNETCORE_URLS=http://+:5000
+--> 8d9edd32b471
+[2/2] STEP 7/11: ENV ASPNETCORE_ENVIRONMENT=Production
+--> 7842d3573c0c
+[2/2] STEP 8/11: ENV ConnectionStrings__DefaultConnection="Data Source=/app/data/myblog.db"
+--> e510b43bcec2
+[2/2] STEP 9/11: USER appuser
+--> 26febf1a4b8d
+[2/2] STEP 10/11: EXPOSE 5000
+--> 8b4827c88786
+[2/2] STEP 11/11: ENTRYPOINT ["dotnet", "MyBlog.Web.dll"]
+[2/2] COMMIT myblog_myblog-web
+--> 3dde1da5b2a7
+Successfully tagged localhost/myblog_myblog-web:latest
+3dde1da5b2a7e5ec8d62f55c44aa72d0b20ebd5c75474cb033459f061e947f89
+[0;32m[INFO][0m Starting MyBlog...
+cd6d320f3dce50bce6a02c2a31fb7dab199145f1956d35d3e117f65f4157c005
+3fdc20a82de648609118d1c85d14256097e32767827e7dfd1b381bfa0f43f6f8
+myblog-web
+[0;32m[INFO][0m MyBlog is ready
+[0;32m[INFO][0m Running E2E tests...
+90d3721ee2056d5dc8412b71fb2cf18120224dfc07f79f8f3a0cf9f51f61ee51
+[1;33m[myblog-e2e] |[0m xUnit.net v3 In-Process Runner v4.0.3+384aa7f0b4 (64-bit .NET 11.0.0)
+[1;33m[myblog-e2e] |[0m [37m  Discovering: MyBlog.E2E
+[1;33m[myblog-e2e] |[0m [0m[37m  Discovered:  MyBlog.E2E
+[1;33m[myblog-e2e] |[0m [0m[37m  Starting:    MyBlog.E2E
+[1;33m[myblog-e2e] |[0m [0m[37m  Finished:    MyBlog.E2E (ID = 'b551022754df80e0b6be19c1a073a28c94489aaa1911ee3dcc45e038ae79adf6')
+[1;33m[myblog-e2e] |[0m [0m[37m=== TEST EXECUTION SUMMARY ===
+[1;33m[myblog-e2e] |[0m [0m[37m   MyBlog.E2E  Total: 71, Errors: 0, Failed: 0, Skipped: 0, Not Run: 0, Time: 14.259s
+[1;33m[myblog-e2e] |[0m [0m[0m
+[0;32m[INFO][0m E2E tests passed
