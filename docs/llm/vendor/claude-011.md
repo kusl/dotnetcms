@@ -189,3 +189,18 @@ Download .NET:
 kushal@fedora:~/src/dotnet/MyImapDownloader$ 
 
 ```
+also looks like github dot com is having trouble with macos 
+please make macos optional so we can limp along even if it fails or times out somehow
+ build-test (macos-latest)
+Started 8m 45s ago
+Job is about to start running on the hosted runner: GitHub Actions 1000079313
+Job is waiting for a hosted runner to come online.
+Evaluating build-test.if
+Evaluating: success()
+Result: true
+Requested labels: macos-latest
+Job defined at: kusl/dotnetcms/.github/workflows/build-deploy.yml@refs/heads/main
+Waiting for a runner to pick up this job...
+Requested labels: macos-latest
+Job defined at: kusl/dotnetcms/.github/workflows/build-deploy.yml@refs/heads/main
+Waiting for a runner to pick up this job...
