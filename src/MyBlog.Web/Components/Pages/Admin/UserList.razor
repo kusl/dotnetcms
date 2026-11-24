@@ -1,7 +1,6 @@
 @page "/admin/users"
 @attribute [Authorize(Roles = AppConstants.AdminRole)]
 @inject IUserRepository UserRepository
-@inject AuthenticationStateProvider AuthStateProvider
 @inject IJSRuntime JsRuntime
 @using System.Security.Claims
 
@@ -60,13 +59,16 @@
 </div>
 
 @code {
+    [CascadingParameter]
+    private Task<AuthenticationState>? AuthenticationStateTask { get; set; }
+
     private IReadOnlyList<User>? _users;
     private Guid _currentUserId;
 
     protected override async Task OnInitializedAsync()
     {
-        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
-        var idClaim = authState.User.FindFirst(ClaimTypes.NameIdentifier);
+        var authState = AuthenticationStateTask is null ? null : await AuthenticationStateTask;
+        var idClaim = authState?.User.FindFirst(ClaimTypes.NameIdentifier);
         if (idClaim != null && Guid.TryParse(idClaim.Value, out var id))
         {
             _currentUserId = id;
@@ -81,7 +83,15 @@
     {
         if (id == _currentUserId) return;
 
-        var confirm = await JsRuntime.InvokeAsync<bool>("confirm", "Are you sure you want to delete this user?");
+        bool confirm;
+        try
+        {
+            confirm = await JsRuntime.InvokeAsync<bool>("confirm", "Are you sure you want to delete this user?");
+        }
+        catch (Exception ex) when (ex is JSException or JSDisconnectedException or TaskCanceledException)
+        {
+            return;
+        }
         
         if (confirm)
         {

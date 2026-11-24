@@ -1,7 +1,6 @@
 @page "/admin/images"
 @attribute [Authorize]
 @inject IImageRepository ImageRepository
-@inject AuthenticationStateProvider AuthStateProvider
 @using System.Security.Claims
 
 <PageTitle>Manage Images</PageTitle>
@@ -48,6 +47,9 @@ else
 }
 
 @code {
+    [CascadingParameter]
+    private Task<AuthenticationState>? AuthenticationStateTask { get; set; }
+
     private IReadOnlyList<Image>? _images;
     private string? _uploadStatus;
     private bool _uploadError;
@@ -81,8 +83,8 @@ else
                 return;
             }
 
-            var authState = await AuthStateProvider.GetAuthenticationStateAsync();
-            var userIdClaim = authState.User.FindFirst(ClaimTypes.NameIdentifier);
+            var authState = AuthenticationStateTask is null ? null : await AuthenticationStateTask;
+            var userIdClaim = authState?.User.FindFirst(ClaimTypes.NameIdentifier);
             
             if (userIdClaim is null || !Guid.TryParse(userIdClaim.Value, out var userId))
             {

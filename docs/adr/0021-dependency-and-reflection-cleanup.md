@@ -43,3 +43,5 @@ Dependencies and framework APIs drifted as the project moved to .NET 10. A revie
 Amends ADR-0008, ADR-0010, ADR-0011 and ADR-0017. Open recommendations stay in `solid-review.md`.
 
 **Y-statement:** In the context of an ageing dependency graph, facing stale packages and reflection on hot paths, we decided for framework references, source-generated or writer-based JSON and `MapStaticAssets`, and neglected keeping the 2.x packages and reflection serializers, to achieve a smaller, faster, auditable build, accepting string serialization of non-primitive log attributes, because no reader depends on their structure.
+
+> **Amendment (2026-11-24):** `ChangePassword`, `ImageManager`, `PostEditor` and `UserList` read the user from the cascading `Task<AuthenticationState>` instead of calling `AuthenticationStateProvider.GetAuthenticationStateAsync`. The .NET 11 analyzer BL0013 rejects a direct call without an `AuthenticationStateChanged` subscription, and the cascading value tracks sign-in changes. The `confirm` call in `UserList` is wrapped in a `try`/`catch` (BL0016). If the dialog fails, times out or the circuit is gone, nothing is deleted.

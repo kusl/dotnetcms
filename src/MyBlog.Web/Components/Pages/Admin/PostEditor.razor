@@ -5,7 +5,6 @@
 @inject IPostRepository PostRepository
 @inject ISlugService SlugService
 @inject NavigationManager Navigation
-@inject AuthenticationStateProvider AuthStateProvider
 @inject ILogger<PostEditor> Logger
 @using System.Security.Claims
 
@@ -82,6 +81,9 @@ else
 
 @code {
     private const int PreviewDebounceMilliseconds = 500;
+
+    [CascadingParameter]
+    private Task<AuthenticationState>? AuthenticationStateTask { get; set; }
 
     [Parameter]
     public Guid? Id { get; set; }
@@ -173,8 +175,8 @@ else
 
         try
         {
-            var authState = await AuthStateProvider.GetAuthenticationStateAsync();
-            var userId = authState.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var authState = AuthenticationStateTask is null ? null : await AuthenticationStateTask;
+            var userId = authState?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             if (string.IsNullOrEmpty(userId))
             {
