@@ -62,3 +62,39 @@ You MUST obey the exact storage and custom Markdown parser limits of this blog e
    - Tables: GFM pipe tables (`|` in header and `:?-+:?` delimiter row with matching column counts). Escape literal pipes inside cells with `\|` (even inside inline code), and put a blank line after every table before the next paragraph.
    - Escapes: backslash escapes for ASCII punctuation work outside code (`\*`, `\_`, `\[`, `\\`).
    - FORBIDDEN syntax (unsupported and will render literally or break): raw HTML tags (all `<`, `>`, `&`, `"` are HTML-escaped), strikethrough (`~~text~~`), task lists (`- [ ]`), footnotes (`[^1]`), reference links (`[text][id]`), nested lists, Setext headings, and `~~~` fences.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
