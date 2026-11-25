@@ -1,4 +1,5 @@
-
+00
+23
 
 Write a blog article answering a strange technical thought experiment.
 
